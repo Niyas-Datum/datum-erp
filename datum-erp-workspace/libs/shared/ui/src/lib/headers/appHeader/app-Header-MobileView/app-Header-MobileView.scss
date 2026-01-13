@@ -1,0 +1,33 @@
+.e-section-control {
+  position: relative;
+  z-index: 30; // Higher than app-footer sidebar (which has z-index: 20)
+  
+  .custom-menu {
+    .e-menu-wrapper {
+      z-index: 31; // Ensure menu wrapper is above everything
+    }
+    
+    .e-menu-popup {
+      z-index: 32; // Ensure dropdown menu is above everything
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// Mobile specific styles
+@media (max-width: 768px) {
+  .e-section-control {
+    z-index: 50; // Even higher on mobile
+    
+    .custom-menu {
+      .e-menu-wrapper {
+        z-index: 51;
+      }      
+      .e-menu-popup {
+        z-index: 52;
+        min-width: 280px;
+        max-width: 95vw;
+      }
+    }
+  }
+}

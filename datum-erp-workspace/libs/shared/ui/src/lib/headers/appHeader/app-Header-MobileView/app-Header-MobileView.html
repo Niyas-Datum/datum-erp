@@ -1,0 +1,14 @@
+<div class="e-section-control">
+  <ejs-menu
+    #menu
+    [items]="menuItems"
+    [fields]="menuFields"
+    cssClass="custom-menu"
+    [enableScrolling]="true"
+    [animationSettings]="animationSettings"
+    (select)="onMenuSelect($event)"
+    [hamburgerMode]="true"
+    [showItemOnClick]="true"
+  ></ejs-menu>
+</div>
+

@@ -1,0 +1,31 @@
+<div class="image-uploader-container">
+  <div class="image-card">
+    <div class="image-area" *ngIf="previewUrl(); else placeholder">
+      <img [src]="previewUrl()" alt="Selected image"/>
+    </div>
+    <ng-template #placeholder>
+      <div class="placeholder">No image selected</div>
+    </ng-template>
+
+    <!-- Syncfusion Uploader -->
+    <ejs-uploader
+      #uploader
+      id="fileUpload"
+      [autoUpload]="false"
+      [allowedExtensions]="allowedExtensions"
+      (selected)="onFileSelected($event)"
+      (removing)="onFileRemoving($event)"
+    >
+    </ejs-uploader>
+
+    <div class="image-actions">
+      <button type="button" (click)="uploadImage()" [disabled]="!selectedFile">Upload</button>
+      <button type="button" (click)="removeImage()" [disabled]="!selectedFile">Remove</button>
+    </div>
+
+    <div class="meta" *ngIf="selectedFile">
+      <div><strong>File:</strong> {{ selectedFile.name }}</div>
+      <div><strong>Size:</strong> {{ selectedFile.size | number }} bytes</div>
+    </div>
+  </div>
+</div>

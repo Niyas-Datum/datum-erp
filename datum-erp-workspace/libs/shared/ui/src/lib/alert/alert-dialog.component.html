@@ -1,0 +1,16 @@
+<ejs-dialog
+  #alertDialog
+  [visible]="visible"
+  [header]="title"
+  [showCloseIcon]="true"
+  [width]="'350px'"
+  [content]="message"
+  [buttons]="[
+    {
+      click: close.bind(this),
+      buttonModel: { content: 'OK', isPrimary: true }
+    }
+  ]"
+  (close)="close()"
+>
+</ejs-dialog>

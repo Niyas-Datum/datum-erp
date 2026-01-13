@@ -1,0 +1,42 @@
+<div class="popup-container" *ngIf="visible" style="z-index: 9999;">
+  <div class="popup-content">
+    <div class="fixed-header">
+      <div class="close-icon" (click)="cancelItems()">X</div>
+    </div>
+
+    <!-- Syncfusion Grid Implementation -->
+    <ejs-grid
+      #grid
+      [dataSource]="popupGridData"
+      [allowPaging]="false"
+      [enableVirtualization]="true"
+      [editSettings]="{
+        allowEditing: gridSettings.allowEditing,
+        allowAdding: gridSettings.allowAdding,
+        allowDeleting: gridSettings.allowDeleting,
+        mode: 'Normal'
+      }"
+      height="250"
+      width="100%"
+      [enableHover]="true"
+      [gridLines]="'Both'"
+      [selectionSettings]="selectionSettings"
+      (rowSelected)="onRowClick($event.data)"
+      [pageSettings]="{ pageSize: 100 }"
+    >
+      <e-columns>
+        <e-column
+          *ngFor="let column of popupGridColumns; trackBy: trackByColumnId"
+          [field]="column.field"
+          [headerText]="column.headerText"
+          [width]="column.width"
+        ></e-column>
+      </e-columns>
+    </ejs-grid>
+
+    <div style="text-align: right; margin-top: 10px">
+      <button class="e-btn e-primary" (click)="onOK()">OK</button>
+      <button class="e-btn" style="margin-left: 10px" (click)="onClose()">Close</button>
+    </div>
+  </div>
+</div>

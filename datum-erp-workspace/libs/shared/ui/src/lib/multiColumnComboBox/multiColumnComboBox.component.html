@@ -1,0 +1,18 @@
+<ejs-multicolumncombobox
+#mcb
+[dataSource]="localData"
+  [allowFiltering]="true"
+  filterType="Contains"
+  [placeholder]="placeholder"
+  [popupWidth]="popupWidth"
+  [fields]=fields
+  (select)="handleSelect($event)"
+  (change)="handleChange($event)"
+  [text]="fields.text"
+>
+  <e-columns>
+    @for (c of columns ; track c.field) { 
+    <e-column [field]="c.field" [header]="c.header" [width]="c.width"></e-column>
+    }
+  </e-columns>
+</ejs-multicolumncombobox>
