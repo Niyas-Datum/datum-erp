@@ -1,3 +1,4 @@
+export * from './lib/models/models';
 export * from './lib/ItemDto';
 export type { BranchDto } from './lib/general/branch.dto';
 export type { CompanyDto } from './lib/general/company.dto';

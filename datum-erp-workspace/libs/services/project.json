@@ -4,8 +4,23 @@
   "sourceRoot": "libs/services/src",
   "prefix": "lib",
   "projectType": "library",
- "tags": ["type:shared", "scope:shared"],
+  "tags": [],
   "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/services/ng-package.json",
+        "tsConfig": "libs/services/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/services/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     }

@@ -1,3 +1,4 @@
+export * from './lib/services/services';
 export * from './lib/storage/localStorage.service';
 export *  from './lib/base.service'
 export * from './lib/utils/loader.service';

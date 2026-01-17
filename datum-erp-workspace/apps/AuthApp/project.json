@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/AuthApp/src",
-  "tags": [],
+  "tags": ["scope:shop"],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
@@ -71,7 +71,8 @@
           "buildTarget": "AuthApp:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "dependsOn": ["hostApp:serve"]
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

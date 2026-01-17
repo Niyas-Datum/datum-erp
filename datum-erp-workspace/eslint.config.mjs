@@ -20,12 +20,12 @@ export default [
           enforceBuildableLibDependency: true,
           allow: [
             '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
-            '^.*/Module$' // Allow module federation remote entries
+            '^.*/Module$', // Allow module federation remote entries
           ],
           depConstraints: [
             {
               sourceTag: 'scope:host',
-              onlyDependOnLibsWithTags: [ 'scope:shared'],
+              onlyDependOnLibsWithTags: ['scope:shared'],
             },
             {
               sourceTag: 'scope:shared',

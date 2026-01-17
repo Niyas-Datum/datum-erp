@@ -1,3 +1,4 @@
+export * from './lib/utils/utils';
 export * from './lib/tab-tracker/app-tab-tracker';
 export *  from  './lib/environments/environment';
 export  {NetworkStatusService} from './lib/network/networkStatus.service'
