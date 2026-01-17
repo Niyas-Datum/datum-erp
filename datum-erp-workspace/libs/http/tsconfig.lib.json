@@ -7,7 +7,7 @@
     "inlineSources": true,
     "types": []
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "auth/**/*.ts", "src/lib/auth/*.ts"] ,
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/*.test.ts",

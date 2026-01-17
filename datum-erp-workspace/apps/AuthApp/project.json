@@ -1,29 +1,29 @@
 {
-  "name": "loginApp",
+  "name": "AuthApp",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/loginApp/src",
+  "sourceRoot": "apps/AuthApp/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/loginApp",
-        "index": "apps/loginApp/src/index.html",
-        "main": "apps/loginApp/src/main.ts",
-        "tsConfig": "apps/loginApp/tsconfig.app.json",
+        "outputPath": "dist/apps/AuthApp",
+        "index": "apps/AuthApp/src/index.html",
+        "main": "apps/AuthApp/src/main.ts",
+        "tsConfig": "apps/AuthApp/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/loginApp/public"
+            "input": "apps/AuthApp/public"
           }
         ],
-        "styles": ["apps/loginApp/src/styles.scss"],
+        "styles": ["apps/AuthApp/src/styles.scss"],
         "customWebpackConfig": {
-          "path": "apps/loginApp/webpack.config.ts"
+          "path": "apps/AuthApp/webpack.config.ts"
         }
       },
       "configurations": {
@@ -42,7 +42,7 @@
           ],
           "outputHashing": "all",
           "customWebpackConfig": {
-            "path": "apps/loginApp/webpack.prod.config.ts"
+            "path": "apps/AuthApp/webpack.prod.config.ts"
           }
         },
         "development": {
@@ -60,24 +60,23 @@
       "continuous": true,
       "executor": "@nx/angular:dev-server",
       "options": {
-        "port": 4201,
-        "publicHost": "http://localhost:4201"
+        "port": 4206,
+        "publicHost": "http://localhost:4206"
       },
       "configurations": {
         "production": {
-          "buildTarget": "loginApp:build:production"
+          "buildTarget": "AuthApp:build:production"
         },
         "development": {
-          "buildTarget": "loginApp:build:development"
+          "buildTarget": "AuthApp:build:development"
         }
       },
-      "defaultConfiguration": "development",
-      "dependsOn": ["hostApp:serve"]
+      "defaultConfiguration": "development"
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "buildTarget": "loginApp:build"
+        "buildTarget": "AuthApp:build"
       }
     },
     "lint": {
@@ -88,16 +87,16 @@
       "executor": "@nx/web:file-server",
       "defaultConfiguration": "production",
       "options": {
-        "buildTarget": "loginApp:build",
-        "port": 4201,
+        "buildTarget": "AuthApp:build",
+        "port": 4206,
         "watch": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "loginApp:build:development"
+          "buildTarget": "AuthApp:build:development"
         },
         "production": {
-          "buildTarget": "loginApp:build:production"
+          "buildTarget": "AuthApp:build:production"
         }
       }
     }

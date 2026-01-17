@@ -1,0 +1,18 @@
+ .login-container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 2rem;
+      background-color: #fff;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    .comp-logo {
+      width: 120px;
+      display: block;
+      margin: 0 auto 20px;
+    }
+    .language-switch {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }

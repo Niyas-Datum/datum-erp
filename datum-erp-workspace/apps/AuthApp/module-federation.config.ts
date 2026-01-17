@@ -1,9 +1,9 @@
 import { ModuleFederationConfig } from '@nx/module-federation';
 
 const config: ModuleFederationConfig = {
-  name: 'loginApp',
+  name: 'AuthApp',
   exposes: {
-    './Module': 'apps/loginApp/src/app/remote-entry/entry-module.ts',
+    './Module': 'apps/AuthApp/src/app/remote-entry/entry-module.ts',
   },
 };
 

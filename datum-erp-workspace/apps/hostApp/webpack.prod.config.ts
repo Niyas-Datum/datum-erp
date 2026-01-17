@@ -6,19 +6,21 @@ import config from './module-federation.config';
  * The DTS Plugin can be enabled by setting dts: true
  * Learn more about the DTS Plugin here: https://module-federation.io/configure/dts.html
  */
-export default withModuleFederation(
-  {
-    ...config,
-    /*
-     * Remote overrides for production.
-     * Each entry is a pair of a unique name and the URL where it is deployed.
-     *
-     * e.g.
-     * remotes: [
-     *   ['app1', 'https://app1.example.com'],
-     *   ['app2', 'https://app2.example.com'],
-     * ]
-     */
-  },
-  { dts: false }
-);
+export default async (cfg: any) => {
+  const wcfg = (await withModuleFederation(
+    {
+      ...config,
+      remotes: [
+        ['AuthApp', 'http://localhost:4206/remoteEntry.mjs'],
+        ['coreApp', 'http://localhost:4202/remoteEntry.mjs'],
+      ],
+    },
+    { dts: false }
+  ))(cfg);
+  if (wcfg.devServer) {
+    wcfg.devServer.hot = true;
+    wcfg.devServer.liveReload = true;
+  }
+
+  return wcfg;
+};

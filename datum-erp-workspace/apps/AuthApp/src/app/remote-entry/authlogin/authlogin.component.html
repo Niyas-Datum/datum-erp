@@ -1,0 +1,49 @@
+
+  <div class="login-container">
+    <img src="/assets/app-logo.png" alt="datum Logo" class="comp-logo">
+
+    <form [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()"
+    autocomplete="off">
+    <div class="mb-3">
+        <label for="login" class="form-label" data-translate="company">Company</label>
+        <select class="form-select" id="company" data-placeholder="company_placeholder"  formControlName = "company" (change) = "onCompanySelect()">
+          <option value="" disabled selected>Select your company</option>
+          <option
+          *ngFor="let company of companyList()"
+          [value]="company.id"
+        >
+          {{ company.name }}
+        </option> 
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="login" class="form-label" data-translate="username">Username</label>
+        <input type="text" class="form-control" id="login" placeholder="" data-placeholder="username_placeholder" name="user_login" formControlName="username">
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label d-flex justify-content-between">
+          <span data-translate="password">Password</span>
+        </label>
+        <input type="password" class="form-control" id="password" placeholder="" data-placeholder="password_placeholder"  name="user_pass" formControlName="password" autocomplete="off">
+      </div>
+
+      <div class="mb-3">
+        <label for="login" class="form-label" data-translate="company">Branch</label>
+          <select class="form-select" id="branch" data-placeholder="branch_placeholder" formControlName="branch" (change)="onBranchSelect()">
+          <option value="" disabled selected>Select Branch</option>
+          <option *ngFor="let branch of branchList()" [value]="branch.id">
+            {{ branch.name }}
+          </option>
+          </select>
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary" data-translate="login" [disabled]="loginForm.invalid">Log in</button>
+      </div>
+    </form>
+
+    <!-- <p class="text-center mt-4 small" data-translate="signup">Don't have an account? <a href="#">Sign up</a></p> -->
+  </div>

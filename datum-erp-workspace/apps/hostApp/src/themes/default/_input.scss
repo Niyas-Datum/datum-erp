@@ -1,0 +1,55 @@
+input.e-input, .e-input-group input,
+ .e-input-group.e-control-wrapper input,
+  .e-input-group input.e-input, 
+ .e-input-group.e-control-wrapper input.e-input {
+  height: 25px !important;
+}
+
+.ejs-textbox
+{
+  border: 1px solid #dcdcdc !important;
+  border-radius: 4px !important;
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+ input {
+  font-size: 1rem !important;
+  color: #333 !important;
+}
+.e-float-input{
+  margin-top: auto !important;
+}
+
+/* Focused field — subtle highlight */
+.e-input-focus {
+  border-color: $secondary !important;  /* Odoo purple tone */
+}
+.e-input-group.e-disabled
+ {
+  background-color: $secondary-light !important;
+  border-color: #e1e1e1 !important;
+  color: #999 !important;
+  font-weight: bold !important;
+  cursor: not-allowed;
+}
+.e-input-group input[readonly],
+.e-input-group textarea[readonly]{
+  background-color: $card-bg !important;
+  border-color: #e1e1e1 !important;
+  color: #999 !important;
+  font-weight: bold !important;
+  cursor: not-allowed;
+}
+/* Placeholder color */
+.e-input-group input::placeholder {
+  color: #aaa !important;
+}
+
+
+/* icon */
+.e-input-group .e-input-group-icon, .e-input-group.e-control-wrapper .e-input-group-icon {
+  color: #666 !important;
+  min-height: 20px !important;
+}
+

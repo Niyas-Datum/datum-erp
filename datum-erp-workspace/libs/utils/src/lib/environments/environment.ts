@@ -1,5 +1,5 @@
 export const environment = {
-    production: false,
+    production: true,
   };
   export const APP_URL = {
     // API: 'http://dibajapi.datuminnovation.com/',

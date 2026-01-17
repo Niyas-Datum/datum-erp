@@ -1,0 +1,31 @@
+@import 'variables';
+@import './_input.scss';
+@import './_button.scss';
+@import './_itemList';
+
+body {
+  font-family: $font-base;
+  background-color: $background;
+  color: $text;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: $font-heading;
+  color: $secondary;
+}
+
+a {
+  color: $accent;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+label{
+  font-size: 14px !important;
+}
+.row{
+  padding-bottom: 3px !important;
+}

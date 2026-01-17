@@ -1,6 +1,14 @@
-<ul class="remote-menu">
-  <li><a routerLink="/">Home</a></li>
-  <li><a routerLink="loginApp">LoginApp</a></li>
-  <li><a routerLink="coreApp">CoreApp</a></li>
-</ul>
-<router-outlet></router-outlet>
+
+<!-- <shared-ui-loader *ngIf="loaderService.loading$ | async"></shared-ui-loader>
+    <div *ngIf="!isOnline" class="offline-banner">
+      ?? You are offline. Please check your internet connection.
+    </div> -->
+ <h2>Hello this host app</h2>
+
+    <router-outlet></router-outlet>
+
+    <!-- toast host (singleton) -->
+   <!-- <app-toast-host></app-toast-host> -->
+
+    <!-- popup container (must be present once in the app) -->
+    <!--<app-popup-container></app-popup-container> -->

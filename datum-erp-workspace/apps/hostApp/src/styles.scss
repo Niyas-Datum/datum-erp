@@ -1,1 +1,360 @@
-/* You can add global styles to this file, and also import other style files */
+
+
+@use "bootstrap" as *;
+//@import "./themes/default/_base.scss";
+
+@import "./themes/default/_variables.scss";
+
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+/* 2. Apply to everything except .material-icons */
+html, body, *:not(.material-icons):not(.e-icons ) {
+  font-family: "Inter",  sans-serif !important;
+}
+
+
+
+// /* You can add global styles to this file, and also import other style files */
+// $primary: #006fbb;
+// $secondary: #6c757d;
+// $font-size-base: 0.95rem;
+// $border-radius: 0.3rem;
+// $body-bg: #f8f9fa;
+// $body-color: #212529;
+
+// $fontcolor: #495057;
+
+
+// #defaultSample{
+//   background-color: $primary  !important; 
+// }
+
+
+.shortcut-item {
+   background-color: transparent !important;
+    border-right: 1px solid #e9ecef  !important;
+     border-radius: 0px !important; 
+    color: $text  !important;
+    
+
+}
+
+
+
+// /// MAIN HEADER STYLES
+// ///  @date: 04-10-2025
+// /// 
+// /// 
+.mh-sec{
+        .bg-body-tertiary{
+          background-color: $secondary !important;
+          color: $text-white;
+          h5{
+            color: $text-white !important;
+          }
+
+          .e-menu-wrapper{
+            background-color: $secondary !important;
+            color: $text-white;
+                    .e-menu .e-menu-item {
+                //   padding: 8px 16px !important;
+                padding-left: 20px !important;
+                  font-size: 16px !important;
+                  color: $text-white !important;
+                }
+          }
+        }
+  }
+
+//  //MOBILE MENU SECTION
+// .mobilesec-view{
+// background-color:  $secondary !important  ;
+//  .e-menu-wrapper.e-hamburger .e-menu-header, .e-menu-container.e-hamburger .e-menu-header{
+//   background: $secondary !important  ;
+//   color: $text-white !important ;
+//   font-size: 1.5rem !important ;
+  
+ 
+//  }
+ 
+// }
+
+//   .tab-bar {
+//       display: flex;
+//       justify-content: space-around;
+//       border-bottom: 1px solid #ccc;
+//     }
+
+//     .tab {
+//       padding: 0px 0;
+//       flex: 1;
+//       text-align: center;
+//       color: $secondary; /* Soft purple */
+//       font-weight: 500;
+//       cursor: pointer;
+//     }
+
+   
+
+//     .tab.active {
+//       border-bottom: 3px solid $secondary;
+//       font-weight: 700;
+//     }
+
+//     /// LEFT GRID SIDE BAR CO+SUTOMIZATION
+//     /// 
+//     /// 
+//     /// 
+//   /* Sidebar will push this container */
+// .leftgrid-section {
+//   margin-left: 0; /* Adjust based on sidebar width */
+//   transition: margin-left 0.3s ease-in-out;
+//   .e-content {
+//     height: auto !important;
+//   }
+// }
+
+// .main-content-wrapper {
+//   transition: margin-left 0.3s ease-in-out;
+// }
+
+// /* Smooth transition for resizing columns */
+// .transition-col {
+//   transition: width 0.3s ease-in-out;
+// }
+
+// // Import Bootstrap after variable overrides
+
+
+// //ALERT AND CONFIRM BOX CSS
+// .e-dialog {
+//   z-index: 10000 !important;
+// }
+
+// .e-dlg-overlay {
+//   z-index: 9000 !important;
+// }
+
+
+
+
+// // // ?? Global layout helpers
+// // html, body {
+// //   height: 100%;
+// //   margin: 0;
+// //   font-family: "Poppins", sans-serif;
+// // }
+
+// .app-container {
+//   display: flex;
+//   height: 100vh;
+//   overflow: hidden;
+// }
+
+// .sidebar {
+//   width: 100%;
+//   background-color: #fafafa;
+//   color: white;
+ 
+// }
+
+// .content {
+//     flex: 1;
+//     background-color: #F4F4F6;
+//     background-size:  cover;
+//     background-position: center;
+//     padding: 0rem;
+//     overflow-y: auto;
+//     overflow-x: hidden;
+// }
+
+// .card {
+//   border-radius: 0.5rem;
+//   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+// }
+
+// .navbar-nav , ul , .dropdown-menu ul, .nav-item > .dropdown-menu ul   { 
+//         text-decoration: none;
+//         // background-color: #3253a7;
+//         // border: 1px dashed #3655a1;
+//         padding: 0;;
+//       }
+//       .dropdown-menu {
+//         background-color: transparent;
+//         border: none  ;
+//       }
+//       .dropdown-menu ul:hover,  .dropdown-menu a:hover  {
+//         background-color: #6b8ad8;
+//       }
+//       .dropdown-menu ul li:hover {
+//         background-color: #8eabf3;
+//       }
+// //Component form css
+// .row.content-wrapper {
+//   padding: 10px 30px;
+// }
+// .content-wrapper .row {
+//   margin-top: 10px;
+// }
+// .content-wrapper {
+//   display: flex;
+//   height: 100vh;
+// }
+// .row.content-wrapper{
+//   padding: 10px;    
+//   position: relative;
+// }
+// .row.content-wrapper {
+//   padding: 3px 15px;
+//   position: relative
+// }
+// .left-section {
+//   position: relative;
+//   padding: 6px;
+//   border-radius: var(--3, 8px);
+//   border: 0.5px solid var(--Tertiary-500, #767676);
+//   width: 17%;
+// }
+// .left-toggle-section {
+//   width: 24px;
+//   position: relative;
+//   margin-left: 5px;
+//   display: inline-flex;
+//   height: 24px;
+//   padding: var(--2, 4px);
+//   align-items: center;
+//   gap: var(--3, 8px);
+//   flex-shrink: 0;
+//   border-radius: var(--2, 4px);
+//   background: var(--Primary-600, #1088AB);
+//   cursor: pointer;
+// }
+
+// .left-toggle-section i {
+//   color: #fff;
+//   position: absolute;
+//   top: 0px;
+//   left: 0px;
+// }
+// .left-section input {
+//   color: var(--Secondary-400, #A1A8AF);
+//   font-size: 10px;
+//   font-style: normal;
+//   font-weight: 400;
+//   line-height: normal;
+//   display: flex;
+//   padding: var(--3, 8px);
+//   align-items: center;
+//   gap: var(--3, 8px);
+//   align-self: stretch;
+//   border-radius: var(--2, 4px);
+//   border: 0.5px solid var(--Tertiary-400, #A3A3A3);
+// }
+// .left-section .datatable-header-cell,
+// .left-section datatable-body-cell {
+//   padding: 9px !important;
+//   text-align: center !important;
+// }
+
+// .left-section .datatable-header-cell,
+// .left-section datatable-body-cell {
+//   padding: 9px !important;
+//   text-align: center !important;
+// }
+// .hide-left-section {
+//   display: none !important;
+// }
+// .left-section{
+//   width: 15%;
+//   margin-top: 15px;
+// }
+// .left-section,.right-section-container{
+//   margin-top: 23px;
+// }
+// .e-hide {
+//   display: none !important;
+// }
+
+// /* Global z-index rules to ensure ALL Syncfusion grids stay below popups */
+// .e-grid,
+// .e-grid-container,
+// .e-grid .e-gridcontent,
+// .e-grid .e-gridheader,
+// .e-grid .e-gridbody,
+// .e-grid .e-gridfooter,
+// .e-grid .e-pager,
+// .e-grid .e-toolbar,
+// .e-grid .e-filterbar {
+//   z-index: 0 !important;
+//   position: relative !important;
+// }
+
+// /* Ensure all popups and dropdowns stay above grids */
+// .e-popup,
+// .e-dialog,
+// .e-tooltip,
+// .e-contextmenu,
+// .e-menu,
+// .e-dropdownlist .e-listbox,
+// .e-multiselect .e-listbox,
+// .e-datepicker .e-calendar,
+// .e-timepicker .e-time-wrapper,
+// .e-datetimepicker .e-calendar,
+// .e-datetimepicker .e-time-wrapper,
+// .e-multicolumn-combobox .e-listbox,
+// .e-autocomplete .e-listbox,
+// .e-combobox .e-listbox {
+//   z-index: 9999 !important;
+// }
+
+// /* Bootstrap dropdowns and modals */
+// .dropdown-menu,
+// .modal,
+// .modal-dialog,
+// .modal-content,
+// .popover,
+// .tooltip,
+// .bs-popover,
+// .bs-tooltip {
+//   z-index: 9999 !important;
+// }
+
+// /* Bootstrap navbar dropdowns */
+// .navbar .dropdown-menu,
+// .nav-item .dropdown-menu {
+//   z-index: 9999 !important;
+// }
+
+// /* Other Bootstrap components */
+// .offcanvas,
+// .toast,
+// .toast-container {
+//   z-index: 9999 !important;
+// }
+
+// /* Grid-specific popups should be above grid but below other popups */
+// .e-grid .e-popup,
+// .e-grid .e-dropdownlist .e-listbox,
+// .e-grid .e-multiselect .e-listbox,
+// .e-grid .e-datepicker .e-calendar,
+// .e-grid .e-timepicker .e-time-wrapper,
+// .e-grid .e-datetimepicker .e-calendar,
+// .e-grid .e-datetimepicker .e-time-wrapper {
+//   z-index: 1000 !important;
+// }
+
+// /* Additional global overrides to ensure grids stay below everything */
+// *[id*="grid"] {
+//   z-index: 0 !important;
+//   position: relative !important;
+// }
+
+// /* Force all popups to stay above any grid */
+// .e-popup,
+// .e-dialog,
+// .dropdown-menu,
+// .modal,
+// .popover,
+// .tooltip {
+//   z-index: 9999 !important;
+// }

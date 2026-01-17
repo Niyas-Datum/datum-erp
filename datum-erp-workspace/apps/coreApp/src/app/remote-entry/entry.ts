@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
 })
 export class RemoteEntry {
 constructor() {
-     console.log('loginApp Remote Entry Component loaded');
+     console.log('coreApp Remote Entry Component loaded');
 
   }
 

@@ -510,7 +510,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
         <div id="welcome">
           <h1>
             <span> Hello there, </span>
-            Welcome loginApp 👋
+            Welcome AuthApp 👋
           </h1>
         </div>
         <!--  HERO  -->
@@ -854,13 +854,13 @@ import { Component, ViewEncapsulation } from '@angular/core';
               Build, test and lint your app
             </summary>
             <pre><span># Build</span>
-nx build loginApp
+nx build AuthApp
 <span># Test</span>
-nx test loginApp
+nx test AuthApp
 <span># Lint</span>
-nx lint loginApp
+nx lint AuthApp
 <span># Run them together!</span>
-nx run-many -p loginApp -t build test lint</pre>
+nx run-many -p AuthApp -t build test lint</pre>
           </details>
           <details>
             <summary>
@@ -879,7 +879,7 @@ nx run-many -p loginApp -t build test lint</pre>
               </svg>
               View project details
             </summary>
-            <pre>nx show project loginApp</pre>
+            <pre>nx show project AuthApp</pre>
           </details>
 
           <details>

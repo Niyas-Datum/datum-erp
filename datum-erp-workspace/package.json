@@ -19,8 +19,8 @@
     "@nx/angular": "22.3.3",
     "@syncfusion/ej2-angular-buttons": "^32.1.21",
     "@syncfusion/ej2-angular-calendars": "^32.1.22",
-    "@syncfusion/ej2-angular-dropdowns": "^32.1.22",
-    "@syncfusion/ej2-angular-grids": "^32.1.22",
+    "@syncfusion/ej2-angular-dropdowns": "^32.1.23",
+    "@syncfusion/ej2-angular-grids": "^32.1.23",
     "@syncfusion/ej2-angular-inputs": "^32.1.22",
     "@syncfusion/ej2-angular-lists": "^32.1.19",
     "@syncfusion/ej2-angular-multicolumn-combobox": "^32.1.20",
@@ -40,7 +40,7 @@
     "qrcode": "^1.5.4",
     "rxjs": "~7.8.0",
     "sql.js": "^1.13.0",
-    "zone.js": "0.16.0"
+    "zone.js": "^0.16.0"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "2.2.0",
@@ -73,7 +73,7 @@
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
     "@types/express": "^4.17.21",
-    "@types/node": "20.19.9",
+    "@types/node": "^20.19.9",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/utils": "^8.40.0",
     "@vitest/coverage-v8": "4.0.9",

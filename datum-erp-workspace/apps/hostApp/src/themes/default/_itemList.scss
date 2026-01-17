@@ -1,0 +1,75 @@
+@import "./variables";
+.e-grid{
+   
+  border-radius:  0px;
+  border: 1px solid #dee2e6;
+ 
+  background-color: $card-bg;
+  overflow: hidden;
+  font-family: "Segoe UI", Arial, sans-serif;
+
+    .e-headercell{
+    background-color: $secondary-light !important;
+      color: #ffffff;
+    .e-stackedheadercelldiv{
+        color: #ffffff;
+    }
+}
+
+}
+
+//ROW STYLE
+.e-rowcell{padding: 2px;}
+.e-row:nth-child(odd) .e-rowcell {
+  background-color: #f9f9f9;   /* Light gray for odd rows */
+}
+
+ .e-row:nth-child(even) .e-rowcell {
+  background-color: #ffffff;   /* White for even rows */
+}
+//* Style the popup grid header */
+.e-popup .e-gridheader  .e-headercell,.e-popup .e-gridheader{
+  background-color:$primary !important;
+  color: #fff;               /* Header text color */
+  font-weight: 600;
+  border-radius: 4px 4px 0 0;
+}
+
+/* Make header thinner */
+.e-popup .e-gridheader th {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  line-height: 18px !important;
+  height: 24px !important;
+}
+
+/* Make the header text smaller and centered vertically */
+.e-multicolumn.e-popup.custom-combo-popup .e-gridheader .e-headercelldiv {
+  font-size: 12px;
+  padding: 0 8px;
+  line-height: 20px;
+}
+
+/* Optional: highlight header border */
+.e-multicolumn.e-popup.custom-combo-popup .e-gridheader th {
+  border-bottom: 1px solid #005a9e;
+}
+
+/* (Optional) Thinner rows too */
+.e-multicolumn.e-popup.custom-combo-popup .e-gridcontent .e-rowcell {
+  padding: 2px 8px !important;
+  line-height: 18px !important;
+}
+
+
+// tab design 
+
+.e-tab {
+    .e-tab-header {
+        background-color: $card-bg !important;
+    }
+.e-tab-header .e-toolbar-item.e-active {
+    background-color: $card-bg !important;
+    color: #fff !important;
+}
+}

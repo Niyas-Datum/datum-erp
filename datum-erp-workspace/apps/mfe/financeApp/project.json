@@ -4,7 +4,7 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/mfe/financeApp/src",
-  "tags": [],
+  "tags": ["scope:host"],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",

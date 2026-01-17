@@ -18,8 +18,15 @@ export default [
         'error',
         {
           enforceBuildableLibDependency: true,
-          allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
+          allow: [
+            '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
+            '^.*/Module$' // Allow module federation remote entries
+          ],
           depConstraints: [
+            {
+              sourceTag: 'scope:host',
+              onlyDependOnLibsWithTags: [ 'scope:shared'],
+            },
             {
               sourceTag: 'scope:shared',
               onlyDependOnLibsWithTags: ['scope:shared'],
