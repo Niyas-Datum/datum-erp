@@ -1,0 +1,149 @@
+<div class="row content-wrapper" style="height: 76vh">
+  <div class="col-md-10 right-section-container d-flex flex-column">
+    <div class="toolbar-shell border-bottom bg-body position-sticky top-0">
+      <div
+        class="px-3 py-2 d-flex align-items-center justify-content-between"
+      ></div>
+    </div>
+    <form [formGroup]="editForm">
+
+    <div class="flex-fill p-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="grid-label-container control-section">
+            <!-- Loading indicator -->
+            <div *ngIf="isLoading()" class="loading-indicator">
+              <div class="spinner"></div>
+              <span>Loading grid labels...</span>
+            </div>
+
+            <!-- Grid container -->
+            <div *ngIf="!isLoading()" class="grid-wrapper">
+              <ejs-grid
+                #grid
+                id="gridLabelGrid"
+                [dataSource]="gridLabels()"
+                [editSettings]="editSettings"
+                [allowKeyboard]="true"
+                [toolbar]="toolbar"
+                (toolbarClick)="clickHandler($event)"
+                [allowTextWrap]="true"
+                [allowPaging]="true"
+                [pageSettings]="{ pageSize: 20 }"
+                [allowSorting]="true"
+                [allowFiltering]="true"
+                [filterSettings]="{ type: 'Menu' }"
+                (actionBegin)="actionBegin($event)"
+                (actionComplete)="onActionComplete($event)"
+                (rowSelected)="onRowSelected($event)"
+                (cellClick)="onCellClick($event)"
+              >
+                <e-columns>
+                  <!-- Form Name Column -->
+
+                  <!-- Form Name Column with ComboBox -->
+                  <e-column field="formName" headerText="Form Name" width="250">
+                    <ng-template #editTemplate let-data>
+                      <ejs-combobox
+                        [dataSource]="formNames()"
+                        [value]="data.formName || ''"
+                        [allowFiltering]="true"
+                        [showClearButton]="true"
+                        placeholder="Select Form Name"
+                        [popupHeight]="'300px'"
+                        (change)="onFormNameChange($event, data)"
+                        (select)="onFormNameChange($event, data)"
+                      ></ejs-combobox>
+                    </ng-template>
+                  </e-column>
+                  
+
+                  <!-- Label Name Column -->
+                  <e-column
+                    field="labelName"
+                    headerText="Label Name"
+                    width="150"
+                    editType="stringedit"
+                  ></e-column>
+
+                  <!-- Original Caption Column -->
+                  <e-column
+                    field="originalCaption"
+                    headerText="Original Caption"
+                    width="200"
+                    editType="stringedit"
+                  ></e-column>
+
+                  <!-- New Caption Column -->
+                  <e-column
+                    field="newCaption"
+                    headerText="New Caption"
+                    width="200"
+                    editType="stringedit"
+                  ></e-column>
+                  <e-column
+                    field="pageId"
+                    headerText="Page Id"
+                    width="200"
+                    editType="stringedit"
+                  ></e-column>
+
+                  <!-- Visible Column -->
+                  <e-column
+                    field="visible"
+                    headerText="Visible"
+                    width="100"
+                    textAlign="Center"
+                    editType="booleanedit"
+                  >
+                    <ng-template #template let-data>
+                      <div class="checkbox-container">
+                        <input
+                          type="checkbox"
+                          [checked]="data.visible"
+                          [disabled]="true"
+                          class="form-check-input"
+                        />
+                      </div>
+                    </ng-template>
+                  </e-column>
+                  <e-column
+                    field="enable"
+                    headerText="Enable"
+                    width="100"
+                    textAlign="Center"
+                    editType="booleanedit"
+                  >
+                    <ng-template #template let-data>
+                      <div class="checkbox-container">
+                        <input
+                          type="checkbox"
+                          [checked]="data.enable"
+                          
+                          [disabled]="true"
+                          class="form-check-input"
+                        />
+                      </div>
+                    </ng-template>
+                  </e-column>
+
+                  <!-- Arabic Caption Column -->
+                  <e-column
+                    field="arabicCaption"
+                    headerText="Arabic Caption"
+                    width="150"
+                    editType="stringedit"
+                  ></e-column>
+                </e-columns>
+              </ejs-grid>
+            </div>
+            <!-- Popup Dialog -->
+
+            <!-- Selected Label Details -->
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>

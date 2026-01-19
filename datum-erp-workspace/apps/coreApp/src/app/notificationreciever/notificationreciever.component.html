@@ -1,0 +1,14 @@
+<div *ngIf="notifications.length > 0">
+  <div *ngFor="let notification of notifications">
+    <div class="notification" [ngClass]="{ 'unread': !notification.IsRead }">
+      <strong>{{ notification.module }}:</strong>
+      <p>{{ notification.message }}</p>
+      <small>{{ notification.dateTime | date: 'short' }}</small>
+      <button (click)="clearNotifications()">Clear</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="notifications.length === 0">
+  <p>No new notifications.</p>
+</div>

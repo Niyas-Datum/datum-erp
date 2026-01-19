@@ -1,0 +1,45 @@
+<div class="notification-details-container">
+    <h2 class="heading">Notification Details</h2>
+  
+    <!-- Display the uniqueKeyID and userName in the same format as other details -->
+    <div class="details-card">
+      <div *ngIf="notificationData; else noData">
+        <div class="detail-item">
+          <div class="label"><strong>ID:</strong></div>
+          <div class="value">{{ notificationData.uniqueKeyID }}</div> <!-- Display uniqueKeyID here -->
+        </div>
+        <div class="detail-item">
+          <div class="label"><strong>User:</strong></div>
+          <div class="value">{{ notificationData.userName }}</div> <!-- Display userName here -->
+        </div>
+
+        <!-- Display the other details from notificationData dynamically -->
+        <div class="detail-item">
+          <div class="label"><strong>Message:</strong></div>
+          <div class="value">{{ notificationData.message }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="label"><strong>Module:</strong></div>
+          <div class="value">{{ notificationData.module }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="label"><strong>Item ID:</strong></div>
+          <div class="value">{{ notificationData.itemID }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="label"><strong>Date & Time:</strong></div>
+          <div class="value">{{ notificationData.dateTime | date: 'short' }}</div>
+        </div>
+        <div class="detail-item">
+          <div class="label"><strong>Status:</strong></div>
+          <div class="value">{{ notificationData.isRead ? 'Read' : 'Unread' }}</div>
+        </div>
+      </div>
+  
+      <!-- Fallback content when no data is available -->
+      <ng-template #noData>
+        <p>No notification details available.</p>
+      </ng-template>
+    </div>
+  </div>
+  

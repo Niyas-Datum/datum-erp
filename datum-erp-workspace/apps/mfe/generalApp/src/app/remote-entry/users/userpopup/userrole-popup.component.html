@@ -1,0 +1,254 @@
+<div class="popup-container" *ngIf="showPopup">
+    <div class="popup-content">
+    <form [formGroup]="userRoleForm" class="p-3">
+      <!-- Role Selection -->
+      <div class="row mb-3">
+        <label for="roles" class="form-label col-md-2">Roles</label>
+      
+        <div class="col-md-4">
+                    <select id="roles" class="form-select" formControlName="userrole" (change)="onUserRoleSelect($event)">
+                        <option *ngFor="let role of allUserRoles" [value]="role?.id">{{ role?.role }}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <input type="text" class="form-control" value="{{searchTerm}}" placeholder="Search Here" (input)="updateFilter($event)">
+            </div></div>
+    </form>
+    <!-- ✅ Syncfusion Grid for User Rights -->
+    <ejs-grid
+    [dataSource]="roleMenus"
+      [allowPaging]="true"
+      [pageSettings]="{ pageSize: 10 }"
+      [allowSorting]="true"
+      [allowFiltering]="true"
+      [gridLines]="'Both'"
+      height="400">
+     <!-- Select All -->
+      <e-columns>
+        <e-column
+          headerText="Select"
+          width="100"
+          textAlign="Center"
+          [allowSorting]="false"
+        >
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              [checked]="selectAllChecked"
+              (change)="selectAllCheckboxes('all')"
+            ></ejs-checkbox>
+          </ng-template>
+
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.selected"
+              (change)="selectRow($event, rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+          <e-column field="pageName" headerText="Page Name" width="200"></e-column>
+        <e-column field="moduleType" headerText="Module Type" width="200"></e-column>
+         <!-- Repeat for each permission -->
+        <e-column field="isView" headerText="View" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="View"
+              [checked]="selectAllIsViewChecked"
+              (change)="selectAllCheckboxes('isView')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isView"
+              (change)="onChangeSingleRight($event, 'isView', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+       
+         <e-column field="isCreate" headerText="Create" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Create"
+              [checked]="selectAllIsCreateChecked"
+              (change)="selectAllCheckboxes('isCreate')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isCreate"
+              (change)="onChangeSingleRight($event, 'isCreate', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+          <e-column field="isEdit" headerText="Edit" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Edit"
+              [checked]="selectAllIsEditChecked"
+              (change)="selectAllCheckboxes('isEdit')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isEdit"
+              (change)="onChangeSingleRight($event, 'isEdit', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+          <e-column field="isCancel" headerText="Cancel" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Cancel"
+              [checked]="selectAllIsCancelChecked"
+              (change)="selectAllCheckboxes('isCancel')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isCancel"
+              (change)="onChangeSingleRight($event, 'isCancel', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+         <e-column field="isDelete" headerText="Delete" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Delete"
+              [checked]="selectAllIsDeleteChecked"
+              (change)="selectAllCheckboxes('isDelete')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isDelete"
+              (change)="onChangeSingleRight($event, 'isDelete', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+         <e-column field="isApprove" headerText="Approve" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Approve"
+              [checked]="selectAllIsApproveChecked"
+              (change)="selectAllCheckboxes('isApprove')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isApprove"
+              (change)="onChangeSingleRight($event, 'isApprove', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+          <e-column field="isEditApproved" headerText="Edit Approved" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Edit Approved"
+              [checked]="selectAllisEditApprovedChecked"
+              (change)="selectAllCheckboxes('isEditApproved')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isEditApproved"
+              (change)="onChangeSingleRight($event, 'isEditApproved', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+          <e-column field="isHigherApprove" headerText="Higher Approve" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Higher Approve"
+              [checked]="selectAllIsHigherApproveChecked"
+              (change)="selectAllCheckboxes('isHigherApprove')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isHigherApprove"
+              (change)="onChangeSingleRight($event, 'isHigherApprove', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+          <e-column field="isPrint" headerText="Print" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Print"
+              [checked]="selectAllIsPrintChecked"
+              (change)="selectAllCheckboxes('isPrint')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isPrint"
+              (change)="onChangeSingleRight($event, 'isPrint', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+         <e-column field="isEmail" headerText="Email" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="Email"
+              [checked]="selectAllIsEmailChecked"
+              (change)="selectAllCheckboxes('isEmail')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isEmail"
+              (change)="onChangeSingleRight($event, 'isEmail', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+           <e-column field="frequentlyUsed" headerText="FrequentlyUsed" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="FrequentlyUsed"
+              [checked]="selectAllIsFrequentlyUsedChecked"
+              (change)="selectAllCheckboxes('frequentlyUsed')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.frequentlyUsed"
+              (change)="onChangeSingleRight($event, 'frequentlyUsed', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+         <e-column field="isPage" headerText="IsPage" width="100">
+          <ng-template #headerTemplate>
+            <ejs-checkbox
+              label="IsPage"
+              [checked]="selectAllIsPageChecked"
+              (change)="selectAllCheckboxes('isPage')"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #template let-data let-rowIndex="rowIndex">
+            <ejs-checkbox
+              [checked]="data.isPage"
+              (change)="onChangeSingleRight($event, 'isPage', rowIndex)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+      </e-columns>
+      </ejs-grid>
+    <!-- ✅ Footer Buttons -->
+    <div class="text-end mt-4">
+      <button ejs-button type="button" (click)="onClickOk()">OK</button>
+      <button ejs-button cssClass="e-flat" (click)="onClickCancel()">Cancel</button>
+    </div>
+  </div>
+</div>
+    
+  

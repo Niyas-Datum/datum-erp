@@ -1,0 +1,401 @@
+<form [formGroup]="userForm" class="p-3 form-layout">
+
+  <!-- ================= Employee Details ================= -->
+  <h5 class="section-heading">Employee Details</h5>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">First Name<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="firstName" formControlName="firstName" cssClass="e-outline" floatLabelType="Auto" appTextOnly></ejs-textbox>
+
+      @if (userForm.get('firstName')?.touched && userForm.get('firstName')?.errors?.['required']) {
+        <small class="text-danger">First Name is required.</small>
+      }
+      @if (userForm.get('firstName')?.touched && userForm.get('firstName')?.errors?.['specialCharacters']) {
+        <small class="text-danger">First Name cannot contain special characters.</small>
+      }
+    </div>
+
+    <label class="form-label col-md-2">Mobile Number<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="mobileNumber" formControlName="mobileNumber" cssClass="e-outline" floatLabelType="Auto" appTelephoneInput></ejs-textbox>
+
+      @if (userForm.get('mobileNumber')?.touched &&
+          (userForm.get('mobileNumber')?.errors?.['required'] ||
+           userForm.get('mobileNumber')?.errors?.['invalidPhoneNumber'])) {
+        <small class="text-danger">
+          @if (userForm.get('mobileNumber')?.errors?.['required']) { Mobile is required } 
+          @if (userForm.get('mobileNumber')?.errors?.['invalidPhoneNumber']) { Invalid format for Mobile }
+        </small>
+      }
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">Middle Name</label>
+    <div class="col-md-4">
+      <ejs-textbox id="middleName" formControlName="middleName" cssClass="e-outline" floatLabelType="Auto" appTextOnly></ejs-textbox>
+
+      @if (userForm.get('middleName')?.touched && userForm.get('middleName')?.errors?.['specialCharacters']) {
+        <small class="text-danger">Middle Name cannot contain special characters.</small>
+      }
+    </div>
+
+    <label class="form-label col-md-2">Email ID<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="emailId" type="email" formControlName="emailId" cssClass="e-outline" floatLabelType="Auto" appEmailInput></ejs-textbox>
+
+      @if (userForm.get('emailId')?.touched &&
+          (userForm.get('emailId')?.errors?.['required'] || userForm.get('emailId')?.errors?.['invalidEmailId'])) {
+        <small class="text-danger">
+          @if (userForm.get('emailId')?.errors?.['required']) { Email ID is required } 
+          @if (userForm.get('emailId')?.errors?.['invalidEmailId']) { Invalid format for Email ID }
+        </small>
+      }
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">Last Name<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="lastName" formControlName="lastName" cssClass="e-outline" floatLabelType="Auto" appTextOnly></ejs-textbox>
+
+      @if (userForm.get('lastName')?.touched && userForm.get('lastName')?.errors?.['required']) {
+        <small class="text-danger">Last Name is required.</small>
+      }
+      @if (userForm.get('lastName')?.touched && userForm.get('lastName')?.errors?.['specialCharacters']) {
+        <small class="text-danger">Last Name cannot contain special characters.</small>
+      }
+    </div>
+
+    <label class="form-label col-md-2">Residence Number</label>
+    <div class="col-md-4">
+      <ejs-textbox id="residenceNumber" formControlName="residenceNumber" cssClass="e-outline" floatLabelType="Auto" appTelephoneInput></ejs-textbox>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <label class="form-label col-md-2">Address<span class="required-asterisk">*</span></label>
+    <div class="col-md-10">
+      <ejs-textbox id="address" formControlName="address" cssClass="e-outline" floatLabelType="Auto"></ejs-textbox>
+
+      @if (userForm.get('address')?.touched && userForm.get('address')?.errors?.['required']) {
+        <small class="text-danger">Address is required.</small>
+      }
+    </div>
+  </div>
+
+  <!-- ================= Official Details ================= -->
+  <h5 class="section-heading">Official Details</h5>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">Employee Type<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-dropdownlist id="employeeType" formControlName="employeeType"
+        [dataSource]="employeeType" [fields]="{ text:'name', value:'value' }"
+        cssClass="e-outline" floatLabelType="Auto"></ejs-dropdownlist>
+         @if (userForm.get('employeeType')?.touched && userForm.get('employeeType')?.errors?.['required']) {
+        <small class="text-danger">EmployeeType is required.</small>
+      }
+    </div>
+
+    <label class="form-label col-md-3">Is Location Restricted User</label>
+    <div class="col-md-3 d-flex align-items-center">
+      <ejs-checkbox id="isLocationRestrictedUser" label="Restricted" formControlName="isLocationRestrictedUser"></ejs-checkbox>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">Designation<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-dropdownlist id="designationId" formControlName="designationId"
+        [dataSource]="allDesignations" [fields]="{ text:'name', value:'id' }"></ejs-dropdownlist>
+          @if (userForm.get('designationId')?.touched && userForm.get('designationId')?.errors?.['required']) {
+        <small class="text-danger">Designation is required.</small>
+      }
+    </div>
+
+    <label class="form-label col-md-2">Office Number<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="officeNumber" formControlName="officeNumber"
+        cssClass="e-outline" floatLabelType="Auto" appTelephoneInput></ejs-textbox>
+        
+      @if (userForm.get('officeNumber')?.touched &&
+          (userForm.get('officeNumber')?.errors?.['required'] ||
+           userForm.get('officeNumber')?.errors?.['invalidPhoneNumber'])) {
+        <small class="text-danger">
+          @if (userForm.get('officeNumber')?.errors?.['required']) { Office Number is required } 
+          @if (userForm.get('officeNumber')?.errors?.['invalidPhoneNumber']) { Invalid format }
+        </small>
+      }
+    </div>
+  </div>
+
+  <!-- ================= Login Details ================= -->
+  <h5 class="section-heading">Login Details</h5>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">Username<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="username" formControlName="username" cssClass="e-outline" floatLabelType="Auto"></ejs-textbox>
+        @if (userForm.get('username')?.touched && userForm.get('username')?.errors?.['required']) {
+        <small class="text-danger">Username is required.</small>
+      }
+    </div>
+
+    <label class="form-label col-md-2">Gmail ID<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="gmailId" type="email" formControlName="gmailId"
+        cssClass="e-outline" floatLabelType="Auto" appEmailInput></ejs-textbox>
+        
+      @if (userForm.get('gmailId')?.touched &&
+          (userForm.get('gmailId')?.errors?.['required'] || userForm.get('gmailId')?.errors?.['invalidEmailId'])) {
+        <small class="text-danger">
+          @if (userForm.get('gmailId')?.errors?.['required']) { Gmail ID is required } 
+          @if (userForm.get('gmailId')?.errors?.['invalidEmailId']) { Invalid format for Gmail ID }
+        </small>
+      }
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">Password<span class="required-asterisk">*</span></label>
+    <div class="col-md-4">
+      <ejs-textbox id="password" type="password" formControlName="password"
+        cssClass="e-outline" floatLabelType="Auto"></ejs-textbox>
+         @if (userForm.get('password')?.touched && userForm.get('password')?.errors?.['required']) {
+        <small class="text-danger">Password is required.</small>
+      }
+    </div>
+
+    <label class="form-label col-md-2">Active<span class="required-asterisk">*</span></label>
+    <div class="col-md-4 d-flex align-items-center">
+      <ejs-checkbox id="active" label="Active" formControlName="active"></ejs-checkbox>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label class="form-label col-md-2">Petty Cash</label>
+    <div class="col-md-4">
+      <ejs-dropdownlist id="pettycash" formControlName="pettycash"
+        [dataSource]="pettycashData" [fields]="{ text:'name', value:'accountID' }"></ejs-dropdownlist>
+    </div>
+
+    <label class="form-label col-md-2">Warehouse</label>
+    <div class="col-md-4">
+      <ejs-dropdownlist id="warehouse" formControlName="warehouse"
+        [dataSource]="warehouseData" [fields]="{ text:'name', value:'id' }"></ejs-dropdownlist>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <label class="form-label col-md-2">Account</label>
+    <div class="col-md-10">
+      <ejs-multicolumncombobox 
+        id="accountDropdown"
+        formControlName="accountDropdown"
+        [dataSource]="allAccounts"
+        [fields]="{ text: 'name', value: 'id' }"
+        [columns]="accountColumns"
+        [disabled]="!isInputDisabled"
+        [value]="selectedAccountName"
+        popupHeight="300px"
+        (change)="onAccountSelected($event)">
+      </ejs-multicolumncombobox>
+    </div>
+  </div>
+   <div class="col-md-3" *ngIf="showImageContainer">
+  <div class="image-upload d-flex align-items-center gap-2">
+    
+    <!-- Label -->
+    <label class="upload-label mb-0" for="fileInput" *ngIf="!imageData">
+      Upload Image
+    </label>
+
+    <!-- File Input -->
+    <div>
+      <input type="file" id="fileInput" (change)="onImageSelected($event)">
+
+      <div *ngIf="imageData" class="image-preview d-flex align-items-center gap-2">
+        <img [src]="imageData" alt="Uploaded Image">
+        <button class="remove-button" (click)="removeImage()">Remove</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+  <h5 class="section-heading">Branch Details</h5>
+   <ejs-grid
+      #branchGrid
+      id="branchGridId"
+      [dataSource]="allBranchDetails"
+      [editSettings]="editSettings"
+      [allowKeyboard]="true"
+      [allowTextWrap]="true"
+      [allowPaging]="true"
+  [pageSettings]="{ pageSize: 10 }"
+  [allowSorting]="true"
+  [allowFiltering]="true"
+      (actionBegin)="onActionBegin($event)"
+      (actionComplete)="onActionComplete($event)">
+      <e-columns>
+        <e-column
+          headerText="Action"
+          width="50"
+          textAlign="Center"
+          [allowEditing]="false">
+        <ng-template #template let-data let-rowIndex="index">
+          <button class="btn" [disabled]="!isInputDisabled"
+                                *ngIf="rowIndex == currentBranchTableIndex" (click)="addRow(true)">+</button>
+            {{ data.rowId  }}
+          </ng-template>
+        </e-column>
+        
+     <e-column
+  field="activeFlag"
+  headerText="Active Flag"
+  width="200"
+  [allowEditing]="isNewMode() || isEditMode()">
+  <ng-template #editTemplate let-data>
+   <ejs-checkbox
+  [checked]="data.activeFlag"
+  (change)="onActiveFlagChange($event, data)"
+  (keydown)="onKeyDown($event, data, 'activeFlag')">
+</ejs-checkbox>
+  </ng-template>
+</e-column>
+<e-column
+  field="isMainBranch"
+  headerText="Is Main Branch"
+  width="200"
+  [allowEditing]="isNewMode() || isEditMode()"
+>
+  <ng-template #editTemplate let-data>
+    <input
+      type="checkbox"
+      [checked]="data.isMainBranch"
+      (change)="onClickMainBranch($event, data,data)"
+      (keydown)="onKeyDown($event, data, 'isMainBranch')"
+    />
+  </ng-template>
+</e-column>
+<e-column
+  field="departmentName"
+  headerText="Department Name"
+  width="250"
+  [allowEditing]="isNewMode() || isEditMode()"
+>
+
+  <ng-template #editTemplate let-data>
+    <ejs-combobox
+      [dataSource]="departmentData"
+      [fields]="{ text: 'name', value: 'id' }"
+      [value]="data.departmentName"
+      [enabled]="isNewMode() || isEditMode()"
+      [allowFiltering]="true"
+      [showClearButton]="true"
+      placeholder="Select Department"
+      popupHeight="250px"
+      (change)="onDepartmentSelected($event, data)"
+      (select)="onDepartmentSelected($event, data)"
+    >
+    </ejs-combobox>
+  </ng-template>
+    <!--  Display template for VIEW mode -->
+  <ng-template #template let-data>
+    <span>{{ data.departmentDisplayName || data.departmentName || 'N/A' }}</span>
+  </ng-template>
+</e-column>
+<e-column
+  field="branchName"
+  headerText="Branch Name"
+  width="250"
+  [allowEditing]="isNewMode() || isEditMode()"
+>
+  <ng-template #editTemplate let-data>
+    <ejs-combobox
+      [dataSource]="branchOptions"
+      [fields]="{ text: 'company', value: 'id' }"
+      [value]="data.branchName"
+      [enabled]="isNewMode() || isEditMode()"
+      [allowFiltering]="true"
+      [showClearButton]="true"
+      [popupHeight]="'300px'"
+      placeholder="Select Branch"
+      (change)="onBranchSelected($event, data)"
+      (select)="onBranchSelected($event, data)"
+    >
+    </ejs-combobox>
+  </ng-template>
+</e-column>
+<e-column
+  field="supervisorID"
+  headerText="Supervisor"
+  width="250"
+  [allowEditing]="isNewMode() || isEditMode()"
+>
+  <!-- Display supervisor name in normal (non-edit) mode -->
+  <ng-template #template let-data>
+    {{ getSupervisorName(data.supervisorID) }}
+  </ng-template>
+
+  <!-- Editable ComboBox for selecting supervisor -->
+  <ng-template #editTemplate let-data>
+    <ejs-combobox
+      [dataSource]="supervisorOptions"
+      [fields]="{ text: 'name', value: 'id' }"
+      [value]="data.supervisorID"
+      [enabled]="isNewMode() || isEditMode()"
+      [allowFiltering]="true"
+      [showClearButton]="true"
+      [popupHeight]="'300px'"
+      placeholder="Select Supervisor"
+      (change)="onSupervisorSelected($event, data)"
+      (select)="onSupervisorSelected($event, data)"
+    ></ejs-combobox>
+  </ng-template>
+</e-column>
+<e-column field="userRole" headerText="User Role" width="200">
+  <ng-template #editTemplate let-data let-rowIndex="rowIndex">
+    <button
+      class="btn btn-link text-primary"
+      type="button"
+      (click)="openUserRolePopup(data, rowIndex)"
+      [disabled]="!isNewMode() && !isEditMode()"
+    >
+      {{ data.maRoleID || 'Select Role' }}
+    </button>
+  </ng-template>
+</e-column>
+
+      </e-columns>
+     </ejs-grid>
+   
+</form>
+
+ 
+
+
+<ejs-dialog
+  #userRoleDialog
+  [visible]="false"
+  [isModal]="true"
+  [showCloseIcon]="true"
+  width="800px"
+  height="600px"
+  (open)="onDialogOpen()"
+  (close)="onDialogClose()">
+
+  <!-- LOAD ONLY AFTER DIALOG IS OPEN -->
+  <ng-container *ngIf="showChild">
+    <app-userrole-popup
+      [maRoleId]="currentMaRoleID"
+      [userRights]="allUserRights"
+      (selectedUserRights)="onUserRoleSelected($event)">
+    </app-userrole-popup>
+  </ng-container>
+
+</ejs-dialog>

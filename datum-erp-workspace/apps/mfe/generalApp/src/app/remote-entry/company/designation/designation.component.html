@@ -1,0 +1,39 @@
+<div class="col-md-12 p-0">
+    <form [formGroup]="designationForm" (ngSubmit)="onSaveClick()">
+      <div class="row g-0">
+        <div class="col-md-12 p-0">
+          <div class="row g-0">
+            <label
+              for="designationName"
+              class="form-label col-md-2"
+              translate=""
+              >Designation:<span class="required-asterisk">*</span></label
+            >
+            <div class="col-md-1"></div>
+            <div class="col-md-9">
+                <ejs-textbox
+                id="designationName"
+                formControlName="designationName"
+                floatLabelType="Auto"
+                [enabled]="!isInputDisabled"
+                cssClass="e-outline">
+              </ejs-textbox>
+              @if (designationForm.get('designationName')?.touched &&
+              (designationForm.get('designationName')?.errors?.['required'] ||
+              designationForm.get('designationName')?.errors?.['invalidDesignationName']))
+              {
+              <small style="color: red">
+                @if (designationForm.get('designationName')?.errors?.['required'])
+                { Designation Name is required } @if
+                (designationForm.get('designationName')?.errors?.['invalidDesignationName'])
+                { Invalid format for Designation Name }
+              </small>
+              }
+            </div>
+          </div>
+        </div>
+    
+      </div>
+      
+    </form>
+  </div>

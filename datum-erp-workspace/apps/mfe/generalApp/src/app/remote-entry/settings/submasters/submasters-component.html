@@ -1,0 +1,45 @@
+ <form [formGroup]="subMasterForm">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="outline-box">
+
+                            <div class="row">
+                                <label for="key" class="form-label col-md-2" translate="">Key<span
+                                        class="required-asterisk">*</span></label>
+                                <div class="col-md-8">
+                                    <select id="key" class="form-select" formControlName="key" (change)="onKeySelect()">
+                                        <option value="">Select</option>
+                                        <option *ngFor="let k of allkeys" [value]="k?.Key">{{k?.Key }}</option>
+                                    </select>
+                                    <div *ngIf="subMasterForm.get('key')?.hasError('required')">
+                                        <small class="text-danger">This field is required.</small>
+                                      </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="code" class="form-label col-md-2" translate="">Code </label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="code" formControlName="code">
+                                </div>
+                            </div>
+                             <div class="row">
+                                <label for="value" class="form-label col-md-2" translate="">Value</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="value" formControlName="value">
+                                     <div *ngIf="subMasterForm.get('value')?.touched && subMasterForm.get('value')?.hasError('required')">
+                                         <small class="text-danger">Value is required.</small>
+                                     </div>
+                                </div>
+                            </div>
+                             <div class="row">
+                                <label for="description" class="form-label col-md-2">Description</label>
+                                <div class="col-md-10">
+                                    <textarea class="form-control" id="description"
+                                        formControlName="description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+</form>

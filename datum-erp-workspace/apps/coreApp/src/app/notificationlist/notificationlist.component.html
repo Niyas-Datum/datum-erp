@@ -1,0 +1,16 @@
+<table class="notification-table">
+  <thead>
+    <tr>
+      <th>Message</th>
+      <th>Date & Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let notification of notifications">
+      <td><strong>{{ notification.message }}</strong></td>
+      <td><small>{{ notification.dateTime }}</small></td>
+    </tr>
+  </tbody>
+</table>
+
+  

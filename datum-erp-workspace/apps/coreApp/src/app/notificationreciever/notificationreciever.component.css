@@ -1,0 +1,15 @@
+.notification {
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.unread {
+  background-color: #f0f8ff;
+  font-weight: bold;
+}
+
+button {
+  margin-top: 10px;
+  padding: 5px 10px;
+}

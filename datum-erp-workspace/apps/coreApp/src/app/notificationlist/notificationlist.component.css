@@ -1,0 +1,29 @@
+.notification-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+}
+
+.notification-table th, .notification-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.notification-table th {
+  background-color: #332ab1;
+  color: white;
+}
+
+.notification-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.notification-table tr:hover {
+  background-color: #ddd;
+}
+
+.notification-table td small {
+  color: #888;
+}

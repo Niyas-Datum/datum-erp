@@ -1,0 +1,14 @@
+:host ::ng-deep .commodity-multiselect .e-multi-select-wrapper {
+  white-space: normal !important;
+}
+
+:host ::ng-deep .commodity-multiselect .e-chips-collection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+:host ::ng-deep .commodity-multiselect .e-chips {
+  margin-bottom: 4px;
+}
+

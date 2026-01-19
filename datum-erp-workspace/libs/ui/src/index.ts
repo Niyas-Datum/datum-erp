@@ -1,6 +1,3 @@
-import { registerLicense } from '@syncfusion/ej2-base';
-import { APPLICATION_CONSTANT } from '@org/constants';
-registerLicense(APPLICATION_CONSTANT.syncfusion.licenseKey);
 
 
 export * from './lib/ui/ui';

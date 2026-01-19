@@ -1,0 +1,58 @@
+<form [formGroup]="departmentForm" style="width: 50%;">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <label for="department" class="form-label col-md-2" translate>
+          Department<span class="required-asterisk">*</span>
+        </label>
+        <div class="col-md-10">
+          <ejs-textbox id="department" formControlName="department" floatLabelType="Auto" cssClass="e-outline">
+          </ejs-textbox>
+
+          @if (departmentForm.get('department')?.hasError('required')) {
+          <small class="text-danger">This field is required.</small>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12">
+      <div class="row">
+        <label for="company" class="form-label col-md-2" translate>
+          Select Company<span class="required-asterisk">*</span>
+        </label>
+        <div class="col-md-3">
+
+<div>
+  <ejs-grid
+    #grid
+    [dataSource]="allBranches"
+    [allowSorting]="true" 
+    [allowPaging]="true" 
+    [allowSelection]="isGridEnabled"
+    [selectionSettings]="{ type: 'Multiple', checkboxOnly: true }"
+    (dataBound)="preselectCompanies()"
+    (rowSelected)="onRowSelected($event)"
+    height="300px"
+    width="500"
+    gridLines="Both">
+
+    <e-columns>
+       <e-column type="checkbox"  width="50"></e-column> 
+
+      <e-column field="company" headerText="Company" textAlign="Left" width="400"></e-column>
+    </e-columns>
+  </ejs-grid>
+</div>
+
+@if(departmentForm.get('company')?.hasError('required')) {
+  <small class="text-danger">Please select at least one company.</small>
+}
+
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,103 @@
+/* Form toolbar button styling */
+.btn-group.form-topbar .btn {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Active state styling for New and Edit buttons */
+.btn-group.form-topbar .btn.top-button-active {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.btn-group.form-topbar .btn.top-button-active:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  color: white;
+}
+
+.btn-group.form-topbar .btn.top-button-active:focus {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  color: white;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Hover effects for all buttons */
+.btn-group.form-topbar .btn:hover:not(.top-button-active) {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+/* Disabled button styling */
+.btn-group.form-topbar .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Odoo-style toolbar with small buttons */
+.e-btn-group.form-topbar {
+  background: #f8f8f8;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 14px;
+  display: flex;
+  gap: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.e-btn {
+  border-radius: 5px !important;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  min-width: 70px;
+  min-height: 28px;
+  border: none;
+  background: #fff;
+  color: #444;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  outline: none;
+  position: relative;
+  line-height: 1.2;
+}
+
+.e-btn.e-primary { background: #875A7B; color: #fff; }
+.e-btn.e-success { background: #00A09D; color: #fff; }
+.e-btn.e-warning { background: #F7B731; color: #fff; }
+.e-btn.e-danger  { background: #EB3D50; color: #fff; }
+.e-btn.e-info    { background: #1E90FF; color: #fff; }
+.e-btn.e-secondary { background: #888; color: #fff; }
+.e-btn.e-dark    { background: #222; color: #fff; }
+.e-btn.e-light   { background: #f8f8f8; color: #444; border: 1px solid #e0e0e0; }
+
+.e-btn:disabled {
+  opacity: 0.5;
+  background: #f0f0f0 !important;
+  color: #bbb !important;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.e-btn:hover:not(:disabled), .e-btn:focus:not(:disabled) {
+  filter: brightness(0.97);
+  box-shadow: 0 2px 8px rgba(135,90,123,0.10);
+  z-index: 1;
+}
+
+.top-button-active {
+  outline: 2px solid #875A7B;
+  outline-offset: 1px;
+  background: #f3e6f1 !important;
+  color: #875A7B !important;
+  box-shadow: 0 2px 8px rgba(135,90,123,0.10);
+}
+
+.material-icons {
+  font-size: 16px;
+  vertical-align: middle;
+  margin-right: 3px;
+}

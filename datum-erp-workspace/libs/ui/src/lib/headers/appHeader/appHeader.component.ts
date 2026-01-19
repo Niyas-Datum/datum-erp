@@ -12,7 +12,6 @@ import { ListViewModule } from '@syncfusion/ej2-angular-lists';
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
   import { MenuService } from './../menu.service';
 
-import { registerLicense, enableRipple, closest } from '@syncfusion/ej2-base';
 import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
 import { DropDownButtonModule } from '@syncfusion/ej2-angular-splitbuttons';
 import { Router } from '@angular/router';
@@ -22,11 +21,8 @@ import { DataSharingService } from '@org/services';
 interface CustomMenuItemModel extends MenuItemModel {
   m_id?: number;
 }
-registerLicense(
-  'Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXdccXRcR2FZUkFzWENWYEk='
-);
 
-enableRipple(true);
+
 
 @Component({
   selector: 'app-header',
@@ -73,11 +69,11 @@ export class AppHeaderComponent implements OnInit {
    
     const parentItem = args.parentItem as CustomMenuItemModel;
 
-    if (parentItem.m_id == 189) {
-      (closest(args.element, '.e-menu-wrapper') as HTMLElement).style.height =
-        '600px';
+    // if (parentItem.m_id == 189) {
+    //   (close(args.element, '.e-menu-wrapper') as HTMLElement).style.height =
+    //     '600px';
    
-    }
+    // }
   }
   onMenuSelect(args: MenuEventArgs) {
    

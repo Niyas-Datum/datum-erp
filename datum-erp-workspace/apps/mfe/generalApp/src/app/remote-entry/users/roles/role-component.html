@@ -1,0 +1,232 @@
+ <form [formGroup]="userRoleForm" >
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <div class="row">
+                            <label for="role" class="form-label col-md-2" translate="">Role Name<span
+                                    class="required-asterisk">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="role" formControlName="role">
+                                <div *ngIf="userRoleForm.get('role')?.hasError('required')">
+                                    <small class="text-danger">This field is required.</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <input type="checkbox" class="form-check-input" id="active" style="margin-right: 10px;" formControlName="active">
+                                <label for="active" class="form-label" translate>Active</label>
+                            </div>
+                        </div>  
+                        
+                        <div class="row">
+                            <p>User rights</p>
+                            <div>
+                                
+<ejs-grid
+  #userRightsGrid
+  [dataSource]="allUserRights"                      
+  [allowSorting]="true"                            
+  [allowPaging]="true"                             
+  [pageSettings]="{ pageSize: 10, pageCount: 4 }"  
+  [height]="500"                                   
+  gridLines="Both">
+
+  <e-columns>
+    <e-column headerText="PageName" [minWidth]="200">
+      <ng-template #template let-data>
+        <span class="preserve-whitespace">{{ ' ' + data.pageName }}</span>
+      </ng-template>
+    </e-column>
+
+    <e-column field="moduleType" headerText="ModuleType" [minWidth]="150"></e-column>
+
+    <e-column headerText="Create" [width]="90" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsCreateChecked"
+                 (change)="selectAllCheckboxes('isCreate')"
+          >
+          Create
+        </label>
+      </ng-template>
+      <ng-template #template let-data let-rowIndex="rowIndex">
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isCreate"
+               (change)="onChangeSingleRight($event,'isCreate',data.rowIndex)"
+        >
+      </ng-template>
+      
+    </e-column>
+
+    <e-column headerText="View" [width]="90" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsViewChecked"
+                 (change)="selectAllCheckboxes('isView')"
+          >
+          View
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isView"
+               (change)="onChangeSingleRight($event,'isView',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+    
+    <e-column headerText="Cancel" [width]="90" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsCancelChecked"
+                 (change)="selectAllCheckboxes('isCancel')"
+          >
+          
+          Cancel
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isCancel"
+               (change)="onChangeSingleRight($event,'isCancel',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+
+    <e-column headerText="Delete" [width]="90" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsDeleteChecked"
+                 (change)="selectAllCheckboxes('isDelete')"
+          >
+          Delete
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isDelete"
+               (change)="onChangeSingleRight($event,'isDelete',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+
+    <e-column headerText="EditApproved" [width]="110" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllisEditApprovedChecked"
+                 (change)="selectAllCheckboxes('isEditApproved')"
+          >
+          EditApproved
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isEditApproved"
+               (change)="onChangeSingleRight($event,'isEditApproved',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+
+    <e-column headerText="Edit" [width]="90" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsEditChecked"
+                 (change)="selectAllCheckboxes('isEdit')"
+          >
+          Edit
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isEdit"
+               (change)="onChangeSingleRight($event,'isEdit',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+
+    <e-column headerText="Approve" [width]="90" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsApproveChecked"
+                 (change)="selectAllCheckboxes('isApprove')"
+          >
+          Approve
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isApprove"
+               (change)="onChangeSingleRight($event,'isApprove',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+
+    <e-column headerText="High.Approve" [width]="120" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsHigherApproveChecked"
+                 (change)="selectAllCheckboxes('isHigherApprove')"
+          >
+          High.Approve
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isHigherApprove"
+               (change)="onChangeSingleRight($event,'isHigherApprove',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+
+    <e-column headerText="Print" [width]="90" textAlign="Center">
+      <ng-template #headerTemplate let-data>
+        <label class="table-head-checkbox">
+          <input type="checkbox"
+                 [disabled]="isInputDisabled"
+                 [checked]="selectAllIsPrintChecked"
+                 (change)="selectAllCheckboxes('isPrint')"
+          >
+          Print
+        </label>
+      </ng-template>
+      <ng-template #template let-data>
+        <input type="checkbox"
+               [disabled]="isInputDisabled"
+               [checked]="data.isPrint"
+               (change)="onChangeSingleRight($event,'isPrint',data.rowIndex)"
+        >
+      </ng-template>
+    </e-column>
+  </e-columns>
+</ejs-grid>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </form>

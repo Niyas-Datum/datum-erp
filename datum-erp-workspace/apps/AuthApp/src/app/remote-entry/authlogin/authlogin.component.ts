@@ -12,7 +12,7 @@ import { UserSettingDto,ShortcutMenuDto } from '@org/models';
 import { BaseService, DataSharingService } from '@org/services';
 
 //import { MatDialog } from '@angular/material/dialog';
-//import { DialogTemplateComponent, ModalType } from '@datum/services';
+//import { DialogTemplateComponent, ModalType } from '@org/services';
 
 @Component({
   selector: 'app-authlogin.component',

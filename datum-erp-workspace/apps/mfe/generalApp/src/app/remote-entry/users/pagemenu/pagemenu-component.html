@@ -1,0 +1,74 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="section-container">
+            <div class="section-content">
+                <!-- Tabs -->
+               
+                <!-- Search Box and Controls -->
+                <div class="d-flex gap-2 align-items-center mb-3">
+                    <div style="width: 20%;">
+                        <ejs-maskedtextbox
+                            #maskObj
+                            id="search"
+                            placeholder="Search ..."
+                            (change)="searchNodes()"
+                            style="width: 100%;">
+                        </ejs-maskedtextbox>
+                         
+                    </div>
+                    <div style="width: 20%;">
+            <ejs-dropdownlist
+              #filterDropdown
+              [dataSource]="filterOptions"
+              [fields]="{ text: 'label', value: 'value' }"
+              style="width: 100%;">
+            </ejs-dropdownlist>
+          </div>
+           <!-- Filter Button -->
+          <button ejs-button id="btnFilter" (click)="applyFilter()">Filter</button>
+          
+<!-- Open Popup Button -->
+<button
+  ejs-button
+  cssClass="e-primary"
+  (click)="openPageMenuPopup()">
+  Activate Forms
+</button>
+
+<!-- Popup -->
+<ejs-dialog
+  #pageMenuDialog
+  [visible]="false"
+  [isModal]="true"
+  [showCloseIcon]="true"
+  width="90%"
+  height="650px"
+  header="Page Menu Mapping"
+  (open)="onDialogOpen()"
+  (close)="onDialogClose()">
+
+  <!-- Load child ONLY after open -->
+  <ng-container *ngIf="showPopup">
+    <app-pagemenu-popoup
+      (closePopup)="closePageMenuPopup()">
+    </app-pagemenu-popoup>
+  </ng-container>
+
+</ejs-dialog>
+
+                </div>
+               
+                <!-- Tree View -->
+                <ejs-treeview
+                    #treeviewObj
+                    id="pageMenuTree"
+                    [fields]="treeViewFields"
+                    [showCheckBox]="false"
+                    (nodeSelected)="onNodeSelected($event)"
+                    (nodeExpanded)="onNodeExpanded($event)"
+                    style="max-height: 500px; overflow-y: auto;">
+                </ejs-treeview>
+            </div>
+        </div>
+    </div>
+</div>

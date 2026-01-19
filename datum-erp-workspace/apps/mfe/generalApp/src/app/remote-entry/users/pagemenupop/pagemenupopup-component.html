@@ -1,0 +1,63 @@
+<div class="row">
+
+  <!-- LEFT TREE -->
+  <div class="col-md-5">
+    <div class="tree-panel">
+
+      <!-- Search -->
+      <div class="d-flex mb-2">
+        <input
+          type="text"
+          class="form-control me-2"
+          placeholder="Search"
+          (input)="searchLeft($event)" />
+        <button class="btn btn-secondary">Search</button>
+      </div>
+
+      <!-- Tree -->
+      <ejs-treeview
+        #leftTree
+        [fields]="treeViewFields"
+        [showCheckBox]="true"
+        style="height: 450px; overflow-y: auto;">
+      </ejs-treeview>
+
+    </div>
+  </div>
+
+  <!-- RIGHT TREE -->
+  <div class="col-md-5">
+    <div class="tree-panel">
+
+      <!-- Search -->
+      <div class="d-flex mb-2">
+        <input
+          type="text"
+          class="form-control me-2"
+          placeholder="Search"
+          (input)="searchRight($event)" />
+        <button class="btn btn-secondary">Search</button>
+      </div>
+
+      <!-- Tree -->
+      <ejs-treeview
+        #rightTree
+        [fields]="treeViewFields"
+        [showCheckBox]="true"
+        style="height: 450px; overflow-y: auto;">
+      </ejs-treeview>
+
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="col-md-2 d-flex flex-column gap-2 align-items-start">
+    <button class="btn btn-outline-primary" (click)="activateForms()">
+      Activate Forms
+    </button>
+    <button class="btn btn-outline-secondary" (click)="markFrequentlyUsed()">
+      Frequently Used Forms
+    </button>
+  </div>
+
+</div>

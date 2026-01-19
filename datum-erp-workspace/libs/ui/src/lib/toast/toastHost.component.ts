@@ -1,16 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastComponent, ToastModule } from '@syncfusion/ej2-angular-notifications';
 import { Subscription } from 'rxjs';
-import { enableRipple, registerLicense } from '@syncfusion/ej2-base';
 import { APPLICATION_CONSTANT } from '@org/constants';
 import { CommonModule } from '@angular/common';
 import { ToastPayload, ToastService } from './toast.service';
-registerLicense(
-  'Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXdccXRcR2FZUkFzWENWYEk='
-);
-
-registerLicense(APPLICATION_CONSTANT.syncfusion.licenseKey);
-enableRipple(true);
 
 @Component({
   selector: 'app-toast-host',

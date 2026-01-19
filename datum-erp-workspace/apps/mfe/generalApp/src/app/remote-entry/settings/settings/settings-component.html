@@ -1,0 +1,112 @@
+<div class="card shadow-sm">
+    <div class="card-body">
+      <form [formGroup]="settingsForm">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+          <label for="key" style="width: 120px; flex-shrink: 0;">Key</label>
+          <ejs-textbox 
+            id="key"
+            formControlName="key" 
+            floatLabelType="Auto"
+            cssClass="e-outline input-sm"
+            width="300px">
+          </ejs-textbox>
+            @if (settingsForm.get('key')?.hasError('required')) {
+          <small class="text-danger">This field is required.</small>
+          }
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+          <label for="value" style="width: 120px; flex-shrink: 0;">Value</label>
+          
+          <!-- Show radio buttons for boolean values -->
+          @if(isBooleanValue()) {
+            <div style="display: flex; gap: 20px;">
+              <ejs-radiobutton 
+                [disabled]="isRadioDisabled()"
+                name="valueRadio"
+                label="True"
+                value="true"
+                [checked]="isTrueValue()"
+                (change)="onRadioChange($event, 'true')">
+              </ejs-radiobutton>
+              <ejs-radiobutton 
+                [disabled]="isRadioDisabled()"
+                name="valueRadio"
+                label="False"
+                value="false"
+                [checked]="isFalseValue()"
+                (change)="onRadioChange($event, 'false')">
+              </ejs-radiobutton>
+            </div>
+          } @else {
+            <!-- Show textbox for non-boolean values -->
+            <ejs-textbox 
+              id="value"
+              formControlName="value" 
+              floatLabelType="Auto"
+              cssClass="e-outline input-md"
+              width="300px">
+            </ejs-textbox>
+          }
+            @if (settingsForm.get('value')?.hasError('required')) {
+          <small class="text-danger">This field is required.</small>
+          }
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+          <label for="description" style="width: 120px; flex-shrink: 0;">Description</label>
+          <ejs-textbox 
+            id="description"
+            formControlName="description" 
+            floatLabelType="Auto"
+            cssClass="e-outline input-md"
+            width="300px">
+          </ejs-textbox>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+          <label for="System Setting" style="width: 120px; flex-shrink: 0;">System Setting</label>
+          <ejs-checkbox 
+            id="systemSetting"
+            formControlName="systemSetting" 
+            label="System Setting"
+            cssClass="e-outline">
+          </ejs-checkbox>
+        </div>
+        
+      </form>
+      
+      
+      <!-- Delete confirmation buttons -->
+      @if(isDeleteMode()) {
+        <div style="display: flex; gap: 10px; margin-top: 15px; padding: 15px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
+          <button type="button" class="btn btn-danger btn-sm" (click)="confirmDelete()">
+            Confirm Delete
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="cancelDelete()">
+            Cancel
+          </button>
+        </div>
+      }
+      
+    </div>
+  </div>
+  @if(showPasswordModal()) {
+    <div class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+      <div class="modal-content" style="background: white; padding: 15px; border-radius: 6px; width: 280px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h4 style="margin: 0 0 10px 0; color: #333; font-size: 16px;">Enter Password</h4>
+        <p style="color: #666; margin-bottom: 15px; font-size: 14px;">Please enter your password:</p>
+        <ejs-textbox 
+          [value]="passwordValue()"
+          (valueChange)="passwordValue.set($event)"
+          type="password"
+          cssClass="e-outline"
+          style="width: 100%; margin-bottom: 15px;">
+        </ejs-textbox>
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary" (click)="cancelPassword()" style="padding: 6px 12px; border: 1px solid #ccc; background: #f8f9fa; border-radius: 4px; cursor: pointer; font-size: 12px;">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="onPasswordEntered()" style="padding: 6px 12px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer; font-size: 12px;">Confirm</button>
+        </div>
+      </div>
+    </div>
+  }

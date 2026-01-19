@@ -1,0 +1,250 @@
+ <form [formGroup]="costCenterForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <label for="code" class="form-label col-md-2">Code<span class="required-asterisk">*</span></label>
+        <div class="col-md-4">
+          <ejs-textbox id="code" formControlName="code" cssClass="e-input"></ejs-textbox>
+          @if (costCenterForm.get('code')?.hasError('required')) {
+            <small class="text-danger">This field is required.</small>
+          }
+        </div>
+
+        <label for="name" class="form-label col-md-2">Name<span class="required-asterisk">*</span></label>
+        <div class="col-md-4">
+          <ejs-textbox id="name" formControlName="name" cssClass="e-input"></ejs-textbox>
+          @if (costCenterForm.get('name')?.hasError('required')) {
+            <small class="text-danger">This field is required.</small>
+          }
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="category" class="form-label col-md-2">Category</label>
+        <div class="col-md-4">
+       <ejs-dropdownlist
+  id="category"
+  formControlName="category"
+  [dataSource]="costCategories()"
+  [fields]="{ text: 'name', value: 'id' }"
+  placeholder="Select Category"
+  (change)="onCostCategorySelect($event)">
+</ejs-dropdownlist>
+        </div>
+
+        <label for="isgroup" class="form-label col-md-2">Is Group</label>
+        <div class="col-md-4">
+          <ejs-checkbox label="Is Group"
+                        id="isgroup"
+                        formControlName="isgroup"
+                        >
+          </ejs-checkbox>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="createunder" class="form-label col-md-2">Create Under</label>
+        <div class="col-md-4">
+          <ejs-dropdownlist id="createunder"
+                            formControlName="createunder"
+                            [dataSource]="createUnderData()"
+                            [fields]="{ text: 'name', value: 'id' }"
+                            placeholder="Select createUnder"
+                            (change)="onCreateUnderSelect($event)">
+          </ejs-dropdownlist>
+        </div>
+
+        <label for="active" class="form-label col-md-2">Active</label>
+        <div class="col-md-4">
+          <ejs-checkbox label="Active"
+                        id="active"
+                        formControlName="active">
+          </ejs-checkbox>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="remarks" class="form-label col-md-2">Remarks</label>
+        <div class="col-md-10">
+          <ejs-textbox id="remarks" formControlName="remarks" cssClass="e-input"></ejs-textbox>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr />
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Details</h3>
+
+      <div class="row">
+        <label for="nature" class="form-label col-md-2">Nature<span class="required-asterisk">*</span></label>
+        <div class="col-md-4">
+          <ejs-dropdownlist id="nature"
+                            formControlName="nature"
+                            [dataSource]="natureList"
+                            [fields]="{ text: 'name', value: 'name' }"
+                            placeholder="Select nature"
+                            (Change)="onNatureSelect()">
+          </ejs-dropdownlist>
+          
+          @if (costCenterForm.get('nature')?.hasError('required')) {
+            <small class="text-danger">This field is required.</small>
+          }
+        </div>
+
+        <label for="status" class="form-label col-md-2">Status</label>
+        <div class="col-md-4">
+          <ejs-dropdownlist id="status"
+                            formControlName="status"
+                            [dataSource]="allStatus()"
+                            [fields]="{ text: 'value', value: 'value' }"
+                            placeholder="Select status"
+                            (change)="onCostCategoryStatusSelect($event)">
+          </ejs-dropdownlist>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="regno" class="form-label col-md-2">RegNo</label>
+        <div class="col-md-4">
+          <ejs-textbox id="regno" formControlName="regno" cssClass="e-input"></ejs-textbox>
+        </div>
+
+        <label for="serialno" class="form-label col-md-2">Serial No</label>
+        <div class="col-md-4">
+          <ejs-textbox id="serialno" formControlName="serialno" cssClass="e-input"></ejs-textbox>
+        </div>
+      </div>
+
+      
+       <div class="row">
+  <label for="client" class="form-label col-md-2">Client</label>
+  <div class="col-md-4">
+                                    <ejs-multicolumncombobox
+                                            id="client"
+                                            formControlName="client"
+                                            [dataSource]="clientOptions()"
+                                            [fields]="{ text: 'name', value: 'id' }"
+                                            [columns]="columns"
+                                            [gridSettings]="gridSettings"
+                                            [placeholder]="'Select Client'"
+                                            [allowFiltering]="true"
+                                            sortType="Ascending"
+                                            [popupHeight]="'200px'"
+                                            (change)="onClientSelected($event)">
+                                        </ejs-multicolumncombobox>
+  </div>
+
+
+        <label for="consultancy" class="form-label col-md-2">Consultancy</label>
+        <div class="col-md-4">
+             <ejs-multicolumncombobox
+                            formControlName="consultancy"
+                            [dataSource]="consultancyOptions()"
+                            [fields]="{ text: 'name', value: 'id' }"
+                            [columns]="columns"
+                            [gridSettings]="gridSettings"
+                            [placeholder]="'Select consultancy'"
+                            [allowFiltering]="true"
+                            sortType="Ascending"
+                            [popupHeight]="'200px'"
+                            (change)="onConsultancySelected($event)">
+             </ejs-multicolumncombobox>
+         
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="engineer" class="form-label col-md-2">Engineer</label>
+        <div class="col-md-4">
+          <ejs-multicolumncombobox
+                            formControlName="engineer"
+                            [dataSource]="staffOptions()"
+                            [fields]="{ text: 'name', value: 'id' }"
+                            [columns]="columns"
+                            [gridSettings]="gridSettings"
+                            [placeholder]="'Select Engineer'"
+                            [allowFiltering]="true"
+                            sortType="Ascending"
+                            [popupHeight]="'200px'"
+                            (change)="onEngineerSelected($event)">
+             </ejs-multicolumncombobox>
+        </div>
+
+        <label for="foreman" class="form-label col-md-2">Foreman</label>
+        <div class="col-md-4">
+           <ejs-multicolumncombobox
+                            formControlName="foreman"
+                            [dataSource]="staffOptions()"
+                            [fields]="{ text: 'name', value: 'id' }"
+                            [columns]="columns"
+                            [gridSettings]="gridSettings"
+                            [placeholder]="'Select Foreman'"
+                            [allowFiltering]="true"
+                            sortType="Ascending"
+                            [popupHeight]="'200px'"
+                            (change)="onForemanSelected($event)">
+             </ejs-multicolumncombobox>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="startdate" class="form-label col-md-2">Start Date</label>
+        <div class="col-md-4">
+          <ejs-datepicker id="startdate"
+                          formControlName="startdate"
+                          placeholder="yyyy-MM-dd">
+          </ejs-datepicker>
+        </div>
+
+        <label for="enddate" class="form-label col-md-2">End Date</label>
+        <div class="col-md-4">
+          <ejs-datepicker id="enddate"
+                          formControlName="enddate"
+                          placeholder="yyyy-MM-dd">
+          </ejs-datepicker>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="contractvalue" class="form-label col-md-2">Contract Value</label>
+        <div class="col-md-4">
+          <ejs-textbox id="contractvalue" formControlName="contractvalue" cssClass="e-input"></ejs-textbox>
+        </div>
+
+        <label for="invoicevalue" class="form-label col-md-2">Invoice Value</label>
+        <div class="col-md-4">
+          <ejs-textbox id="invoicevalue" formControlName="invoicevalue" cssClass="e-input"></ejs-textbox>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="make" class="form-label col-md-2">Make</label>
+        <div class="col-md-4">
+          <ejs-textbox id="make" formControlName="make" cssClass="e-input"></ejs-textbox>
+        </div>
+
+        <label for="makeyear" class="form-label col-md-2">Make Year</label>
+        <div class="col-md-4">
+          <ejs-textbox id="makeyear" formControlName="makeyear" cssClass="e-input"></ejs-textbox>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="site" class="form-label col-md-2">Site</label>
+        <div class="col-md-4">
+          <ejs-textbox id="site" formControlName="site" cssClass="e-input"></ejs-textbox>
+        </div>
+
+        <label for="rate" class="form-label col-md-2">Rate</label>
+        <div class="col-md-4">
+          <ejs-textbox id="rate" formControlName="rate" cssClass="e-input"></ejs-textbox>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

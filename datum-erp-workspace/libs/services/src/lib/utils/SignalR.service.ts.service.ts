@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { APP_URL } from '../../../utils/src/environments/environment';
+import { APP_URL } from '@org/utils';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({

@@ -1,0 +1,68 @@
+<form [formGroup]="costCategoryForm" class="w-60">
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="section-container">
+        <div class="section-content">
+
+          <!-- Name -->
+          <div class="row mb-3 align-items-center">
+            <label for="name" class="form-label col-md-2">
+              Name <span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-4">
+              <input type="text" id="name" class="form-control" formControlName="name">
+              <small *ngIf="costCategoryForm.get('name')?.hasError('required')" class="text-danger">
+                This field is required.
+              </small>
+            </div>
+
+            <div class="col-md-2"></div>
+
+            <div class="col-md-4 d-flex align-items-center">
+              <label for="active" class="form-label me-2 mb-0">Active</label>
+              <input type="checkbox" id="active" class="form-check-input" formControlName="active">
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="row mb-3">
+            <label for="description" class="form-label col-md-2">
+              Description <span class="required-asterisk">*</span>
+            </label>
+
+            <div class="col-md-10">
+              <input type="text" id="description" class="form-control" formControlName="description">
+              <small *ngIf="costCategoryForm.get('description')?.hasError('required')" class="text-danger">
+                This field is required.
+              </small>
+            </div>
+          </div>
+          <!-- Allocate Revenue + Allocate Non-Revenue -->
+          <div class="row mb-3 align-items-center">
+
+            <label for="allocaterevenue" class="form-label col-md-2">
+              Allocate Revenue
+            </label>
+
+            <div class="col-md-4">
+              <input type="checkbox" id="allocaterevenue" class="form-check-input" formControlName="allocaterevenue">
+            </div>
+
+            <div class="col-md-2"></div>
+
+            <div class="col-md-4 d-flex align-items-center justify-content-end">
+              <label for="allocatenonrevenue" class="form-label me-2 mb-0">
+                Allocate Non-Revenue
+              </label>
+              <input type="checkbox" id="allocatenonrevenue" class="form-check-input" formControlName="allocatenonrevenue">
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</form>
