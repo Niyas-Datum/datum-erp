@@ -1,0 +1,48 @@
+<div class="e-btn-group form-topbar" role="group">
+  <button type="button" class="e-btn e-small e-primary"
+          (click)="onClick('new')"
+          [ngClass]="{'top-button-active': isNewMode()}"
+          [disabled]="isNewBtnDisabled()">
+    <span class="material-icons">add_to_photos</span> New
+  </button>
+
+  <button type="button" class="e-btn e-small e-success"
+          (click)="onClick('save')"
+          [disabled]="isSaveBtnDisabled()">
+    <span class="material-icons">save</span> Save
+  </button>
+
+  <button type="button" class="e-btn e-small e-warning"
+          (click)="onClick('edit')"
+          [ngClass]="{'top-button-active': isEditMode()}"
+          [disabled]="isEditBtnDisabled()">
+    <span class="material-icons">edit</span> Edit
+  </button>
+
+  <button type="button" class="e-btn e-small e-danger"
+          (click)="onClick('delete')"
+          [disabled]="isDeleteBtnDisabled()">
+    <span class="material-icons">delete_forever</span> Delete
+  </button>
+
+  <button type="button" class="e-btn e-small e-info"
+          (click)="onClick('print')"
+          [disabled]="isPrintBtnDisabled()">
+    <span class="material-icons">print</span> Print
+  </button>
+
+  <button type="button" class="e-btn e-small e-secondary"
+          (click)="onClick('preview')">
+    <span class="material-icons">pageview</span> Preview
+  </button>
+
+  <button type="button" class="e-btn e-small e-dark"
+          (click)="onClick('settings')">
+    <span class="material-icons">settings</span> Settings
+  </button>
+
+  <button type="button" class="e-btn e-small e-light"
+          (click)="onClick('help')">
+    <span class="material-icons">help</span> Help
+  </button>
+</div>

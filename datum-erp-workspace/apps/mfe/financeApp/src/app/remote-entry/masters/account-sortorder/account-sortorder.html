@@ -1,0 +1,70 @@
+<div class="page-layout">
+  <!-- Fixed Header -->
+  <div class="fixed-header">
+    <h2>Account Sort Order</h2>
+    <p style="color: green; font-size: 12px;">Component loaded successfully</p>
+  </div>
+
+  <!-- Scrollable Grid Container -->
+  <div class="scrollable-grid-container">
+    <ejs-grid
+      #grid
+      id="transactionGrid"
+      [dataSource]="accountSortorderData()"
+      [editSettings]="editSettings"
+      [allowKeyboard]="true"
+      [allowTextWrap]="true"
+      (actionComplete)="onActionComplete($event)"
+    >
+      <e-columns>
+        <e-column
+          field="id"
+          headerText="ID"
+          width="150"
+          [allowEditing]="false"
+        ></e-column>
+        
+        <e-column 
+          field="accountCode" 
+          headerText="Account Code" 
+          [visible]="false"
+          [allowEditing]="false"
+        ></e-column>
+        <e-column
+          field="accountName"
+          headerText="Account Name"
+          width="150"
+          [allowEditing]="false"
+        ></e-column>
+        <e-column
+          field="Parent"
+          headerText="Parent"
+          width="150"
+          [allowEditing]="false"
+        ></e-column>
+        <e-column
+          field="GroupOrder"
+          headerText="Group Order"
+          width="150"
+          [allowEditing]="true"
+        ></e-column>
+        <e-column
+          field="NewOrder"
+          headerText="New Order"
+          width="200"
+          [allowEditing]="true"
+        ></e-column>
+      </e-columns>
+    </ejs-grid>
+  </div>
+
+  <!-- Fixed Save Button at Bottom -->
+  <div class="fixed-save-button-container">
+    <button 
+      type="button" 
+      class="save-button"
+      (click)="onSaveClick()">
+      <span class="material-icons">save</span>Apply
+    </button>
+  </div>
+</div>

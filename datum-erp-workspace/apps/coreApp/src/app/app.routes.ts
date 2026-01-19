@@ -3,7 +3,7 @@ import { NxWelcome } from './remote-entry/nx-welcome';
 
 export const appRoutes: Route[] = [
   {
-    path: 'financeApp',
+    path: 'financialApp',
     loadChildren: () =>
       import('financeApp/Module').then((m) => m!.RemoteEntryModule),
   },

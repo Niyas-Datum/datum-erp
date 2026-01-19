@@ -1,0 +1,90 @@
+<div class="page-layout">
+  <!-- Fixed Header -->
+  <div class="fixed-header">
+    <h2>Branch Accounts</h2>
+  </div>
+
+  <!-- Scrollable Grid Container -->
+  <div class="scrollable-grid-container">
+    <ejs-grid
+      #grid
+      id="branchAccountsGrid"
+      [dataSource]="filteredData()"
+      [editSettings]="editSettings"
+      [allowKeyboard]="true"
+      [allowTextWrap]="true"
+      [allowPaging]="true"
+      [pageSettings]="{ pageSize: 20 }"
+      [allowSorting]="true"
+      [gridLines]="'Both'"
+      (actionComplete)="onActionComplete($event)"
+    >
+      <e-columns>
+        <!-- Account Code Column -->
+        <e-column
+          field="accountCode"
+          headerText="AccountCode"
+          width="150"
+          [allowEditing]="false"
+          [allowSorting]="true"
+        ></e-column>
+        
+        <!-- Account Name Column -->
+        <e-column
+          field="accountName"
+          headerText="AccountName"
+          width="250"
+          [allowEditing]="false"
+          [allowSorting]="true"
+        ></e-column>
+        
+        <!-- Dynamic Branch Columns -->
+        <e-column
+          *ngFor="let branchName of branchNames()"
+          [field]="branchName"
+          [headerText]="branchName"
+          width="120"
+          textAlign="Center"
+          [allowEditing]="false"
+          [allowSorting]="false"
+        >
+          <ng-template #template let-data>
+            <ejs-checkbox
+              [checked]="data[branchName]"
+              (change)="onBranchCheckboxChange(branchName, data, $event)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+      </e-columns>
+    </ejs-grid>
+  </div>
+
+  <!-- Fixed Footer with Search and Buttons -->
+  <div class="fixed-footer-container">
+    <div class="search-container">
+      <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Search Here"
+        [value]="searchTerm()"
+        (input)="updateFilter($event)"
+      />
+    </div>
+    <div class="button-container">
+      <button
+        type="button"
+        class="btn btn-primary apply-button"
+        (click)="onSaveClick()"
+      >
+        Apply
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary close-button"
+        (click)="onCloseClick()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,271 @@
+<h2>Finance Register</h2>
+
+<form [formGroup]="financeRegisterForm">
+    <div class="row">
+        <div class="col-md-3" style="border: 1px solid #ccc; padding: 15px; border-radius: 4px;">
+            <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <button type="button" ejs-button [isPrimary]="false" (click)="onPrint()">Print</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onPreview()">Preview</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onExcel()">Excel</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onEmail()">Email</button>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <label for="viewby" class="form-label">View By</label>
+                    <ejs-radiobutton 
+                      name="valueRadio"
+                      label="voucher"
+                      value="voucher"
+                      [checked]="isVoucherValue()"
+                      (change)="onRadioChange($event, 'true')">
+                    </ejs-radiobutton>
+                    <ejs-radiobutton 
+                      name="valueRadio"
+                      label="account"
+                      value="account"
+                      [checked]="isAccountValue()"
+                      (change)="onRadioChange($event, 'false')">
+                    </ejs-radiobutton>
+                </div>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div class="row">
+                    <label for="from" class="form-label col-md-2">
+                      From<span class="required-asterisk">*</span>
+                    </label>
+                    <div class="col-md-4 flex-wrapper">
+                      <ejs-datepicker id="from" formControlName="from" format="yyyy-MM-dd" placeholder="yyyy-mm-dd"></ejs-datepicker>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div class="row">
+                    <label for="to" class="form-label col-md-2">
+                      To<span class="required-asterisk">*</span>
+                    </label>
+                    <div class="col-md-4 flex-wrapper">
+                      <ejs-datepicker id="to" formControlName="to" format="yyyy-MM-dd" placeholder="yyyy-mm-dd"></ejs-datepicker>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div class="row">
+                    <label for="basictype" class="form-label col-md-2">Basic Type<span class="required-asterisk">*</span></label>
+                    <div class="col-md-4 flex-wrapper">
+                        <ejs-dropdownlist id="basictype" formControlName="basictype" [dataSource]="fillbasictypeData()" [fields]="{ text: 'name', value: 'id' }" placeholder="Select Basic Type"></ejs-dropdownlist>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div class="row">
+                    <label for="vouchertype" class="form-label col-md-2">Voucher Type<span class="required-asterisk">*</span></label>
+                    <div class="col-md-4 flex-wrapper">
+                        <ejs-dropdownlist id="vouchertype" formControlName="vouchertype" [dataSource]="fillvouchertypeData()" [fields]="{ text: 'name', value: 'id' }" placeholder="Select Voucher Type"></ejs-dropdownlist>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div class="row">
+                    <label for="account" class="form-label col-md-2">Account<span class="required-asterisk">*</span></label>
+                    <div class="col-md-4 flex-wrapper">
+                        <ejs-textbox id="account" formControlName="account" placeholder="Enter Account"></ejs-textbox>
+                    </div>
+                </div>
+            </div>
+            
+            @if(!isAccountValue()) {
+            <div class="raw" style="margin-bottom: 20px;">
+                <div class="row">
+                    <div class="col-md-2 flex-wrapper"></div>
+                    <div class="col-md-4 flex-wrapper">
+                        <ejs-checkbox id="columnar" formControlName="columnar" label="Columnar"></ejs-checkbox>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div class="row">
+                    <div class="col-md-2 flex-wrapper"></div>
+                    <div class="col-md-4 flex-wrapper">
+                        <ejs-checkbox id="detailed" formControlName="detailed" label="Detailed"></ejs-checkbox>
+                    </div>
+                </div>
+            </div>
+            }
+            
+            <div class="raw" style="margin-bottom: 10px;">
+                <div class="row">
+                    <div class="col-md-2 flex-wrapper"></div>
+                    <div class="col-md-4 flex-wrapper" style="display: flex; gap: 10px;">
+                        <button type="button" ejs-button [isPrimary]="true" (click)="onClickGo()">Go</button>
+                        <button type="button" ejs-button [isPrimary]="true" (click)="onSearchClick()">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <div *ngIf="isLoading() && (isVoucherValue() || isAccountValue())" style="padding: 20px; text-align: center;">
+                <p>Loading data... Please wait (this may take up to 12 seconds)</p>
+            </div>
+            <div *ngIf="!isLoading() && financeRegisterData().length > 0 && isVoucherValue()">
+                <p>Data loaded: {{ financeRegisterData().length }} records</p>
+                <div class="scrollable-grid-container" style="width: 100%; overflow-x: auto;">
+                    <ejs-grid
+                      #grid
+                      id="transactionGrid"
+                      [dataSource]="financeRegisterData()"
+                      [editSettings]="editSettings"
+                      [allowKeyboard]="true"
+                      [allowTextWrap]="true"
+                      [width]="'100%'"
+                      (actionComplete)="onActionComplete($event)"
+                    >
+                      <e-columns>
+                        <e-column
+                          field="VType"
+                          headerText="Voucher Type"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="VNo"
+                          headerText="Voucher No"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="VDate"
+                          headerText="Voucher Date"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Particulars"
+                          headerText="Particulars"
+                          width="250"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Debit"
+                          headerText="Debit"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Credit"
+                          headerText="Credit"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="AddedDate"
+                          headerText="Added Date"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="RefrenceNo"
+                          headerText="Reference No"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="CounterName"
+                          headerText="Counter Name"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Customer"
+                          headerText="Customer"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="PhNo"
+                          headerText="Phone No"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Staff"
+                          headerText="Staff"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Area"
+                          headerText="Area"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="AddedBy"
+                          headerText="Added By"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="VATNO"
+                          headerText="VAT No"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="PartyInvNo"
+                          headerText="Party Inv No"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                      </e-columns>
+                    </ejs-grid>
+                  </div>
+
+            </div>
+            <div *ngIf="!isLoading() && financeRegisterData().length > 0 && isAccountValue()">
+                <p>Data loaded: {{ financeRegisterData().length }} records</p>
+                <div class="scrollable-grid-container" style="width: 100%; overflow-x: auto;">
+                    <ejs-grid
+                      #accountGrid
+                      id="accountGrid"
+                      [dataSource]="financeRegisterData()"
+                      [editSettings]="editSettings"
+                      [allowKeyboard]="true"
+                      [allowTextWrap]="true"
+                      [width]="'100%'"
+                      (actionComplete)="onActionComplete($event)"
+                    >
+                      <e-columns>
+                        <e-column
+                          field="Particulars"
+                          headerText="Particulars"
+                          width="300"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Debit"
+                          headerText="Debit"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Credit"
+                          headerText="Credit"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                      </e-columns>
+                    </ejs-grid>
+                  </div>
+
+            </div>
+        </div>
+    </div>
+</form>

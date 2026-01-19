@@ -1,0 +1,127 @@
+<div class="popup-overlay" *ngIf="popupVisible">
+  <div class="popup-content">
+    <div class="popup-header">
+      <h5>PO Allocation</h5>
+      <button class="close-btn" (click)="close()">×</button>
+    </div>
+
+    <!-- PO Grid -->
+      <ejs-grid
+        #poGrid
+        [dataSource]="unpaidPOs"
+        [allowSelection]="true"
+        [selectionSettings]="selectionSettings"
+        [ngClass]="{ 'disable-header-select': crdrAmount > 0 && remainingAmount <= 0 }"
+        (rowSelecting)="onRowSelecting($event)"
+        (rowSelected)="onRowSelected($event)"
+        (rowDeselected)="onRowDeselected($event)"
+        (dataBound)="syncSelectionCheckboxes()"
+        height="400px">
+
+      <e-columns>
+        <!-- Checkbox column -->
+        <e-column
+          type="checkbox"
+          width="50">
+        </e-column>
+
+        <e-column
+          field="invoiceNo"
+          headerText="Invoice No"
+          width="120"
+          [isPrimaryKey]="true">
+        </e-column>
+
+        <e-column
+          field="invoiceDate"
+          headerText="Invoice Date"
+          width="120">
+        </e-column>
+
+        <e-column
+          field="partyInvNo"
+          headerText="Party Inv No"
+          width="120">
+        </e-column>
+
+        <e-column
+          field="partyInvDate"
+          headerText="Party Inv Date"
+          width="120">
+        </e-column>
+
+        <e-column
+          field="description"
+          headerText="Description"
+          width="150">
+        </e-column>
+
+        <e-column
+          field="account"
+          headerText="Account"
+          width="100">
+        </e-column>
+
+        <e-column
+          field="invoiceAmount"
+          headerText="Invoice Amount"
+          width="130"
+          textAlign="Right"
+          format="N2">
+        </e-column>
+
+        <e-column
+          field="allocated"
+          headerText="Allocated"
+          width="120"
+          textAlign="Right"
+          format="N2">
+        </e-column>
+
+        <e-column
+          field="amount"
+          headerText="Amount"
+          width="120"
+          textAlign="Right"
+          format="N2">
+        </e-column>
+
+        <e-column
+          field="balance"
+          headerText="Balance"
+          width="120"
+          textAlign="Right"
+          format="N2">
+        </e-column>
+      </e-columns>
+    </ejs-grid>
+
+    <!-- Footer Totals -->
+    <div class="footer-totals">
+      <div class="total-row">
+        <span class="label">Invoice Amount:</span>
+        <span class="value">{{ formatCurrency(totalInvoiceAmount) }}</span>
+      </div>
+      <div class="total-row">
+        <span class="label">Pay Amount:</span>
+        <span class="value">{{ formatCurrency(totalPayAmount) }}</span>
+      </div>
+      <div class="total-row">
+        <span class="label">Allocated Amount:</span>
+        <span class="value">{{ formatCurrency(totalAllocatedAmount) }}</span>
+      </div>
+      <div class="total-row">
+        <span class="label">Balance Amount:</span>
+        <span class="value" [class.negative]="totalBalanceAmount < 0">
+          {{ formatCurrency(totalBalanceAmount) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="popup-footer">
+      <button class="btn btn-primary" (click)="onOkClick()">OK</button>
+      <button class="btn btn-secondary" (click)="onCancelClick()">Cancel</button>
+    </div>
+  </div>
+</div>

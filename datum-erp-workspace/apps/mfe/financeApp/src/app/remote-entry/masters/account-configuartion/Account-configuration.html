@@ -1,0 +1,65 @@
+<div class="page-layout">
+    <!-- Fixed Header -->
+    <div class="fixed-header">
+      <h2>account configuration</h2>
+    </div>
+  
+    <!-- Scrollable Grid Container -->
+    <div class="scrollable-grid-container">
+      <ejs-grid
+        #grid
+        id="transactionGrid"
+        [dataSource]="accountConfigurationData()"
+        [editSettings]="editSettings"
+        [allowKeyboard]="true"
+        [allowTextWrap]="true"
+        (actionComplete)="onActionComplete($event)"
+      >
+        <e-columns>
+          <e-column
+            field="keyword"
+            headerText="Keyword"
+            width="150"
+            [allowEditing]="true"
+          ></e-column>
+          
+          <e-column 
+            field="accountCode" 
+            headerText="Account Code" 
+            width="150"
+            [allowEditing]="true"
+          >
+            <ng-template #editTemplate let-data>
+              <ejs-multicolumncombobox
+                [dataSource]="accountPopup()"
+                [fields]="{ text: 'accountCode', value: 'accountCode' }"
+                [value]="data.accountCode || ''"
+                [allowFiltering]="true"
+                [showClearButton]="true"
+                placeholder="Select Account Code" 
+                popupWidth="900px"
+                (beforeOpen)="onAccountCodeComboOpen()"
+                (change)="onAccountCodeChange($event, data)"
+              >
+                <e-columns>
+                  <e-column field="accountCode" headerText="Account Code" width="150"></e-column>
+                  <e-column field="accountName" headerText="Account Name" width="250"></e-column>
+                  <e-column field="id" headerText="ID" width="100"></e-column>
+                </e-columns>
+              </ejs-multicolumncombobox>
+            </ng-template>
+          </e-column>
+          <e-column
+            field="accountName"
+            headerText="Account Name"
+            width="150"
+            [allowEditing]="true"
+          ></e-column>
+          
+        </e-columns>
+      </ejs-grid>
+    </div>
+  
+    <!-- Fixed Save Button at Bottom -->
+    
+  </div>

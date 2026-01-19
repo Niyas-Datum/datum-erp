@@ -1,0 +1,138 @@
+<div class="row mb-3">
+    <div class="col-md-12" style="text-align: left; margin-bottom: 15px;">
+        <button
+            type="button"
+            class="e-btn e-primary"
+            style="margin-right: 10px;"
+            [disabled]="!isInputDisabled"
+            (click)="onClickEditAccountList()">
+            <span class="e-btn-icon e-icons e-edit"></span>
+            Edit
+        </button>
+        <button
+            type="button"
+            class="e-btn e-info"
+            style="margin-right: 10px;"
+            [disabled]="isInputDisabled"
+            (click)="onAddRow()">
+            <span class="e-btn-icon e-icons e-plus"></span>
+            Add Row
+        </button>
+        <button
+            type="button"
+            class="e-btn e-success"
+            [disabled]="isInputDisabled"
+            (click)="onClickSaveAccountList()">
+            <span class="e-btn-icon e-icons e-check"></span>
+            Save
+        </button>
+    </div>
+</div>
+
+<div class="right-section">
+  
+    <form [formGroup]="accountListForm">
+        <!-- Edit and Save Buttons -->
+       
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-container">
+                    <div class="section-content">
+
+                        <div class="row mb-3">
+                            <label for="list" class="form-label col-md-2">List<span
+                                    class="required-asterisk">*</span></label>
+                            <div class="col-md-4">
+                            
+                                <ejs-dropdownlist
+                                id="list"
+                                formControlName="list"
+                                [dataSource]="listDropdown"
+                                [fields]="{ text: 'description', value: 'id' }"
+                                placeholder="--Select--"
+                                (change)="onChangeList($event)"
+                                cssClass="e-outline">
+                              </ejs-dropdownlist>
+                                <div *ngIf="accountListForm.get('list')?.hasError('required') && accountListForm.get('list')?.touched">
+                                    <small class="text-danger">This field is required.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                  
+
+                        <div class="row" style="padding: 0px 15px;">
+                            <!-- Syncfusion Grid for Accounts List -->
+                            <ejs-grid
+                                #accountGrid
+                                [dataSource]="accountListData"
+                                [allowPaging]="true"
+                                [pageSettings]="{ pageSize: 10 }"
+                                [allowSorting]="true"
+                                [editSettings]="editSettings"
+                                [allowKeyboard]="true"
+                                [allowTextWrap]="true"
+                                [gridLines]="'Both'"
+                                height="400"
+                                (actionComplete)="onGridActionComplete($event)"
+                            >
+                                <e-columns>
+                                    <e-column
+                                        field="alias"
+                                        headerText="Alias"
+                                        width="200"
+                                        [allowEditing]="!isInputDisabled"
+                                    >
+                                        <ng-template #editTemplate let-data>
+                                            <ejs-multicolumncombobox
+                                                [dataSource]="accountPopup"
+                                                [fields]="{ text: 'alias', value: 'alias' }"
+                                                [value]="data.alias || ''"
+                                                [allowFiltering]="true"
+                                                [showClearButton]="true"
+                                                placeholder="Select Account Alias"
+                                                popupWidth="900px"
+                                                (change)="onAccountAliasChange($event, data)"
+                                            >
+                                                <e-columns>
+                                                    <e-column field="alias" headerText="Alias" width="150"></e-column>
+                                                    <e-column field="name" headerText="Name" width="250"></e-column>
+                                                    <e-column field="id" headerText="ID" width="100"></e-column>
+                                                </e-columns>
+                                            </ejs-multicolumncombobox>
+                                        </ng-template>
+                                    </e-column>
+
+                                    <e-column
+                                        field="name"
+                                        headerText="Name"
+                                        width="250"
+                                        [allowEditing]="false"
+                                    ></e-column>
+
+                                    <e-column
+                                        headerText="Actions"
+                                        width="100"
+                                        [allowEditing]="false"
+                                        textAlign="Center"
+                                    >
+                                        <ng-template #template let-data>
+                                            <button
+                                                type="button"
+                                                class="e-btn e-danger e-small"
+                                                [disabled]="isInputDisabled"
+                                                (click)="deleteAccount(data.id)">
+                                                Delete
+                                            </button>
+                                        </ng-template>
+                                    </e-column>
+                                </e-columns>
+                            </ejs-grid>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

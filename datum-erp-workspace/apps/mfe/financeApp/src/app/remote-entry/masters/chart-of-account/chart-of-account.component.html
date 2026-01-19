@@ -1,0 +1,123 @@
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="section-container">
+            <div class="section-content">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                   
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'accountsList'"
+                            (click)="onTabClick('accountsList')"
+                            type="button">
+                            Accounts List
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'accountsortorder'"
+                            (click)="onTabClick('accountsortorder')"
+                            type="button">
+                            Account Sort Order
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'groupparentupdate'"
+                            (click)="onTabClick('groupparentupdate')"
+                            type="button">
+                            Group ParentUpdate
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'Branchaccounts'"
+                            (click)="onTabClick('Branchaccounts')"
+                            type="button">
+                            Branch Accounts
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Search Box and Controls -->
+                <div class="d-flex gap-2 align-items-center mb-3">
+                    <div style="width: 20%;">
+                        <ejs-maskedtextbox
+                            #maskObj
+                            id="search"
+                            placeholder="Search accounts..."
+                            (change)="searchNodes($event)"
+                            style="width: 100%;">
+                        </ejs-maskedtextbox>
+                    </div>
+                    <button ejs-button id="expandAll" (click)="expandAllNodes()">Expand All</button>
+                    <button ejs-button id="collapseAll" (click)="collapseAllNodes()">Collapse All</button>
+                </div>
+                
+                <!-- Tree View -->
+                <ejs-treeview 
+                    #treeviewObj
+                    id="chartOfAccountTree"
+                    [fields]="treeViewFields"
+                    [showCheckBox]="false"
+                    (nodeSelected)="onNodeSelected($event)"
+                    (nodeExpanded)="onNodeExpanded($event)"
+                    (nodeCollapsed)="onNodeCollapsed($event)"
+                    style="max-height: 500px; overflow-y: auto;">
+                </ejs-treeview>
+                <ejs-contextmenu
+  #contextMenu
+  target="#chartOfAccountTree"
+  [items]="menuItems"
+  (select)="onMenuSelect($event)">
+</ejs-contextmenu>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dynamic Dialog for Multiple Components -->
+<ejs-dialog
+    #accountDialog
+    [visible]="false"
+    [isModal]="true"
+    [showCloseIcon]="true"
+    width="75%"
+    height="60%"
+    [header]="dialogHeader()"
+    [buttons]="dialogButtons"
+    (open)="onDialogOpen()"
+    (close)="onDialogClose()">
+    
+    <!-- Load component ONLY when dialog is open - Show different components based on active tab -->
+    <ng-container *ngIf="showDialogContent()">
+        <!-- Accounts List -->
+        <ng-container *ngIf="activeTab() === 'accountsList'">
+            <app-accounts-list-Main></app-accounts-list-Main>
+        </ng-container>
+        
+        <!-- Update Sort Order -->
+        <ng-container *ngIf="activeTab() === 'accountsortorder'">
+            <app-account-sortorder-Main></app-account-sortorder-Main>
+        </ng-container>
+        
+        <!-- Branch Accounts -->
+        <ng-container *ngIf="activeTab() === 'Branchaccounts'">
+            <app-branch-accounts-Main></app-branch-accounts-Main>
+        </ng-container>
+        <!-- Group Parent Update -->
+        <ng-container *ngIf="activeTab() === 'groupparentupdate'">
+            <app-chart-of-account></app-chart-of-account>
+        </ng-container>
+        <!-- Chart of Accounts -->
+        <ng-container *ngIf="activeTab() === 'chartofaccounts'">
+            <app-chart-of-account></app-chart-of-account>
+        </ng-container>
+    </ng-container>
+</ejs-dialog>

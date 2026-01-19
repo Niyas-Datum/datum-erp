@@ -1,0 +1,73 @@
+<h2>card master</h2>
+<form [formGroup]="cardMasterForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="section-container">
+                <div class="section-content">
+                    <div class="row">
+                        <label for="description" class="form-label col-md-2">Description<span
+                                class="required-asterisk">*</span></label>
+                        <div class="col-md-4">
+                            <ejs-textbox 
+                                id="description"
+                                formControlName="description"
+                                placeholder="Enter description"
+                                cssClass="e-outline">
+                            </ejs-textbox>
+                            @if (cardMasterForm.get('description')?.hasError('required') && cardMasterForm.get('description')?.touched) {
+                                <small class="text-danger">This field is required.</small>
+                            }
+                        </div>                                    
+                    </div>
+                    <div class="row">
+                        <label for="accountname" class="form-label col-md-2">Account Name<span
+                            class="required-asterisk">*</span></label>
+                        <div class="col-md-4"> 
+                            <ejs-multicolumncombobox 
+                                #accountDropdown
+                                id="accountDropdown"
+                                [dataSource]="accountOptions"
+                                [fields]="{ text: 'name', value: 'id' }"
+                                [columns]="accountNameKeys"
+                                popupWidth="400px"
+                                formControlName="accountname"
+                                (change)="onAccountNameSelected($event)">
+                            </ejs-multicolumncombobox> 
+                            @if (cardMasterForm.get('accountname')?.hasError('required') && cardMasterForm.get('accountname')?.touched) {
+                                <small class="text-danger">This field is required.</small>
+                            }    
+                        </div>                                             
+                    </div>                           
+
+                    <div class="row">
+                        <label for="commission" class="form-label col-md-2">Commission<span
+                            class="required-asterisk">*</span></label>
+                        <div class="col-md-4">
+                            <ejs-textbox 
+                                id="commission"
+                                formControlName="commission"
+                                placeholder="Enter commission"
+                                cssClass="e-outline">
+                            </ejs-textbox>
+                            @if (cardMasterForm.get('commission')?.hasError('required') && cardMasterForm.get('commission')?.touched) {
+                                <small class="text-danger">This field is required.</small>
+                            }
+                        </div>                 
+                    </div>                                
+
+                    <div class="row">
+                        <label for="default" class="form-label col-md-2">Default</label>
+                        <div class="col-md-4">
+                            <ejs-checkbox 
+                                id="default"
+                                formControlName="default"
+                                label="Default"
+                                cssClass="e-outline">
+                            </ejs-checkbox>
+                        </div>                                  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>   

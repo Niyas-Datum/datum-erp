@@ -1,0 +1,195 @@
+<h2>Cheque Register</h2>
+
+<form [formGroup]="chequeRegisterForm">
+    <div class="row">
+        <div class="col-md-3" style="border: 1px solid #ccc; padding: 15px; border-radius: 4px;">
+            <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <button type="button" ejs-button [isPrimary]="false" (click)="onPrint()">Print</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onPreview()">Preview</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onExcel()">Excel</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onEmail()">Email</button>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <span class="form-label" style="margin-bottom: 10px; font-weight: 500; display: block;">Filter</span>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px;">
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <span class="form-label" style="margin-right: 10px;">Date Type:</span>
+                    <ejs-radiobutton 
+                      name="dateType"
+                      label="Cheque Date"
+                      value="chequeDate"
+                      [checked]="isChequeDateValue()"
+                      (change)="onChequeDateChange($event)">
+                    </ejs-radiobutton>
+                    <ejs-radiobutton 
+                      name="dateType"
+                      label="Voucher Date"
+                      value="voucherDate"
+                      [checked]="isVoucherDateValue()"
+                      (change)="onVoucherDateChange($event)">
+                    </ejs-radiobutton>
+                </div>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="from" class="form-label" style="margin-bottom: 0; min-width: 80px;">
+                    From
+                </label>
+                <ejs-datepicker 
+                    id="from" 
+                    formControlName="from" 
+                    format="dd-MM-yyyy" 
+                    placeholder="dd-mm-yyyy"
+                    [showClearButton]="false"
+                    style="flex: 1;">
+                </ejs-datepicker>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="to" class="form-label" style="margin-bottom: 0; min-width: 80px;">
+                    To
+                </label>
+                <ejs-datepicker 
+                    id="to" 
+                    formControlName="to" 
+                    format="dd-MM-yyyy" 
+                    placeholder="dd-mm-yyyy"
+                    [showClearButton]="false"
+                    style="flex: 1;">
+                </ejs-datepicker>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="bank" class="form-label" style="margin-bottom: 0; min-width: 80px;">Bank</label>
+                <ejs-textbox id="bank" formControlName="bank" placeholder="Enter Bank" style="flex: 1;"></ejs-textbox>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="chequeNo" class="form-label" style="margin-bottom: 0; min-width: 80px;">Cheque No.</label>
+                <ejs-textbox id="chequeNo" formControlName="chequeNo" placeholder="Enter Cheque No." style="flex: 1;"></ejs-textbox>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="type" class="form-label" style="margin-bottom: 0; min-width: 80px;">Type</label>
+                <ejs-dropdownlist 
+                    id="type" 
+                    formControlName="type" 
+                    [dataSource]="filltypeData()" 
+                    [fields]="{ text: 'name', value: 'id' }" 
+                    placeholder="Select Type"
+                    style="flex: 1;">
+                </ejs-dropdownlist>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="status" class="form-label" style="margin-bottom: 0; min-width: 80px;">Status</label>
+                <ejs-dropdownlist 
+                    id="status" 
+                    formControlName="status" 
+                    [dataSource]="fillstatusData()" 
+                    [fields]="{ text: 'name', value: 'id' }" 
+                    placeholder="All"
+                    [value]="statusDefaultValue"
+                    style="flex: 1;">
+                </ejs-dropdownlist>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="autoId" class="form-label" style="margin-bottom: 0; min-width: 80px;">AutoID</label>
+                <ejs-textbox id="autoId" formControlName="autoId" placeholder="Enter AutoID" style="flex: 1;"></ejs-textbox>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="statusOn" class="form-label" style="margin-bottom: 0; min-width: 80px;">Status on</label>
+                <ejs-datepicker 
+                    id="statusOn" 
+                    formControlName="statusOn" 
+                    format="dd-MM-yyyy" 
+                    placeholder="dd-mm-yyyy"
+                    [showClearButton]="false"
+                    style="flex: 1;">
+                </ejs-datepicker>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 10px; display: flex; gap: 10px;">
+                <button type="button" ejs-button [isPrimary]="true" (click)="onClickGo()">Go</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onSearchClick()">Clear</button>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <div *ngIf="isLoading()" style="padding: 20px; text-align: center;">
+                <p>Loading data... Please wait</p>
+            </div>
+            <div *ngIf="!isLoading() && chequeRegisterData().length > 0">
+                <p>Data loaded: {{ chequeRegisterData().length }} records</p>
+                <div class="scrollable-grid-container" style="width: 100%; overflow-x: auto;">
+                    <ejs-grid
+                      #grid
+                      id="chequeRegisterGrid"
+                      [dataSource]="chequeRegisterData()"
+                      [editSettings]="editSettings"
+                      [allowKeyboard]="true"
+                      [allowTextWrap]="true"
+                      [width]="'100%'"
+                      (actionComplete)="onActionComplete($event)"
+                    >
+                      <e-columns>
+                        <e-column
+                          field="ChequeNo"
+                          headerText="Cheque No"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="ChequeDate"
+                          headerText="Cheque Date"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Bank"
+                          headerText="Bank"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Amount"
+                          headerText="Amount"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Status"
+                          headerText="Status"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="Type"
+                          headerText="Type"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="AutoID"
+                          headerText="AutoID"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="StatusOn"
+                          headerText="Status On"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                      </e-columns>
+                    </ejs-grid>
+                  </div>
+            </div>
+        </div>
+    </div>
+</form>

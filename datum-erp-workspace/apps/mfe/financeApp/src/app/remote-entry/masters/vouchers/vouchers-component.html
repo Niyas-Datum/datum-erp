@@ -1,0 +1,280 @@
+
+<div class="page-layout">
+  <!-- Fixed Header with Action Buttons -->
+  <div class="fixed-header">
+    <h2>Vouchers Configuration</h2>
+    <div class="action-buttons">
+      <button
+        type="button"
+        class="e-btn e-primary"
+        style="margin-right: 10px;"
+        [disabled]="!isInputDisabled"
+        (click)="onClickEditAccountList()">
+        <span class="e-btn-icon e-icons e-edit"></span>
+        Edit
+      </button>
+      <button
+        type="button"
+        class="e-btn e-success"
+        [disabled]="isInputDisabled"
+        (click)="onClickSaveAccountList()">
+        <span class="e-btn-icon e-icons e-check"></span>
+        Save
+      </button>
+    </div>
+  </div>
+
+  <!-- Scrollable Grid Container -->
+  <div class="scrollable-grid-container">
+    <ejs-grid
+      #voucherGrid
+      id="voucherGrid"
+      [dataSource]="vouchersData"
+      [editSettings]="editSettings"
+      [allowKeyboard]="true"
+      [allowTextWrap]="true"
+      [allowPaging]="true"
+      [pageSettings]="{ pageSize: 20 }"
+      [allowSorting]="true"
+      [gridLines]="'Both'"
+      (actionComplete)="onGridActionComplete($event)"
+      (dataBound)="onDataBound($event)"
+    >
+      <e-columns>
+        <!-- 1. ID (Read-only) -->
+        <e-column
+          field="id"
+          headerText="ID"
+          width="80"
+          [allowEditing]="false"
+          textAlign="Right"
+        ></e-column>
+
+        <!-- 2. Alias (Read-only) -->
+        <e-column
+          field="alias"
+          headerText="Alias"
+          width="100"
+          [allowEditing]="false"
+        ></e-column>
+
+        <!-- 3. Name (Read-only) -->
+        <e-column
+          field="name"
+          headerText="Name"
+          width="180"
+          [allowEditing]="false"
+        ></e-column>
+
+        <!-- 4. Primary Voucher Name (Read-only) -->
+        <e-column
+          field="primaryVoucherName"
+          headerText="Primary Voucher"
+          width="150"
+          [allowEditing]="false"
+        ></e-column>
+
+        <!-- 5. Code (Read-only) -->
+        <e-column
+          field="code"
+          headerText="Code"
+          width="100"
+          [allowEditing]="false"
+        ></e-column>
+
+        <!-- 6. Document Type Name (Read-only) -->
+        <e-column
+          field="documentTypeName"
+          headerText="Document Type"
+          width="120"
+          [allowEditing]="false"
+        ></e-column>
+
+        <!-- 7. Row Type (Read-only) -->
+        <e-column
+          field="rowType"
+          headerText="Row Type"
+          width="120"
+          [allowEditing]="false"
+        ></e-column>
+
+        <!-- 8. Numbering (Editable) -->
+        <e-column
+          field="numbering"
+          headerText="Numbering"
+          width="120"
+          [allowEditing]="false"
+          textAlign="Right"
+          type="number"
+        >
+          <ng-template #template let-data>
+            <ejs-textbox
+              *ngIf="!isInputDisabled"
+              [value]="data.numbering || ''"
+              placeholder="Enter numbering"
+              (change)="onNumberingChange($event, data)"
+              (blur)="onNumberingChange($event, data)"
+            ></ejs-textbox>
+            <span *ngIf="isInputDisabled">{{ data.numbering || 0 }}</span>
+          </ng-template>
+        </e-column>
+
+        <!-- 9. Approval Days (Editable) -->
+        <e-column
+          field="approvalDays"
+          headerText="Approval Days"
+          width="130"
+          [allowEditing]="false"
+          textAlign="Right"
+          type="number"
+        >
+          <ng-template #template let-data>
+            <ejs-textbox
+              *ngIf="!isInputDisabled"
+              [value]="data.approvalDays || ''"
+              placeholder="Enter approval days"
+              (change)="onApprovalDaysChange($event, data)"
+              (blur)="onApprovalDaysChange($event, data)"
+            ></ejs-textbox>
+            <span *ngIf="isInputDisabled">{{ data.approvalDays || 0 }}</span>
+          </ng-template>
+        </e-column>
+
+        <!-- 10. Workflow Days (Editable) -->
+        <e-column
+          field="workflowDays"
+          headerText="Workflow Days"
+          width="130"
+          [allowEditing]="false"
+          textAlign="Right"
+          type="number"
+        >
+          <ng-template #template let-data>
+            <ejs-textbox
+              *ngIf="!isInputDisabled"
+              [value]="data.workflowDays || ''"
+              placeholder="Enter workflow days"
+              (change)="onWorkflowDaysChange($event, data)"
+              (blur)="onWorkflowDaysChange($event, data)"
+            ></ejs-textbox>
+            <span *ngIf="isInputDisabled">{{ data.workflowDays || 0 }}</span>
+          </ng-template>
+        </e-column>
+
+        <!-- 11. Active (Checkbox - Editable) -->
+        <e-column
+          field="active"
+          headerText="Active"
+          width="100"
+          [allowEditing]="!isInputDisabled"
+          textAlign="Center"
+        >
+          <ng-template #template let-data>
+            <ejs-checkbox
+              [checked]="data.active"
+              [disabled]="isInputDisabled"
+              (change)="onActiveChange($event, data)"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #editTemplate let-data>
+            <ejs-checkbox
+              [checked]="data.active"
+              (change)="onActiveChange($event, data)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+        <!-- 12. Approval Required (Checkbox - Editable) -->
+        <e-column
+          field="approvalRequired"
+          headerText="Approval Required"
+          width="150"
+          [allowEditing]="!isInputDisabled"
+          textAlign="Center"
+        >
+          <ng-template #template let-data>
+            <ejs-checkbox
+              [checked]="data.approvalRequired"
+              [disabled]="isInputDisabled"
+              (change)="onApprovalRequiredChange($event, data)"
+            ></ejs-checkbox>
+          </ng-template>
+          <ng-template #editTemplate let-data>
+            <ejs-checkbox
+              [checked]="data.approvalRequired"
+              (change)="onApprovalRequiredChange($event, data)"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+        <!-- 13. Inventory Update (Checkbox - Read-only display) -->
+        <e-column
+          field="inventoryUpdate"
+          headerText="Inventory Update"
+          width="140"
+          [allowEditing]="false"
+          textAlign="Center"
+        >
+          <ng-template #template let-data>
+            <ejs-checkbox
+              [checked]="data.inventoryUpdate"
+              [disabled]="true"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+        <!-- 14. Finance Update (Checkbox - Read-only display) -->
+        <e-column
+          field="financeUpdate"
+          headerText="Finance Update"
+          width="130"
+          [allowEditing]="false"
+          textAlign="Center"
+        >
+          <ng-template #template let-data>
+            <ejs-checkbox
+              [checked]="data.financeUpdate"
+              [disabled]="true"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+        <!-- 15. Rate Update (Checkbox - Read-only display) -->
+        <e-column
+          field="rateUpdate"
+          headerText="Rate Update"
+          width="120"
+          [allowEditing]="false"
+          textAlign="Center"
+        >
+          <ng-template #template let-data>
+            <ejs-checkbox
+              [checked]="data.rateUpdate"
+              [disabled]="true"
+            ></ejs-checkbox>
+          </ng-template>
+        </e-column>
+
+        <!-- 16. Report Path (Editable) -->
+        <e-column
+          field="reportPath"
+          headerText="Report Path"
+          width="300"
+          [allowEditing]="false"
+        >
+          <ng-template #template let-data>
+            <ejs-textbox
+              *ngIf="!isInputDisabled"
+              [value]="data.reportPath || ''"
+              placeholder="Enter report path"
+              (change)="onReportPathChange($event, data)"
+              (blur)="onReportPathChange($event, data)"
+            ></ejs-textbox>
+            <span *ngIf="isInputDisabled">{{ data.reportPath || '' }}</span>
+          </ng-template>
+        </e-column>
+      </e-columns>
+    </ejs-grid>
+  </div>
+</div>
+

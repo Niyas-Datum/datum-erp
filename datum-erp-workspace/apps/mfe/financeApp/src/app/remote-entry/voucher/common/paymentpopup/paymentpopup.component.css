@@ -1,0 +1,190 @@
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 1000px;
+  border-radius: 8px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.popup-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 800px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.popup-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.footer-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-total-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.footer-total-value {
+  font-weight: 700;
+  min-width: 120px;
+  text-align: right;
+}
+
+/* ===== GRID CONTAINER ===== */
+.e-grid {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  background-color: #fff;
+  overflow: hidden;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ===== HEADER ===== */
+.e-grid .e-headercell {
+  background-color: #3c5f92 !important;
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 13px;
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.e-grid .e-headercell .e-headertext {
+  white-space: nowrap;
+}
+
+.e-grid .e-headercontent {
+  border-bottom: 2px solid #3c5f92;
+}
+
+/* ===== ROWS ===== */
+.e-grid .e-row {
+  font-size: 13px;
+  color: #333;
+  background-color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.e-grid .e-row:hover {
+  background-color: #f8f9fa !important;
+}
+
+.e-grid .e-altrow {
+  background-color: #fcfcfc !important;
+}
+
+/* ===== SELECTION ===== */
+.e-grid .e-rowcell.e-selectionbackground {
+  background-color: rgba(0,123,255,0.15) !important;
+  color: #000 !important;
+}
+
+/* ===== GRID LINES ===== */
+.e-grid .e-rowcell {
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* ===== PAGER ===== */
+.e-grid .e-pager {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.e-grid .e-pager .e-numericitem.e-currentpage {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* ===== FILTERS / DROPDOWNS ===== */
+.e-grid .e-filterbarcell input {
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  font-size: 12px;
+  padding: 4px 6px;
+}
+
+/* Component-specific overrides using :host */
+:host {
+  z-index: 0 !important;
+  position: relative !important;
+}
+
+:host .e-grid,
+:host .e-grid-container,
+:host #transactionGrid {
+  z-index: 0 !important;
+  position: relative !important;
+}
+
+:host ::ng-deep .e-dialog,
+:host ::ng-deep .e-dlg-modal,
+:host ::ng-deep .e-popup-open.e-dialog {
+  z-index: 2000 !important;
+}

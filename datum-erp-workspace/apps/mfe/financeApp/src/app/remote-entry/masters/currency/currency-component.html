@@ -1,0 +1,217 @@
+<form [formGroup]="currencyMasterForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="section-container">
+                <div class="section-content">
+
+                    <!-- Currency Name -->
+                    <div class="row">
+                        <label for="currencyname" class="form-label col-md-2">
+                            Currency Name<span class="required-asterisk">*</span>
+                        </label>
+                        <div class="col-md-4">
+                            <ejs-textbox
+                                id="currencyname"
+                                formControlName="currencyname"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                            <div *ngIf="currencyMasterForm.get('currencyname')?.hasError('required') && currencyMasterForm.get('currencyname')?.touched">
+                                <small class="text-danger">This field is required.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Currency Rate -->
+                    <div class="row">
+                        <label for="currencyrate" class="form-label col-md-2">
+                            Currency Rate<span class="required-asterisk">*</span>
+                        </label>
+                        <div class="col-md-4">
+                            <ejs-textbox
+                                id="currencyrate"
+                                formControlName="currencyrate"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                            <div *ngIf="currencyMasterForm.get('currencyrate')?.hasError('required') && currencyMasterForm.get('currencyrate')?.touched">
+                                <small class="text-danger">This field is required.</small>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Currency Code Dropdown -->
+                    <div class="row">
+                        <label for="currencycode" class="form-label col-md-2">
+                            Currency Code<span class="required-asterisk">*</span>
+                        </label>
+                        <div class="col-md-4">
+                            <ejs-dropdownlist
+                                id="currencycode"
+                                formControlName="currencycode"
+                                [dataSource]="allcurrencycodes"
+                                [fields]="{ text: 'name', value: 'code' }"
+                                floatLabelType="Auto">
+                            </ejs-dropdownlist>
+                            <div *ngIf="currencyMasterForm.get('currencycode')?.hasError('required') && currencyMasterForm.get('currencycode')?.touched">
+                                <small class="text-danger">This field is required.</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary"  (click)="togglePopup()">Add Code</button>
+                        </div>
+                    </div>
+
+                    <!-- Symbol -->
+                    <div class="row">
+                        <label for="symbol" class="form-label col-md-2">Symbol</label>
+                        <div class="col-md-4">
+                            <ejs-textbox
+                                id="symbol"
+                                formControlName="symbol"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                        </div>
+                    </div>
+
+                    <!-- Coin -->
+                    <div class="row">
+                        <label for="coin" class="form-label col-md-2">Coin</label>
+                        <div class="col-md-4">
+                            <ejs-textbox
+                                id="coin"
+                                formControlName="coin"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                        </div>
+                    </div>
+
+                    <!-- Is Default Checkbox -->
+                    <div class="row">
+                        <label for="isdefault" class="form-label col-md-2">Is Default</label>
+                        <div class="col-md-4">
+                            <ejs-checkbox
+                                label="Is Default"
+                                labelPosition="After"
+                                formControlName="isdefault">
+                            </ejs-checkbox>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+     <h2>Currency Code</h2><hr>
+<ejs-grid
+  [dataSource]="allcurrencycodes"
+  [allowPaging]="true"
+  [pageSettings]="{ pageSize: 10 }"
+  (rowSelected)="onRowSelectCode($event)"
+  height="400px"
+  width="100%">
+
+  <e-columns>
+    <e-column
+      field="code"
+      headerText="Code"
+      [width]="120"
+      [textAlign]="'Left'">
+      <ng-template #template let-data>
+        {{ data?.code }}
+      </ng-template>
+    </e-column>
+
+    <e-column
+      field="name"
+      headerText="Name"
+      [width]="150"
+      [textAlign]="'Left'">
+      <ng-template #template let-data>
+        {{ data?.name }}
+      </ng-template>
+    </e-column>
+
+    <e-column
+      headerText="Actions"
+      [width]="180"
+      [textAlign]="'Center'">
+      <ng-template #template let-data>
+        <button class="btn"  (click)="editCurrencyCode(data.id)">Edit</button>
+        <button class="btn"  (click)="deleteCurrencyCode(data.id)">Delete</button>
+      </ng-template>
+    </e-column>
+  </e-columns>
+
+</ejs-grid>
+
+
+<!-- popup section -->
+<div class="popup-container" *ngIf="showCurrencyCodePopup">
+  <div class="popup-content">
+    <button (click)="togglePopup()" class="close-button">&times;</button>
+
+    <form [formGroup]="currencyCodeForm">
+      <div class="row">
+        <h3>Add Currency Code</h3>
+        <hr />
+      </div>
+
+      <!-- Code Input -->
+      <div class="row">
+        <label for="code" class="form-label col-md-2">
+          Code<span class="required-asterisk">*</span>
+        </label>
+        <div class="col-md-10">
+          <ejs-textbox
+            id="code"
+            formControlName="code"
+            floatLabelType="Auto"
+            placeholder="Enter code"
+            [cssClass]="'e-outline'">
+          </ejs-textbox>
+
+          <div *ngIf="currencyCodeForm.get('code')?.invalid && (currencyCodeForm.get('code')?.dirty || currencyCodeForm.get('code')?.touched)">
+            <small class="text-danger" *ngIf="currencyCodeForm.get('code')?.errors?.['required']">Code is required.</small>
+            <small class="text-danger" *ngIf="currencyCodeForm.get('code')?.errors?.['minlength']">Code must be exactly 3 characters long.</small>
+            <small class="text-danger" *ngIf="currencyCodeForm.get('code')?.errors?.['maxlength']">Code must be exactly 3 characters long.</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name Input -->
+      <div class="row">
+        <label for="name" class="form-label col-md-2">
+          Name<span class="required-asterisk">*</span>
+        </label>
+        <div class="col-md-10">
+          <ejs-textbox
+            id="name"
+            formControlName="name"
+            floatLabelType="Auto"
+            placeholder="Enter name"
+            [cssClass]="'e-outline'">
+          </ejs-textbox>
+
+          <div *ngIf="currencyCodeForm.get('name')?.hasError('required') && (currencyCodeForm.get('name')?.touched || currencyCodeForm.get('name')?.dirty)">
+            <small class="text-danger">This field is required.</small>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Save Button -->
+    <div class="row mt-3">
+      <div class="col-md-12 text-end">
+        <button (click)="saveCurrencyCode()" [disabled]="currencyCodeForm.invalid">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+

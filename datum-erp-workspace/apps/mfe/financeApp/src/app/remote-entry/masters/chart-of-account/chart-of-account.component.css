@@ -1,0 +1,44 @@
+
+    /* Folder icon for groups - using Material Icons */
+    .e-treeview .e-list-item .e-list-icon.tree-folder-icon,
+    .e-treeview .e-list-icon.tree-folder-icon {
+        font-family: 'Material Icons' !important;
+        font-size: 18px !important;
+        color: #ffa500 !important;
+        display: inline-block !important;
+        width: 18px !important;
+        height: 18px !important;
+        line-height: 18px !important;
+        vertical-align: middle !important;
+    }
+    .e-treeview .e-list-item .e-list-icon.tree-folder-icon::before,
+    .e-treeview .e-list-icon.tree-folder-icon::before {
+        content: 'folder' !important;
+        font-family: 'Material Icons' !important;
+        display: inline-block !important;
+    }
+    
+    /* File icon for items - using Material Icons */
+    .e-treeview .e-list-item .e-list-icon.tree-file-icon,
+    .e-treeview .e-list-icon.tree-file-icon {
+        font-family: 'Material Icons' !important;
+        font-size: 18px !important;
+        color: #2196F3 !important;
+        display: inline-block !important;
+        width: 18px !important;
+        height: 18px !important;
+        line-height: 18px !important;
+        vertical-align: middle !important;
+    }
+    .e-treeview .e-list-item .e-list-icon.tree-file-icon::before,
+    .e-treeview .e-list-icon.tree-file-icon::before {
+        content: 'description' !important;
+        font-family: 'Material Icons' !important;
+        display: inline-block !important;
+    }
+    
+    /* Ensure icon is visible */
+    .e-treeview .e-list-item .e-list-icon {
+        display: inline-block !important;
+        margin-right: 8px !important;
+    }

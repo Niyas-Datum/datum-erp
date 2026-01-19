@@ -1,0 +1,158 @@
+<h2>Cheque Register</h2>
+
+<form [formGroup]="customerForm">
+    <div class="row">
+        <div class="col-md-3" style="border: 1px solid #ccc; padding: 15px; border-radius: 4px;">
+            <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+                <button type="button" ejs-button [isPrimary]="false" (click)="onPrint()">Print</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onPreview()">Preview</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onExcel()">Excel</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onEmail()">Email</button>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <span class="form-label" style="margin-bottom: 10px; font-weight: 500; display: block;">Filter</span>
+            </div>
+            
+          
+            
+           
+            
+           
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="Account" class="form-label" style="margin-bottom: 0; min-width: 80px;">Account</label>
+                <ejs-multicolumncombobox
+                    #accountCombo
+                    id="Account"
+                    formControlName="Account"
+                    [dataSource]="fillaccountpopupData()"
+                    [fields]="{ text: 'accountName', value: 'accountID' }"
+                    [allowFiltering]="true"
+                    [showClearButton]="true"
+                    filterType="Contains"
+                    placeholder="Search by Account Code or Name..."
+                    popupWidth="900px"
+                    (change)="onAccountChange($event)"
+                    style="flex: 1;">
+                    <e-columns>
+                        <e-column field="accountCode" headerText="Account Code" width="150"></e-column>
+                        <e-column field="accountName" headerText="Account Name" width="250"></e-column>
+                        <e-column field="accountID" headerText="Account ID" width="100"></e-column>
+                    </e-columns>
+                </ejs-multicolumncombobox>
+            </div>
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="category" class="form-label" style="margin-bottom: 0; min-width: 80px;">Category</label>
+                <ejs-dropdownlist 
+                    id="category" 
+                    formControlName="category" 
+                    [dataSource]="fillcategoryData()" 
+                    [fields]="{ text: 'name', value: 'id' }" 
+                    placeholder="Select Category"
+                    style="flex: 1;">
+                </ejs-dropdownlist>
+            </div>
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="address" class="form-label" style="margin-bottom: 0; min-width: 80px;">Address</label>
+                <ejs-textbox id="address" formControlName="address" placeholder="Enter Address" style="flex: 1;"></ejs-textbox>
+            </div>
+            
+           
+            
+           
+            
+            <div class="raw" style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <label for="city" class="form-label" style="margin-bottom: 0; min-width: 80px;">City</label>
+                <ejs-textbox id="city" formControlName="city" placeholder="Enter City" style="flex: 1;"></ejs-textbox>
+            </div>
+            
+           
+            
+            <div class="raw" style="margin-bottom: 10px; display: flex; gap: 10px;">
+                <button type="button" ejs-button [isPrimary]="true" (click)="onClickGo()">Search</button>
+                <button type="button" ejs-button [isPrimary]="false" (click)="onSearchClick()">Clear</button>
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            <div *ngIf="isLoading()" style="padding: 20px; text-align: center;">
+                <p>Loading data... Please wait</p>
+            </div>
+           
+            
+                <div class="scrollable-grid-container" style="width: 100%; overflow-x: auto;">
+                    <ejs-grid
+                      #grid
+                      id="customerGrid"
+                      [dataSource]="customerData()"
+                      [editSettings]="editSettings"
+                      [allowKeyboard]="true"
+                      [allowTextWrap]="true"
+                      [width]="'100%'"
+                      (actionComplete)="onActionComplete($event)"
+                    >
+                      <e-columns>
+                        <e-column
+                          field="accountcode"
+                          headerText="Account Code"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="accountname"
+                          headerText="Account Name"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="contactperson"
+                          headerText="Contact Person"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="address"
+                          headerText="Address"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="mobileno"
+                          headerText="Mobile No"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="faxno"
+                          headerText="Fax No"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="telephoneno"
+                          headerText="Telephone No"
+                          width="120"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                          field="emailaddress"
+                          headerText="Email Address"
+                          width="150"
+                          [allowEditing]="false"
+                        ></e-column>
+                        <e-column
+                        field="country"
+                        headerText="Country"
+                        width="150"
+                        [allowEditing]="false"
+                      ></e-column>
+                      </e-columns>
+                    </ejs-grid>
+                  </div>
+           
+                </div>
+        
+    </div>
+</form>

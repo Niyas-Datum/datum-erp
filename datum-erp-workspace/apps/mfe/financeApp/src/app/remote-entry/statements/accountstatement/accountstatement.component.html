@@ -1,0 +1,126 @@
+<form [formGroup]="accountStatementForm">
+    <div class="container-fluid">
+        <div class="row" style="height:100vh">
+
+            <!-- ================= LEFT FILTER PANEL ================= -->
+            <div class="col-md-3 border p-3" style="background:#f7f7f7; overflow-y:auto;">
+
+                <!-- Action Buttons -->
+                <div class="mb-3 d-flex gap-2">
+                    <button type="button" ejs-button (click)="onPrint()">Print</button>
+                    <button type="button" ejs-button (click)="onPreview()">Preview</button>
+                    <button type="button" ejs-button (click)="onExcel()">Excel</button>
+                    <button type="button" ejs-button (click)="onEmail()">Email</button>
+                </div>
+
+                <h5 class="mb-3">Filter</h5>
+
+                <!-- From -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">From</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="from" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+                <!-- To -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">To</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="to" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+                <!-- Account -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Account</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox formControlName="account" [dataSource]="allAccounts"
+                            [fields]="accountFields" [columns]="accountColumns" popupHeight="300px">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Branch -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Branch</div>
+                    <div class="col-8">
+                        <ejs-dropdownlist formControlName="branch" [dataSource]="branchData" [fields]="branchFields"
+                            placeholder="Select Branch">
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+
+                <!-- User -->
+                <div class="row mb-3 align-items-center">
+                    <div class="col-4">User</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox formControlName="user" [dataSource]="users" [fields]="userFields"
+                            [columns]="userColumns" popupHeight="300px" popupWidth="700px">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Go / Clear -->
+                <div class="d-flex gap-2 mb-3">
+                    <button type="button" ejs-button cssClass="e-primary" (click)="onClickGo()">Go</button>
+                    <button type="button" ejs-button (click)="onClear()">Clear</button>
+                </div>
+
+                <!-- Toggle -->
+                <div class="d-flex gap-2 mb-2">
+                    <button type="button" ejs-button [cssClass]="isSummary ? 'e-primary' : 'e-flat'"
+                        (click)="showSummary()">Summary</button>
+
+                    <button type="button" ejs-button [cssClass]="!isSummary ? 'e-primary' : 'e-flat'"
+                        (click)="showDetailed()">Detailed</button>
+                </div>
+
+                <!-- Summary Grid -->
+                <ejs-grid *ngIf="isSummary" height="220" [dataSource]="summaryGridData" gridLines="Both">
+
+                    <e-columns>
+                        <e-column field="head" headerText="Head" width="180"></e-column>
+                        <e-column field="value" headerText="Value" width="120" textAlign="Right"></e-column>
+                    </e-columns>
+
+                </ejs-grid>
+
+
+
+                <!-- Detailed Grid -->
+                <ejs-grid *ngIf="!isSummary" [dataSource]="detailedGridData" gridLines="Both">
+                    <e-columns>
+                        <e-column field="head" headerText="Head"></e-column>
+                        <e-column field="debit" headerText="Debit" textAlign="Right" format="N2"></e-column>
+                        <e-column field="credit" headerText="Credit" textAlign="Right" format="N2"></e-column>
+                    </e-columns>
+                </ejs-grid>
+
+
+
+
+            </div>
+
+            <!-- ================= RIGHT DATA GRID ================= -->
+            <div class="col-md-9 p-0">
+
+                <ejs-grid height="100%" gridLines="Both" allowResizing="true" [dataSource]="reportData">
+                    <e-columns>
+                        <e-column field="vDate" headerText="VDate" width="110"></e-column>
+                        <e-column field="vNo" headerText="VNo" width="140"></e-column>
+                        <e-column field="commonNarration" headerText="Common Narration" width="200"></e-column>
+                        <e-column field="narration" headerText="Narration" width="250"></e-column>
+                        <e-column field="particulars" headerText="Particulars" width="180"></e-column>
+                        <e-column field="debit" headerText="Debit" width="120" textAlign="Right"></e-column>
+                        <e-column field="credit" headerText="Credit" width="120" textAlign="Right"></e-column>
+                        <e-column field="rBalance" headerText="RBalance" width="130" textAlign="Right"></e-column>
+                    </e-columns>
+
+                </ejs-grid>
+
+            </div>
+
+        </div>
+    </div>
+</form>

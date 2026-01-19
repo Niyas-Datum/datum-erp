@@ -1,0 +1,43 @@
+/* Payment Voucher Component Styles */
+
+/* Voucher number fields */
+.col-md-4 .e-input-group,
+.col-md-4 .e-textbox {
+  width: 100%;
+}
+
+.section-title {
+  background-color: #17a2b8;
+  color: white;
+  padding: 8px 12px;
+  margin-bottom: 0;
+  font-weight: 600;
+  border-radius: 4px 4px 0 0;
+}
+
+.row {
+  margin-bottom: 15px;
+}
+
+.required-asterisk {
+  color: red;
+  margin-left: 2px;
+}
+
+/* Grid styling */
+.e-grid .e-headercell {
+  background-color: #17a2b8 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.e-grid .e-rowcell {
+  padding: 5px;
+}
+
+/* Material icons alignment */
+.material-icons {
+  vertical-align: middle;
+  margin-right: 5px;
+  font-size: 18px;
+}

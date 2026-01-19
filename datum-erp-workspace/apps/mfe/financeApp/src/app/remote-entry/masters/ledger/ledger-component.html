@@ -1,0 +1,211 @@
+<h1>Ledger</h1>
+<div class="row">
+    <div class="col-md-12">
+        <div class="section-container">
+            <div class="section-content">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                  
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'accountsList'"
+                            (click)="onTabClick('accountsList')"
+                            type="button">
+                            Accounts List
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'updateSortorder'"
+                            (click)="onTabClick('updateSortorder')"
+                            type="button">
+                            Update Sort Order
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'groupparentupdate'"
+                            (click)="onTabClick('groupparentupdate')"
+                            type="button">
+                            Group ParentUpdate
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button 
+                            class="nav-link" 
+                            [class.active]="activeTab() === 'Branchaccounts'"
+                            (click)="onTabClick('Branchaccounts')"
+                            type="button">
+                            Branch Accounts
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Ledger Form -->
+                <form [formGroup]="ledgerForm" class="mt-3">
+                    <!-- First Row: Group, Sub Group, and Active Checkbox -->
+                    <div class="row mb-3">
+                        <label for="Group" class="form-label col-md-2">Group</label>
+                        <div class="col-md-3">
+                            <ejs-dropdownlist
+                                id="Group"
+                                formControlName="Group"
+                                [dataSource]="groupdata()"
+                                [fields]="{ text: 'name', value: 'id' }"
+                                [enabled]="false"
+                                (change)="onGroupChange($event)"
+                                floatLabelType="Auto">
+                            </ejs-dropdownlist>
+                        </div>
+                        <label for="SubGroup" class="form-label col-md-2">Sub Group</label>
+                        <div class="col-md-3">
+                            <ejs-dropdownlist
+                                id="SubGroup"
+                                formControlName="SubGroup"
+                                [dataSource]="subGroupData()"
+                                [fields]="{ text: 'description', value: 'id' }"
+                                [enabled]="isSubGroupEnabled()"
+                                (change)="onSubGroupChange($event)"
+                                floatLabelType="Auto">
+                            </ejs-dropdownlist>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <ejs-checkbox
+                                label="Active"
+                                labelPosition="After"
+                                formControlName="active">
+                            </ejs-checkbox>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Code -->
+                    <div class="row mb-3">
+                        <label for="AccountCode" class="form-label col-md-2">Account Code</label>
+                        <div class="col-md-4">
+                            <ejs-textbox
+                                id="AccountCode"
+                                formControlName="AccountCode"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Name -->
+                    <div class="row mb-3">
+                        <label for="AccountName" class="form-label col-md-2">
+                            Account Name<span class="required-asterisk">*</span>
+                        </label>
+                        <div class="col-md-4">
+                            <ejs-textbox
+                                id="AccountName"
+                                formControlName="AccountName"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                            <div *ngIf="ledgerForm.get('AccountName')?.hasError('required') && ledgerForm.get('AccountName')?.touched">
+                                <small class="text-danger">This field is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alternate Name -->
+                    <div class="row mb-3">
+                        <label for="AlternateName" class="form-label col-md-2">Alternate Name</label>
+                        <div class="col-md-4">
+                            <ejs-textbox
+                                id="AlternateName"
+                                formControlName="AlternateName"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Category -->
+                    <div class="row mb-3">
+                        <label for="AccountCategory" class="form-label col-md-2">Account Category</label>
+                        <div class="col-md-4">
+                            <ejs-dropdownlist
+                                id="AccountCategory"
+                                formControlName="AccountCategory"
+                                [dataSource]="accountCategoryData()"
+                                (change)="onAccountCategoryChange($event)"
+                                [fields]="{ text: 'description', value: 'id' }"
+                                floatLabelType="Auto">
+                            </ejs-dropdownlist>
+                        </div>
+                    </div>
+                    
+                    <!-- Checkboxes in Two Columns -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <ejs-checkbox
+                                    label="Is Group"
+                                    labelPosition="After"
+                                    formControlName="isGroup">
+                                </ejs-checkbox>
+                            </div>
+                            <div class="mb-2">
+                                <ejs-checkbox
+                                    label="Prevent Extra Pay"
+                                    labelPosition="After"
+                                    formControlName="PreventExtraPay">
+                                </ejs-checkbox>
+                            </div>
+                            <div class="mb-2">
+                                <ejs-checkbox
+                                    label="Maintain Cost Center"
+                                    labelPosition="After"
+                                    formControlName="Maintaincostcenter">
+                                </ejs-checkbox>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <ejs-checkbox
+                                    label="Maintain Bill wise"
+                                    labelPosition="After"
+                                    formControlName="MaintainBillWise">
+                                </ejs-checkbox>
+                            </div>
+                            <div class="mb-2">
+                                <ejs-checkbox
+                                    label="Track Collection"
+                                    labelPosition="After"
+                                    formControlName="Trackcollection">
+                                </ejs-checkbox>
+                            </div>
+                            <div class="mb-2">
+                                <ejs-checkbox
+                                    label="Maintain Item wise"
+                                    labelPosition="After"
+                                    formControlName="maintainitemwise">
+                                </ejs-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Narration -->
+                    <div class="row mb-3">
+                        <label for="narration" class="form-label col-md-2">Narration</label>
+                        <div class="col-md-10">
+                            <ejs-textbox
+                                id="narration"
+                                formControlName="narration"
+                                multiline="true"
+                                rows="3"
+                                floatLabelType="Auto"
+                                cssClass="e-input">
+                            </ejs-textbox>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

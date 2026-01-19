@@ -1,0 +1,153 @@
+<form [formGroup]="billwiseForm">
+    <div class="container-fluid">
+        <div class="row" style="height:100vh">
+            <div class="col-md-3 border p-3" style="background:#f7f7f7; overflow-y:auto;">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary">Print</button>
+                    <button class="btn btn-sm btn-outline-primary">Excel</button>
+                    <button class="btn btn-sm btn-outline-primary">Preview</button>
+                </div>
+                <h5 class="mb-3">Filter</h5>
+
+                <!-- effective date and voucher date -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-8 d-flex">
+                        <div class="col-6"><ejs-radiobutton label="Effective Date" name="dateType" value="effectivedate"
+                                formControlName="dateType">
+                            </ejs-radiobutton></div>
+
+                        <div class="col-6"><ejs-radiobutton label="Voucher Date" name="dateType" value="voucherdate"
+                                class="ms-3" formControlName="dateType">
+                            </ejs-radiobutton></div>
+                    </div>
+                </div>
+
+                <!-- From -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">From</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="from" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+                <!--To-->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">To</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="to" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+                <!-- Days -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4"></div>
+                    <div class="col-4">From</div>
+                    <div class="col-4">To</div>
+                    <div class="col-4">Days</div>
+                    <div class="col-4">
+                        <ejs-textbox formControlName="daysFrom" format="n0" min="0">
+                        </ejs-textbox>
+                    </div>
+                    <div class="col-4">
+                        <ejs-textbox formControlName="daysUpto" format="n0" min="0">
+                        </ejs-textbox>
+                    </div>
+                </div>
+
+                <!-- Account -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Account</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox formControlName="account" [dataSource]="allAccounts"
+                            [fields]="accountFields" [columns]="accountColumns" popupHeight="300px">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Bill Type -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Bill Type</div>
+                    <div class="col-8">
+                        <ejs-dropdownlist formControlName="billType" [dataSource]="billTypes"
+                            [fields]="{ text: 'name', value: 'id' }" placeholder="All">
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+
+                <!-- Account Group -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Acc. Group</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox formControlName="accountGroup" [dataSource]="accountGroups"
+                            [fields]="accGroupFields" [columns]="accGroupColumns" popupHeight="300px">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Account Category -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Acc. Category</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox formControlName="accountCategory" [dataSource]="accountCategories"
+                            [fields]="accCategoryFields" [columns]="accCategoryColumns" popupHeight="250px">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <ejs-checkbox label="Detailed" formControlName="detailed"></ejs-checkbox>
+                    </div>
+
+                    <div class="col-6">
+                        <ejs-checkbox label="Pending Bills" formControlName="pendingbills"></ejs-checkbox>
+                    </div>
+                </div>
+
+                <!-- Branch -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Branch</div>
+                    <div class="col-8">
+                        <ejs-dropdownlist formControlName="branch" [dataSource]="branchData" [fields]="branchFields">
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+
+                <!-- Go and Clear -->
+                <div class="d-flex gap-2 mb-3">
+                    <button type="button" ejs-button cssClass="e-primary" (click)="onClickGo()">Go</button>
+                    <button type="button" ejs-button (click)="onClear()">Clear</button>
+                </div>
+
+            </div>
+            <!-- grid data -->
+            <div class="col-md-9 p-0">
+
+                <ejs-grid height="100%" gridLines="Both" allowResizing="true" [dataSource]="reportData">
+                    <e-columns>
+                        <e-column field="VDate" headerText="VDate" width="110"></e-column>
+                        <e-column field="VNo" headerText="VNo" width="140"></e-column>
+                        <e-column field="effDate" headerText="EffDate" width="180"></e-column>
+                        <e-column field="CommonNarration" headerText="Common Narration" width="200"></e-column>
+                        <e-column field="partyInvNo" headerText="Customer/Supplier InvNo" width="250"></e-column>
+                        <e-column field="partyInvDate" headerText="Customer/Supplier InvDate" width="180"></e-column>
+                        <e-column field="referenceNo" headerText="ReferenceNo" width="120" textAlign="Right"></e-column>
+                        <e-column field="deliveryLocation" headerText="DeliveryLocation" width="120"
+                            textAlign="Right"></e-column>
+                        <e-column field="accountName" headerText="AccountName" width="130" textAlign="Right"></e-column>
+                        <e-column field="accBalance" headerText="AccBalance" width="130" textAlign="Right"></e-column>
+                        <e-column field="dueDate" headerText="DueDate" width="130" textAlign="Right"></e-column>
+                        <e-column field="dueDays" headerText="DueDays" width="130" textAlign="Right"></e-column>
+                        <e-column field="debit" headerText="Debit" width="130" textAlign="Right"></e-column>
+                        <e-column field="credit" headerText="Credit" width="130" textAlign="Right"></e-column>
+                        <e-column field="allocated" headerText="Allocated" width="130" textAlign="Right"></e-column>
+                        <e-column field="balance" headerText="Balance" width="130" textAlign="Right"></e-column>
+                        <e-column field="rBalance" headerText="RBalance" width="130" textAlign="Right"></e-column>
+                    </e-columns>
+
+                </ejs-grid>
+
+            </div>
+        </div>
+    </div>
+</form>

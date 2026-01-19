@@ -1,0 +1,105 @@
+<form [formGroup]="dayBookForm">
+    <div class="container-fluid">
+        <div class="row" style="height:100vh">
+            <div class="col-md-3 border p-3" style="background:#f7f7f7; overflow-y:auto;">
+                <!-- Action Buttons -->
+                <div class="mb-3 d-flex gap-2">
+                    <button type="button">Print</button>
+                    <button type="button">Preview</button>
+                    <button type="button">Excel</button>
+                    <button type="button">Email</button>
+                </div>
+
+                <h5 class="mb-3">Filter</h5>
+
+                <!-- From -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Date From</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="from" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+                <!-- To -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Date Upto</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="to" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+
+                <!-- Voucher Type -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Voucher Type</div>
+                    <div class="col-8">
+                        <ejs-dropdownlist formControlName="voucherType" [dataSource]="voucherTypes"
+                            [fields]="voucherTypeFields"  popupHeight="250px">
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+
+                <!-- Branch -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">Branch</div>
+                    <div class="col-8">
+                        <ejs-dropdownlist formControlName="branch" [dataSource]="branchData" [fields]="branchFields">                            
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+
+                <!-- User -->
+                <div class="row mb-3 align-items-center">
+                    <div class="col-4">User</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox formControlName="user" [dataSource]="users" [fields]="userFields"
+                            [columns]="userColumns" popupHeight="300px" popupWidth="700px">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <ejs-checkbox label="Detailed" formControlName="detailed"></ejs-checkbox>
+                    </div>
+
+                    <div class="col-6">
+                        <ejs-checkbox label="Posted" formControlName="posted"></ejs-checkbox>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="d-flex gap-2 mb-3">
+                        <button type="button" ejs-button cssClass="e-primary" (click)="onClickGo()">Go</button>
+                        <button type="button" ejs-button (click)="onClear()">Clear</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- grid data -->
+            <div class="col-md-9 p-0">
+
+                <ejs-grid height="100%" gridLines="Both" allowResizing="true" [dataSource]="reportData">
+                    <e-columns>
+                        <e-column field="VDate" headerText="VDate" width="110"></e-column>
+                        <e-column field="VNo" headerText="VNo" width="140"></e-column>
+                        <e-column field="Particulars" headerText="Particulars" width="180"></e-column>
+                        <e-column field="CommonNarration" headerText="Common Narration" width="200"></e-column>
+                        <e-column field="Narration" headerText="Narration" width="250"></e-column>
+                        <e-column field="BillDetails" headerText="Bill Ref" width="180"></e-column>
+                        <e-column field="Debit" headerText="Debit" width="120" textAlign="Right"></e-column>
+                        <e-column field="Credit" headerText="Credit" width="120" textAlign="Right"></e-column>
+                        <e-column field="Posted" headerText="Posted" width="130" textAlign="Right"></e-column>
+                        <e-column field="ApprovalStatus" headerText="Approv" width="130" textAlign="Right"></e-column>
+                        <e-column field="UserName" headerText="UserName" width="130" textAlign="Right"></e-column>
+                    </e-columns>
+
+                </ejs-grid>
+
+            </div>
+
+
+        </div>
+    </div>
+</form>

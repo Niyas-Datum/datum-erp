@@ -1,0 +1,70 @@
+ <form [formGroup]="financialYearForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="section-container">
+        <div class="section-content"> 
+
+          <!-- Financial Year -->
+          <div class="row">
+            <label for="financeyear" class="form-label col-md-2">
+              Financial Year<span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-4">
+               <ejs-textbox id="financeyear" formControlName="financeyear"></ejs-textbox> 
+              @if (financialYearForm.get('financeyear')?.hasError('required')) {
+                <!-- <small class="text-danger">This field is required.</small> -->
+              }
+            </div>
+          </div>
+
+          <!-- Start Date -->
+          <div class="row">
+            <label for="startdate" class="form-label col-md-2">
+              Start Date<span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-4 flex-wrapper">
+              <ejs-datepicker id="startdate" formControlName="startdate" format="yyyy-MM-dd" placeholder="yyyy-mm-dd"></ejs-datepicker>
+            </div>
+          </div>
+
+          <!-- End Date -->
+          <div class="row">
+            <label for="enddate" class="form-label col-md-2">
+              End Date<span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-4 flex-wrapper">
+              <ejs-datepicker id="enddate" formControlName="enddate" format="yyyy-MM-dd" placeholder="yyyy-mm-dd"></ejs-datepicker>
+            </div>
+          </div>
+
+          <!-- Lock Till Date -->
+          <div class="row">
+            <label for="locktilldate" class="form-label col-md-2">
+              Lock Till Date<span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-4 flex-wrapper">
+              <ejs-datepicker id="locktilldate" formControlName="locktilldate" format="yyyy-MM-dd" placeholder="yyyy-mm-dd"></ejs-datepicker>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="row">
+            <label for="status" class="form-label col-md-2">
+              Status<span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-4">
+              <ejs-dropdownlist
+                id="status"
+                formControlName="status"
+                [dataSource]="statusList"
+                [fields]="{ text: 'name', value: 'value' }"
+                placeholder="Select">
+              </ejs-dropdownlist>
+            </div>
+          </div>
+
+          </div>
+      </div>
+    </div>
+  </div> 
+ </form>   
