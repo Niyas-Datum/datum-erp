@@ -1,0 +1,104 @@
+<!-- Search Form -->
+<form [formGroup]="referenceSearchForm" style="padding: 0 10px;">
+  <div class="row mb-2">
+    <div class="col-md-3">
+      <label>Voucher Type</label>
+      <ejs-dropdownlist
+        formControlName="vouchertype"
+        [dataSource]="voucherTypesWithAll"
+        [fields]="{ text: 'name', value: 'name' }"
+        placeholder="Select voucher type"
+        [allowFiltering]="true">
+      </ejs-dropdownlist>
+    </div>
+    <div class="col-md-2">
+      <label>Voucher No.</label>
+      <ejs-textbox
+        formControlName="voucherno"
+        placeholder="Enter voucher number">
+      </ejs-textbox>
+    </div>
+    <div class="col-md-2">
+      <label>Voucher Date</label>
+      <ejs-datepicker
+        formControlName="voucherdate"
+        [format]="'dd/MM/yyyy'"
+        placeholder="Select date"
+        cssClass="datepicker-compact"
+        [width]="'100%'">
+      </ejs-datepicker>
+    </div>
+    <div class="col-md-3">
+      <label>Party</label>
+      <ejs-textbox
+        formControlName="party"
+        placeholder="Enter party name">
+      </ejs-textbox>
+    </div>
+    <div class="col-md-2">
+      <label>&nbsp;</label>
+      <button
+        type="button"
+        class="btn btn-primary w-100"
+        (click)="setReferenceData()">
+        Search
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- Syncfusion Grid -->
+<ejs-grid
+  [dataSource]="filteredData"
+  [allowPaging]="true"
+  [pageSettings]="{ pageSize: 10 }"
+  [allowSorting]="true"
+  height="300px">
+  <e-columns>
+    <e-column headerText="Select" width="80" textAlign="Center">
+      <ng-template #template let-data let-rowIndex="index">
+        <input type="checkbox" [checked]="data?.sel" (change)="onChangeSelection($event, data)" />
+      </ng-template>
+    </e-column>
+    <e-column field="vNo" headerText="VNo" width="100"></e-column>
+    <e-column field="vDate" headerText="VDate" width="150" format="dd/MM/yyyy" type="date"></e-column>
+    <e-column field="referenceNo" headerText="ReferenceNo" width="120"></e-column>
+    <e-column field="accountName" headerText="AccountName" width="150"></e-column>
+    <e-column field="amount" headerText="Amount" width="100" textAlign="Right"></e-column>
+    <e-column field="partyInvNo" headerText="PartyInvNo" width="120"></e-column>
+    <e-column field="partyInvDate" headerText="PartyInvDate" width="120" format="dd/MM/yyyy" type="date"></e-column>
+    <e-column field="voucherType" headerText="VoucherType" width="120"></e-column>
+  </e-columns>
+</ejs-grid>
+
+<!-- Footer with Actions -->
+<div class="row mt-3 p-2">
+  <div class="col-md-6"></div>
+  <div class="col-md-4">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      [checked]="isOverwriteVoucher"
+      (change)="onChangeOverwriteOption($event)" />
+    <span>Overwrite voucher info</span>
+  </div>
+  <div class="col-md-2 d-flex justify-content-end">
+    <button
+      type="button"
+      class="btn btn-secondary me-2"
+      (click)="importItems()"
+      (keydown)="handleOkbuttonkeydown($event)"
+      #okbutton>
+      Import
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="cancelItems()"
+      (keydown)="handleCancelbuttonkeydown($event)"
+      #cancelbutton>
+      Cancel
+    </button>
+  </div>
+</div>
+

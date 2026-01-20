@@ -1,0 +1,2882 @@
+{
+  "version": "6.0",
+  "nxVersion": "21.1.2",
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {
+      "http": [
+        {
+          "file": "datum-erp-workspace/libs/http/README.md",
+          "hash": "14594772007395949665"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/ng-package.json",
+          "hash": "17636125773786489117"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/package.json",
+          "hash": "5295998853461233679"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/project.json",
+          "hash": "16938588658372464275"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/index.ts",
+          "hash": "12996345739319515604"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/lib/auth/auth.guard.ts",
+          "hash": "10747650928543768332"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/lib/auth/auth.interceptor.ts",
+          "hash": "4158283601801666516"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/lib/http/http.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/lib/http/http.html",
+          "hash": "10997349311356986136"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/lib/http/http.spec.ts",
+          "hash": "12652633151481125636"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/lib/http/http.ts",
+          "hash": "12963108109406034771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/lib/loader.interceptor.ts",
+          "hash": "3233012648334934906"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/http/vite.config.mts",
+          "hash": "16594119220846995801"
+        }
+      ],
+      "hostApp": [
+        {
+          "file": "datum-erp-workspace/apps/hostApp/eslint.config.mjs",
+          "hash": "16756400681144203361"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/module-federation.config.ts",
+          "hash": "8955539347828047684"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/project.json",
+          "hash": "11063569213577525776"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/app/app-module.ts",
+          "hash": "11456139707458681356"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/app/app.html",
+          "hash": "9432058697864931647"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/app/app.routes.ts",
+          "hash": "7817408334683847213"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/app/app.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/app/app.spec.ts",
+          "hash": "9732641980328974879"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/app/app.ts",
+          "hash": "8733745919050147483"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/app/nx-welcome.ts",
+          "hash": "6715924585851334131"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/bootstrap.ts",
+          "hash": "11913275833423581797"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/index.html",
+          "hash": "18199070781509656293"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/main.ts",
+          "hash": "18313037863774934551"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/styles.scss",
+          "hash": "8010042460510499301"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/themes/default/_base.scss",
+          "hash": "17559063713799216639"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/themes/default/_button.scss",
+          "hash": "6065907166304641268"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/themes/default/_input.scss",
+          "hash": "9623481589395578541"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/themes/default/_itemList.scss",
+          "hash": "6742131962326639844"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/src/themes/default/_variables.scss",
+          "hash": "17604044198385863516"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/tsconfig.app.json",
+          "hash": "12487390440158867026"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/tsconfig.json",
+          "hash": "6404635381601203591"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/webpack.config.ts",
+          "hash": "6298584379234879844"
+        },
+        {
+          "file": "datum-erp-workspace/apps/hostApp/webpack.prod.config.ts",
+          "hash": "8740721587809569813"
+        }
+      ],
+      "architecture": [
+        {
+          "file": "datum-erp-workspace/libs/architecture/README.md",
+          "hash": "12278071066491611312"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/ng-package.json",
+          "hash": "2122753675497242170"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/package.json",
+          "hash": "5706740645137198086"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/project.json",
+          "hash": "5422539756775157112"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/index.ts",
+          "hash": "4500238152377367279"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/SeviceInject.base.ts",
+          "hash": "16788185437742710043"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/app-variables.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/architecture/architecture.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/architecture/architecture.html",
+          "hash": "2201785968418387224"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/architecture/architecture.spec.ts",
+          "hash": "7466087584419757288"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/architecture/architecture.ts",
+          "hash": "2358056588309817309"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/baseComponent.base.ts",
+          "hash": "6998463951557551206"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/form-utils.base.ts",
+          "hash": "17797655618406459664"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/leftGrid.base.ts",
+          "hash": "6777264664218427629"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/toolbar-section.map.ts",
+          "hash": "12239690510042444439"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/lib/validation.base.ts",
+          "hash": "3171986344781200109"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/architecture/vite.config.mts",
+          "hash": "4754279674234002561"
+        }
+      ],
+      "generalApp": [
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/eslint.config.mjs",
+          "hash": "17687263402401803215"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/module-federation.config.ts",
+          "hash": "3822258427255262002"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/project.json",
+          "hash": "199578923377692819"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/app-module.ts",
+          "hash": "2166649392976278536"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/app.routes.ts",
+          "hash": "11665467327953765520"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/app.ts",
+          "hash": "7751035360752112094"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.css",
+          "hash": "9970056401780549169"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.html",
+          "hash": "7900885375471305614"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.spec.ts",
+          "hash": "16062255734001902568"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.ts",
+          "hash": "269407933794328998"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/leftGrid/leftGrid.component.html",
+          "hash": "8730387157881837100"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/leftGrid/leftGrid.component.scss",
+          "hash": "174113756098165085"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/leftGrid/leftGrid.component.spec.ts",
+          "hash": "9198517434762992309"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/common/leftGrid/leftGrid.component.ts",
+          "hash": "10472509649899324345"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/branch/branch-component.ts",
+          "hash": "8537778623953166375"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/branch/branch.component.html",
+          "hash": "8184186310900187541"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/company-component.ts",
+          "hash": "5124828604320148977"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/company-module.ts",
+          "hash": "7983028816816223269"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/department/department-component.html",
+          "hash": "10989863852423872788"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/department/department-component.ts",
+          "hash": "13194291074378841442"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/designation/designation.component.html",
+          "hash": "11385997351520900005"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/designation/designation.component.ts",
+          "hash": "5667901593637281976"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/model/pDepartment.model.ts",
+          "hash": "13181808744736971249"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/model/pbranch.model.ts",
+          "hash": "2924662686102647723"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/company/model/pdesignation.component.ts",
+          "hash": "10688335877169483865"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/costcategory/costcategory-component.html",
+          "hash": "15858673519227098992"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/costcategory/costcategory-component.ts",
+          "hash": "2217204471717527068"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/costcenter/costcenter-component.html",
+          "hash": "2459621833369017342"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/costcenter/costcenter-component.ts",
+          "hash": "3682894491878246431"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/costcenterMain-component.ts",
+          "hash": "14077059291842931641"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/costcenterMain-module.ts",
+          "hash": "8641584582139373881"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/model/pCosftCategory.model.ts",
+          "hash": "6733777105788482025"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/costcenter/model/pCostCenter.model.ts",
+          "hash": "10001765438085444390"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/customer-supplier/Model/pcustomer-supplier.model.ts",
+          "hash": "17869368178010644547"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/customer-supplier/customer-supplier.component.ts",
+          "hash": "5393496736700941724"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/customer-supplier/customer-supplier.module.ts",
+          "hash": "6415940681766069692"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/customer-supplier/customer-supplier/customer-supplier.css",
+          "hash": "15775116215726808477"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/customer-supplier/customer-supplier/customer-supplier.html",
+          "hash": "123542165047093798"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/customer-supplier/customer-supplier/customer-supplier.ts",
+          "hash": "11512967427306782578"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/entry-module.ts",
+          "hash": "4722701042494887338"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/entry.routes.ts",
+          "hash": "17029252247458195974"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/entry.ts",
+          "hash": "12151628627257464336"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/http/general-app.service.ts",
+          "hash": "15948662830363670013"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/nx-welcome.ts",
+          "hash": "6337259453195318410"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/Formlabelsettings/formlabelsettings.component.html",
+          "hash": "9156578424504338278"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/Formlabelsettings/formlabelsettings.component.ts",
+          "hash": "5082257379363350148"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/formgridsettings/formgridsettings.component.html",
+          "hash": "9229387229831079684"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/formgridsettings/formgridsettings.component.ts",
+          "hash": "905802326573472912"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/model/pgridlabel.model.ts",
+          "hash": "13562162512489148955"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/model/pgridsettings.model.ts",
+          "hash": "14441556966590771046"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/model/psettings.model.ts",
+          "hash": "10813630836035813705"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/model/psubmasters.model.ts",
+          "hash": "16771684531609859072"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/settings.component.ts",
+          "hash": "2066108445878305258"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/settings.module.ts",
+          "hash": "11043591590337379986"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/settings/settings-component.html",
+          "hash": "13794889630848699653"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/settings/settings-component.ts",
+          "hash": "6393190397087858886"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/submasters/submasters-component.html",
+          "hash": "6533694287621132745"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/settings/submasters/submasters-component.ts",
+          "hash": "17815742939263815113"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/model/ppagemenu.model.ts",
+          "hash": "12639171340370735734"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/model/puser.model.ts",
+          "hash": "11899322698441761214"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/model/puserrole.model.ts",
+          "hash": "6783813151692393672"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/pagemenu/pagemenu-component.html",
+          "hash": "10593977678344542350"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/pagemenu/pagemenu-component.ts",
+          "hash": "986517249910361911"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/pagemenupop/pagemenupopup-component.html",
+          "hash": "3011071586747116121"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/pagemenupop/pagemenupopup-component.ts",
+          "hash": "11350335924234357719"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/roles/role-component.html",
+          "hash": "864462931505492402"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/roles/role-component.ts",
+          "hash": "11341407995854993131"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/user/user-component.html",
+          "hash": "1968523020893824096"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/user/user-component.ts",
+          "hash": "9290491943836041607"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/userpopup/userrole-popup.component.html",
+          "hash": "6070807117096915217"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/userpopup/userrole-popup.component.ts",
+          "hash": "18112690002563106128"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/usersMain-component.ts",
+          "hash": "11662176041578496141"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/users/usersMain-module.ts",
+          "hash": "9400345030853465587"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/zatca/zatca-component.ts",
+          "hash": "17195914684432271765"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/app/remote-entry/zatca/zatca-module.ts",
+          "hash": "15251039988863149391"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/bootstrap.ts",
+          "hash": "10447077110737532417"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/index.html",
+          "hash": "9609011025930541012"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/main.ts",
+          "hash": "14701344671644104227"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/src/styles.scss",
+          "hash": "5195668842064076916"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/tsconfig.app.json",
+          "hash": "366442650219359972"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/tsconfig.json",
+          "hash": "15104521131975233387"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/webpack.config.ts",
+          "hash": "383329064200880040"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/generalApp/webpack.prod.config.ts",
+          "hash": "2861062658584108841"
+        }
+      ],
+      "utils": [
+        {
+          "file": "datum-erp-workspace/libs/utils/README.md",
+          "hash": "7928633615893668067"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/ng-package.json",
+          "hash": "283797331025497411"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/package.json",
+          "hash": "5652688043606494278"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/project.json",
+          "hash": "13623344110886020425"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/index.ts",
+          "hash": "5471711957706982102"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/environments/environment.prod.ts",
+          "hash": "15771713436555376863"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/environments/environment.ts",
+          "hash": "11049130088812520545"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/network/networkStatus.service.ts",
+          "hash": "1486536204786532623"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/tab-tracker/app-tab-tracker.ts",
+          "hash": "15567825961197504769"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/utils/utils.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/utils/utils.html",
+          "hash": "60998714669822579"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/utils/utils.spec.ts",
+          "hash": "11965259168196061308"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/lib/utils/utils.ts",
+          "hash": "12766360061316032156"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/utils/vite.config.mts",
+          "hash": "1529467369783806273"
+        }
+      ],
+      "services": [
+        {
+          "file": "datum-erp-workspace/libs/services/README.md",
+          "hash": "5047947139507590044"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/ng-package.json",
+          "hash": "11412456280310967071"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/package.json",
+          "hash": "5144307390974629333"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/project.json",
+          "hash": "1845800574813500805"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/index.ts",
+          "hash": "15848037486556181162"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/base.service.ts",
+          "hash": "643060908128353455"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/crude.service.ts",
+          "hash": "15449128136421416470"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/menuPermissionStore.service.ts",
+          "hash": "16127355901122807035"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/services/services.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/services/services.html",
+          "hash": "14581811284491598031"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/services/services.spec.ts",
+          "hash": "4350925192341450375"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/services/services.ts",
+          "hash": "12289750409039988860"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/storage/localStorage.service.ts",
+          "hash": "15171068412785625752"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/utils/SignalR.service.ts.service.ts",
+          "hash": "7646283707354810312"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/utils/alert.service.ts",
+          "hash": "1765660382882253986"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/utils/costcategory.service.ts",
+          "hash": "13194425896460297366"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/utils/datasharing.service.ts",
+          "hash": "1746690465699723916"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/utils/formToolbar.service.ts",
+          "hash": "2423868571827682929"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/utils/loader.service.ts",
+          "hash": "646735231818980842"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/utils/menudata.service.ts",
+          "hash": "14222806703716831269"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/validation/customvalidation.service.ts",
+          "hash": "17106190261929423431"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/lib/validation/validation.service.ts",
+          "hash": "2268528731964244274"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/services/vite.config.mts",
+          "hash": "4677565414399327724"
+        }
+      ],
+      "ui": [
+        {
+          "file": "datum-erp-workspace/libs/ui/README.md",
+          "hash": "3098996868279451883"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/ng-package.json",
+          "hash": "15350994949342722085"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/package.json",
+          "hash": "17984262262020142812"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/project.json",
+          "hash": "2466475559748578560"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/index.ts",
+          "hash": "675477182693558276"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/alert/alert-dialog.component.html",
+          "hash": "826438631409536731"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/alert/alert-dialog.component.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/alert/alert-dialog.component.ts",
+          "hash": "6326881940249513109"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/alert/alert-dialog.module.ts",
+          "hash": "17366813044366623125"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/app-Header-MobileView/app-Header-MobileView.html",
+          "hash": "10723220057518664908"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/app-Header-MobileView/app-Header-MobileView.scss",
+          "hash": "10701531248018990331"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/app-Header-MobileView/app-Header-MobileView.spec.ts",
+          "hash": "8658967348223536783"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/app-Header-MobileView/app-Header-MobileView.ts",
+          "hash": "5919702806388124383"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/appHeader.component.html",
+          "hash": "12196371420107555482"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/appHeader.component.scss",
+          "hash": "17846544532256619912"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/appHeader.component.ts",
+          "hash": "5149818992847161422"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/appHeader/menu.interface.ts",
+          "hash": "3624849644429704369"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/header.component.ts",
+          "hash": "4923164054342375193"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/index.ts",
+          "hash": "1348481403856140244"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/headers/menu.service.ts",
+          "hash": "8473474093046736705"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/imageUploader/image.html",
+          "hash": "13119356698408940596"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/imageUploader/image.scss",
+          "hash": "6107616722617030358"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/imageUploader/image.ts",
+          "hash": "2878770546177161417"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/imageUploader/styles.scss",
+          "hash": "9564718994666722208"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/loader.component.ts",
+          "hash": "17204514777077168558"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/multiColumnComboBox/multiColumnComboBox.component.html",
+          "hash": "11387990329560110135"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/multiColumnComboBox/multiColumnComboBox.component.scss",
+          "hash": "17463251372430609101"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/multiColumnComboBox/multiColumnComboBox.component.ts",
+          "hash": "9744473307811847010"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/inventory/generic/Pinventory.generic-popup.component.ts",
+          "hash": "12686410419589348031"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/inventory/refernece/Pinventory.reference.component.html",
+          "hash": "13012925619995295151"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/inventory/refernece/Pinventory.reference.component.ts",
+          "hash": "10581826986442375206"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/lazy-financial-popup-map.ts",
+          "hash": "12625645833560324063"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/lazy-general-popup-map.ts",
+          "hash": "13320017400442080976"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/lazy-inventory-popup-map.ts",
+          "hash": "16820821785526446872"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/popup-container.component.scss",
+          "hash": "16193466629767742075"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/popup-container.component.ts",
+          "hash": "11035388141048639696"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popup/popup.service.ts",
+          "hash": "5602100014383636317"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popups/popup.component.css",
+          "hash": "14566774060018907334"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popups/popup.component.html",
+          "hash": "3287024023083255577"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popups/popup.component.spec.ts",
+          "hash": "12805680815159898369"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/popups/popup.component.ts",
+          "hash": "13942779359358824907"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/toast/toast.service.ts",
+          "hash": "7513262304820455523"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/toast/toastHost.component.ts",
+          "hash": "15884959748613188235"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/ui/ui.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/ui/ui.html",
+          "hash": "11089220566535924882"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/ui/ui.spec.ts",
+          "hash": "15848068596344699442"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/lib/ui/ui.ts",
+          "hash": "1810374238182138446"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/ui/vite.config.mts",
+          "hash": "5783401023202332166"
+        }
+      ],
+      "models": [
+        {
+          "file": "datum-erp-workspace/libs/models/README.md",
+          "hash": "13610073357949299532"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/ng-package.json",
+          "hash": "13203852366646989698"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/package.json",
+          "hash": "14283294013149615203"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/project.json",
+          "hash": "3422716611979370241"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/index.ts",
+          "hash": "14938865625192467335"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/ItemDto.ts",
+          "hash": "11402369701415101399"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/api-response.model.ts",
+          "hash": "18160183091195223372"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/currentUser/ShortcutMenuDto.model.ts",
+          "hash": "4535621103897086161"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/currentUser/index.ts",
+          "hash": "894513453207621158"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/currentUser/loginUserDto.model.ts",
+          "hash": "7995386755901469256"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/currentUser/menuDto.model.ts",
+          "hash": "18356383642196116223"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/currentUser/userSettingsDto.model.ts",
+          "hash": "2210302669288605133"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/general/branch.dto.ts",
+          "hash": "230905311989987170"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/general/company.dto.ts",
+          "hash": "11158863735602285834"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/general/costcategory.dto.ts",
+          "hash": "3380457341988604667"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/inventory/unitmaster.dto.ts",
+          "hash": "250061524322680112"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/main/LeftGridDto.ts",
+          "hash": "18324297678479250850"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/main/MainMenuItem.Dto.ts",
+          "hash": "2775749296653129892"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/menu-permission.interface.ts",
+          "hash": "670562297159579951"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/models/models.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/models/models.html",
+          "hash": "10034085234440186784"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/models/models.spec.ts",
+          "hash": "18029840378206773859"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/lib/models/models.ts",
+          "hash": "9360761176945926196"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/models/vite.config.mts",
+          "hash": "17041936855805179603"
+        }
+      ],
+      "assets": [
+        {
+          "file": "datum-erp-workspace/libs/assets/README.md",
+          "hash": "9789781934178906916"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/ng-package.json",
+          "hash": "9100314880801809134"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/package.json",
+          "hash": "10604409232586217617"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/project.json",
+          "hash": "15674988889876783346"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/index.ts",
+          "hash": "10496910584135031598"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/assets/assets.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/assets/assets.html",
+          "hash": "8873417416705344143"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/assets/assets.spec.ts",
+          "hash": "13150863354175004626"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/assets/assets.ts",
+          "hash": "1768045669331842070"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/app-logo.png",
+          "hash": "15220464535920106859"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/bg.jpg",
+          "hash": "1459328639263798359"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/bg1.jpg",
+          "hash": "7222738674707888682"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/bg3.jpg",
+          "hash": "8202423451762897966"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/bg4.jpg",
+          "hash": "9317641317500030937"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/bg5.jpg",
+          "hash": "16498704618357656238"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/h.jpg",
+          "hash": "2201888916163132700"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/h1.jpg",
+          "hash": "18137896550952616810"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/header-logo.png",
+          "hash": "11666676113196624325"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/login-bg.jpg",
+          "hash": "5447678541015502934"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/images/top-bar.png",
+          "hash": "17494919616291719329"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/styles/app-header.scss",
+          "hash": "4310917267282439406"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/styles/invoice-footer.scss",
+          "hash": "9533308052289155835"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/lib/styles/theme-blue.scss",
+          "hash": "9997440137228862656"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/assets/vite.config.mts",
+          "hash": "9924322369163496092"
+        }
+      ],
+      "financeApp": [
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/eslint.config.mjs",
+          "hash": "17687263402401803215"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/module-federation.config.ts",
+          "hash": "1790797140924980543"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/project.json",
+          "hash": "1609729162874472803"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/app-module.ts",
+          "hash": "2166649392976278536"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/app.routes.ts",
+          "hash": "11665467327953765520"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/app.ts",
+          "hash": "7751035360752112094"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.css",
+          "hash": "9970056401780549169"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.html",
+          "hash": "7900885375471305614"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.spec.ts",
+          "hash": "16062255734001902568"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.ts",
+          "hash": "269407933794328998"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/leftGrid/leftGrid.component.html",
+          "hash": "8730387157881837100"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/leftGrid/leftGrid.component.scss",
+          "hash": "174113756098165085"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/leftGrid/leftGrid.component.spec.ts",
+          "hash": "9198517434762992309"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/common/leftGrid/leftGrid.component.ts",
+          "hash": "856794333447831134"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/entry-module.ts",
+          "hash": "2441425301033392375"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/entry.html",
+          "hash": "11216844060047197229"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/entry.routes.ts",
+          "hash": "15280518062250189566"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/entry.ts",
+          "hash": "13227220257539723775"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/http/finance-app.service.ts",
+          "hash": "7269117391021274276"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/account-configuartion/Account-configuration.html",
+          "hash": "14611091095022597286"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/account-configuartion/Account-configuration.ts",
+          "hash": "13908683118458424210"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/account-sortorder/account-sortorder.css",
+          "hash": "15799434996517677243"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/account-sortorder/account-sortorder.html",
+          "hash": "17315960281699808616"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/account-sortorder/account-sortorder.ts",
+          "hash": "13610314457700627504"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/accounts-list/accounts-list.html",
+          "hash": "2127036858035860743"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/accounts-list/accounts-list.ts",
+          "hash": "10991037162970002435"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/branch-accounts/branch-account.ts",
+          "hash": "9205251732892973427"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/branch-accounts/branch-accounts.css",
+          "hash": "1951651483044835909"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/branch-accounts/branch-accounts.html",
+          "hash": "13884945674865215049"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/card-master/cardmaster-component.html",
+          "hash": "12408199173074242907"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/card-master/cardmaster-component.ts",
+          "hash": "685471986222064096"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/chart-of-account/chart-of-account.component.css",
+          "hash": "12485775738869290771"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/chart-of-account/chart-of-account.component.html",
+          "hash": "4391560282623490786"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/chart-of-account/chart-of-account.component.ts",
+          "hash": "6195861992205537360"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/currency/currency-component.html",
+          "hash": "6385998360725678936"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/currency/currency-component.ts",
+          "hash": "4610699502738871018"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/financialYear/financialYear-component.html",
+          "hash": "11079281821732416567"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/financialYear/financialYear-component.ts",
+          "hash": "1666537707387299950"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/ledger/ledger-component.html",
+          "hash": "5799147754290320711"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/ledger/ledger-component.ts",
+          "hash": "2123962742647629083"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/masters-component.ts",
+          "hash": "15960174631860218941"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/masters-module.ts",
+          "hash": "15187551778006859899"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/popup/popup.component.html",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/popup/popup.component.ts",
+          "hash": "7103556317936199059"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/vouchers/vouchers-component.css",
+          "hash": "5147052266992751371"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/vouchers/vouchers-component.html",
+          "hash": "15182503395638882364"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/masters/vouchers/vouchers-component.ts",
+          "hash": "2130502189370189488"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/model/PCurrencyModel.ts",
+          "hash": "5674085080384867722"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/model/PFinancialYearModel.ts",
+          "hash": "11721798754157397827"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/model/PVoucherModel.ts",
+          "hash": "15926472837160130373"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/model/paccountlistcomponent.model.ts",
+          "hash": "11657513851740758743"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/model/pcard-master.model.ts",
+          "hash": "15731772145128114031"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/model/pledgercomponent.model.ts",
+          "hash": "12574551177631631746"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/nx-welcome.ts",
+          "hash": "1981746010668553778"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/Model/pfinanceregister.ts",
+          "hash": "1586698071077527949"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/account/customer.component.html",
+          "hash": "14721042694838645840"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/account/customer.component.ts",
+          "hash": "5068269539973536928"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/cheque-register/cheque-register.component.html",
+          "hash": "10766146789009585383"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/cheque-register/cheque-register.component.ts",
+          "hash": "16232986465753887234"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/finance-register/finance-register.component.html",
+          "hash": "4565770883906883490"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/finance-register/finance-register.component.ts",
+          "hash": "18006115377055911490"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/registers-component.ts",
+          "hash": "13061380399995809691"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/registers/registers-module.ts",
+          "hash": "8098251381811293159"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/accountstatement/accountstatement.component.html",
+          "hash": "9295561468856021983"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/accountstatement/accountstatement.component.ts",
+          "hash": "11880430316732277329"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/billwisestatement/billwisestatement.component.html",
+          "hash": "7942009629391422038"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/billwisestatement/billwisestatement.component.ts",
+          "hash": "11824426002924365136"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/daybook/daybook.component.html",
+          "hash": "5214391106551619776"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/daybook/daybook.component.ts",
+          "hash": "7566382849394764011"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/model/accountstatement.model.ts",
+          "hash": "15585345573968039773"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/statements.component.ts",
+          "hash": "11444506892459737560"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/statements/statements.module.ts",
+          "hash": "12126606377436396248"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/paymentpopup/paymentpopup.component.css",
+          "hash": "3306775955311158709"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/paymentpopup/paymentpopup.component.html",
+          "hash": "2128587219359741994"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/paymentpopup/paymentpopup.component.ts",
+          "hash": "7188413030379179666"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/poallocationpopup/poallocationpopup.component.css",
+          "hash": "3887655162958997424"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/poallocationpopup/poallocationpopup.component.html",
+          "hash": "6380659550911790702"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/poallocationpopup/poallocationpopup.component.ts",
+          "hash": "12060412244950369759"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/services/common.services.ts",
+          "hash": "10904802384753943417"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/services/voucher-common.service.ts",
+          "hash": "472248304639679212"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/common/services/voucher.service.ts",
+          "hash": "5192286929031509237"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/payment-voucher/payment-voucher.component.css",
+          "hash": "10504762560437708424"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/payment-voucher/payment-voucher.component.html",
+          "hash": "1860995348200259219"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/payment-voucher/payment-voucher.component.ts",
+          "hash": "12312860593706473770"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/voucher-routing.module.ts",
+          "hash": "8881855107831392749"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/app/remote-entry/voucher/voucher.module.ts",
+          "hash": "2268023533245682256"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/bootstrap.ts",
+          "hash": "10447077110737532417"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/index.html",
+          "hash": "2337443299673847949"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/main.ts",
+          "hash": "14701344671644104227"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/src/styles.scss",
+          "hash": "5195668842064076916"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/tsconfig.app.json",
+          "hash": "366442650219359972"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/tsconfig.json",
+          "hash": "15104521131975233387"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/webpack.config.ts",
+          "hash": "383329064200880040"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/financeApp/webpack.prod.config.ts",
+          "hash": "2861062658584108841"
+        }
+      ],
+      "AuthApp": [
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/eslint.config.mjs",
+          "hash": "16756400681144203361"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/module-federation.config.ts",
+          "hash": "3839374909179308750"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/project.json",
+          "hash": "701025686887861286"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/app-module.ts",
+          "hash": "2166649392976278536"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/app.routes.ts",
+          "hash": "11665467327953765520"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/app.ts",
+          "hash": "7751035360752112094"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/authlogin/authlogin.component.css",
+          "hash": "16678545180987078271"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/authlogin/authlogin.component.html",
+          "hash": "14655106861555959139"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/authlogin/authlogin.component.spec.ts",
+          "hash": "12737063273162997462"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/authlogin/authlogin.component.ts",
+          "hash": "15529369522834585776"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/entry-module.ts",
+          "hash": "953146020751359958"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/entry.routes.ts",
+          "hash": "15202598017377680567"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/entry.ts",
+          "hash": "13120336900569790077"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/app/remote-entry/nx-welcome.ts",
+          "hash": "6119626687982697126"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/bootstrap.ts",
+          "hash": "10447077110737532417"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/index.html",
+          "hash": "12714688938734522730"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/main.ts",
+          "hash": "14701344671644104227"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/model/currentUserDto.model.ts",
+          "hash": "4901243349990580778"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/services/login.service.ts",
+          "hash": "10120543725665856715"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/src/styles.scss",
+          "hash": "5195668842064076916"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/tsconfig.app.json",
+          "hash": "6434968326538654025"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/tsconfig.json",
+          "hash": "4516499123136711707"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/webpack.config.ts",
+          "hash": "383329064200880040"
+        },
+        {
+          "file": "datum-erp-workspace/apps/AuthApp/webpack.prod.config.ts",
+          "hash": "9736620798464135970"
+        }
+      ],
+      "constants": [
+        {
+          "file": "datum-erp-workspace/libs/constants/README.md",
+          "hash": "5587646698786466735"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/eslint.config.mjs",
+          "hash": "948695448186046999"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/ng-package.json",
+          "hash": "9427776934764631106"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/package.json",
+          "hash": "6970099115188230048"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/project.json",
+          "hash": "12130640367085731067"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/index.ts",
+          "hash": "9126614029525600833"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/lib/app.constants.ts",
+          "hash": "14204800256023195340"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/lib/constants/constants.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/lib/constants/constants.html",
+          "hash": "2841699163009440647"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/lib/constants/constants.spec.ts",
+          "hash": "1589090714419206216"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/lib/constants/constants.ts",
+          "hash": "18291970582863925001"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/lib/endpoint.constants.ts",
+          "hash": "14055431770621536362"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/src/test-setup.ts",
+          "hash": "13866865793787813771"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/tsconfig.json",
+          "hash": "9608369235850420230"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/tsconfig.lib.json",
+          "hash": "4155067039551569377"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/tsconfig.lib.prod.json",
+          "hash": "10809217796916261822"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/tsconfig.spec.json",
+          "hash": "11359119564988205903"
+        },
+        {
+          "file": "datum-erp-workspace/libs/constants/vite.config.mts",
+          "hash": "2390869886882027226"
+        }
+      ],
+      "loginApp": [
+        {
+          "file": "datum-erp-workspace/apps/loginApp/eslint.config.mjs",
+          "hash": "16756400681144203361"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/module-federation.config.ts",
+          "hash": "11087643762370534102"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/project.json",
+          "hash": "4080969350744911419"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/app/app-module.ts",
+          "hash": "2166649392976278536"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/app/app.routes.ts",
+          "hash": "11665467327953765520"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/app/app.ts",
+          "hash": "7751035360752112094"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/app/remote-entry/entry-module.ts",
+          "hash": "14261267417774621738"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/app/remote-entry/entry.routes.ts",
+          "hash": "3867460417164941437"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/app/remote-entry/entry.ts",
+          "hash": "1185409136655853477"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/app/remote-entry/nx-welcome.ts",
+          "hash": "11254248999826332340"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/bootstrap.ts",
+          "hash": "10447077110737532417"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/index.html",
+          "hash": "1650884499934663492"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/main.ts",
+          "hash": "14701344671644104227"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/src/styles.scss",
+          "hash": "5195668842064076916"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/tsconfig.app.json",
+          "hash": "6434968326538654025"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/tsconfig.json",
+          "hash": "4516499123136711707"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/webpack.config.ts",
+          "hash": "383329064200880040"
+        },
+        {
+          "file": "datum-erp-workspace/apps/loginApp/webpack.prod.config.ts",
+          "hash": "2861062658584108841"
+        }
+      ],
+      "inventoryApp": [
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/eslint.config.mjs",
+          "hash": "17687263402401803215"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/module-federation.config.ts",
+          "hash": "13957824127481206035"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+          "hash": "9227785563789917639"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/app-module.ts",
+          "hash": "3930291049808144190"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/app.routes.ts",
+          "hash": "11665467327953765520"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/app.ts",
+          "hash": "8776235408955009993"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.css",
+          "hash": "9970056401780549169"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.html",
+          "hash": "7900885375471305614"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.spec.ts",
+          "hash": "16062255734001902568"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/form-toolbar/form-toolbar.component.ts",
+          "hash": "269407933794328998"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/leftGrid/leftGrid.component.html",
+          "hash": "8730387157881837100"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/leftGrid/leftGrid.component.scss",
+          "hash": "174113756098165085"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/leftGrid/leftGrid.component.spec.ts",
+          "hash": "9198517434762992309"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/common/leftGrid/leftGrid.component.ts",
+          "hash": "5995989208044631598"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/entry-module.ts",
+          "hash": "6345693025557428941"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/entry.html",
+          "hash": "7378363208386065419"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/entry.routes.ts",
+          "hash": "3404992480870944096"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/entry.ts",
+          "hash": "15158935340227521582"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/http/inventory-app.service.ts",
+          "hash": "11711248578377492311"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/areamaster/areamaster-component.html",
+          "hash": "7256113866157698790"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/areamaster/areamaster-component.ts",
+          "hash": "14980122761997695682"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/category/category.component.html",
+          "hash": "10611860018972522172"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/category/category.component.ts",
+          "hash": "2339347649805624044"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/categoryType/categoryType-component.html",
+          "hash": "11869758218052325128"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/categoryType/categoryType-component.ts",
+          "hash": "5730981791490945368"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/itemMaster/itemMaster.component.html",
+          "hash": "1402578146580107251"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/itemMaster/itemMaster.component.scss",
+          "hash": "5881999802825809692"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/itemMaster/itemMaster.component.ts",
+          "hash": "11660942159164968074"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/locationType/locationType-component.html",
+          "hash": "12139862281198161962"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/locationType/locationType-component.ts",
+          "hash": "13329434975801873804"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/master-component.ts",
+          "hash": "14229397132496367005"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/master-module.ts",
+          "hash": "17404440036433891731"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/pItemMasters.model.ts",
+          "hash": "4634815503777292891"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/pareamaster.model.ts",
+          "hash": "17295151148733824966"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/pcategory.model.ts",
+          "hash": "3574099856435896937"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/ppricecategory.model.ts",
+          "hash": "18182651838344068145"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/psizemaster.model.ts",
+          "hash": "6329926981344904239"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/ptaxType.model.ts",
+          "hash": "11524954059632821730"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/punitmaster.model.ts",
+          "hash": "250061524322680112"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/model/pwarehouse.model.ts",
+          "hash": "8829530615400309478"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/pricecategory/pricecategory.component.html",
+          "hash": "922466560125106754"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/pricecategory/pricecategory.component.ts",
+          "hash": "8702568324401376710"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/sizemaster/sizemaster.component.html",
+          "hash": "4580278288098383137"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/sizemaster/sizemaster.component.ts",
+          "hash": "3934220395715984793"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/taxType/taxType.component.html",
+          "hash": "14030440814877623545"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/taxType/taxType.component.ts",
+          "hash": "544300560383009513"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/unitMaster/unitmaster-component.html",
+          "hash": "5599030408628575022"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/unitMaster/unitmaster-component.ts",
+          "hash": "133991360281854144"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/warehouse/warehouse-compnent.ts",
+          "hash": "16897963010745125954"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/masters/warehouse/warehouse-component.html",
+          "hash": "14918894208004674102"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/nx-welcome.ts",
+          "hash": "17050598349551068209"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/common/pdfgeneration.service.ts",
+          "hash": "10237639253930700318"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/generalregister/generalregister.component.css",
+          "hash": "8073120355160792235"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/generalregister/generalregister.component.html",
+          "hash": "11855576515245581616"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/generalregister/generalregister.component.ts",
+          "hash": "13047032258192084863"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/model/generalregister.model.ts",
+          "hash": "13706539367003921043"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/model/pdfgeneration.model.ts",
+          "hash": "3079789790091528300"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/purchasereports/purchaseregister/purchaseregister.component.html",
+          "hash": "7400630241487562422"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/purchasereports/purchaseregister/purchaseregister.component.ts",
+          "hash": "2310487535338044761"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/purchasereports/purchasereports.component.ts",
+          "hash": "2023144708134240432"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/purchasereports/purchasereports.module.ts",
+          "hash": "17431674420087182031"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/purchasereports/purchasereports.routes.ts",
+          "hash": "5532769735630156319"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/reports.component.ts",
+          "hash": "18363670128681406744"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/reports.module.ts",
+          "hash": "17969733101569863337"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/reports.routes.ts",
+          "hash": "17259961375081132532"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/salesreports/salesregister/salesregister.component.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/salesreports/salesregister/salesregister.component.html",
+          "hash": "17344008761495427423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/salesreports/salesregister/salesregister.component.ts",
+          "hash": "15323895241648913529"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/salesreports/salesreports.component.ts",
+          "hash": "4582459099672368527"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/salesreports/salesreports.module.ts",
+          "hash": "8801030479625093861"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/reports/salesreports/salesreports.routes.ts",
+          "hash": "17622832173574231856"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/architecture/transactionComponent.base.ts",
+          "hash": "11161156136356328824"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/additional-details/additional-details.component.html",
+          "hash": "10194918654846060474"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/additional-details/additional-details.component.scss",
+          "hash": "10386848260561217425"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/additional-details/additional-details.component.ts",
+          "hash": "11963013242061572565"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/interface/transactions.interface.ts",
+          "hash": "7617304177461936043"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-footer/invoice-footer.html",
+          "hash": "13717384600681298477"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-footer/invoice-footer.scss",
+          "hash": "5031698338409075397"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-footer/invoice-footer.spec.ts",
+          "hash": "7034417454154896956"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-footer/invoice-footer.ts",
+          "hash": "4300294550116198590"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-header/invoice-header.css",
+          "hash": "1892450998816551785"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-header/invoice-header.html",
+          "hash": "6783135251992585315"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-header/invoice-header.spec.ts",
+          "hash": "11786087888246398271"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-header/invoice-header.ts",
+          "hash": "7545377815459390220"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment-additional/invoice-payment-additional.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment-additional/invoice-payment-additional.html",
+          "hash": "13878781450360409136"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment-additional/invoice-payment-additional.spec.ts",
+          "hash": "11639781711818603692"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment-additional/invoice-payment-additional.ts",
+          "hash": "17109895864894438554"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment/invoice-payment.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment/invoice-payment.html",
+          "hash": "3493677940736814400"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment/invoice-payment.spec.ts",
+          "hash": "17483245915854429134"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/invoice-payment/invoice-payment.ts",
+          "hash": "7171691659598330681"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-additional/item-additional.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-additional/item-additional.html",
+          "hash": "14297752425440107948"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-additional/item-additional.spec.ts",
+          "hash": "16941007992921098981"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-additional/item-additional.ts",
+          "hash": "4357138833188401185"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-list/item-list.html",
+          "hash": "9164633514811882588"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-list/item-list.scss",
+          "hash": "13067513793320037359"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-list/item-list.spec.ts",
+          "hash": "6333367602201139494"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/item-list/item-list.ts",
+          "hash": "4016847424067935564"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/paymentpopup/paymentpopup.component.css",
+          "hash": "16650684691183683385"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/paymentpopup/paymentpopup.component.html",
+          "hash": "15419058340699018241"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/paymentpopup/paymentpopup.component.spec.ts",
+          "hash": "9939671304948293961"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/paymentpopup/paymentpopup.component.ts",
+          "hash": "10836075931067894612"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/services/common.services.ts",
+          "hash": "8326318960230612846"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/services/item.services.ts",
+          "hash": "3714741216837292501"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/services/pdfgeneration.service.ts",
+          "hash": "4297245137402488342"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/services/sales-validator.service.ts",
+          "hash": "13981724100681067161"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/services/tab-communication.service.ts",
+          "hash": "10287073160609353147"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/services/transaction.services.ts",
+          "hash": "13260298295991910145"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-delivery-in/purchase-delivery-in-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-delivery-in/purchase-delivery-in-component.html",
+          "hash": "10233237146184803403"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-delivery-in/purchase-delivery-in-component.ts",
+          "hash": "10156005153366859753"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-enquiry/purchase-enquiry-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-enquiry/purchase-enquiry-component.html",
+          "hash": "10233237146184803403"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-enquiry/purchase-enquiry-component.ts",
+          "hash": "7403199771364980277"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-international/purchase-international-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-international/purchase-international-component.html",
+          "hash": "10233237146184803403"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-international/purchase-international-component.ts",
+          "hash": "11218134048736728253"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-invoice/purchase-invoice-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-invoice/purchase-invoice-component.html",
+          "hash": "10233237146184803403"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-invoice/purchase-invoice-component.ts",
+          "hash": "17000283047364689253"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-material-request/purchase-material-request-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-material-request/purchase-material-request-component.html",
+          "hash": "10233237146184803403"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-material-request/purchase-material-request-component.ts",
+          "hash": "8442044084297691031"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-order/purchase-order-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-order/purchase-order-component.html",
+          "hash": "10233237146184803403"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-order/purchase-order-component.ts",
+          "hash": "16462294813753249768"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-quotation/purchase-quotation-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-quotation/purchase-quotation-component.html",
+          "hash": "10233237146184803403"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-quotation/purchase-quotation-component.ts",
+          "hash": "3428014457382106858"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-return/purchase-return-component.css",
+          "hash": "7644441497448282423"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-return/purchase-return-component.html",
+          "hash": "3316181791054758170"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-return/purchase-return-component.ts",
+          "hash": "3970110979105007643"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase-routing.module.ts",
+          "hash": "1095655970799255594"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/purchase/purchase.module.ts",
+          "hash": "1612144181115075315"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-delivery-out/sales-delivery-out-component.css",
+          "hash": "6687608258833900621"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-delivery-out/sales-delivery-out-component.html",
+          "hash": "8071738665812404792"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-delivery-out/sales-delivery-out-component.ts",
+          "hash": "14932317643743876539"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-enquiry/sales-enquiry-component.css",
+          "hash": "6687608258833900621"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-enquiry/sales-enquiry-component.html",
+          "hash": "8071738665812404792"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-enquiry/sales-enquiry-component.ts",
+          "hash": "9659538884990927191"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-invoice/sales-invoice-component.css",
+          "hash": "6687608258833900621"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-invoice/sales-invoice-component.html",
+          "hash": "8071738665812404792"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-invoice/sales-invoice-component.spec.ts",
+          "hash": "286573131578186808"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-invoice/sales-invoice-component.ts",
+          "hash": "4267747346964331"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-main-component.html",
+          "hash": "12836045575720980510"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-main-component.ts",
+          "hash": "6902203651635400909"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-material-issue/sales-material-issue-component.css",
+          "hash": "6687608258833900621"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-material-issue/sales-material-issue-component.html",
+          "hash": "8071738665812404792"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-material-issue/sales-material-issue-component.ts",
+          "hash": "6680499938171692699"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-order/sales-order-component.css",
+          "hash": "6687608258833900621"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-order/sales-order-component.html",
+          "hash": "8071738665812404792"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-order/sales-order-component.ts",
+          "hash": "17407950142680313034"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-packing-list/sales-packing-list-component.css",
+          "hash": "6687608258833900621"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-packing-list/sales-packing-list-component.html",
+          "hash": "8071738665812404792"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-packing-list/sales-packing-list-component.ts",
+          "hash": "3009556653338433839"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-proforma-invoice/sales-proforma-invoice-component.css",
+          "hash": "6687608258833900621"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-proforma-invoice/sales-proforma-invoice-component.html",
+          "hash": "8071738665812404792"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-proforma-invoice/sales-proforma-invoice-component.ts",
+          "hash": "3398137009435969337"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-quotation/sales-quotation.component.html",
+          "hash": "12525174447465779531"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-quotation/sales-quotation.component.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-quotation/sales-quotation.component.spec.ts",
+          "hash": "8573265338215511297"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-quotation/sales-quotation.component.ts",
+          "hash": "14256147366579250807"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-return/sales-return.component.css",
+          "hash": "18164486227812464591"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-return/sales-return.component.html",
+          "hash": "687106896859721863"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-return/sales-return.component.scss",
+          "hash": "17237436456319933691"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-return/sales-return.component.spec.ts",
+          "hash": "7038595632633253987"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-return/sales-return.component.ts",
+          "hash": "17825033616653616263"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales-routing.module.ts",
+          "hash": "6035552266166826842"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/sales/sales.module.ts",
+          "hash": "15106427068888606365"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/transactions-component.html",
+          "hash": "16498897523005705592"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/transactions-component.ts",
+          "hash": "16781727861804347476"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/transactions-routing.module.ts",
+          "hash": "2556439160972474506"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/app/remote-entry/transactions/transactions.module.ts",
+          "hash": "1713721520340439839"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/bootstrap.ts",
+          "hash": "10447077110737532417"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/index.html",
+          "hash": "6262319293514034939"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/main.ts",
+          "hash": "14701344671644104227"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/src/styles.scss",
+          "hash": "5195668842064076916"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/tsconfig.app.json",
+          "hash": "5598781899868754425"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/tsconfig.json",
+          "hash": "15104521131975233387"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/webpack.config.ts",
+          "hash": "383329064200880040"
+        },
+        {
+          "file": "datum-erp-workspace/apps/mfe/inventoryApp/webpack.prod.config.ts",
+          "hash": "2861062658584108841"
+        }
+      ],
+      "coreApp": [
+        {
+          "file": "datum-erp-workspace/apps/coreApp/eslint.config.mjs",
+          "hash": "16756400681144203361"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/module-federation.config.ts",
+          "hash": "4506645169870773518"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/project.json",
+          "hash": "11541037842545189904"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/app-module.ts",
+          "hash": "2166649392976278536"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/app.routes.ts",
+          "hash": "1022791347340281852"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/app.ts",
+          "hash": "7751035360752112094"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notification/notification.component.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notification/notification.component.html",
+          "hash": "7773384755844860851"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notification/notification.component.spec.ts",
+          "hash": "3680880635519398017"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notification/notification.component.ts",
+          "hash": "7867451656936573005"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationdetails/notificationdetails.component.css",
+          "hash": "13492743511192513104"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationdetails/notificationdetails.component.html",
+          "hash": "8698832033216007268"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationdetails/notificationdetails.component.spec.ts",
+          "hash": "16722182467817140963"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationdetails/notificationdetails.component.ts",
+          "hash": "4743148256035216329"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationlist/notificationlist.component.css",
+          "hash": "14341593735032249628"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationlist/notificationlist.component.html",
+          "hash": "7084292719308280434"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationlist/notificationlist.component.spec.ts",
+          "hash": "13147175099700232211"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationlist/notificationlist.component.ts",
+          "hash": "14351963628768998885"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationreciever/notificationreciever.component.css",
+          "hash": "4894661530611115559"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationreciever/notificationreciever.component.html",
+          "hash": "810054454715005383"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationreciever/notificationreciever.component.spec.ts",
+          "hash": "8203134702150581307"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/notificationreciever/notificationreciever.component.ts",
+          "hash": "9631464547636888261"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/remote-entry/entry-module.ts",
+          "hash": "9188761603765201595"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/remote-entry/entry.routes.ts",
+          "hash": "14199587717266182381"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/remote-entry/entry.ts",
+          "hash": "2775689230120840626"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/app/remote-entry/nx-welcome.ts",
+          "hash": "16914927684325418074"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/bootstrap.ts",
+          "hash": "17127264607799518645"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/index.html",
+          "hash": "16313376671775240279"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/main.ts",
+          "hash": "14701344671644104227"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/services/core.service.ts",
+          "hash": "8324664140959718733"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/src/styles.scss",
+          "hash": "5195668842064076916"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/tsconfig.app.json",
+          "hash": "6434968326538654025"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/tsconfig.json",
+          "hash": "4516499123136711707"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/webpack.config.ts",
+          "hash": "383329064200880040"
+        },
+        {
+          "file": "datum-erp-workspace/apps/coreApp/webpack.prod.config.ts",
+          "hash": "2861062658584108841"
+        }
+      ]
+    },
+    "nonProjectFiles": [
+      {
+        "file": ".gitignore",
+        "hash": "557385588170937783"
+      },
+      {
+        "file": "datum-erp-workspace/.editorconfig",
+        "hash": "11532813898455409296"
+      },
+      {
+        "file": "datum-erp-workspace/.gemini/settings.json",
+        "hash": "10806997076034305161"
+      },
+      {
+        "file": "datum-erp-workspace/.github/workflows/ci.yml",
+        "hash": "12602271644751850563"
+      },
+      {
+        "file": "datum-erp-workspace/.gitignore",
+        "hash": "6789359950525614493"
+      },
+      {
+        "file": "datum-erp-workspace/.mcp.json",
+        "hash": "7414543004516674486"
+      },
+      {
+        "file": "datum-erp-workspace/.prettierignore",
+        "hash": "12269743867629339573"
+      },
+      {
+        "file": "datum-erp-workspace/.prettierrc",
+        "hash": "6820402234827505055"
+      },
+      {
+        "file": "datum-erp-workspace/.vscode/extensions.json",
+        "hash": "11309362834336059819"
+      },
+      {
+        "file": "datum-erp-workspace/.vscode/launch.json",
+        "hash": "11397966353554284715"
+      },
+      {
+        "file": "datum-erp-workspace/AGENTS.md",
+        "hash": "7581461091827600493"
+      },
+      {
+        "file": "datum-erp-workspace/CLAUDE.md",
+        "hash": "7581461091827600493"
+      },
+      {
+        "file": "datum-erp-workspace/README.md",
+        "hash": "11216185634198222713"
+      },
+      {
+        "file": "datum-erp-workspace/eslint.config.mjs",
+        "hash": "18261230759611741765"
+      },
+      {
+        "file": "datum-erp-workspace/nx.json",
+        "hash": "6180446480634845113"
+      },
+      {
+        "file": "datum-erp-workspace/package-lock.json",
+        "hash": "13916772246314400581"
+      },
+      {
+        "file": "datum-erp-workspace/package.json",
+        "hash": "12454954180765401727"
+      },
+      {
+        "file": "datum-erp-workspace/tsconfig.base.json",
+        "hash": "15760241899489716097"
+      },
+      {
+        "file": "datum-erp-workspace/vitest.workspace.ts",
+        "hash": "382902831997169314"
+      },
+      {
+        "file": "package.json",
+        "hash": "15075154560673377003"
+      }
+    ]
+  }
+}

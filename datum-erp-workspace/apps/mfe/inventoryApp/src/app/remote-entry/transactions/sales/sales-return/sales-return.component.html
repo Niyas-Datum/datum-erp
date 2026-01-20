@@ -1,0 +1,39 @@
+<div class="row content-wrapper">
+    <div class="col-md-12 right-section-container">
+    <div class="row fixed-header">
+        <app-invoice-header (formSubmitted)="handleInvoiceHeaderForm($event)"></app-invoice-header>
+      </div>
+    
+    <!-- Tab Section -->
+    <div class="row fixed-tabs">
+      <app-additional-details 
+        [isNewMode]="isNewMode()"
+        [isEditMode]="isEditMode()"
+        (additionalDetailsChanged)="handleAdditionalDetailsChange($event)"
+        (barcodeClicked)="handleBarcodeClick()"
+        (grossAmountEditChanged)="onGrossAmountEditChanged($event)"
+        (approveChanged)="onApproveChanged($event)"
+        (tabChanged)="onTabChangedEvent($event)"
+        #additionalDetailsRef>
+      </app-additional-details>
+    </div>
+    
+    <!-- Main Content Area - Item List Grid when Item Details tab is active -->
+    <div class="row main-content-area" *ngIf="selectedTab() === 1">
+        <app-item-list 
+          [isNewMode]="isNewMode()"
+          [isEditMode]="isEditMode()"
+        ></app-item-list>
+      </div>
+    
+    <div class="row fixed-footer">
+        <app-invoice-footer (footerPopUpData)="handleSelectedItem($event)"></app-invoice-footer>
+      </div>
+    </div>
+  
+    <router-outlet></router-outlet>
+  
+  <!-- Alert Dialog -->
+  <div id="alertDialog" #dialogAlert></div>
+  </div>
+  

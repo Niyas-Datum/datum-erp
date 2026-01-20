@@ -1,0 +1,2816 @@
+{
+  "datum-erp-workspace/libs/architecture": {
+    "root": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/architecture/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/architecture/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/libs/assets": {
+    "root": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/assets/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/assets/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/libs/constants": {
+    "root": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/constants/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:shared": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/constants/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/libs/http": {
+    "root": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/http/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:shared": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/http/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/libs/models": {
+    "root": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/models/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:shared": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/models/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/libs/services": {
+    "root": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/services/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:shared": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/services/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/libs/ui": {
+    "root": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/ui/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:shared": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/ui/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/libs/utils": {
+    "root": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "tags.npm:public": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.targetGroups": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.packageName": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "metadata.js.isInPackageManagerWorkspaces": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.executor": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.dependsOn": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "targets.nx-release-publish.options": [
+      "datum-erp-workspace/libs/utils/package.json",
+      "nx/core/package-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.project": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.tsConfig": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/libs/utils/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/apps/AuthApp": {
+    "root": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:shop": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.index": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.main": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.customWebpackConfig": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.customWebpackConfig": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.buildOptimizer": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.vendorChunk": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.namedChunks": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.dependsOn": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.publicHost": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.executor": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options.buildTarget": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.defaultConfiguration": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.watch": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/AuthApp/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/apps/coreApp": {
+    "root": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:shop": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.index": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.main": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.customWebpackConfig": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.customWebpackConfig": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.buildOptimizer": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.vendorChunk": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.namedChunks": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.dependsOn": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.publicHost": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.executor": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options.buildTarget": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.defaultConfiguration": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.watch": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/coreApp/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/apps/hostApp": {
+    "root": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:host": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.index": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.main": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.customWebpackConfig": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.customWebpackConfig": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.buildOptimizer": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.vendorChunk": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.namedChunks": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.publicHost": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.executor": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options.buildTarget": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.spa": [
+      "datum-erp-workspace/apps/hostApp/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/apps/loginApp": {
+    "root": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.index": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.main": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.customWebpackConfig": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.customWebpackConfig": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.buildOptimizer": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.vendorChunk": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.namedChunks": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.dependsOn": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.publicHost": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.executor": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options.buildTarget": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.defaultConfiguration": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.watch": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/loginApp/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/apps/mfe/financeApp": {
+    "root": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:host": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.index": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.main": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.customWebpackConfig": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.customWebpackConfig": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.buildOptimizer": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.vendorChunk": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.namedChunks": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.publicHost": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.executor": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options.buildTarget": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.watch": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/mfe/financeApp/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/apps/mfe/generalApp": {
+    "root": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:host": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.index": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.main": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.customWebpackConfig": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.customWebpackConfig": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.buildOptimizer": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.vendorChunk": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.namedChunks": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.publicHost": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.executor": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options.buildTarget": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.watch": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/mfe/generalApp/project.json",
+      "nx/core/project-json"
+    ]
+  },
+  "datum-erp-workspace/apps/mfe/inventoryApp": {
+    "root": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "name": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "$schema": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "projectType": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "prefix": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "sourceRoot": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "tags.scope:host": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.executor": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.outputs": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.outputPath": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.index": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.main": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.tsConfig": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.inlineStyleLanguage": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.assets": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.styles": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.options.customWebpackConfig": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.budgets": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.outputHashing": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.production.customWebpackConfig": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.buildOptimizer": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.optimization": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.vendorChunk": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.extractLicenses": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.sourceMap": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.build.configurations.development.namedChunks": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.continuous": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.executor": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.port": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.options.publicHost": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.executor": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.extract-i18n.options.buildTarget": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.lint.executor": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.continuous": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.executor": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.defaultConfiguration": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.buildTarget": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.port": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.options.watch": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.development.buildTarget": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ],
+    "targets.serve-static.configurations.production.buildTarget": [
+      "datum-erp-workspace/apps/mfe/inventoryApp/project.json",
+      "nx/core/project-json"
+    ]
+  }
+}

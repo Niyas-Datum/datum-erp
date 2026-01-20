@@ -4,7 +4,7 @@ const config: ModuleFederationConfig = {
   name: 'generalApp',
   exposes: {
     './Module': 'apps/mfe/generalApp/src/app/remote-entry/entry-module.ts',
-   // './popup/lazy-general-popup-map': 'apps/mfe/generalApp/src/app/remote-entry/common/popup/lazy-general-popup-map.ts',
+    './popup': 'apps/mfe/generalApp/src/app/remote-entry/common/popup/lazy-general-popup-map.ts',
   },
 };
 

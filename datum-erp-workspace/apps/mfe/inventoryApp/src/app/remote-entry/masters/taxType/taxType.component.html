@@ -1,0 +1,171 @@
+<form [formGroup]="taxTypeForm" >
+    <div class="row">
+                    <div class="col-md-12">
+                        <div class="section-container">
+                            <div class="section-content">
+                                <div class="row">
+                                    <label for="type" class="form-label col-md-2">Name<span
+                                            class="required-asterisk">*</span></label>
+                                    <div class="col-md-4">
+                                        <ejs-textbox type="text" id="name" [enabled]="!isInputDisabled" id="name" 
+                                            formControlName="name"></ejs-textbox>
+                                        <div *ngIf="taxTypeForm.get('name')?.hasError('required')">
+                                            <small class="text-danger">This field is required.</small>
+                                            </div>
+                                    </div>
+                                </div>
+                                 <div class="row">
+                                    <label for="name" class="form-label col-md-2">Type<span
+                                        class="required-asterisk">*</span></label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="type" [dataSource]="allType" formControlName="type" (change)="onTypeSelected($event)"
+                                        [fields]="{ text: 'Value', value: 'Id' }" [enabled]="!isInputDisabled" 
+                                        placeholder="Select Type">
+                                           
+                                        </ejs-dropdownlist> 
+                                    </div>  
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-4 flex-wrapper">
+                                                <label for="active" class="form-label">Active</label>
+                                                <ejs-checkbox type="checkbox" id="active" formControlName="active"></ejs-checkbox>
+                                            </div>
+                                            <div class="col-md-4 flex-wrapper">
+                                                <label for="default" class="form-label">IsDefault</label>
+                                                <ejs-checkbox type="checkbox" id="default"  formControlName="default"></ejs-checkbox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                                 <div class="row">
+                                    
+                                    <label for="purchasePerc" class="form-label col-md-2">Purchase%</label>
+                                    <div class="col-md-4">
+                                        <ejs-textbox type="text" id="purchasePerc"  [enabled]="!isInputDisabled"
+                                        formControlName="purchasePerc" appNumberFormat></ejs-textbox>
+                                  <small class="text-danger"
+         *ngIf="taxTypeForm.get('purchasePerc')?.hasError('pattern')">
+    Only numbers are allowed.
+  </small>
+                                    </div>
+                                        <label for="salesPerc" class="form-label col-md-2">sales%</label>
+                                        <div class="col-md-4">
+                                            <ejs-textbox type="text" id="salesPerc" [enabled]="!isInputDisabled"
+                                            formControlName="salesPerc" appNumberFormat></ejs-textbox>
+                                        <div *ngIf="taxTypeForm.get('salesPerc')?.hasError('required')">
+                                            <small class="text-danger">This field is required.</small>
+                                             <small class="text-danger"
+         *ngIf="taxTypeForm.get('salesPerc')?.hasError('pattern')">
+    Only numbers are allowed.
+  </small>
+                                            </div>                                          
+                                        </div>
+                                </div>  
+                                <div class="row">
+                                    <label for="receivableAccount" class="form-label col-md-2">Receivable Account</label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="receivableAccount" tabindex="5" (change)="onreceivableAccountSelected()"
+                                        formControlName="receivableAccount" [dataSource]="allreceivableAccount"  [enabled]="!isInputDisabled"
+                                        [fields]="{ text: 'Name', value: 'ID' }">                                       
+                                        </ejs-dropdownlist>
+                                     
+                                    </div>
+                                        <label for="payableAccount" class="form-label col-md-2">Payable Account</label>
+                                        <div class="col-md-4">
+                                            <ejs-dropdownlist id="payableAccount" tabindex="5" (change)="onpayableAccountSelected()"
+                                        formControlName="payableAccount" [dataSource]="allpayableAccount"  [enabled]="!isInputDisabled"
+                                        [fields]="{ text: 'Name', value: 'ID' }">
+                                            </ejs-dropdownlist>
+                                        </div>       
+                                </div>  
+
+                                 <div class="row">
+                                    <label for="salePurcMode" class="form-label col-md-2">Sales/Pur.Mode</label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="salePurcMode" tabindex="5"  [enabled]="!isInputDisabled"
+                                                (change)="onsalePurcModeSelected()" [dataSource]="allsalePurMode" [fields]="{ text: 'Value', value: 'ID' }"
+                                                formControlName="salePurcMode">
+                                        
+                                        </ejs-dropdownlist>
+                                    </div>
+                                        <label for="taxType" class="form-label col-md-2">TaxType</label>
+                                        <div class="col-md-4">
+                                            <ejs-dropdownlist id="taxType" tabindex="5" (change)="ontaxTypeSelected()" [enabled]="!isInputDisabled"
+                                                    formControlName="taxType"  [dataSource]="allTaxType" [fields]="{ text: 'Value', value: 'ID' }">
+                                            </ejs-dropdownlist>
+                                        </div>
+                                </div>   
+
+                                 <div class="row">
+                                    <label for="sgstReceivable" class="form-label col-md-2">SGST Receivable</label>
+                                    <div class="col-md-4">
+                                       <ejs-dropdownlist id="sgstReceivable" tabindex="5" (change)="onsgstReceivableSelected()"  [enabled]="!isInputDisabled"
+                                        formControlName="sgstReceivable" [dataSource]="allsgstReceivable" [fields]="{ text: 'Name', value: 'ID' }">
+                                       </ejs-dropdownlist>
+                                    </div>
+                                        <label for="sgstPayable" class="form-label col-md-2">SGST Payable</label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="sgstPayable" tabindex="5" (change)="onsgstPayableSelected()"  [enabled]="!isInputDisabled"
+                                        formControlName="sgstPayable" [dataSource]="allsgstPayable" [fields]="{ text: 'Name', value: 'ID' }">
+                                        </ejs-dropdownlist>
+                                    </div>
+                                </div>
+
+                                 <div class="row">
+                                    <label for="cgstReceivable" class="form-label col-md-2">CGST Receivable</label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="cgstReceivable" tabindex="5" (change)="oncgstReceivableSelected()"  [enabled]="!isInputDisabled"
+                                        formControlName="cgstReceivable" [dataSource]="allcgstReceivable" [fields]="{ text: 'Name', value: 'ID' }">
+                                        </ejs-dropdownlist>                                     
+                                    </div>
+                                        <label for="cgstPayable" class="form-label col-md-2">CGST Payable</label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="cgstPayable" tabindex="5" (change)="oncgstPayableSelected()"  [enabled]="!isInputDisabled"
+                                        formControlName="cgstPayable" [dataSource]="allcgstPayable" [fields]="{ text: 'Name', value: 'ID' }">
+                                        </ejs-dropdownlist>               
+                                    </div>
+                                </div>
+
+                                 <div class="row">
+                                    <label for="cessPayables" class="form-label col-md-2">Cess Payable</label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="cessPayables" tabindex="5" (change)="oncessPayablesSelected()"  [enabled]="!isInputDisabled"
+                                        formControlName="cessPayables" [dataSource]="allcessPayables" [fields]="{ text: 'Name', value: 'ID' }">
+                                        </ejs-dropdownlist>
+                                    </div>
+                                        <label for="cessReceivable" class="form-label col-md-2">Cess Receivable</label>
+                                    <div class="col-md-4">
+                                        <ejs-dropdownlist id="cessReceivable" tabindex="5" (change)="oncessReceivableSelected()" [enabled]="!isInputDisabled"
+                                        formControlName="cessReceivable" [dataSource]="allcessReceivable" [fields]="{ text: 'Name', value: 'ID' }">
+                                        </ejs-dropdownlist>
+                                    </div>                                  
+                                </div>
+
+                                <div class="row">
+                                    <label for="cess" class="form-label col-md-2">Cess %<span
+                                            class="required-asterisk">*</span></label>
+                                        <div class="col-md-4">
+                                            <ejs-textbox type="text" id="cess" [enabled]="!isInputDisabled" 
+                                                formControlName="cess" appNumberFormat></ejs-textbox>
+                                            <div *ngIf="taxTypeForm.get('cess')">
+                                            </div>   
+                                        </div>
+                                </div>
+
+                                <div class="row">
+                                    <label for="description" class="form-label col-md-2">Description<span
+                                            class="required-asterisk">*</span></label>
+                                    <div class="col-md-10">
+                                        <ejs-textbox type="text" id="description" [enabled]="!isInputDisabled"
+                                            formControlName="description"></ejs-textbox>
+                                            <div *ngIf="taxTypeForm.get('description')">                                           
+                                            </div>
+                                    </div>                                    
+                                </div>
+
+                            </div>                            
+                        </div>
+                    </div>
+    </div>
+
+</form>

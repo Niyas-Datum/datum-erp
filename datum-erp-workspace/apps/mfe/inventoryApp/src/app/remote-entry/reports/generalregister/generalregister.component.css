@@ -1,0 +1,19 @@
+.left-summary-wrapper {
+  margin-top: 10px;
+  padding: 5px;
+}
+
+.e-grid {
+  font-size: 13px;
+}
+
+.e-headercell {
+  font-weight: 600;
+  background-color: #2c2c2c;
+  color: #fff;
+}
+
+.e-row:last-child {
+  font-weight: 600;
+  background-color: #f3f6f9;
+}

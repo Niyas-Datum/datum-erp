@@ -1,0 +1,348 @@
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 1000px;
+  border-radius: 8px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.popup-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 800px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.popup-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.nested-popup {
+  position: fixed;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  z-index: 1000;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
+}
+
+.nested-popup-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 600px;
+}
+
+.selected-id-display h4 {
+  margin: 0;
+  color: #1976d2;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.item-list-content {
+  padding: 10px 0;
+}
+
+/* Style for when no transaction is selected */
+.selected-id-display h4:empty::after {
+  content: 'No transaction selected';
+  color: #666;
+  font-style: italic;
+}
+
+/* Loading indicator */
+.loading-indicator {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.loading-indicator p {
+  margin: 0;
+  font-style: italic;
+}
+
+/* Purchase details styling */
+.purchase-details {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.purchase-details h5 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.item-row:hover {
+  background-color: #f9f9f9;
+}
+
+.item-qty,
+.item-rate {
+  flex: 1;
+  text-align: center;
+  color: #666;
+}
+
+/* No data message */
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Mode Display Styling */
+.mode-display {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.mode-display h3 {
+  margin: 0 0 10px 0;
+  color: #495057;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.mode-indicators {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.mode-indicator {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #e9ecef;
+  color: #6c757d;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.mode-indicator.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+
+/* ===== GRID CONTAINER ===== */
+.e-grid {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  background-color: #fff;
+  overflow: hidden;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ===== HEADER ===== */
+.e-grid .e-headercell {
+  background-color: #3c5f92 !important; /* ERP blue header */
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 13px;
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.e-grid .e-headercell .e-headertext {
+  white-space: nowrap;
+}
+
+.e-grid .e-headercontent {
+  border-bottom: 2px solid #3c5f92;
+}
+
+/* ===== ROWS ===== */
+.e-grid .e-row {
+  font-size: 13px;
+  color: #333;
+  background-color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.e-grid .e-row:hover {
+  background-color: #f8f9fa !important; /* Light hover */
+}
+
+/* Alternate row color for better readability */
+.e-grid .e-altrow {
+  background-color: #fcfcfc !important;
+}
+
+/* ===== SELECTION ===== */
+.e-grid .e-rowcell.e-selectionbackground {
+  background-color: rgba(0,123,255,0.15) !important;
+  color: #000 !important;
+}
+
+/* ===== GRID LINES ===== */
+.e-grid .e-rowcell {
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* ===== PAGER ===== */
+.e-grid .e-pager {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.e-grid .e-pager .e-numericitem.e-currentpage {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* ===== FILTERS / DROPDOWNS ===== */
+.e-grid .e-filterbarcell input {
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  font-size: 12px;
+  padding: 4px 6px;
+}
+
+/* ===== Z-INDEX RULES TO ENSURE GRID STAYS BELOW ALL POPUPS ===== */
+
+/* Force the entire item-list component to have lowest z-index */
+.item-list-container {
+  z-index: 0 !important;
+  position: relative !important;
+}
+
+/* Force all grid elements to have lowest z-index */
+.e-grid,
+.e-grid-container,
+.e-grid .e-gridcontent,
+.e-grid .e-gridheader,
+.e-grid .e-gridbody,
+.e-grid .e-gridfooter,
+.e-grid .e-pager,
+.e-grid .e-toolbar,
+.e-grid .e-filterbar,
+#transactionGrid,
+#transactionGrid .e-gridcontent,
+#transactionGrid .e-gridheader,
+#transactionGrid .e-gridbody,
+#transactionGrid .e-gridfooter {
+  z-index: 0 !important;
+  position: relative !important;
+}
+
+/* Component-specific overrides using :host */
+:host {
+  z-index: 0 !important;
+  position: relative !important;
+}
+
+:host .e-grid,
+:host .e-grid-container,
+:host #transactionGrid {
+  z-index: 0 !important;
+  position: relative !important;
+}
+
+/* Additional specificity for the item-list component */
+app-item-list .e-grid,
+app-item-list .e-grid-container,
+app-item-list #transactionGrid {
+  z-index: 0 !important;
+  position: relative !important;
+}
+
+
+/* paymentpopup.component.css (or global styles) */
+:host ::ng-deep .e-dialog,
+:host ::ng-deep .e-dlg-modal,
+:host ::ng-deep .e-popup-open.e-dialog {
+  z-index: 2000 !important; /* higher than your outer modal */
+}
+

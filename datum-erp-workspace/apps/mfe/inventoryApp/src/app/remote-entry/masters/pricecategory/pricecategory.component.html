@@ -1,0 +1,69 @@
+<form [formGroup]="PriceCategoryForm">
+        <div class="section-container">
+          <div class="section-content">
+            <div class="row">
+              <label for="categoryname" class="form-label col-md-2">Category Name<span class="required-asterisk">*</span></label>
+              <div class="col-md-4">
+                <input type="text" class="form-control" id="categoryname" formControlName="categoryname">
+                <div *ngIf="PriceCategoryForm.get('categoryname')?.hasError('required')">
+                  <small class="text-danger">This field is required.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="ofsellingprice" class="form-label col-md-2">% of Selling Price<span class="required-asterisk">*</span></label>
+              <div class="col-md-4">
+                <div class="d-flex align-items-start">
+                  <!-- Dropdown for selecting sign  -->
+                   <!-- <select id="ofsellingprice" class="form-select"
+                       formControlName="ofsellingpriceSign"  style="width: 100px; height: 30px;">  
+                    <option *ngFor="let sellingprice of signList"
+                      [value]="sellingprice?.value">
+                      {{ sellingprice?.value }}
+                    </option>
+                  </select>  -->
+
+                   <ejs-dropdownlist id="ofsellingpriceSign" tabindex="5"  [enabled]="!isInputDisabled" [dataSource]="signList"
+                                  [fields]="{ text: 'value', value: 'value' }"  formControlName="ofsellingpriceSign" >
+                                            </ejs-dropdownlist>
+
+                  <!-- Input field for decimal value -->
+                  <input type="number" class="form-control" id="ofsellingpriceValue" formControlName="ofsellingpriceValue" >
+                  <small class="text-danger"
+         *ngIf="PriceCategoryForm.get('ofsellingpriceValue')?.hasError('pattern')">
+    Only numbers are allowed.
+  </small>
+            </div>
+
+            
+              <div class="row mt-2">
+                <div class="col-md-12">
+                  <div *ngIf="PriceCategoryForm.get('ofsellingpriceValue')?.hasError('required')">
+                    <small class="text-danger">This field is required.</small>
+                  </div> 
+                  <div *ngIf="PriceCategoryForm.get('ofsellingpriceValue')?.hasError('notInteger')">
+                    <small class="text-danger">Value must be an integer.</small>                                        
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+            
+            <div class="row">
+              <label for="description" class="form-label col-md-2">Description</label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" id="description" formControlName="description">
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="active" class="form-label col-md-2" style="margin-right: 3px;">Active</label>
+              <div class="col-md-3">
+                <input type="checkbox" class="form-check-input" id="active" formControlName="active">
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>

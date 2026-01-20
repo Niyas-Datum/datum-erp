@@ -1,0 +1,47 @@
+<form [formGroup]="locationTypeForm">
+  <div class="row">
+
+    <!-- ID -->
+    <div class="col-md-12">
+      <div class="row">
+        <label for="id" class="form-label col-md-2">ID</label>
+
+        <div class="col-md-4">
+          <ejs-textbox
+            id="id"
+            [readonly]="true"
+            formControlName="id"
+            placeholder="Enter ID"
+            cssClass="e-outline input-sm"
+            width="100%">
+          </ejs-textbox>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Type -->
+    <div class="col-md-12">
+      <div class="row">
+        <label for="locationType" class="form-label col-md-2">Location Type</label>
+
+        <div class="col-md-4">
+          <ejs-textbox
+            id="locationType"
+            formControlName="locationType"
+            placeholder="Enter Location Type"
+            cssClass="e-outline input-md"
+            width="100%">
+          </ejs-textbox>
+           @if (submitted && locationTypeForm.get('locationType')?.errors)
+          {
+            <small style="color: red">
+              @if (locationTypeForm.get('locationType')?.errors?.['required'])
+              { locationType is required }
+            </small>
+          }
+        </div>
+      </div>
+    </div>
+
+  </div>
+</form>

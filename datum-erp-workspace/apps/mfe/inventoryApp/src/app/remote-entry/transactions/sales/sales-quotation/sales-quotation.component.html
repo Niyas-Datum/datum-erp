@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-md-12">
+        <app-invoice-header></app-invoice-header>
+    </div>
+</div>
+<hr />
+<div class="col-md-12">
+    <ejs-tab id="element">
+        <e-tabitems>
+            <e-tabitem>
+                <ng-template #headerText>
+                    <div>Item details</div>
+                </ng-template>
+                <ng-template #content>
+                    <app-item-list 
+                        [isNewMode]="isNewMode()"
+                        [isEditMode]="isEditMode()"
+                    ></app-item-list>
+                </ng-template>
+            </e-tabitem>
+            <e-tabitem>
+                <ng-template #headerText>
+                    <div>Additional Details</div>
+                </ng-template>
+                <ng-template #content>
+                    <app-additional-details 
+                        [isNewMode]="isNewMode()"
+                        [isEditMode]="isEditMode()"
+                        #additionalDetailsRef
+                    ></app-additional-details>
+                </ng-template>
+            </e-tabitem>
+        </e-tabitems>
+    </ejs-tab>
+</div>
+<div class="row fixed-footer">
+    <app-invoice-footer></app-invoice-footer>
+</div>

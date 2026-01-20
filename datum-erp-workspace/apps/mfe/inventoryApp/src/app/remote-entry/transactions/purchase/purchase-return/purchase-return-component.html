@@ -1,0 +1,81 @@
+<div class="row">
+  <div class="col-md-12 ">
+
+    <app-invoice-header (formSubmitted)="handleInvoiceHeaderForm($event)"></app-invoice-header>
+
+  </div>
+  <hr />
+  <div class="col-md-12 ">
+
+    <ejs-tab id="element">
+
+      <e-tabitems>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> Item details</div>
+          </ng-template>
+          <ng-template #content>
+            <app-item-list [isNewMode]="isNewMode()" [isEditMode]="isEditMode()"></app-item-list>
+          </ng-template>
+        </e-tabitem>
+        <e-tabitem>
+          <ng-template #headerText>
+            <div> Additional Details </div>
+          </ng-template>
+          <ng-template #content>
+            <app-additional-details [isNewMode]="isNewMode()" [isEditMode]="isEditMode()"
+              (additionalDetailsChanged)="handleAdditionalDetailsChange($event)" (barcodeClicked)="handleBarcodeClick()"
+              (grossAmountEditChanged)="onGrossAmountEditChanged($event)" (approveChanged)="onApproveChanged($event)"
+              (tabChanged)="onTabChangedEvent($event)" #additionalDetailsRef></app-additional-details>
+          </ng-template>
+        </e-tabitem>
+
+        <e-tabitem align="Right">
+          <ng-template #headerText>
+            <button type="button" class="btn btn-outline-primary" (click)="onBarcodeClick()">
+              <span>BR</span>
+            </button>
+          </ng-template>
+        </e-tabitem>
+        <e-tabitem align="Right">
+          <ng-template #headerText>
+            <label class="form-label">Gross Amount Edit</label>
+            <label class="switch">
+              <input type="checkbox" [checked]="isGrossAmountEditable" (change)="onGrossAmountEditChange($event)">
+              <span class="slider round"></span>
+            </label>
+          </ng-template>
+        </e-tabitem>
+        <e-tabitem align="Right">
+          <ng-template #headerText>
+            <label class="form-label">Approve</label>
+            <label class="switch">
+              <input type="checkbox" [checked]="isApproved" (change)="onApproveChange($event)">
+              <span class="slider round"></span>
+            </label>
+
+          </ng-template>
+        </e-tabitem>
+
+        <e-tabitem align="Right">
+          <ng-template #headerText>
+            <div class="party-balance">
+              <span>Party Balance : {{ partyBalance }}</span>
+            </div>
+          </ng-template>
+        </e-tabitem>
+
+      </e-tabitems>
+    </ejs-tab>
+
+  </div>
+  <div class="row fixed-footer">
+    <app-invoice-footer (footerPopUpData)="handleSelectedItem($event)"></app-invoice-footer>
+  </div>
+
+  <div class="col-md-12 ">
+    <div #dialogAlert></div>
+  </div>
+
+</div>
+

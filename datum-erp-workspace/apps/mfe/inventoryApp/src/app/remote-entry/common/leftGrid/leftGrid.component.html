@@ -1,0 +1,54 @@
+
+<div #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()" [class.grid-disabled]="isSelectionDisabled()">
+  <div #overlay [class.overlay]="!isInputDisabled()" [style.display]="isInputDisabled() ? 'none' : 'block'">
+    <p translate>Disabled</p>
+  </div>
+
+
+<ejs-grid
+  #grid
+  [dataSource]="this.leftdata$ | async  "  
+  [allowResizing]="true"
+  [allowTextWrap]="true"
+  [enableHover]="false"
+   (rowSelected)="onRowSelect($event)"
+  [allowFiltering]="true"
+  [filterSettings]="filterOptions"
+  [allowSorting]="true"
+  gridLines="Both"
+  height="80vh"
+  [rowHeight]="30"
+>
+ <e-columns>
+  <ng-container *ngFor="let col of columns">
+    <!-- Stacked Header -->
+    <e-column *ngIf="col.columns; else singleCol" [headerText]="col.headerText">
+      <e-stacked-columns>
+        <e-stacked-column
+          *ngFor="let child of col.columns"
+          [field]="child.field"
+          [headerText]="child.headerText"
+          textAlign="Center"
+          width="120"
+        >
+       
+        </e-stacked-column>
+      </e-stacked-columns>
+    </e-column>
+
+    <!-- Single Column -->
+    <ng-template #singleCol>
+      <e-column
+        [field]="col.field"
+        [headerText]="col.headerText"
+        textAlign="Center"
+        width="120"
+      ></e-column>
+    </ng-template>
+  </ng-container>
+</e-columns>
+
+</ejs-grid>
+
+
+</div>

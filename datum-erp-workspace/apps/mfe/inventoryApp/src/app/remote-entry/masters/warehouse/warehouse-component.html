@@ -1,0 +1,115 @@
+ <form [formGroup]="warehouseForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+      <label for="type"  class="form-label col-md-2">Type</label>
+    
+    <div class="col-md-4">
+      <ejs-dropdownlist id="LocationTypeID"  
+      [dataSource]="warehouseTypes()"
+        formControlName="locationTypeID"
+        [fields]="{ text: 'name', value: 'id' }"
+        (change)="onWarehouseTypeSelected($event)"
+         [enabled]="!isInputDisabled"
+        placeholder="Select Type">
+      </ejs-dropdownlist>
+    </div>
+
+    <!-- Active -->
+    
+      <label for="active"  class="form-label col-md-2">Active</label>
+    
+    <div class="col-md-4">
+      <ejs-checkbox id="active" formControlName="active" ></ejs-checkbox>
+    </div>
+</div></div>
+ <div class="col-md-12">
+<div class="row">
+    <!-- Code -->
+    <div  class="form-label col-md-2">
+      <label for="code">Code</label>
+    </div>
+    <div class="col-md-4">
+      <ejs-textbox id="code" formControlName="code" placeholder="Enter Code" [enabled]="!isInputDisabled"></ejs-textbox>
+       @if (warehouseForm.get('code')?.touched &&
+                (warehouseForm.get('code')?.errors?.['required'] ||
+                warehouseForm.get('code')?.errors?.['invalidcode']))
+                {
+                <small style="color: red">
+                  @if (warehouseForm.get('code')?.errors?.['required'])
+                  {Code is required } @if
+                  (warehouseForm.get('code')?.errors?.['invalidcode'])
+                  { Invalid format for code }
+                </small>
+                }
+    </div>
+
+    <!-- Is Default -->
+    
+      <label for="isDefault"  class="form-label col-md-2">IsDefault</label>
+    
+    <div class="col-md-4">
+      <ejs-checkbox id="isDefault" formControlName="isDefault"></ejs-checkbox>
+    </div>
+</div></div>
+    <!-- Name -->
+    <div class="col-span-2 flex items-center">
+      <label for="name">Name</label>
+    </div>
+    <div class="col-span-10">
+      <ejs-textbox id="name" formControlName="name" placeholder="Enter Name" [enabled]="!isInputDisabled"></ejs-textbox>
+       @if (warehouseForm.get('name')?.touched &&
+                (warehouseForm.get('name')?.errors?.['required'] ||
+                warehouseForm.get('name')?.errors?.['invalidcode']))
+                {
+                <small style="color: red">
+                  @if (warehouseForm.get('name')?.errors?.['required'])
+                  {name is required } @if
+                  (warehouseForm.get('name')?.errors?.['invalidcode'])
+                  { Invalid format for name }
+                </small>
+                }
+    </div>
+
+    <!-- Address -->
+    <div class="col-span-2 flex items-center">
+      <label for="address">Address</label>
+    </div>
+    <div class="col-span-10">
+      <ejs-textbox id="address" formControlName="address" placeholder="Enter Address"></ejs-textbox>
+    </div>
+
+    <!-- Remarks -->
+    <div class="col-span-2 flex items-center">
+      <label for="remarks">Remarks</label>
+    </div>
+    <div class="col-span-10">
+      <ejs-textbox id="remarks" formControlName="remarks" placeholder="Enter Remarks"></ejs-textbox>
+    </div>
+     <div class="col-span-2 flex items-center">
+      <label for="clearingPerCFT">clearingPerCFT</label>
+    </div>
+    <div class="col-span-10">
+      <ejs-textbox id="clearingPerCFT" formControlName="clearingPerCFT" placeholder="Enter ClearingPerCFT"></ejs-textbox>
+    </div>
+ <div class="col-span-2 flex items-center">
+      <label for="groundRentPerCFT">GroundRentPerCFT</label>
+    </div>
+    <div class="col-span-10">
+      <ejs-textbox id="groundRentPerCFT" formControlName="groundRentPerCFT" placeholder="Enter GroundRentPerCFT"></ejs-textbox>
+    </div>
+ <div class="col-span-2 flex items-center">
+      <label for="lottingPerPiece">LottingPerPiece</label>
+    </div>
+    <div class="col-span-10">
+      <ejs-textbox id="lottingPerPiece" formControlName="lottingPerPiece" placeholder="Enter LottingPerPiece"></ejs-textbox>
+    </div>
+ <div class="col-span-2 flex items-center">
+      <label for="lorryHirePerCFT">LorryHirePerCFT</label>
+    </div>
+    <div class="col-span-10">
+      <ejs-textbox id="lorryHirePerCFT" formControlName="lorryHirePerCFT" placeholder="Enter LorryHirePerCFT"></ejs-textbox>
+    </div>
+  </div>
+
+    </form>

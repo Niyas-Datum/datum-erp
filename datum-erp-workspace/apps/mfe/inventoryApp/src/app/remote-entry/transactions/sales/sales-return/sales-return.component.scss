@@ -1,0 +1,650 @@
+// .content-wrapper {
+//   height: 100vh;
+//   display: flex;
+//   background: #f8f9fa;
+//   overflow: hidden; /* Prevent full page scroll */
+  
+//   .left-section {
+//     background: #fff;
+//     border-right: 1px solid #dee2e6;
+//     padding: 0;
+//     overflow-y: auto;
+//     flex-shrink: 0;
+//     width: 200px; /* Fixed width for left panel */
+//   }
+  
+//   .right-section-container {
+//     display: flex;
+//     flex-direction: column;
+//     height: 100%;
+//     background: #fff;
+//     flex: 1;
+//     overflow: hidden; /* Prevent container from scrolling */
+//     min-width: 0; /* Allow flex shrinking */
+//     position: relative; /* Ensure proper positioning */
+//   }
+// }
+
+// /* Fixed sections (header, tabs, footer) - Optimized for single screen view */
+// .fixed-header {
+//   flex-shrink: 0;
+//   background: #fff;
+//   border-bottom: 1px solid #dee2e6;
+//   height: 120px; /* Increased header height to accommodate all fields */
+//   min-height: 120px;
+//   max-height: 120px;
+// }
+
+// .fixed-tabs {
+//   flex-shrink: 0;
+//   background: #fff;
+//   border-bottom: 1px solid #dee2e6;
+//   height: 50px; /* Reduced tabs height */
+//   min-height: 50px;
+//   max-height: 50px;
+// }
+
+// .fixed-footer {
+//   flex-shrink: 0;
+//   background: #fff;
+//   border-top: 1px solid #dee2e6;
+//   height: 320px; /* Increased footer height */
+//   min-height: 320px; /* Ensure minimum height */
+//   margin-top: auto; /* Push footer to bottom of available space */
+//   overflow-y: auto; /* Allow footer to scroll if content exceeds height */
+//   overflow-x: hidden; /* Prevent horizontal scroll */
+  
+//   /* Ensure footer content is properly styled */
+//   app-invoice-footer {
+//     display: block;
+//     width: 100%;
+//     height: 100%;
+    
+//     /* Target the form inside invoice footer */
+//     form {
+//       height: 100%;
+//       display: flex;
+//       flex-direction: column;
+      
+//       .section-content {
+//         flex: 1;
+//         display: flex;
+//         flex-direction: column;
+//         padding: 20px;
+//         overflow-y: auto;
+//         overflow-x: hidden;
+//         min-height: 0;
+//         height: 100%;
+        
+//         /* Ensure all sections are visible */
+//         .terms-discount-section,
+//         .roundoff-container-start,
+//         .payment-tab-outer,
+//         .payment-tab-content {
+//           flex-shrink: 0;
+//           margin-bottom: 10px;
+//         }
+        
+//         /* Specific styling for payment sections */
+//         .payment-tab-content {
+//           flex: 1;
+//           display: flex;
+//           flex-direction: column;
+//           min-height: 0;
+          
+//           /* Ensure payment sections are visible */
+//           .paytype-section {
+//             flex-shrink: 0;
+//             margin-bottom: 10px;
+//           }
+          
+//           /* Ensure total paid and balance are visible */
+//           .total-paid-label-input,
+//           .balance-label-input {
+//             flex-shrink: 0;
+//             margin-bottom: 5px;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+
+// .main-content-area {
+//   flex: 1;
+//   display: flex;
+//   flex-direction: column;
+//   min-height: 0;
+//   background: #fff;
+//   margin: 0;
+//   padding: 0;
+//   overflow: hidden; /* Prevent main content from scrolling */
+//   height: calc(100vh - 490px); /* Optimized height: 100vh - header(120) - tabs(50) - footer(320) */
+//   max-height: calc(100vh - 490px); /* Ensure it doesn't exceed this height */
+// }
+
+// /* Header styling to ensure all fields are visible */
+// .fixed-header {
+//   app-invoice-header {
+//     height: 100%;
+//     overflow: visible; /* Allow content to be visible */
+    
+//     .section-content {
+//       padding: 10px 15px; /* Adequate padding for visibility */
+//       height: 100%;
+//       overflow: visible; /* Allow content to be visible */
+//     }
+    
+//     .purchase-form-top-container {
+//       margin-bottom: 10px; /* Adequate margin */
+//       padding: 10px; /* Adequate padding */
+//       gap: 10px; /* Adequate gap */
+//     }
+    
+//     .purchase-form-left,
+//     .purchase-form-right {
+//       padding: 8px; /* Adequate padding */
+//       gap: 8px; /* Adequate gap */
+//     }
+    
+//     .purchase-voucher-outer,
+//     .project-section,
+//     .purchase-partyinvoice-outer,
+//     .purchase-date-section,
+//     .purchase-supplier-outer,
+//     .reference-section,
+//     .salesman-section,
+//     .warehouse-section,
+//     .vatno-section {
+//       padding: 4px 0; /* Adequate padding */
+//       border-bottom: 1px solid #f1f3f4; /* Subtle borders for separation */
+//     }
+    
+//     .purchase-form-right-top {
+//       margin-bottom: 8px; /* Adequate margin */
+//       gap: 8px; /* Adequate gap */
+//     }
+    
+//     .top-section1,
+//     .top-section2,
+//     .top-section3 {
+//       padding: 6px; /* Adequate padding */
+//       gap: 6px; /* Adequate gap */
+//     }
+//   }
+// }
+
+// .main-content-area {
+//   app-item-list {
+//     flex: 1;
+//     display: flex;
+//     flex-direction: column;
+//     height: 100%;
+//     overflow: hidden;
+//   }
+  
+//   /* Additional details form container */
+//   .additional-details-form-container {
+//     height: 100%;
+//     min-height: 100%;
+//     flex: 1;
+//     display: flex;
+//     flex-direction: column;
+//   }
+  
+//   /* Ensure the col-12 takes full height */
+//   .col-12 {
+//     height: 100%;
+//     display: flex;
+//     flex-direction: column;
+//   }
+// }
+
+// /* Ensure the item list grid fills the available space and scrolls properly */
+// .main-content-area app-item-list {
+//   height: 100%;
+  
+//   /* Target the grid container within item-list */
+//   ::ng-deep .grid-container,
+//   ::ng-deep .e-grid,
+//   ::ng-deep .e-grid-container {
+//     height: 100% !important;
+//     min-height: 0 !important;
+//     max-height: 100% !important;
+//     overflow: hidden !important;
+//   }
+  
+//   /* Ensure grid content has proper scrolling when items are added */
+//   ::ng-deep .e-grid .e-content {
+//     height: calc(100% - 50px) !important; /* Subtract header height */
+//     max-height: calc(100% - 50px) !important;
+//     overflow-y: auto !important;
+//     overflow-x: auto !important;
+//   }
+  
+//   ::ng-deep .e-grid .e-content .e-table {
+//     height: auto !important; /* Allow table to grow with items */
+//     max-height: none !important;
+//   }
+  
+//   ::ng-deep .e-grid .e-content .e-table .e-tablebody {
+//     height: auto !important;
+//     max-height: none !important;
+//     overflow: visible !important;
+//   }
+  
+//   /* Ensure grid header stays fixed while content scrolls */
+//   ::ng-deep .e-grid .e-gridheader {
+//     position: sticky !important;
+//     top: 0 !important;
+//     z-index: 10 !important;
+//     background: #fff !important;
+//   }
+// }
+
+// /* Additional details form styling */
+// .additional-details-form-container {
+//   padding: 0;
+//   background: #fff;
+//   height: 100%;
+//   min-height: 100%;
+//   overflow-y: auto;
+//   overflow-x: hidden;
+//   display: flex;
+//   flex-direction: column;
+
+//   .form-content {
+//     padding: 15px; /* Reduced padding for compact view */
+//     flex: 1;
+//     min-height: 0;
+//     overflow-y: auto;
+//     overflow-x: hidden;
+//     max-height: 100%;
+//   }
+
+//   .section-header {
+//     margin: 0 0 15px 0;
+//     padding: 10px 15px; /* Reduced padding */
+//     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+//     color: white;
+//     border-radius: 6px 6px 0 0;
+    
+//     h4 {
+//       color: white;
+//       font-weight: 600;
+//       margin: 0;
+//       font-size: 14px; 
+//       text-transform: uppercase;
+//       letter-spacing: 0.5px;
+//     }
+    
+//     hr {
+//       display: none; 
+//     }
+//   }
+
+//   .form-row {
+//     display: flex;
+//     flex-wrap: wrap;
+//     margin-bottom: 15px; 
+//     gap: 10px; 
+//   }
+
+//   .form-group {
+//     flex: 1;
+//     min-width: 180px; 
+//     margin-bottom: 0;
+
+//     &.full-width {
+//       flex: 100%;
+//       min-width: 100%;
+//     }
+//   }
+
+//   .form-label {
+//     display: block;
+//     margin-bottom: 5px; 
+//     font-weight: 600;
+//     color: #495057;
+//     font-size: 13px;
+//     text-transform: capitalize;
+//   }
+
+//   .form-control {
+//     width: 100%;
+//     padding: 8px 12px; 
+//     border: 1px solid #e9ecef;
+//     border-radius: 6px; 
+//     font-size: 13px;
+//     transition: all 0.3s ease;
+//     background: #fff;
+
+//     &:focus {
+//       border-color: #667eea;
+//       outline: 0;
+//       box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+//     }
+
+//     &:hover {
+//       border-color: #ced4da;
+//     }
+//   }
+
+//   textarea.form-control {
+//     resize: vertical;
+//     min-height: 60px; 
+//     font-family: inherit;
+//   }
+
+//   select.form-control {
+//     cursor: pointer;
+//     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+//     background-position: right 12px center;
+//     background-repeat: no-repeat;
+//     background-size: 16px;
+//     padding-right: 40px;
+//   }
+
+//   .financial-section {
+//     background: #f8f9fa;
+//     padding: 15px; 
+//     border-radius: 6px; 
+//     margin: 15px 0; 
+//     border-left: 3px solid #28a745; 
+
+//     .section-header {
+//       background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+//       margin: -15px -15px 15px -15px; 
+//       border-radius: 6px 6px 0 0;
+//     }
+//   }
+
+//   .payment-section {
+//     background: #fff3cd;
+//     padding: 15px; 
+//     border-radius: 6px;
+//     margin: 15px 0; 
+//     border-left: 3px solid #ffc107; 
+
+//     .section-header {
+//       background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+//       margin: -15px -15px 15px -15px; 
+//       border-radius: 6px 6px 0 0;
+//     }
+//   }
+// }
+
+// @media (max-width: 1200px) {
+//   .content-wrapper {
+//     .left-section {
+//       width: 180px;
+//     }
+    
+//     .right-section-container {
+//       width: calc(100% - 180px);
+//     }
+//   }
+  
+//   .fixed-header {
+//     height: 110px;
+//     min-height: 110px;
+//     max-height: 110px;
+//   }
+  
+//   .fixed-tabs {
+//     height: 45px;
+//     min-height: 45px;
+//     max-height: 45px;
+//   }
+  
+//   .fixed-footer {
+//     height: 300px;
+//     min-height: 300px;
+//   }
+  
+//   .main-content-area {
+//     height: calc(100vh - 465px);
+//     max-height: calc(100vh - 465px);
+//   }
+  
+//   .additional-details-form-container {
+//     .form-content {
+//       padding: 10px; 
+//     }
+    
+//     .form-row {
+//       margin-bottom: 10px; 
+//       gap: 8px; 
+//     }
+    
+//     .form-group {
+//       min-width: 150px; 
+//     }
+    
+//     .form-label {
+//       font-size: 12px; 
+//     }
+    
+//     .form-control {
+//       padding: 6px 10px; 
+//       font-size: 12px; 
+//     }
+//   }
+// }
+
+// @media (max-width: 992px) {
+//   .content-wrapper {
+//     flex-direction: column;
+//     height: 100vh;
+    
+//     .left-section {
+//       width: 100%;
+//       height: 200px;
+//       border-right: none;
+//       border-bottom: 1px solid #dee2e6;
+//       flex-shrink: 0;
+//     }
+    
+//     .right-section-container {
+//       width: 100%;
+//       height: calc(100vh - 200px);
+//       flex: 1;
+//     }
+//   }
+  
+//   .fixed-header {
+//     height: 100px;
+//     min-height: 100px;
+//     max-height: 100px;
+//     flex-shrink: 0;
+//   }
+  
+//   .fixed-tabs {
+//     height: 40px;
+//     min-height: 40px;
+//     max-height: 40px;
+//     flex-shrink: 0;
+//   }
+  
+//   .fixed-footer {
+//     height: 280px;
+//     min-height: 280px;
+//     flex-shrink: 0;
+//   }
+  
+//   .main-content-area {
+//     flex: 1;
+//     overflow: hidden;
+//     height: calc(100vh - 430px);
+//     max-height: calc(100vh - 430px);
+//   }
+  
+//   .additional-details-form-container {
+//     padding: 12px;
+    
+//     .section-header {
+//       margin: 16px 0 12px 0;
+      
+//       h4 {
+//         font-size: 16px;
+//       }
+//     }
+    
+//     .form-row {
+//       margin-bottom: 10px;
+//     }
+    
+//     .form-group {
+//       padding: 0 4px;
+//       margin-bottom: 10px;
+//     }
+    
+//     .form-label {
+//       font-size: 12px;
+//     }
+    
+//     .form-control {
+//       padding: 5px 8px;
+//       font-size: 12px;
+//     }
+//   }
+// }
+
+// @media (max-width: 768px) {
+//   .content-wrapper {
+//     .left-section {
+//       height: 150px;
+//     }
+    
+//     .right-section-container {
+//       height: calc(100vh - 150px);
+//     }
+//   }
+  
+//   .fixed-header {
+//     height: 90px;
+//     min-height: 90px;
+//     max-height: 90px;
+//     flex-shrink: 0;
+//   }
+  
+//   .fixed-tabs {
+//     height: 35px;
+//     min-height: 35px;
+//     max-height: 35px;
+//     flex-shrink: 0;
+//   }
+  
+//   .fixed-footer {
+//     height: 260px;
+//     min-height: 260px;
+//     flex-shrink: 0;
+//   }
+  
+//   .main-content-area {
+//     flex: 1;
+//     overflow: hidden;
+//     height: calc(100vh - 385px);
+//     max-height: calc(100vh - 385px);
+//   }
+  
+//   .additional-details-form-container {
+//     padding: 10px;
+    
+//     .section-header {
+//       margin: 12px 0 8px 0;
+      
+//       h4 {
+//         font-size: 14px;
+//       }
+//     }
+    
+//     .form-row {
+//       margin-bottom: 8px;
+//     }
+    
+//     .form-group {
+//       padding: 0 2px;
+//       margin-bottom: 8px;
+//     }
+    
+//     .form-label {
+//       font-size: 11px;
+//     }
+    
+//     .form-control {
+//       padding: 4px 6px;
+//       font-size: 11px;
+//     }
+//   }
+// }
+
+// @media (max-width: 576px) {
+//   .content-wrapper {
+//     .left-section {
+//       height: 120px;
+//     }
+    
+//     .right-section-container {
+//       height: calc(100vh - 120px);
+//     }
+//   }
+  
+//   .fixed-header {
+//     height: 80px;
+//     min-height: 80px;
+//     max-height: 80px;
+//     flex-shrink: 0;
+//   }
+  
+//   .fixed-tabs {
+//     height: 30px;
+//     min-height: 30px;
+//     max-height: 30px;
+//     flex-shrink: 0;
+//   }
+  
+//   .fixed-footer {
+//     height: 200px;
+//     min-height: 200px;
+//     flex-shrink: 0;
+//   }
+  
+//   .main-content-area {
+//     flex: 1;
+//     overflow: hidden;
+//     height: calc(100vh - 310px);
+//     max-height: calc(100vh - 310px);
+//   }
+  
+//   .additional-details-form-container {
+//     padding: 8px;
+    
+//     .section-header {
+//       margin: 8px 0 6px 0;
+      
+//       h4 {
+//         font-size: 13px;
+//       }
+//     }
+    
+//     .form-row {
+//       margin-bottom: 6px;
+//     }
+    
+//     .form-group {
+//       padding: 0 1px;
+//       margin-bottom: 6px;
+//     }
+    
+//     .form-label {
+//       font-size: 10px;
+//     }
+    
+//     .form-control {
+//       padding: 3px 5px;
+//       font-size: 10px;
+//     }
+//   }
+// }
+

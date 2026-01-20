@@ -4,7 +4,7 @@ const config: ModuleFederationConfig = {
   name: 'financeApp',
   exposes: {
     './Module': 'apps/mfe/financeApp/src/app/remote-entry/entry-module.ts',
-   // './popup': 'apps/mfe/financeApp/src/app/remote-entry/common/popup/lazy-financial-popup-map.ts',
+    './popup': 'apps/mfe/financeApp/src/app/remote-entry/common/popup/lazy-financial-popup-map.ts',
   },
 };
 

@@ -1,0 +1,93 @@
+ <form [formGroup]="categoryForm" >
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="section-container">
+                            <div class="section-content">
+                                <div class="row">
+                                    <label for="categorycode" class="form-label col-md-2">Category Code<span
+                                            class="required-asterisk">*</span></label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="categorycode"
+                                            formControlName="categorycode">
+                                        <div *ngIf="categoryForm.get('categorycode')?.hasError('required')">
+                                            <small class="text-danger">This field is required.</small>
+                                            </div>
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-4" style="text-align: right;">
+                                        <label for="active" class="form-label" style="margin-right: 3px;">Active</label>
+                                        <input type="checkbox" id="active" class="form-check-input "
+                                            formControlName="active">
+                                    </div>                                                                        
+                                </div>
+                                <div class="row">
+                                    <label for="categoryname" class="form-label col-md-2">Category Name<span
+                                        class="required-asterisk">*</span></label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" id="categoryname"
+                                            formControlName="categoryname">
+                                        <div *ngIf="categoryForm.get('categoryname')?.hasError('required')">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div>
+                                    </div>                 
+                                </div>
+                                 <div class="row">
+                                    <label for="categorytype" class="form-label col-md-2">Category Type<span
+                                        class="required-asterisk">*</span></label>
+                                    <div class="col-md-6">
+                                         <app-multiColumnComboBox
+                                            formControlName="categorytype"
+                                            [dataSource]="categoryTypeOptions()"
+                                            [fields]="{ text: 'description', value: 'Code' }"
+                                            [columns]="columns"
+                                            popupWidth="450px"
+                                            (rowSelected)="onCategoryTypeSelected($event)">
+                                    </app-multiColumnComboBox>
+                                      
+                                    </div>                 
+                                </div>
+
+                                  <div class="row">
+                                    <div class="col-md-8"></div>
+                                    <div class="col-md-4" style="text-align: right;">
+                                        <label for="disableminusstock" class="form-label" style="margin-right: 3px;">Disable Minus Stock</label>
+                                        <input type="checkbox" id="disableminusstock" class="form-check-input"
+                                            formControlName="disableminusstock">
+                                    </div>                 
+                                </div>                               
+                                
+                                <div class="row">
+                                    <label for="startdate" class="form-label col-md-2" translate>Start Date</label>
+                                    <div class="col-md-4 flex-wrapper">
+                                        <ejs-datepicker id="startdate"
+                                        formControlName="startdate"
+                                        placeholder="yyyy-MM-dd">
+                                    </ejs-datepicker>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <label for="enddate" class="form-label col-md-2" translate>End Date</label>
+                                    <div class="col-md-4 flex-wrapper">
+                                        <ejs-datepicker id="enddate"
+                                        formControlName="enddate"
+                                        placeholder="yyyy-MM-dd">
+                                    </ejs-datepicker>
+                                    </div>
+                                </div>
+
+                                 <div class="row">
+                                    <label for="discount Perc" class="form-label col-md-2" translate>Discount Perc</label>
+                                    <div class="col-md-4">
+                                        <div class="input-group" >
+                                            <input class="form-control" type="number" formControlName="discountperc" style="text-align: right;"/>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+    </form>

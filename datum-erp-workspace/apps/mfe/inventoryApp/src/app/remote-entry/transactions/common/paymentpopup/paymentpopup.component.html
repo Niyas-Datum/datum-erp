@@ -1,0 +1,121 @@
+<ng-template #accountCodeTemplate let-data>
+  <ejs-multicolumncombobox [dataSource]="popupData" [fields]="{ text: 'accountcode', value: 'accountname' }"
+    [showClearButton]="true" [allowFiltering]="true" filterType="Contains" placeholder="Search by Item Code or Name..."
+    popupWidth="900px" (change)="onAccountSelect($event, data)">
+  </ejs-multicolumncombobox>
+</ng-template>
+
+
+
+<ng-template #pdcPayableTemplate let-data>
+  <ejs-multicolumncombobox
+    [dataSource]="popupData" 
+    [fields]="{ text: 'accountname', value: 'id' }"  
+    [columns]="[
+      { field: 'accountcode', header: 'Code', width: 120 },
+      { field: 'accountname', header: 'Name', width: 240 }
+    ]"
+    [value]="data.pdcpayableId" 
+    [showClearButton]="true"
+    [allowFiltering]="true"
+    filterType="Contains"
+    placeholder="Select PDC Payable..."
+    popupWidth="600px"
+    (change)="onPdcSelect($event, data)">
+  </ejs-multicolumncombobox>
+</ng-template>
+
+<ng-template #bankNameTemplate let-data>
+  <ejs-multicolumncombobox
+    [dataSource]="bankData"
+    [fields]="{ text: 'accountname', value: 'id' }"  
+    [columns]="[
+      { field: 'accountcode', header: 'Code', width: 120 },
+      { field: 'accountname', header: 'Name', width: 240 }
+    ]"
+    [value]="data.bankId" 
+    [showClearButton]="true"
+    [allowFiltering]="true"
+    filterType="Contains"
+    placeholder="Select PDC Payable..."
+    popupWidth="600px"
+    (change)="onBankSelect($event, data)">
+  </ejs-multicolumncombobox>
+</ng-template>
+
+<ng-template #descriptionEdit let-data>
+  <input [(ngModel)]="data.description" class="e-input" />
+</ng-template>
+
+
+
+<div class="popup-overlay" *ngIf="popupVisible">
+  <div class="popup-content">
+    <div class="popup-header">
+      <h5>Select Payment</h5>
+      <button class="close-btn" (click)="close()">×</button>
+    </div>
+
+    <ejs-grid #grid id="popupGrid" [dataSource]="popupData1" [editSettings]="editSettings" [allowPaging]="false"
+      height="300">
+      <e-columns>
+        <ng-container *ngFor="let column of popupGridColumns">
+          <e-column [field]="column.field" [headerText]="column.headerText" [width]="column.width"
+            [textAlign]="column.textAlign" [format]="column.format" [type]="column.type"
+            [allowEditing]="column.allowEditing ?? true" [isPrimaryKey]="column.isPrimaryKey"
+            [editTemplate]="column.editTemplate"></e-column>
+        </ng-container>
+      </e-columns>
+    </ejs-grid>
+
+    <div class="popup-footer mt-3">
+      <button class="btn btn-primary" (click)="submit()">OK</button>
+      <button class="btn btn-secondary" (click)="close()">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- description -->
+<ng-template #descriptionEdit let-data>
+  <input class="e-input"
+         [ngModel]="data.description"
+         (ngModelChange)="onCellChange('description', $event, data)" />
+</ng-template>
+
+<!-- amount -->
+<ng-template #amountEdit let-data>
+  <input type="number" step="0.0001" class="e-input"
+         [ngModel]="data.amount"
+         (ngModelChange)="onCellChange('amount', $event, data)" />
+</ng-template>
+
+<!-- cheque date -->
+<ng-template #chequeDateTemplate let-data>
+  <ejs-datepicker
+    [(ngModel)]="data.chequedate"
+    (change)="onChequeDateChange($event, data)"
+    format="dd-MMM-yyyy">
+  </ejs-datepicker>
+</ng-template>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <ng-template #pdcPayableTemplate let-data>
+  <ejs-multicolumncombobox [dataSource]="popupData"     [fields]="{ text: 'accountname', value: 'id' }"
+   [columns]="[
+      { field: 'accountcode', header: 'Code', width: 120 },
+      { field: 'accountname', header: 'Name', width: 240 }
+    ]" [value]="data.pdcpayableId" [showClearButton]="true" [allowFiltering]="true" filterType="Contains"
+    placeholder="Select PDC Payable..." popupWidth="900px" (change)="onPdcSelect($event, data)">
+  </ejs-multicolumncombobox>
+</ng-template> -->

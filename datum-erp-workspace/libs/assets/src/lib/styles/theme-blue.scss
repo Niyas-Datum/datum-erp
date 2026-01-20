@@ -1,0 +1,56 @@
+// Odoo-inspired Blue Theme Variables
+$theme-primary: #00A0D9;
+$theme-primary-dark: #007bb3;
+$theme-primary-light: #e6f7fd;
+$theme-accent: #1976D2;
+$theme-success: #00A09D;
+$theme-warning: #F7B731;
+$theme-danger: #EB3D50;
+$theme-info: #1E90FF;
+$theme-gray: #f5f5f5;
+$theme-dark: #222;
+$theme-text: #444;
+$theme-border: #e0e0e0;
+
+// Example usage
+.datum-section-header {
+  background: $theme-primary;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 6px 6px 0 0;
+  padding: 10px 18px;
+  letter-spacing: 0.5px;
+  margin-bottom: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.datum-section-header.theme-accent {
+  background: $theme-accent;
+}
+
+.datum-section-header.theme-success {
+  background: $theme-success;
+}
+
+.datum-section-header.theme-warning {
+  background: $theme-warning;
+}
+
+.datum-section-header.theme-danger {
+  background: $theme-danger;
+}
+
+.datum-section-header.theme-info {
+  background: $theme-info;
+}
+
+.datum-section-header.theme-dark {
+  background: $theme-dark;
+}
+
+.datum-section-header.theme-light {
+  background: $theme-gray;
+  color: $theme-text;
+  border: 1px solid $theme-border;
+}

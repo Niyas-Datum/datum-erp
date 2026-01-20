@@ -1,0 +1,306 @@
+  <!-- Main Content Area - Additional Details Form when Additional Details tab is active -->
+      <div class="row main-content-area" >
+        <!-- Tabs -->
+          <div class="odoo-tabs">
+            <button 
+              class="tab-btn" 
+              [class.active]="isActive('general')" 
+              (click)="setActive('general')">General Information</button>/
+
+            <button 
+              class="tab-btn" 
+              [class.active]="isActive('sales')" 
+              (click)="setActive('sales')">Sales Information</button>
+
+            <button 
+              class="tab-btn" 
+              [class.active]="isActive('delivery')" 
+              (click)="setActive('delivery')">Delivery</button>
+
+            <button 
+              class="tab-btn" 
+              [class.active]="isActive('terms')" 
+              (click)="setActive('terms')">Terms of Delivery</button>
+          </div>
+
+
+          <div class="tab-content">
+                                       <form [formGroup]="additionalDetailsForm">
+
+          <div *ngIf="isActive('general')">
+          
+               <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="partyInvoiceNo">Party Invoice No.</label>
+                                      </div>  <div class="col">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="partyInvoiceNo"
+                           formControlName="partyInvoiceNo"
+                           placeholder="Enter party invoice number">
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="partyInvoiceDate">Party Invoice Date</label>
+                                      </div>  <div class="col">
+
+                    <input type="date" 
+                           class="form-control" 
+                           id="partyInvoiceDate"
+                           formControlName="partyInvoiceDate">
+                  </div>
+                </div>
+                   <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="orderNo">Order No.</label>
+                  </div>  <div class="col">
+                    <input type="text" 
+                           class="form-control" 
+                           id="orderNo"
+                           formControlName="orderNo"
+                           placeholder="Enter order number">
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="orderDate">Order Date</label>
+                                      </div>  <div class="col">
+
+                    <input type="date" 
+                           class="form-control" 
+                           id="orderDate"
+                           formControlName="orderDate">
+                  </div>
+                </div>
+                  <div class="row">
+                    <div class="col">
+                      <label class="form-label" for="partyName">Party Name</label>
+                                        </div>  <div class="col">
+
+                      <input type="text" 
+                            class="form-control" 
+                            id="partyName"
+                            formControlName="partyName"
+                            placeholder="Enter party name">
+                    </div>
+                    <div class="col">
+                      <label class="form-label" for="partyAddress">Party Address</label>
+                                        </div>  <div class="col">
+
+                      <input type="text" 
+                            class="form-control" 
+                            id="partyAddress"
+                            formControlName="partyAddress"
+                            placeholder="Enter party address" />
+                    </div>
+                  </div>
+                  
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="expiryDate">Expiry Date</label>
+                    </div><div class="col">
+                    <input type="date" 
+                           class="form-control" 
+                           id="expiryDate"
+                           formControlName="expiryDate">
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="transportationType">Transportation Type</label>
+                                        </div><div class="col">
+
+                    <select class="form-control" 
+                            id="transportationType"
+                            formControlName="transportationType">
+                      <option value="">Select Transportation Type</option>
+                      <option value="road">Road Transport</option>
+                      <option value="rail">Rail Transport</option>
+                      <option value="air">Air Transport</option>
+                      <option value="sea">Sea Transport</option>
+                    </select>
+                  </div>
+                </div>
+                  <div class="row">
+                  <div class="col-3">
+                    <label class="form-label" for="creditPeriod">Credit Period (Days)</label>
+                    </div><div class="col-3">
+                    <input type="number" 
+                           class="form-control" 
+                           id="creditPeriod"
+                           formControlName="creditPeriod"
+                           placeholder="Enter credit period in days">
+                  </div>
+                  </div>
+       </div>
+
+  <div *ngIf="isActive('sales')">
+     <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="salesman">Salesman</label>
+                    </div><div class="col">
+                    <select class="form-control" 
+                            id="salesman"
+                            formControlName="salesman">
+                      <option value="">Select Salesman</option>
+                    </select>
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="salesArea">Sales Area</label>
+                    </div><div class="col">
+                    <select class="form-control" 
+                            id="salesArea"
+                            formControlName="salesArea">
+                      <option value="">Select Sales Area</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="staffIncentive">Staff Incentive (%)</label>
+                                        </div><div class="col">
+
+                    <input type="number" 
+                           class="form-control" 
+                           id="staffIncentive"
+                           formControlName="staffIncentive"
+                           placeholder="Enter incentive percentage">
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="mobileNumber">Mobile Number</label>
+                                        </div><div class="col">
+
+                    <input type="tel" 
+                           class="form-control" 
+                           id="mobileNumber"
+                           formControlName="mobileNumber"
+                           placeholder="Enter mobile number">
+                  </div>
+                </div>
+                
+  </div>
+
+  <div *ngIf="isActive('delivery')">
+    
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="vehicleno">Vehicle No.</label>
+                                        </div><div class="col ">
+
+                    <select class="form-control" 
+                            id="vehicleno"
+                            formControlName="vehicleno">
+                      <option value="">Select Vehicle</option>
+                    </select>
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="attention">Attention</label>
+                                        </div><div class="col ">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="attention"
+                           formControlName="attention"
+                           placeholder="Enter attention person">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="deliveryNote">Delivery Note</label>
+                                        </div><div class="col ">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="deliveryNote"
+                           formControlName="deliveryNote"
+                           placeholder="Enter delivery note">
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="dispatchDetails">Dispatch Details</label>
+                                        </div><div class="col ">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="dispatchDetails"
+                           formControlName="dispatchDetails"
+                           placeholder="Enter dispatch details">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="deliveryPartyName">Delivery Party Name</label>
+                                        </div><div class="col ">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="deliveryPartyName"
+                           formControlName="deliveryPartyName"
+                           placeholder="Enter delivery party name">
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="deliveryAddress1">Address Line 1</label>
+                                        </div><div class="col ">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="deliveryAddress1"
+                           formControlName="deliveryAddress1"
+                           placeholder="Enter address line 1">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                    <label class="form-label" for="deliveryAddress2">Address Line 2</label>
+                                        </div><div class="col ">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="deliveryAddress2"
+                           formControlName="deliveryAddress2"
+                           placeholder="Enter address line 2">
+                  </div>
+                  <div class="col">
+                    <label class="form-label" for="deliveryAddress3">Address Line 3</label>
+                                        </div><div class="col ">
+
+                    <input type="text" 
+                           class="form-control" 
+                           id="deliveryAddress3"
+                           formControlName="deliveryAddress3"
+                           placeholder="Enter address line 3">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col ">
+                    <label class="form-label" for="deliverylocation">Delivery Location</label>
+                    </div><div class="col ">
+                    <select class="form-control" 
+                            id="deliverylocation"
+                            formControlName="deliverylocation">
+                      <option value="">Select Delivery Location</option>
+                    </select>
+                  </div>
+                </div>
+  </div>
+
+  <div *ngIf="isActive('terms')">
+     <div class="row">
+                  <div class="col-3">
+                    <label class="form-label" for="terms">Terms & Conditions</label>
+                    </div><div class="col">
+                    <textarea class="form-control" 
+                              id="terms"
+                              formControlName="terms"
+                              rows="4"
+                              placeholder="Enter terms and conditions"></textarea>
+                  </div>
+                </div>
+  </div>
+  </form>
+</div>
+                 
+
+
+
+      </div>

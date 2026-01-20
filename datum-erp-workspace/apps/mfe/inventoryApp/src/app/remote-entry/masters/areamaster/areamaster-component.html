@@ -1,0 +1,94 @@
+<form [formGroup]="areaMasterForm">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="section-container">
+        <div class="section-content">
+          
+          <!-- Row 1: Code + Active -->
+          <div class="row">
+            <label for="code" class="form-label col-md-2">
+              Code<span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-4">
+              <ejs-textbox 
+                id="code" 
+                formControlName="code"
+                floatLabelType="Auto">
+              </ejs-textbox>
+              <div *ngIf="areaMasterForm.get('code')?.hasError('required')">
+                <small class="text-danger">This field is required.</small>
+              </div>
+            </div>
+
+            <label for="active" class="form-label col-md-2">Active</label>
+            <div class="col-md-3">
+              <ejs-checkbox 
+                id="active"
+                formControlName="active"
+                label="Active">
+              </ejs-checkbox>
+            </div>
+          </div>
+
+          <!-- Row 2: Name -->
+          <div class="row">
+            <label for="name" class="form-label col-md-2">
+              Name<span class="required-asterisk">*</span>
+            </label>
+            <div class="col-md-10">
+              <ejs-textbox 
+                id="name" 
+                formControlName="name"
+                floatLabelType="Auto">
+              </ejs-textbox>
+              <div *ngIf="areaMasterForm.get('name')?.hasError('required')">
+                <small class="text-danger">This field is required.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Group + IsGroup -->
+          <div class="row">
+            <label for="group" class="form-label col-md-2">Group</label>
+            <div class="col-md-4">
+              <ejs-multicolumncombobox
+  id="group"
+  formControlName="group"
+  [dataSource]="areaGroupData()"
+  [fields]="{ text: 'value', value: 'id' }"
+  [columns]="columns"
+  placeholder="Select Group"
+  [allowFiltering]="true"
+  sortType="Ascending"
+  (change)="onAreaGroupSelected($event)"
+  popupHeight="200px">
+</ejs-multicolumncombobox>
+            </div>
+
+            <label for="isgroup" class="form-label col-md-2">IsGroup</label>
+            <div class="col-md-3">
+              <ejs-checkbox 
+                id="isgroup"
+                formControlName="isgroup"
+                label="IsGroup">
+              </ejs-checkbox>
+            </div>
+          </div>
+
+          <!-- Row 4: Description -->
+          <div class="row">
+            <label for="description" class="form-label col-md-2">Description</label>
+            <div class="col-md-10">
+              <ejs-textbox 
+                id="description"
+                formControlName="description"
+                floatLabelType="Auto">
+              </ejs-textbox>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

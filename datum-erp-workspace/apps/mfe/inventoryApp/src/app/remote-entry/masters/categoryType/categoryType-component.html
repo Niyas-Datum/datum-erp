@@ -1,0 +1,54 @@
+ <form [formGroup]="categoryTypeForm">
+    <div class="row">
+
+    <!-- ID -->
+    <div class="col-md-12">
+      <div class="row">
+            <label for="code">Code</label>
+            <div class="col-md-4">
+            <ejs-textbox 
+              id="code"
+              formControlName="code" 
+              floatLabelType="Auto"
+              cssClass="e-outline input-sm"
+              width="200px">
+            </ejs-textbox>
+            </div>
+            </div></div>
+
+           <div class="col-md-12">
+      <div class="row"> 
+            <label for="description" class="mt-3">Description</label>
+            <div class="col-md-4">
+            <ejs-textbox 
+              id="description"
+              formControlName="description" 
+              floatLabelType="Auto"
+              cssClass="e-outline input-md"
+              width="300px">
+            </ejs-textbox>
+            </div></div></div>
+            <div class="mt-3">
+              <ejs-checkbox 
+                id="active"
+                formControlName="active"
+                label="Active"
+                cssClass="e-outline">
+              </ejs-checkbox>
+            </div>
+             <div class="col-md-12">
+      <div class="row"> 
+            <label for="notes" class="mt-3">Notes</label>
+            <div class="col-md-12">
+            <ejs-textbox 
+              id="notes"
+              formControlName="notes" 
+              floatLabelType="Auto"
+              multiline="true"
+              rows="3"
+              cssClass="e-outline input-full"
+              width="100%">
+            </ejs-textbox>
+            </div></div></div>
+                </div>
+          </form>

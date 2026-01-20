@@ -1,0 +1,143 @@
+<form [formGroup]="unitMasterForm">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="section-container">
+                <div class="section-content">
+                  <div class="row">
+                    <label class="form-label col-md-2"
+                      >Unit<span class="required-asterisk">*</span></label
+                    >
+                    <div class="col-md-4">
+                      <ejs-textbox 
+                        id="unit"
+                        formControlName="unit"
+                      ></ejs-textbox>
+                     @if (unitMasterForm.get('unit')?.touched &&
+                (unitMasterForm.get('unit')?.errors?.['required'] ||
+                unitMasterForm.get('unit')?.errors?.['invalidcode']))
+                {
+                <small style="color: red">
+                  @if (unitMasterForm.get('unit')?.errors?.['required'])
+                  {unit is required } @if
+                  (unitMasterForm.get('unit')?.errors?.['invalidcode'])
+                  { Invalid format for unit }
+                </small>
+                }
+                      
+                    </div>
+
+                    <label class="form-label col-md-2" style="margin-right: 3px"
+                      >Active</label
+                    >
+                    <div class="col-md-3">
+                      <ejs-checkbox formControlName="active"></ejs-checkbox>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <label for="basic unit" class="form-label col-md-2"
+                      >Basic Unit</label
+                    >
+                    <div class="col-md-4">
+                      <ejs-dropdownlist
+                        id="basicunit"
+                        formControlName="basicunit"
+                        [dataSource]="BasicUnitList()"
+                        [fields]="{ text: 'unit', value: 'unit' }"
+                        placeholder="-Select-"
+                        [allowFiltering]="true"
+                      >
+                      </ejs-dropdownlist>
+                      <div>
+                        @if(unitMasterForm.get('basicunit')?.errors?.['required'])
+                      {
+                        <small class="text-danger"
+                          >Basic Unit is required.</small
+                        >}
+                      </div>
+                    </div>
+                    <label for="factor" class="form-label col-md-2"
+                      >Factor<span class="required-asterisk">*</span></label
+                    >
+                    <div class="col-md-4">
+                      <ejs-textbox id="factor"
+                        floatLabelType="Auto"
+                        formControlName="factor"
+                      >
+                      </ejs-textbox>
+                      <div>
+                        @if(unitMasterForm.get('factor')?.errors?.['required'])
+                      {
+                        <small class="text-danger">Factor is required.</small>}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <label for="precision" class="form-label col-md-2"
+                      >Precision<span class="required-asterisk">*</span></label
+                    >
+                    <div class="col-md-4">
+                      <ejs-textbox
+                      id="Precision"
+                        floatLabelType="Auto"
+                        formControlName="precision"
+                      >
+                      </ejs-textbox>
+                      <div>
+                        @if( unitMasterForm.get('precision')?.errors?.['required'])
+                      {
+                        <small class="text-danger"
+                          >Precision is required.</small
+                        >}
+                      </div>
+                    </div>
+                    <label for="iscomplex" class="form-label col-md-2"
+                      >IsComplex</label
+                    >
+                    <div class="col-md-4">
+                      <ejs-checkbox formControlName="iscomplex" id="iscomplex"> </ejs-checkbox>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <label for="description" class="form-label col-md-2"
+                      >Description<span class="required-asterisk"
+                        >*</span
+                      ></label
+                    >
+                    <div class="col-md-10">
+                      <ejs-textbox
+                      id="description"
+                        floatLabelType="Auto"
+                        formControlName="description"
+                      >
+                      </ejs-textbox>
+                      <div>
+                        @if (unitMasterForm.get('description')?.touched &&
+                (unitMasterForm.get('description')?.errors?.['required'] ||
+                unitMasterForm.get('description')?.errors?.['invaliddescription']))
+                        {
+                        <small class="text-danger"
+                          >Description is required.</small>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <label for="arabicname" class="form-label col-md-2"
+                      >Arabic Name</label
+                    >
+                    <div class="col-md-10">
+                      <ejs-textbox
+                      id="arabicname"
+                        floatLabelType="Auto"
+                        formControlName="arabicname"
+                      >
+                      </ejs-textbox>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- </div> -->
+        </form>

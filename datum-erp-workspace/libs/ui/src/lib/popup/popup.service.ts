@@ -1,10 +1,7 @@
 import { ComponentRef, Injectable, Type } from '@angular/core';
-/*import { lazyInventoryPopupMap } from '../../../ ../../../../../apps/mfe/inventoryApp/src/app/remote-entry/common/popupModule/lazy-inventory-popup-map';
-import { lazyFinancialPopupMap } from '../../../../../apps/mfe/financialApp/src/app/remote-entry/common/popup/lazy-financial-popup-map';
-import { lazyGeneralPopupMap } from '../../../../../apps/mfe/generalApp/src/app/remote-entry/common/popup/lazy-general-popup-map';*/
-//import { lazyGeneralPopupMap } from 'generalApp/popup';
-//import { lazyFinancialPopupMap } from '@financeApp/popup/lazy-financial-popup-map';
-//import { lazyGeneralPopupMap } from '@generalApp/popup/lazy-general-popup-map';
+/*import { lazyGeneralPopupMap } from 'generalApp/popup';
+import { lazyFinancialPopupMap } from 'financeApp/popup';
+import { lazyInventoryPopupMap } from 'inventoryApp/popup';*/
 import { Subject } from 'rxjs';
 import { PopupContainerComponent } from './popup-container.component';
 

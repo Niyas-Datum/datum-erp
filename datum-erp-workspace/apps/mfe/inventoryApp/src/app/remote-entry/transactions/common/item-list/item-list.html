@@ -1,0 +1,170 @@
+<div
+  class="item-list-container control-section"
+  [class.read-only]="!(isNewMode() || isEditMode())"
+>
+  <div>
+    <ejs-grid
+      #grid
+      id="transactionGrid"
+      [dataSource]="commonService.tempItemFillDetails()"
+      [editSettings]="editSettings()"
+      [allowKeyboard]="true"
+      [allowTextWrap]="true"
+      (actionBegin)="onActionBegin($event)"
+      (actionComplete)="onActionComplete($event)"
+    >
+      <e-columns>
+        <e-column
+          headerText="#"
+          width="50"
+          textAlign="Center"
+          [allowEditing]="false"
+        >
+          <ng-template #template let-data let-rowIndex="index">
+            {{ data.rowId || (rowIndex + 1) }}
+          </ng-template>
+        </e-column>
+           <e-column field="itemId" headerText="ItemId" [visible]="false"></e-column>
+        <e-column
+          field="itemCode"
+          headerText="Item Code"
+          editType="stringedit"
+          [allowEditing]="isNewMode() || isEditMode()"
+        >
+          <ng-template #editTemplate let-data>
+            <ejs-multicolumncombobox
+              [dataSource]="itemService.fillItemDataOptions()"
+              [fields]='{text: "itemCode", value: "itemCode"}'
+              [showClearButton]="true"
+              [allowFiltering]="true"
+              filterType="Contains"
+              placeholder="Search by Item Code or Name..."
+              popupWidth="900px"
+              (change)="onItemSelect($event, data)"
+              (filtering)="onFiltering($event)"
+              (keydown)="onKeyDown($event, data, 'itemCode')"
+              (open)="onItemSearchOpen()"
+            >
+              <e-columns>
+                <e-column
+                  field="itemCode"
+                  headerText="Item Code"
+                  width="120"
+                ></e-column>
+                <e-column
+                  field="itemName"
+                  headerText="Item Name"
+                  width="100"
+                ></e-column>
+                <e-column
+                  field="unitname"
+                  headerText="Unit"
+                  width="80"
+                ></e-column>
+                <e-column
+                  field="stock"
+                  headerText="Stock"
+                  width="80"
+                ></e-column>
+                <e-column
+                  field="rate"
+                  headerText="Rate"
+                  width="80"
+                  format="N2"
+                  type="number"
+                ></e-column>
+              </e-columns>
+            </ejs-multicolumncombobox>
+          </ng-template>
+        </e-column>
+        <e-column
+          field="itemName"
+          headerText="Item Name"
+          [allowEditing]="false"
+        ></e-column>
+        <e-column
+          field="unit"
+          headerText="Unit"
+          width="100"
+          [allowEditing]="isNewMode() || isEditMode()"
+        >
+          <ng-template #template let-data>
+            {{ data.unit?.unit || data.unit || '' }}
+          </ng-template>
+          <ng-template #editTemplate let-data>
+            <input
+              type="text"
+              [value]="data.unit?.unit || data.unit"
+              (blur)="onUnitChange($event, data)"
+              (keydown)="onKeyDown($event, data, 'unit')"
+              placeholder="Enter unit"
+            />
+          </ng-template>
+        </e-column>
+        <e-column
+          field="qty"
+          headerText="Qty"
+          editType="numericedit"
+          width="200"
+          [allowEditing]="isNewMode() || isEditMode()"
+        >
+          <ng-template #editTemplate let-data>
+            <input
+              type="number"
+              [value]="data.qty"
+              (blur)="onQTYChange($event, data)"
+              (keydown)="onKeyDown($event, data, 'qty')"
+              placeholder="Enter quantity"
+            />
+          </ng-template>
+        </e-column>
+        <e-column
+          field="rate"
+          headerText="Rate"
+          editType="numericedit"
+          width="100"
+          format="N2"
+          type="number"
+          [allowEditing]="isNewMode() || isEditMode()"
+        >
+          <ng-template #editTemplate let-data>
+            <input
+              type="number"
+              [value]="data.rate"
+              (blur)="onRateChange($event, data)"
+              (keydown)="onKeyDown($event, data, 'rate')"
+              placeholder="Enter rate"
+            />
+          </ng-template>
+        </e-column>
+
+        <e-column
+          field="amount"
+          headerText="Amount"
+          width="100"
+          format="N2"
+          type="number"
+          [allowEditing]="false"
+        >
+        </e-column>
+
+        <e-column
+          field="taxValue"
+          headerText="Tax Value"
+          width="100"
+          format="N2"
+          type="number"
+          [allowEditing]="false"
+        ></e-column>
+        <e-column
+          field="totalAmount"
+          headerText="Total Amount"
+          width="100"
+          format="N2"
+          type="number"
+          [allowEditing]="false"
+        ></e-column>
+      </e-columns>
+    </ejs-grid>
+  </div>
+</div>

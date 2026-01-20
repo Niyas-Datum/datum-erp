@@ -1,0 +1,1361 @@
+{
+  "nodes": {
+    "inventoryApp": {
+      "name": "inventoryApp",
+      "type": "app",
+      "data": {
+        "root": "datum-erp-workspace/apps/mfe/inventoryApp",
+        "name": "inventoryApp",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/mfe/inventoryApp/src",
+        "tags": [
+          "scope:host"
+        ],
+        "targets": {
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/mfe/inventoryApp",
+              "index": "apps/mfe/inventoryApp/src/index.html",
+              "main": "apps/mfe/inventoryApp/src/main.ts",
+              "tsConfig": "apps/mfe/inventoryApp/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/mfe/inventoryApp/public"
+                }
+              ],
+              "styles": [
+                "apps/mfe/inventoryApp/src/styles.scss"
+              ],
+              "customWebpackConfig": {
+                "path": "apps/mfe/inventoryApp/webpack.config.ts"
+              }
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all",
+                "customWebpackConfig": {
+                  "path": "apps/mfe/inventoryApp/webpack.prod.config.ts"
+                }
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@nx/angular:dev-server",
+            "options": {
+              "port": 4204,
+              "publicHost": "http://localhost:4204"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "inventoryApp:build:production"
+              },
+              "development": {
+                "buildTarget": "inventoryApp:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "parallelism": true
+          },
+          "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+              "buildTarget": "inventoryApp:build"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "defaultConfiguration": "production",
+            "options": {
+              "buildTarget": "inventoryApp:build",
+              "port": 4204,
+              "watch": false
+            },
+            "configurations": {
+              "development": {
+                "buildTarget": "inventoryApp:build:development"
+              },
+              "production": {
+                "buildTarget": "inventoryApp:build:production"
+              }
+            },
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    },
+    "financeApp": {
+      "name": "financeApp",
+      "type": "app",
+      "data": {
+        "root": "datum-erp-workspace/apps/mfe/financeApp",
+        "name": "financeApp",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/mfe/financeApp/src",
+        "tags": [
+          "scope:host"
+        ],
+        "targets": {
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/mfe/financeApp",
+              "index": "apps/mfe/financeApp/src/index.html",
+              "main": "apps/mfe/financeApp/src/main.ts",
+              "tsConfig": "apps/mfe/financeApp/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/mfe/financeApp/public"
+                }
+              ],
+              "styles": [
+                "apps/mfe/financeApp/src/styles.scss"
+              ],
+              "customWebpackConfig": {
+                "path": "apps/mfe/financeApp/webpack.config.ts"
+              }
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all",
+                "customWebpackConfig": {
+                  "path": "apps/mfe/financeApp/webpack.prod.config.ts"
+                }
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@nx/angular:dev-server",
+            "options": {
+              "port": 4205,
+              "publicHost": "http://localhost:4205"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "financeApp:build:production"
+              },
+              "development": {
+                "buildTarget": "financeApp:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "parallelism": true
+          },
+          "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+              "buildTarget": "financeApp:build"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "defaultConfiguration": "production",
+            "options": {
+              "buildTarget": "financeApp:build",
+              "port": 4205,
+              "watch": false
+            },
+            "configurations": {
+              "development": {
+                "buildTarget": "financeApp:build:development"
+              },
+              "production": {
+                "buildTarget": "financeApp:build:production"
+              }
+            },
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    },
+    "generalApp": {
+      "name": "generalApp",
+      "type": "app",
+      "data": {
+        "root": "datum-erp-workspace/apps/mfe/generalApp",
+        "name": "generalApp",
+        "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/mfe/generalApp/src",
+        "tags": [
+          "scope:host"
+        ],
+        "targets": {
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/mfe/generalApp",
+              "index": "apps/mfe/generalApp/src/index.html",
+              "main": "apps/mfe/generalApp/src/main.ts",
+              "tsConfig": "apps/mfe/generalApp/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/mfe/generalApp/public"
+                }
+              ],
+              "styles": [
+                "apps/mfe/generalApp/src/styles.scss"
+              ],
+              "customWebpackConfig": {
+                "path": "apps/mfe/generalApp/webpack.config.ts"
+              }
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all",
+                "customWebpackConfig": {
+                  "path": "apps/mfe/generalApp/webpack.prod.config.ts"
+                }
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@nx/angular:dev-server",
+            "options": {
+              "port": 4203,
+              "publicHost": "http://localhost:4203"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "generalApp:build:production"
+              },
+              "development": {
+                "buildTarget": "generalApp:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "parallelism": true
+          },
+          "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+              "buildTarget": "generalApp:build"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "defaultConfiguration": "production",
+            "options": {
+              "buildTarget": "generalApp:build",
+              "port": 4203,
+              "watch": false
+            },
+            "configurations": {
+              "development": {
+                "buildTarget": "generalApp:build:development"
+              },
+              "production": {
+                "buildTarget": "generalApp:build:production"
+              }
+            },
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    },
+    "architecture": {
+      "name": "architecture",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/architecture",
+        "name": "architecture",
+        "tags": [
+          "npm:public"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/architecture",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/architecture/ng-package.json",
+              "tsConfig": "libs/architecture/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/architecture/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/architecture/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "constants": {
+      "name": "constants",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/constants",
+        "name": "constants",
+        "tags": [
+          "npm:public",
+          "scope:shared"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/constants",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/constants/ng-package.json",
+              "tsConfig": "libs/constants/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/constants/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/constants/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "loginApp": {
+      "name": "loginApp",
+      "type": "app",
+      "data": {
+        "root": "datum-erp-workspace/apps/loginApp",
+        "name": "loginApp",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/loginApp/src",
+        "tags": [],
+        "targets": {
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/loginApp",
+              "index": "apps/loginApp/src/index.html",
+              "main": "apps/loginApp/src/main.ts",
+              "tsConfig": "apps/loginApp/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/loginApp/public"
+                }
+              ],
+              "styles": [
+                "apps/loginApp/src/styles.scss"
+              ],
+              "customWebpackConfig": {
+                "path": "apps/loginApp/webpack.config.ts"
+              }
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all",
+                "customWebpackConfig": {
+                  "path": "apps/loginApp/webpack.prod.config.ts"
+                }
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@nx/angular:dev-server",
+            "options": {
+              "port": 4207,
+              "publicHost": "http://localhost:4207"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "loginApp:build:production"
+              },
+              "development": {
+                "buildTarget": "loginApp:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "dependsOn": [
+              "hostApp:serve"
+            ],
+            "parallelism": true
+          },
+          "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+              "buildTarget": "loginApp:build"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "defaultConfiguration": "production",
+            "options": {
+              "buildTarget": "loginApp:build",
+              "port": 4207,
+              "watch": false
+            },
+            "configurations": {
+              "development": {
+                "buildTarget": "loginApp:build:development"
+              },
+              "production": {
+                "buildTarget": "loginApp:build:production"
+              }
+            },
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    },
+    "services": {
+      "name": "services",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/services",
+        "name": "services",
+        "tags": [
+          "npm:public",
+          "scope:shared"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/services",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/services/ng-package.json",
+              "tsConfig": "libs/services/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/services/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/services/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "AuthApp": {
+      "name": "AuthApp",
+      "type": "app",
+      "data": {
+        "root": "datum-erp-workspace/apps/AuthApp",
+        "name": "AuthApp",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/AuthApp/src",
+        "tags": [
+          "scope:shop"
+        ],
+        "targets": {
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/AuthApp",
+              "index": "apps/AuthApp/src/index.html",
+              "main": "apps/AuthApp/src/main.ts",
+              "tsConfig": "apps/AuthApp/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/AuthApp/public"
+                }
+              ],
+              "styles": [
+                "apps/AuthApp/src/styles.scss"
+              ],
+              "customWebpackConfig": {
+                "path": "apps/AuthApp/webpack.config.ts"
+              }
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all",
+                "customWebpackConfig": {
+                  "path": "apps/AuthApp/webpack.prod.config.ts"
+                }
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@nx/angular:dev-server",
+            "options": {
+              "port": 4206,
+              "publicHost": "http://localhost:4206"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "AuthApp:build:production"
+              },
+              "development": {
+                "buildTarget": "AuthApp:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "dependsOn": [
+              "hostApp:serve"
+            ],
+            "parallelism": true
+          },
+          "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+              "buildTarget": "AuthApp:build"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "defaultConfiguration": "production",
+            "options": {
+              "buildTarget": "AuthApp:build",
+              "port": 4206,
+              "watch": false
+            },
+            "configurations": {
+              "development": {
+                "buildTarget": "AuthApp:build:development"
+              },
+              "production": {
+                "buildTarget": "AuthApp:build:production"
+              }
+            },
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    },
+    "coreApp": {
+      "name": "coreApp",
+      "type": "app",
+      "data": {
+        "root": "datum-erp-workspace/apps/coreApp",
+        "name": "coreApp",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/coreApp/src",
+        "tags": [
+          "scope:shop"
+        ],
+        "targets": {
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/coreApp",
+              "index": "apps/coreApp/src/index.html",
+              "main": "apps/coreApp/src/main.ts",
+              "tsConfig": "apps/coreApp/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/coreApp/public"
+                }
+              ],
+              "styles": [
+                "apps/coreApp/src/styles.scss"
+              ],
+              "customWebpackConfig": {
+                "path": "apps/coreApp/webpack.config.ts"
+              }
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all",
+                "customWebpackConfig": {
+                  "path": "apps/coreApp/webpack.prod.config.ts"
+                }
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@nx/angular:dev-server",
+            "options": {
+              "port": 4202,
+              "publicHost": "http://localhost:4202"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "coreApp:build:production"
+              },
+              "development": {
+                "buildTarget": "coreApp:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "dependsOn": [
+              "hostApp:serve"
+            ],
+            "parallelism": true
+          },
+          "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+              "buildTarget": "coreApp:build"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "defaultConfiguration": "production",
+            "options": {
+              "buildTarget": "coreApp:build",
+              "port": 4202,
+              "watch": false
+            },
+            "configurations": {
+              "development": {
+                "buildTarget": "coreApp:build:development"
+              },
+              "production": {
+                "buildTarget": "coreApp:build:production"
+              }
+            },
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    },
+    "hostApp": {
+      "name": "hostApp",
+      "type": "app",
+      "data": {
+        "root": "datum-erp-workspace/apps/hostApp",
+        "name": "hostApp",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "projectType": "application",
+        "prefix": "app",
+        "sourceRoot": "apps/hostApp/src",
+        "tags": [
+          "scope:host"
+        ],
+        "targets": {
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "outputs": [
+              "{options.outputPath}"
+            ],
+            "options": {
+              "outputPath": "dist/apps/hostApp",
+              "index": "apps/hostApp/src/index.html",
+              "main": "apps/hostApp/src/main.ts",
+              "tsConfig": "apps/hostApp/tsconfig.app.json",
+              "inlineStyleLanguage": "scss",
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "apps/hostApp/public"
+                }
+              ],
+              "styles": [
+                "apps/hostApp/src/styles.scss"
+              ],
+              "customWebpackConfig": {
+                "path": "apps/hostApp/webpack.config.ts"
+              }
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  },
+                  {
+                    "type": "anyComponentStyle",
+                    "maximumWarning": "4kb",
+                    "maximumError": "8kb"
+                  }
+                ],
+                "outputHashing": "all",
+                "customWebpackConfig": {
+                  "path": "apps/hostApp/webpack.prod.config.ts"
+                }
+              },
+              "development": {
+                "buildOptimizer": false,
+                "optimization": false,
+                "vendorChunk": true,
+                "extractLicenses": false,
+                "sourceMap": true,
+                "namedChunks": true
+              }
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "serve": {
+            "continuous": true,
+            "executor": "@nx/angular:module-federation-dev-server",
+            "options": {
+              "port": 4200,
+              "publicHost": "http://localhost:4200"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "hostApp:build:production"
+              },
+              "development": {
+                "buildTarget": "hostApp:build:development"
+              }
+            },
+            "defaultConfiguration": "development",
+            "parallelism": true
+          },
+          "extract-i18n": {
+            "executor": "@angular-devkit/build-angular:extract-i18n",
+            "options": {
+              "buildTarget": "hostApp:build"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "serve-static": {
+            "continuous": true,
+            "executor": "@nx/web:file-server",
+            "options": {
+              "buildTarget": "hostApp:build",
+              "port": 4200,
+              "spa": true
+            },
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "implicitDependencies": []
+      }
+    },
+    "assets": {
+      "name": "assets",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/assets",
+        "name": "assets",
+        "tags": [
+          "npm:public"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/assets",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/assets/ng-package.json",
+              "tsConfig": "libs/assets/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/assets/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/assets/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "models": {
+      "name": "models",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/models",
+        "name": "models",
+        "tags": [
+          "npm:public",
+          "scope:shared"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/models",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/models/ng-package.json",
+              "tsConfig": "libs/models/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/models/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/models/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "utils": {
+      "name": "utils",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/utils",
+        "name": "utils",
+        "tags": [
+          "npm:public"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/utils",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/utils/ng-package.json",
+              "tsConfig": "libs/utils/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/utils/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/utils/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "http": {
+      "name": "http",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/http",
+        "name": "http",
+        "tags": [
+          "npm:public",
+          "scope:shared"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/http",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/http/ng-package.json",
+              "tsConfig": "libs/http/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/http/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/http/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    },
+    "ui": {
+      "name": "ui",
+      "type": "lib",
+      "data": {
+        "root": "datum-erp-workspace/libs/ui",
+        "name": "ui",
+        "tags": [
+          "npm:public",
+          "scope:shared"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "@org/ui",
+            "isInPackageManagerWorkspaces": false
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:ng-packagr-lite",
+            "outputs": [
+              "{workspaceRoot}/dist/{projectRoot}"
+            ],
+            "options": {
+              "project": "libs/ui/ng-package.json",
+              "tsConfig": "libs/ui/tsconfig.lib.json"
+            },
+            "configurations": {
+              "production": {
+                "tsConfig": "libs/ui/tsconfig.lib.prod.json"
+              },
+              "development": {}
+            },
+            "defaultConfiguration": "production",
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "libs/ui/src",
+        "prefix": "lib",
+        "projectType": "library",
+        "implicitDependencies": []
+      }
+    }
+  },
+  "externalNodes": {},
+  "dependencies": {
+    "inventoryApp": [],
+    "financeApp": [],
+    "generalApp": [],
+    "architecture": [],
+    "constants": [],
+    "loginApp": [],
+    "services": [],
+    "AuthApp": [],
+    "coreApp": [],
+    "hostApp": [],
+    "assets": [],
+    "models": [],
+    "utils": [],
+    "http": [],
+    "ui": []
+  },
+  "version": "6.0",
+  "errors": [],
+  "computedAt": 1768841418776
+}

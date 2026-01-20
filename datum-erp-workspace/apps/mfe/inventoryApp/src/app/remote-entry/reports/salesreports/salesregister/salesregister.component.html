@@ -1,0 +1,240 @@
+<form [formGroup]="salesRegisterForm">
+
+    <div class="container-fluid">
+
+
+
+        <div class="row" style="height:100vh">
+            <div class="col-md-3 border p-3" style="background:#f7f7f7; overflow-y:auto;">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary">Print</button>
+                    <button class="btn btn-sm btn-outline-primary">Excel</button>
+                    <button class="btn btn-sm btn-outline-primary" (click)="onPreviewPdf()">Preview</button>
+                </div>
+
+                <h5 class="mb-3">Filter</h5>
+
+                <!-- View by -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4 ">View By</div>
+                    <div class="col-8 d-flex">
+                        <ejs-radiobutton label="Inventory" name="viewBy" value="inventory"
+                            formControlName="selectedView">
+                        </ejs-radiobutton>
+
+                        <ejs-radiobutton label="Finance" name="viewBy" value="finance" formControlName="selectedView"
+                            class="ms-3">
+                        </ejs-radiobutton>
+                    </div>
+                </div>
+
+                <!-- From -->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">From</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="from" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+                <!--To-->
+                <div class="row mb-2 align-items-center">
+                    <div class="col-4">To</div>
+                    <div class="col-8">
+                        <ejs-datepicker formControlName="to" format="dd-MM-yyyy"></ejs-datepicker>
+                    </div>
+                </div>
+
+                <!-- Basic Type -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Basic Type</div>
+                    <div class="col-8">
+                        <ejs-textbox formControlName="basicType" [value]="'Sales Invoice'" [readonly]="true">
+                        </ejs-textbox>
+                    </div>
+                </div>
+
+                <!-- Voucher Type -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Voucher Type</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox [dataSource]="voucherTypesarr" [fields]="{ text: 'name', value: 'id' }"
+                            [columns]="voucherTypeColumns" formControlName="voucherType"
+                            (select)="onVoucherTypeSelect($event)">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Customer / Supplier -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Customer/Supplier</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox [dataSource]="customerSupplierArr"
+                            [fields]="{ text: 'accountName', value: 'id' }" [columns]="customerSupplierTypeColumns"
+                            formControlName="customerSupplier" (select)="onCustomerSelect($event)">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Item -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Item</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox [dataSource]="itemsArr" [fields]="{ text: 'itemName', value: 'id' }"
+                            [columns]="itemcolumns" formControlName="item" (select)="onItemSelect($event)">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Staff -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Staff</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox [dataSource]="staffArr" [fields]="{ text: 'name', value: 'id' }"
+                            [columns]="staffColumns" formControlName="staff" (select)="onStaffSelect($event)">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Area -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Area</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox [dataSource]="areaArr" [fields]="{ text: 'name', value: 'id' }"
+                            [columns]="areaColumns" formControlName="area" (select)="onAreaSelect($event)">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Payment Type -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Payment Type</div>
+                    <div class="col-8">
+                        <ejs-dropdownlist [dataSource]="paymentTypes" [fields]="{ text: 'name', value: 'id' }"
+                            formControlName="paymentType" (change)="onPaymentTypeChange($event)">
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+
+                <!-- Counter -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Counter</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox [dataSource]="counters" [fields]="{ text: 'counterName', value: 'id' }"
+                            [columns]="counterColumns" formControlName="counter" (select)="onCounterSelect($event)">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- User -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">User</div>
+                    <div class="col-8">
+                        <ejs-multicolumncombobox [dataSource]="users" [fields]="{ text: 'username', value: 'id' }"
+                            [columns]="userColumns" formControlName="user" (select)="onUserSelect($event)">
+                        </ejs-multicolumncombobox>
+                    </div>
+                </div>
+
+                <!-- Invoice number -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Invoice No</div>
+                    <div class="col-8">
+                        <ejs-textbox class="w-100" formControlName="invoiceNo">
+                        </ejs-textbox>
+                    </div>
+                </div>
+
+
+                <!-- Batch number -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Batch No</div>
+                    <div class="col-8">
+                        <ejs-textbox class="w-100" formControlName="batchNo">
+                        </ejs-textbox>
+                    </div>
+                </div>
+
+                <!-- Branch -->
+                <div class="row align-items-center mb-2">
+                    <div class="col-4">Branch</div>
+                    <div class="col-8">
+                        <ejs-dropdownlist [dataSource]="branches" [fields]="branchFields" formControlName="branch"
+                            (change)="onBranchChange($event)">
+                        </ejs-dropdownlist>
+                    </div>
+                </div>
+
+                <!-- Checkboxes -->
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <ejs-checkbox label="Columnar" formControlName="columnar"></ejs-checkbox>
+                    </div>
+
+                    <div class="col-6">
+                        <ejs-checkbox label="Detailed" formControlName="detailed"></ejs-checkbox>
+                    </div>
+
+                    <div class="col-6 mt-2">
+                        <ejs-checkbox label="Inventory" formControlName="inventory"></ejs-checkbox>
+                    </div>
+
+                    <div class="col-6 mt-2">
+                        <ejs-checkbox label="Group Item" formControlName="groupItem"></ejs-checkbox>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="button" class="btn btn-primary w-50" (click)="onClickGo()">
+                        Go
+                    </button>
+
+                    <button type="button" class="btn btn-secondary w-50" (click)="onClickClear()">
+                        Clear
+                    </button>
+                </div>
+
+                <!-- ================= LEFT SUMMARY GRID ================= -->
+
+                <!-- LEFT SUMMARY GRID -->
+                
+                <div class="left-summary-wrapper">
+                    <ejs-grid [dataSource]="leftSummaryData" [allowSorting]="false" [allowPaging]="false" height="140"
+                        gridLines="Both">
+
+                        <e-columns>
+                            <e-column field="particulars" headerText="Particulars" width="120" textAlign="Left">
+                            </e-column>
+
+                            <e-column field="debit" headerText="Debit" width="90" textAlign="Right" format="N2">
+                            </e-column>
+
+                            <e-column field="credit" headerText="Credit" width="90" textAlign="Right" format="N2">
+                            </e-column>
+                        </e-columns>
+
+                    </ejs-grid>
+                </div>
+            </div>
+
+            <!-- main grid -->
+              
+            
+            <div class="col-md-9 p-3">
+                <ejs-grid [dataSource]="reportData" [allowPaging]="true" [allowSorting]="true" [allowResizing]="true"
+                    [pageSettings]="{ pageSize: 20 }" gridLines="Both" height="500" [enableHover]="true">
+
+                    <e-columns>
+                        <e-column *ngFor="let col of gridColumns" [field]="col.field" [headerText]="col.headerText"
+                            [width]="col.width" [textAlign]="col.textAlign">
+                        </e-column>
+                    </e-columns>
+
+
+
+                </ejs-grid>
+            </div>
+
+        </div>
+    </div>
+</form>
