@@ -2,7 +2,12 @@
   "name": "@org/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+     "serve": "nx run-many -t serve -c development --all",
+    "start": "nx reset && nx run-many -t serve -c production --all",
+    "build": "nx reset && nx run-many -t build -c production --all"
+
+  },
   "private": true,
   "dependencies": {
     "@angular-devkit/build-angular": "21.0.3",
