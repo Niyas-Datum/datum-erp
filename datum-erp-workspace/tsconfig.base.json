@@ -28,14 +28,21 @@
       "AuthApp/Module": ["apps/AuthApp/src/app/remote-entry/entry-module.ts"],
       "loginApp/Module": ["apps/loginApp/src/app/remote-entry/entry-module.ts"],
       "@org/http": ["libs/http/src/index.ts"],
+      "@org/http/*": ["libs/http/src/*"],
       "@org/services": ["libs/services/src/index.ts"],
+      "@org/services/*": ["libs/services/src/*"],
       "@org/models": ["libs/models/src/index.ts"],
+      "@org/models/*": ["libs/models/src/*"],
       "@org/ui": ["libs/ui/src/index.ts"],
+      "@org/ui/*": ["libs/ui/src/*"],
       "@org/utils": ["libs/utils/src/index.ts"],
+      "@org/utils/*": ["libs/utils/src/*"],
       "@org/constants": ["libs/constants/src/index.ts"],
+      "@org/constants/*": ["libs/constants/src/*"],
       "@org/architecture": ["libs/architecture/src/index.ts"],
+      "@org/architecture/*": ["libs/architecture/src/*"],
       "@org/assets": ["libs/assets/src/index.ts"],
-    
+      "@org/assets/*": ["libs/assets/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,7 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { MenuItem, ShortcutMenuItem } from './appHeader/menu.interface';
 import { firstValueFrom } from 'rxjs';
-import { EndpointConstant } from '@org/constants';
 import { LocalStorageService } from '@org/services';
 import { BaseService } from '@org/services';
 import { Router } from '@angular/router';

@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ToastComponent, ToastModule } from '@syncfusion/ej2-angular-notifications';
 import { Subscription } from 'rxjs';
-import { APPLICATION_CONSTANT } from '@org/constants';
 import { CommonModule } from '@angular/common';
 import { ToastPayload, ToastService } from './toast.service';
 
