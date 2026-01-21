@@ -5,7 +5,7 @@ export const APPLICATION_CONSTANT = {
       MAIN_APP: '/',
     },
     syncfusion: {
-      licenseKey: 'Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXdccXRcR2FZUkFzWENWYEk=',
+      licenseKey: 'Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX5ccXRURmFcV0ByXktWYEs=',
     },
     environment: {
       production: true,
