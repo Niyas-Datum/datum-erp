@@ -6,9 +6,12 @@ import { LocalStorageService } from "@org/services";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const localStorageService = inject(LocalStorageService);
+console.log('AuthInterceptor: Intercepting request', req);
+
 
         // Clone the request to add the new header.
         const token = localStorageService.getLocalStorageItem('access_token');
+        console.log('AuthInterceptor: Intercepting request', token);
       
         const authReq = req.clone({
             setHeaders: {
