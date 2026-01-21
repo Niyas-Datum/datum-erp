@@ -19,6 +19,12 @@ export default withModuleFederation(
      *   ['app2', 'https://app2.example.com'],
      * ]
      */
+    // production URL 
+    /*remotes: [
+      ['inventoryApp', 'http://erpdemo.datuminnovation.com/mfe/inventoryApp/remoteEntry.mjs'],
+      ['generalApp', 'http://erpdemo.datuminnovation.com/mfe/generalApp/remoteEntry.mjs'],
+      ['financeApp', 'http://erpdemo.datuminnovation.com/mfe/financeApp/remoteEntry.mjs'],
+    ],*/
   },
   { dts: false },
 );

@@ -10,7 +10,13 @@ export default async (cfg: any) => {
   const wcfg = (await withModuleFederation(
     {
       ...config,
-      remotes: [
+      //prodcution URL
+      // remotes: [
+      //   ['AuthApp', 'http://erpdemo.datuminnovation.com/AuthApp/remoteEntry.mjs'],
+      //   ['coreApp', 'http://erpdemo.datuminnovation.com/coreApp/remoteEntry.mjs'],
+      // ],
+
+       remotes: [
         ['AuthApp', 'http://localhost:4206/remoteEntry.mjs'],
         ['coreApp', 'http://localhost:4202/remoteEntry.mjs'],
       ],
