@@ -76,13 +76,14 @@ export class AppHeaderComponent implements OnInit {
     // }
   }
   onMenuSelect(args: MenuEventArgs) {
-   
+    args.event?.preventDefault();
+
     const item = args.item as any; // the menu model object
     const hasChildren = Array.isArray(item.submenu) && item.submenu.length > 0;
 
     if (hasChildren) {
       // stop anchor navigation for parent items — allow submenu expand
-      args.event?.preventDefault();
+     // args.event?.preventDefault();
       return; // don't navigate
     }
 
