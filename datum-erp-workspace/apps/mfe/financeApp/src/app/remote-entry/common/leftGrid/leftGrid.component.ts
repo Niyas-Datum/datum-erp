@@ -7,7 +7,6 @@ import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
 ;
 
-registerLicense('Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXdfeHRSRmBfWE1zW0FWYEk=');
 
 
 @Component({

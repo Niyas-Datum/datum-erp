@@ -3,7 +3,6 @@ import {FormControl,FormGroup, Validators } from '@angular/forms';
 import { GeneralAppService } from '../../http/general-app.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EndpointConstant } from '@org/constants';
-import { registerLicense } from '@syncfusion/ej2-base';
 import { BaseComponent } from '@org/architecture';
 import { firstValueFrom } from 'rxjs';
 import { TreeViewComponent } from '@syncfusion/ej2-angular-navigations';

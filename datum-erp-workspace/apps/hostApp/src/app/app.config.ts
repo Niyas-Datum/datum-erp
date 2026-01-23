@@ -29,7 +29,7 @@ export const appConfig: ApplicationConfig = {
   // //  provideStore({ [itemFeatureKey]: itemReducer }, {}),
   //   provideEffects([]),
   //   provideStoreDevtools({ maxAge: 25, logOnly: false }),
-   // DatePipe,
+    DatePipe,
 
     //  interceptor: AuthInterceptor
     provideHttpClient(withInterceptors([authInterceptor, LoaderInterceptor])),

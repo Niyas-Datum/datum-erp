@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, inject, OnDestroy, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PopupService } from './popup.service';
+import { tmepPopupService as PopupService} from './ptempopup.service';
 
 @Component({
   selector: 'app-popup-container',

@@ -15,8 +15,7 @@ import {
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
-import { PopupService } from '@org/ui';
+import { InventoryPopupService } from '../../../common/popupModule/inventory.popup.service';
 import { TransactionService } from '../services/transaction.services';
 import { EndpointConstant } from '@org/constants';
 import { ItemService } from '../services/item.services';
@@ -39,7 +38,6 @@ import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 import { BasetransactionComponent } from '../../architecture/transactionComponent.base';
-import { InventoryPopupService } from '../../../common/popupModule/inventory.popup.service';
 
 // Type definitions
 interface GridSettings {

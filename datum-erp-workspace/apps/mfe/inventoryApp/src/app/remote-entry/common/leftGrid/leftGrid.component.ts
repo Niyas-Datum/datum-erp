@@ -2,12 +2,10 @@ import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, 
 import { CommonModule } from '@angular/common';
 import { BaseService, DataSharingService } from '@org/services';
 import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService } from '@syncfusion/ej2-angular-grids';
-import { registerLicense } from '@syncfusion/ej2-base';import { EndpointConstant } from '@org/constants';
 import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
 ;
 
-registerLicense('Ngo9BigBOggjHTQxAR8/V1JEaF5cXmRCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXdfeHRSRmBfWE1zW0FWYEk=');
 
 
 @Component({

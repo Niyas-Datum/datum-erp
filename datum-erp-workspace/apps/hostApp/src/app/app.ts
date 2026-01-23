@@ -6,7 +6,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { NetworkStatusService, TabTrackerService } from '@org/utils';
-import { registerLicense } from '@syncfusion/ej2-base';
 import { APPLICATION_CONSTANT } from '@org/constants';
 import { LoaderService } from '@org/services';
 
@@ -39,7 +38,6 @@ export class App  implements AfterViewInit, OnInit {
       });
     });
 
-        registerLicense(APPLICATION_CONSTANT.syncfusion.licenseKey);
 
   }
 
