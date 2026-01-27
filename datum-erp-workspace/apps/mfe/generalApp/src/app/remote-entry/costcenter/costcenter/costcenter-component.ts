@@ -8,7 +8,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BaseService } from "@org/services";
- 
 @Component({
   selector: 'app-costcategory-Main',
   standalone: false,
@@ -19,37 +18,33 @@ export class CostCenterComponent extends BaseComponent implements OnInit  {
        
 selectedCategoryId!: string;  
 selectedCategory = signal<CostCategories | null>(null);
-
-  foremanData = [] as Array<StaffDropdown>;
-  engineerData = [] as Array<StaffDropdown>;
-  selectedStatus = signal<CostCentreStatus | null>(null);
-  allStatus=signal<CostCentreStatus[]>([]);
-   
-  selectedStatusId!:String;
-  clientData = [] as Array<ClientDropdown>;
-   
-  firstCostCenter!:number;
-  active: boolean = false;
-  isGroup: boolean = false;
-  clientValue = "";
-  consultancyValue = "";
-  engineerValue = "";
-  foremanValue = "";
-  isLoading = false;
-  isUpdate: boolean = false;  
-   
-  selectedCostCenterId!: number;
-  currentCostCenter = {} as CostCenter;
-    clientreturnField:string = 'name';
-    clientKeys = ['ID','Name','Code'];
-    engineerreturnField:string = 'name';
-    engineerKeys = ['ID','Name','Code'];
-    foremanreturnField:string = 'name';
-    foremanKeys = ['ID','Name','Code'];
-    consultancyreturnField:string = 'name';
-    consultancyKeys = ['ID','Name','Code'];
-    pageId = 0;
-    natureList:Nature[] = [
+foremanData = [] as Array<StaffDropdown>;
+engineerData = [] as Array<StaffDropdown>;
+selectedStatus = signal<CostCentreStatus | null>(null);
+allStatus=signal<CostCentreStatus[]>([]);   
+selectedStatusId!:String;
+clientData = [] as Array<ClientDropdown>;
+firstCostCenter!:number;
+active: boolean = false;
+isGroup: boolean = false;
+clientValue = "";
+consultancyValue = "";
+engineerValue = "";
+foremanValue = "";
+isLoading = false;
+isUpdate: boolean = false;  
+selectedCostCenterId!: number;
+currentCostCenter = {} as CostCenter;
+clientreturnField:string = 'name';
+clientKeys = ['ID','Name','Code'];
+engineerreturnField:string = 'name';
+engineerKeys = ['ID','Name','Code'];
+foremanreturnField:string = 'name';
+foremanKeys = ['ID','Name','Code'];
+consultancyreturnField:string = 'name';
+consultancyKeys = ['ID','Name','Code'];
+pageId = 0;
+natureList:Nature[] = [
     {
     "value":1, 
     "name":"Real"
@@ -58,61 +53,48 @@ selectedCategory = signal<CostCategories | null>(null);
     "value":2,
     "name":"UnReal"
     }];
-    selectedNatureId!: string;
-    selectedNature = {} as Nature;
-  selectedCreateUnderId!: string;  
-  costCategories =signal <CostCategories[]>([]);
-  selectedCreateUnder = signal<CreateUnder | null>(null);
-  createUnderData=signal<CreateUnder[]>([]);
-  clientOptions= signal<ClientDropdown[]>([]);
-  consultancyOptions= signal<ConsultancyDropdown[]>([]);
-  staffOptions= signal<StaffDropdown[]>([]);
-  public columns = [
+selectedNatureId!: string;
+selectedNature = {} as Nature;
+selectedCreateUnderId!: string;  
+costCategories =signal <CostCategories[]>([]);
+selectedCreateUnder = signal<CreateUnder | null>(null);
+createUnderData=signal<CreateUnder[]>([]);
+clientOptions= signal<ClientDropdown[]>([]);
+consultancyOptions= signal<ConsultancyDropdown[]>([]);
+staffOptions= signal<StaffDropdown[]>([]);
+public columns = [
   { field: 'id', header: 'ID', width: 80 },
   { field: 'code', header: 'Code', width: 120 },
   { field: 'name', header: 'Name', width: 150 }
 ];
-  public gridSettings = { rowHeight: 40, enableAltRow: true, gridLines: 'Both' };
+public gridSettings = { rowHeight: 40, enableAltRow: true, gridLines: 'Both' };
  
-  private httpService = inject(GeneralAppService);
-  private baseService = inject(BaseService);
- private cdr = inject(ChangeDetectorRef);
- private zone = inject(NgZone);
-  private datePipe= inject(DatePipe);
-  costCenterForm = this.formUtil.thisForm;
+private httpService = inject(GeneralAppService);
+private baseService = inject(BaseService);
+private datePipe= inject(DatePipe);
+costCenterForm = this.formUtil.thisForm;
 
-  private async runOutsideAngular<T>(fn: () => Promise<T>): Promise<T> {
-  return this.zone.runOutsideAngular(async () => await fn());
-}
-
- 
 constructor() {
     super();
     this.commonInit();
   }
  
-async ngOnInit(): Promise<void> {
+ngOnInit(): void {
   this.onInitBase();
   this.SetPageType(1);
-  
-  // Load data FIRST, then initialize form
-  await Promise.all([
-    this.fetchCategories(),
-    this.fetchStatus(),
-    this.fetchCreateUnder(),
-  ]);
-  
-  this.FormInitialize(); // Move here AFTER data loads
+  this.loadDropdown();
   this.costCenterForm.disable();
-  
-  // Load remaining data
-  setTimeout(() => {
-    this.fetchClient();
-    this.fetchConsultancy();
-    this.fetchStaffs();
-  }, 100);
 }
 
+private loadDropdown(): void{
+  this.fetchCategories();
+  this.fetchStatus();
+  this.fetchCreateUnder();
+  this.fetchClient();
+  this.fetchConsultancy();
+  this.fetchStaffs();
+
+}
 
   override FormInitialize() {
     this.costCenterForm = new FormGroup({
@@ -140,119 +122,117 @@ async ngOnInit(): Promise<void> {
       site: new FormControl({ value: '', disabled: false}),
       rate: new FormControl({ value: '', disabled: false}),
     });
-    console.log('form init started');
   }
 
   override newbuttonClicked(): void {
-    console.log('New button clicked');
     this.costCenterForm.enable();
-     this.costCenterForm.reset();
+    this.costCenterForm.reset();
   }
- 
-async fetchClient(): Promise<void> {
-  try {
-    const response = await firstValueFrom(
-      this.httpService.fetch<any[]>(EndpointConstant.FILLCLIENTPOPUP)
-    );
-    // ✅ FIXED: Use .set() for signals
-    this.clientOptions.set(response?.data ?? []);
-    console.log("Data in popup:", this.clientOptions());
-  } catch (error) {
-    console.error('An Error Occurred', error);
-    this.clientOptions.set([]);
-  }
+
+ fetchClient(): void {
+  this.httpService
+    .fetch<any[]>(EndpointConstant.FILLCLIENTPOPUP)
+    .subscribe({
+      next: (response) => {
+        // ✅ Use .set() for signals
+        this.clientOptions.set(response?.data ?? []);
+      },
+      error: (error) => {
+        console.error('An Error Occurred', error);
+        this.clientOptions.set([]);
+      }
+    });
 }
 
- 
-async fetchConsultancy(): Promise<void> {
-  try {
-    const response = await firstValueFrom(
-      this.httpService.fetch<any[]>(EndpointConstant.FILLCONSULTANCYPOPUP)
-    );
-    this.consultancyOptions.set(response?.data ?? []);
-    console.log("Data in popup:", this.consultancyOptions());
-  } catch (error) {
-    console.error('An Error Occurred', error);
-    this.consultancyOptions.set([]);
-  }
+fetchConsultancy(): void {
+  this.httpService
+    .fetch<any[]>(EndpointConstant.FILLCONSULTANCYPOPUP)
+    .subscribe({
+      next: (response) => {
+        this.consultancyOptions.set(response?.data ?? []);
+      },
+      error: (error) => {
+        console.error('An Error Occurred', error);
+        this.consultancyOptions.set([]);
+      }
+    });
 }
- 
-async fetchStaffs(): Promise<void> {
-  try {
-    const response = await firstValueFrom(
-      this.httpService.fetch<any[]>(EndpointConstant.FILLSTAFFOPUP)
-    );
-    this.staffOptions.set(response?.data ?? []);
-    console.log("Data in popup:", this.staffOptions());
-  } catch (error) {
-    console.error('An Error Occurred', error);
-    this.staffOptions.set([]);
-  }
+
+fetchStaffs(): void {
+  this.httpService
+    .fetch<any[]>(EndpointConstant.FILLSTAFFOPUP)
+    .subscribe({
+      next: (response) => {
+        this.staffOptions.set(response?.data ?? []);
+      },
+      error: (error) => {
+        console.error('An Error Occurred', error);
+        this.staffOptions.set([]);
+      }
+    });
 }
- 
-async fetchStatus(): Promise<void> {
-  try {
-    const response = await firstValueFrom(
-      this.httpService.fetch(EndpointConstant.FILLCOSTCENTERSTATUS)
-    );
-     const data = Array.isArray(response?.data)
-      ? (Array.isArray(response.data[0]) ? response.data[0] : response.data)
-      : [];
 
-    // ✅ FIXED: Use .set() for signals
-    this.allStatus.set(data);
+fetchStatus(): void {
+  this.httpService
+    .fetch(EndpointConstant.FILLCOSTCENTERSTATUS)
+    .subscribe({
+      next: (response: any) => {
+        const data = Array.isArray(response?.data)
+          ? (Array.isArray(response.data[0]) ? response.data[0] : response.data)
+          : [];
 
-    console.log("status:", this.allStatus());  // ✅ Log current signal value
-  } catch (error) {
-    console.error('An Error Occurred', error);
-    // ✅ Set empty array on error too
-    this.allStatus.set([]);
+        // ✅ Use .set() for signals
+        this.allStatus.set(data);
+      },
+      error: (error) => {
+        console.error('An Error Occurred', error);
+        // ✅ Set empty array on error
+        this.allStatus.set([]);
+      }
+    });
 }
+
+fetchCategories(): void {
+  this.httpService
+    .fetch(EndpointConstant.FILLCOSTCATEGORY)
+    .subscribe({
+      next: (response: any) => {
+        const raw = response?.data ?? [];
+
+        // normalize nested array structure
+        const parsed = Array.isArray(raw)
+          ? (Array.isArray(raw[0]) ? raw[0] : raw)
+          : [];
+
+        // update signal
+        this.costCategories.set(parsed);
+      },
+      error: (error) => {
+        console.error('Error fetching categories', error);
+      }
+    });
 }
- 
-async fetchCategories(): Promise<void> {
-  try {
-    const response: any = await firstValueFrom(
-      this.httpService.fetch(EndpointConstant.FILLCOSTCATEGORY)
-    );
 
-    const raw = response?.data ?? [];
+fetchCreateUnder(): void {
+  this.httpService
+    .fetch(EndpointConstant.COSTCENTERDROPDOWN)
+    .subscribe({
+      next: (response: any) => {
+        const data = Array.isArray(response?.data)
+          ? (Array.isArray(response.data[0]) ? response.data[0] : response.data)
+          : [];
 
-    // normalize nested array structure
-    const parsed = Array.isArray(raw)
-      ? (Array.isArray(raw[0]) ? raw[0] : raw)
-      : [];
-
-    console.log("Fetched Categories:", parsed);
-
-    // update signal
-    this.costCategories.set(parsed);
-
-  } catch (error) {
-    console.error("Error fetching categories", error);
-  }
+        // ✅ Use .set() for signals
+        this.createUnderData.set(data);
+      },
+      error: (error) => {
+        console.error('An Error Occurred', error);
+        // ✅ Set empty array on error too
+        this.createUnderData.set([]);
+      }
+    });
 }
- 
-async fetchCreateUnder(): Promise<void> {
-  try {
-    const response = await firstValueFrom(
-      this.httpService.fetch(EndpointConstant.COSTCENTERDROPDOWN)
-    );
 
-    const data = Array.isArray(response?.data)
-      ? (Array.isArray(response.data[0]) ? response.data[0] : response.data)
-      : [];
-
-    // ✅ FIXED: Use .set() for signals
-    this.createUnderData.set(data);
-
-    console.log("createUnder:", this.createUnderData());  // ✅ Log current signal value
-  } catch (error) {
-    console.error('An Error Occurred', error);
-    // ✅ Set empty array on error too
-    this.createUnderData.set([]);
-  }
-}
 
 onConsultancySelected(event: any): void {
   const selectedItem = event.itemData || event.selectedItem;
@@ -269,7 +249,6 @@ onConsultancySelected(event: any): void {
     this.consultancyValue = found.name;
     // ✅ Patch form with ID
     this.costCenterForm.patchValue({ consultancy: found.id });
-    console.log('✅ consultancy selected:', found);
   } else {
     console.warn('consultancy not found in options:', selectedId);
   }
@@ -290,7 +269,6 @@ onEngineerSelected(event: any): void {
     this.engineerValue = found.name;
     // ✅ Patch form with ID
     this.costCenterForm.patchValue({ engineer: found.id });
-    console.log('✅ engineer selected:', found);
   } else {
     console.warn('engineer not found in options:', selectedId);
   }
@@ -311,7 +289,6 @@ onForemanSelected(event: any): void {
     this.engineerValue = found.name;
     // ✅ Patch form with ID
     this.costCenterForm.patchValue({ foreman: found.id });
-    console.log('✅ foreman selected:', found);
   } else {
     console.warn('foreman not found in options:', selectedId);
   }
@@ -324,7 +301,6 @@ onCostCategorySelect(event?: any): void {
     this.selectedCategory.set(null);
     return;
   }
-
   const list = this.costCategories();
   const found = list.find(c => c.id == categoryId);
   this.selectedCategory.set(found ?? null);
@@ -332,7 +308,6 @@ onCostCategorySelect(event?: any): void {
  
 onCostCategoryStatusSelect(event?: any): void {
   const statusVal = event?.itemData?.id || this.costCenterForm.get('status')?.value;
-  
   if (!statusVal) {
     this.selectedStatus.set(null);
     return;
@@ -346,7 +321,7 @@ onCostCategoryStatusSelect(event?: any): void {
   }
 }
  
-   onActiveChange(event: any) {
+  onActiveChange(event: any) {
     this.active = event.target.checked ? true : false;
   }
  
@@ -393,7 +368,6 @@ onClientSelected(event: any): void {
     this.clientValue = found.name;
     // ✅ Patch form with ID
     this.costCenterForm.patchValue({ client: found.id });
-    console.log('✅ Client selected:', found);
   } else {
     console.warn('Client not found in options:', selectedId);
   }
@@ -415,7 +389,6 @@ onClientSelected(event: any): void {
   }
 
   override SaveFormData() {
-    console.log('data scving');
     console.log(this.costCenterForm.controls);
     this.saveCostCenter();
   }
@@ -456,10 +429,6 @@ onClientSelected(event: any): void {
     "serialNo": this.costCenterForm.value.serialno || "",
     "regNo": this.costCenterForm.value.regno || "",
     "consultancy": this.costCenterForm.value.consultancy || 0,
-    // "status": {
-    //   "id": sts?.id ?? 0,
-    //   "value": sts?.value ?? ""
-    // },
      "status": {
       "id": this.selectedStatus()?.id || 0,
       "value": this.selectedStatus()?.value || ""
@@ -491,8 +460,6 @@ onClientSelected(event: any): void {
 }
   };
 
-  console.log('✅ Sending exact payload:', JSON.stringify(payload, null, 2));
-
   if (this.isUpdate) {
     this.updateCallback(payload, this.selectedCostCenterId);
   } else {
@@ -516,6 +483,7 @@ onClientSelected(event: any): void {
                   data: this.leftGrid.leftGridData,
                   pageheading: this.pageheading,
                 });
+                this.costCenterForm.disable();
         } else {
           this.baseService.showCustomDialogue(response.data as any);
         }
@@ -561,7 +529,6 @@ updateCallback(payload: any, costCenterId: number) {
 }
 
    override onEditClick(){
-    console.log('we have entered in to edit mode ')
     this.isUpdate = true;
     this.costCenterForm.enable();
   }
@@ -607,7 +574,6 @@ updateCallback(payload: any, costCenterId: number) {
   }
 
   override getDataById(data: CostCenter) {
-    console.log('data', data);
     this.selectedCostCenterId = data.id; // make sure ID is set before fetching
     this.fetchCostCenterById();
   }
