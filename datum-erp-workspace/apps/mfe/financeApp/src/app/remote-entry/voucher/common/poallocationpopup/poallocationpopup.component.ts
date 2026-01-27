@@ -256,7 +256,7 @@ export class PoallocationpopupComponent implements OnInit {
     const selectedPOs = this.poGrid
       ? this.poGrid.getSelectedRecords() as UnpaidPOModel[]
       : this.unpaidPOs.filter(po => po.selection);
-  
+    debugger;
     console.log('✅ OK clicked, selected POs:', selectedPOs.length);
 
     const result: POAllocationResult = {
@@ -283,7 +283,7 @@ export class PoallocationpopupComponent implements OnInit {
 
     console.log('📤 Emitting result:', result);
     
-    
+    debugger;
     // Emit event to parent component
     this.allocationComplete.emit(result);
 

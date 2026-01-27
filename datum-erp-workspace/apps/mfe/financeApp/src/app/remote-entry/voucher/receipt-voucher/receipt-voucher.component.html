@@ -1,4 +1,4 @@
-<form [formGroup]="paymentVoucherForm">
+<form [formGroup]="receiptVoucherForm">
   <div class="row">
     <div class="col-md-12">
       <div class="row align-items-start">
@@ -8,13 +8,13 @@
                 class="required-asterisk">*</span></label>
             <div class="col-md-4">
               <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="e-input"></ejs-textbox>
-              @if (paymentVoucherForm.get('voucherName')?.hasError('required')) {
+              @if (receiptVoucherForm.get('voucherName')?.hasError('required')) {
               <small class="text-danger">This field is required.</small>
               }
             </div>
             <div class="col-md-4">
               <ejs-textbox id="voucherNo" formControlName="voucherNo" cssClass="e-input"></ejs-textbox>
-              @if (paymentVoucherForm.get('voucherNo')?.hasError('required')) {
+              @if (receiptVoucherForm.get('voucherNo')?.hasError('required')) {
               <small class="text-danger">This field is required.</small>
               }
             </div>
@@ -26,7 +26,7 @@
               <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy"
                 format="dd/MM/yyyy">
               </ejs-datepicker>
-              @if (paymentVoucherForm.get('voucherDate')?.hasError('required')) {
+              @if (receiptVoucherForm.get('voucherDate')?.hasError('required')) {
               <small class="text-danger">This field is required.</small>
               }
             </div>
@@ -102,7 +102,7 @@
                     placeholder="Search by Account Code or Name..."
                     popupWidth="600px"
                     (change)="onAccountSelect($event, data)"
-                    (filtering)="onAccountFiltering($event)"                    >
+                    (filtering)="onAccountFiltering($event)">
                     <e-columns>
                       <e-column field="accountCode" headerText="Account Code" width="150"></e-column>
                       <e-column field="accountName" headerText="Account Name" width="250"></e-column>
@@ -114,14 +114,14 @@
               <e-column field="description" headerText="Description" width="250"></e-column>
               <e-column field="dueDate" headerText="DueDate" width="120"></e-column>
               <e-column
-                field="debit"
-                headerText="Debit"
+                field="credit"
+                headerText="Credit"
                 width="120"
                 textAlign="Right"
+                format="N2"
                 type="number"
                 editType="numericedit"
-                [edit]="debitEditParams"
-                format="N2">
+                [edit]="creditEditParams">
               </e-column>
             </e-columns>
           </ejs-grid>

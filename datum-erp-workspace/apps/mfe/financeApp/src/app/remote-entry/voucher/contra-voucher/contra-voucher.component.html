@@ -1,0 +1,137 @@
+<form [formGroup]="contraVoucherForm">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- Voucher Name and Number Row -->
+      <div class="row align-items-start">
+        <div class="col-md-6">
+          <div class="row">
+            <label for="voucherNo" class="form-label col-md-4">Voucher No<span class="required-asterisk">*</span></label>
+            <div class="col-md-4">
+              <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="e-input"></ejs-textbox>
+            </div>
+            <div class="col-md-4">
+              <ejs-textbox id="voucherNo" formControlName="voucherNo" cssClass="e-input"></ejs-textbox>
+              @if (contraVoucherForm.get('voucherNo')?.hasError('required')) {
+              <small class="text-danger">This field is required.</small>
+              }
+            </div>
+          </div>
+
+          <!-- Voucher Date Row -->
+          <div class="row mt-2">
+            <label for="voucherDate" class="form-label col-md-4">Voucher Date<span class="required-asterisk">*</span></label>
+            <div class="col-md-8">
+              <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy"
+                format="dd/MM/yyyy">
+              </ejs-datepicker>
+              @if (contraVoucherForm.get('voucherDate')?.hasError('required')) {
+              <small class="text-danger">This field is required.</small>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost Centre Row -->
+      <div class="row mt-2">
+        <label for="costCentre" class="form-label col-md-2">Cost Centre</label>
+        <div class="col-md-4">
+          <ejs-dropdownlist id="costCentre" formControlName="costCentre" [dataSource]="costCentreData"
+            [fields]="{ text: 'description', value: 'id' }" placeholder="Select Cost Centre">
+          </ejs-dropdownlist>
+        </div>
+      </div>
+
+      <!-- Reference No Row -->
+      <div class="row mt-2">
+        <label for="referenceNo" class="form-label col-md-2">Reference No</label>
+        <div class="col-md-10">
+          <ejs-textbox id="referenceNo" formControlName="referenceNo" cssClass="e-input"></ejs-textbox>
+        </div>
+      </div>
+
+      <!-- Narration Row -->
+      <div class="row mt-2">
+        <label for="narration" class="form-label col-md-2">Narration</label>
+        <div class="col-md-10">
+          <ejs-textbox id="narration" formControlName="narration" cssClass="e-input"></ejs-textbox>
+        </div>
+      </div>
+
+      <!-- Account Details Grid -->
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <h6 class="section-title">Account Details</h6>
+          <ejs-grid #accountDetailsGrid [dataSource]="voucherCommonService.accountDetailsData()"
+            [editSettings]="accountDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true"
+            gridLines="Both" height="300px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)"
+            (actionComplete)="onGridActionComplete($event)" (keyPressed)="onGridKeyPressed($event)">
+            <e-columns>
+              <!-- Row ID column for tracking -->
+              <e-column field="rowId" headerText="#" width="50" textAlign="Center" [isPrimaryKey]="true" [allowEditing]="false"></e-column>
+              <e-column field="accountCode" headerText="Account Code" width="150">
+                <ng-template #editTemplate let-data>
+                  <ejs-multicolumncombobox [dataSource]="voucherService.contraAccountsData()"
+                    [fields]='{text: "accountCode", value: "accountCode"}' [value]="data.accountCode"
+                    [showClearButton]="true" [allowFiltering]="true" filterType="Contains"
+                    placeholder="Search by Account Code or Name..." popupWidth="600px"
+                    (change)="onAccountSelect($event, data)" (filtering)="onAccountFiltering($event)">
+                    <e-columns>
+                      <e-column field="accountCode" headerText="Account Code" width="150"></e-column>
+                      <e-column field="accountName" headerText="Account Name" width="250"></e-column>
+                    </e-columns>
+                  </ejs-multicolumncombobox>
+                </ng-template>
+              </e-column>
+              <e-column field="accountName" headerText="Account Name" width="200" [allowEditing]="false"></e-column>
+              <e-column field="description" headerText="Description" width="250"></e-column>
+              <e-column field="dueDate" headerText="Due Date" width="120" editType="datepickeredit" format="dd/MM/yyyy"
+                [edit]="{ params: { format: 'dd/MM/yyyy' } }">
+              </e-column>
+              <e-column field="debit" headerText="Debit" width="120" textAlign="Right" format="N2" type="number"
+                editType="numericedit" [edit]="debitEditParams">
+              </e-column>
+              <e-column field="credit" headerText="Credit" width="120" textAlign="Right" format="N2" type="number"
+                editType="numericedit" [edit]="creditEditParams">
+              </e-column>
+            </e-columns>
+
+            <!-- Aggregate Footer Row -->
+            <e-aggregates>
+              <e-aggregate>
+                <e-columns>
+                  <e-column field="debit" type="Sum" format="N2">
+                    <ng-template #footerTemplate let-data>
+                      <strong>Total: {{ data.Sum | number:'1.2-2' }}</strong>
+                    </ng-template>
+                  </e-column>
+                  <e-column field="credit" type="Sum" format="N2">
+                    <ng-template #footerTemplate let-data>
+                      <strong>Total: {{ data.Sum | number:'1.2-2' }}</strong>
+                    </ng-template>
+                  </e-column>
+                </e-columns>
+              </e-aggregate>
+            </e-aggregates>
+          </ejs-grid>
+
+          <!-- Additional Totals Display Below Grid -->
+          <div class="row mt-2">
+            <div class="col-md-12 text-end">
+              <strong>Total Debit: {{ calculateTotalDebit() | number:'1.2-2' }}</strong> |
+              <strong>Total Credit: {{ calculateTotalCredit() | number:'1.2-2' }}</strong> |
+              <strong [class.text-success]="isBalanced()" [class.text-danger]="!isBalanced()">
+                Difference: {{ calculateDifference() | number:'1.2-2' }}
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<!-- PO Allocation Popup -->
+<app-poallocationpopup #poAllocationPopup (allocationComplete)="onAllocationComplete($event)">
+</app-poallocationpopup>

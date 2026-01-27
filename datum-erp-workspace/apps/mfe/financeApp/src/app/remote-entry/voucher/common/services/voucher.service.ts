@@ -14,6 +14,7 @@ export class VoucherService {
 
   // Dropdown data signals (like ItemService.fillItemDataOptions)
   accountMasterData = signal<AccountMasterModel[]>([]);
+  contraAccountsData = signal<any[]>([]);
   cashPopupData = signal<any[]>([]);
   cardPopupData = signal<any[]>([]);
   chequePopupData = signal<any[]>([]);
@@ -34,7 +35,7 @@ export class VoucherService {
     console.log('🔄 Fetching account master data...');
 
     this.httpService
-      .fetch<AccountMasterModel[]>(EndpointConstant.ACCOUNTCODEPOPUP)
+      .fetch<AccountMasterModel[]>(EndpointConstant.COAACCOUNTPOPUP)
       .subscribe({
         next: (response) => {
           this.accountMasterData.set(response?.data ?? []);
@@ -42,6 +43,31 @@ export class VoucherService {
         },
         error: (error) => {
           console.error('❌ Error fetching account master:', error);
+        },
+      });
+  }
+
+  /**
+   * Fetch contra accounts data for Contra Voucher AccountCode dropdown
+   */
+  fetchContraAccounts(): void {
+    // Don't fetch if already loaded
+    if (this.contraAccountsData().length > 0) {
+      console.log('✅ Contra accounts already loaded');
+      return;
+    }
+
+    console.log('🔄 Fetching contra accounts data...');
+
+    this.httpService
+      .fetch<any[]>(EndpointConstant.FILLCONTRAACCOUNTS)
+      .subscribe({
+        next: (response) => {
+          this.contraAccountsData.set(response?.data ?? []);
+          console.log('✅ Contra accounts loaded:', this.contraAccountsData().length, 'accounts');
+        },
+        error: (error) => {
+          console.error('❌ Error fetching contra accounts:', error);
         },
       });
   }
@@ -134,14 +160,14 @@ export class VoucherService {
     console.log('🔄 Fetching bank details...');
 
     this.httpService
-      .fetch<any>(EndpointConstant.FILLBANKPOPUP)
+      .fetch<any>(EndpointConstant.FILLCARDPOPUP)
       .subscribe({
         next: (response) => {
           const responseData = response?.data;
           const bankDataMapped = responseData.map((item: any) => ({
             accountcode: item.alias,
             accountname: item.name,
-            id: item.id,
+            id: item.id ?? item.ID ?? item.Id ?? 0,
           }));
           this.bankData.set(bankDataMapped);
           console.log('✅ Bank details loaded:', bankDataMapped.length, 'banks');

@@ -1,0 +1,100 @@
+<form [formGroup]="pdcClearingForm">
+  <div class="row">
+    <div class="col-md-12">
+
+      <!-- Header Section Row 1 -->
+      <div class="row align-items-start">
+        <div class="col-md-6">
+          <div class="row">
+            <label for="voucherNo" class="form-label col-md-4">Voucher No<span class="required-asterisk">*</span></label>
+            <div class="col-md-4">
+              <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="e-input"></ejs-textbox>
+              @if (pdcClearingForm.get('voucherName')?.hasError('required')) {
+              <small class="text-danger">This field is required.</small>
+              }
+            </div>
+            <div class="col-md-4">
+              <ejs-textbox id="voucherNo" formControlName="voucherNo" cssClass="e-input"></ejs-textbox>
+              @if (pdcClearingForm.get('voucherNo')?.hasError('required')) {
+              <small class="text-danger">This field is required.</small>
+              }
+            </div>
+          </div>
+          <div class="row">
+            <label for="voucherDate" class="form-label col-md-4">Voucher Date<span class="required-asterisk">*</span></label>
+            <div class="col-md-8">
+              <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy"
+                format="dd/MM/yyyy">
+              </ejs-datepicker>
+              @if (pdcClearingForm.get('voucherDate')?.hasError('required')) {
+              <small class="text-danger">This field is required.</small>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="row">
+            <label for="bankName" class="form-label col-md-4">Bank Name<span class="required-asterisk">*</span></label>
+            <div class="col-md-8">
+              <ejs-dropdownlist
+                id="bankName"
+                formControlName="bankName"
+                [dataSource]="voucherService.bankData()"
+                [fields]="{ text: 'accountname', value: 'id' }"
+                placeholder="Select Bank"
+                (change)="onBankChange($event)">
+              </ejs-dropdownlist>
+              @if (pdcClearingForm.get('bankName')?.hasError('required')) {
+              <small class="text-danger">This field is required.</small>
+              }
+            </div>
+          </div>
+          <div class="row">
+            <label for="narration" class="form-label col-md-4">Narration</label>
+            <div class="col-md-8">
+              <ejs-textbox id="narration" formControlName="narration" cssClass="e-input"></ejs-textbox>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cheque Details Grid -->
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <h6 class="section-title">Cheque Details</h6>
+          <ejs-grid
+            #chequeDetailsGrid
+            [dataSource]="chequeDetailsData()"
+            [allowResizing]="true"
+            [allowTextWrap]="true"
+            [allowSelection]="true"
+            [selectionSettings]="chequeSelectionSettings"
+            gridLines="Both"
+            height="350px"
+            [rowHeight]="30">
+            <e-columns>
+              <e-column field="rowId" headerText="#" width="60" textAlign="Center" [isPrimaryKey]="true" [allowEditing]="false"></e-column>
+              <e-column
+                type="checkbox"
+                width="50">
+              </e-column>
+              <e-column field="chequeNo" headerText="ChequeNo" width="120" [allowEditing]="false"></e-column>
+              <e-column field="chequeDate" headerText="ChequeDate" width="120" [allowEditing]="false"></e-column>
+              <e-column field="vDate" headerText="VDate" width="120" [allowEditing]="false"></e-column>
+              <e-column field="bankName" headerText="BankName" width="150" [allowEditing]="false"></e-column>
+              <e-column field="party" headerText="Customer/Supplier" width="200" [allowEditing]="false"></e-column>
+              <e-column field="debit" headerText="Received" width="120" textAlign="Right" format="N2" [allowEditing]="false"></e-column>
+              <e-column field="credit" headerText="Issued" width="120" textAlign="Right" format="N2" [allowEditing]="false"></e-column>
+              <e-column field="description" headerText="Description" width="200" [allowEditing]="false"></e-column>
+              <e-column field="accountCode" headerText="AccountCode" width="120" [allowEditing]="false"></e-column>
+              <e-column field="accountName" headerText="AccountName" width="200" [allowEditing]="false"></e-column>
+              <e-column field="status" headerText="Status" width="120" [allowEditing]="false"></e-column>
+            </e-columns>
+          </ejs-grid>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

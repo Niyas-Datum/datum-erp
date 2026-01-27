@@ -326,6 +326,19 @@ export const EndpointConstant = {
     FILLPARTYBALANCE:'api/v1/invtrans/partyBal?partyid=',
     SAVERECEIPTTVOUHER:'api/v1/fn/receiptvou/save?PageId=',
     UPDATERECEIPTVOUHER:'api/v1/fn/receiptvou/update?PageId=',
+    SAVERECEIPTVOUCHER:'api/v1/fn/receiptvou/save?PageId=',
+    UPDATERECEIPTVOUCHER:'api/v1/fn/receiptvou/update?PageId=',
+    DELETERECEIPTVOUCHER:'api/v1/fn/receiptvou/delete?PageId=',
+    DELETEJOURNAL:'api/v1/fn/journalVoucher/delete?PageId=',
+    SAVECONTRAVOUCHER:'api/v1/fn/contravou/save?pageId=',
+    UPDATECONTRAVOUCHER:'api/v1/fn/contravou/update?pageId=',
+    DELETECONTRAVOUCHER:'api/v1/fn/contravou/delete?PageId=',
+    FILLPDCCHEQUES:'api/v1/fn/pdcclearing/fillCheqdet?BankId=',
+    SAVEPDCCLEARING:'api/v1/fn/pdcclearing/save?PageId=',
+    UPDATEPDCCLEARING:'api/v1/fn/pdcclearing/update?PageId=',
+    SAVEOPENINGVOUCHER:'api/v1/fn/Openingvou/save?PageId=',
+    UPDATEOPENINGVOUCHER:'api/v1/fn/Openingvou/update?PageId=',
+    DELETEOPENINGVOUCHER:'api/v1/fn/Openingvou/delete?PageId=',
     SAVESALESORDER:'api/v1/sales/saveSalesorder?PageId=',
     UPDATESALESORDER:'api/v1/sales/updateSalesOrder?PageId=',
     FILLBRANCH:'api/v1/branch/DropDown',
@@ -351,7 +364,14 @@ export const EndpointConstant = {
     FETCHSALESMAN:'api/v1/trnadd/salesman?accountId=',
     FETCHSALESMANOFCUST:'api/v1/trnadd/salesmanOfCust?accountId=',
     FETCHSALESMANMOBILE:'api/v1/trnadd/salesmanMobile',
-    FILLBILLWISESTMT:'api/v1/fn/FinStmt/billWiseStmt?pageId='
+    FILLBILLWISESTMT:'api/v1/fn/FinStmt/billWiseStmt?pageId=',
+
+    // Account Reconciliation
+    FILLACCOUNTRECOPOPUP:'api/v1/fn/accountreco/accpopup',
+    FILLACCOUNTRECONCILIATION:'api/v1/fn/accountreco/fill?FromDate=',
+
+    // COA Account Popup
+    COAACCOUNTPOPUP:'api/v1/fn/coa/accpopup'
 }
 
 
