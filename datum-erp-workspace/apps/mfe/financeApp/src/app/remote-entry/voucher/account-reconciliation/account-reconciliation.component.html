@@ -1,0 +1,135 @@
+<div class="account-reconciliation-container">
+
+  <!-- Search Criteria Section -->
+  <form [formGroup]="searchForm">
+    <div class="row search-section">
+      <div class="col-md-3">
+        <label for="fromDate" class="form-label">From Date<span class="required-asterisk">*</span></label>
+        <ejs-datepicker
+          id="fromDate"
+          formControlName="fromDate"
+          placeholder="dd/MM/yyyy"
+          format="dd/MM/yyyy">
+        </ejs-datepicker>
+        @if (searchForm.get('fromDate')?.hasError('required')) {
+        <small class="text-danger">This field is required.</small>
+        }
+      </div>
+
+      <div class="col-md-3">
+        <label for="toDate" class="form-label">To Date<span class="required-asterisk">*</span></label>
+        <ejs-datepicker
+          id="toDate"
+          formControlName="toDate"
+          placeholder="dd/MM/yyyy"
+          format="dd/MM/yyyy">
+        </ejs-datepicker>
+        @if (searchForm.get('toDate')?.hasError('required')) {
+        <small class="text-danger">This field is required.</small>
+        }
+      </div>
+
+      <div class="col-md-4">
+        <label for="accountId" class="form-label">Account</label>
+        <ejs-multicolumncombobox
+          id="accountId"
+          formControlName="accountId"
+          [dataSource]="accountData"
+          [fields]="{ text: 'accountName', value: 'id' }"
+          placeholder="Select Account (Optional)"
+          [allowFiltering]="true"
+          [showClearButton]="true"
+          [popupHeight]="300"
+          [popupWidth]="400"
+          (filtering)="onAccountFiltering($event)">
+          <e-columns>
+            <e-column field="accountCode" header="Code" width="120"></e-column>
+            <e-column field="accountName" header="Account Name" width="280"></e-column>
+          </e-columns>
+        </ejs-multicolumncombobox>
+      </div>
+
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="button" class="btn btn-primary w-100" (click)="onSearchClick()">
+          Search
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Reconciliation Grid -->
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <ejs-grid
+        #reconciliationGrid
+        [dataSource]="reconciliationData()"
+        [editSettings]="reconciliationEditSettings()"
+        [allowResizing]="true"
+        [allowTextWrap]="true"
+        [allowSorting]="true"
+        gridLines="Both"
+        height="400px"
+        [rowHeight]="30"
+        (cellSave)="onReconciliationCellSave($event)">
+        <e-columns>
+          <e-column headerText="#" width="60" textAlign="Center" [allowEditing]="false">
+            <ng-template #template let-data>
+              {{ data.rowId }}
+            </ng-template>
+          </e-column>
+          <e-column field="vNo" headerText="VNo" width="150" [allowEditing]="false"></e-column>
+          <e-column field="vDate" headerText="VDate" width="120" [allowEditing]="false"></e-column>
+          <e-column field="particulars" headerText="Particulars" width="250" [allowEditing]="false"></e-column>
+          <e-column field="transactionType" headerText="TransactionType" width="140" [allowEditing]="false"></e-column>
+          <e-column field="vType" headerText="VType" width="120" [allowEditing]="false"></e-column>
+          <e-column
+            field="bankDate"
+            headerText="BankDate"
+            width="120">
+          </e-column>
+          <e-column field="debit" headerText="Debit" width="120" textAlign="Right" format="N2" [allowEditing]="false"></e-column>
+          <e-column field="credit" headerText="Credit" width="120" textAlign="Right" format="N2" [allowEditing]="false"></e-column>
+          <e-column field="balance" headerText="Balance" width="120" textAlign="Right" format="N2" [allowEditing]="false"></e-column>
+        </e-columns>
+      </ejs-grid>
+    </div>
+  </div>
+
+  <!-- Summary Section (Bottom Right) -->
+  <div class="row mt-3">
+    <div class="col-md-8"></div>
+    <div class="col-md-4">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="text-right">Debit</th>
+            <th class="text-right">Credit</th>
+            <th class="text-right">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Book Balance</strong></td>
+            <td class="text-right">{{ bookBalance().debit | number:'1.2-2' }}</td>
+            <td class="text-right">{{ bookBalance().credit | number:'1.2-2' }}</td>
+            <td class="text-right">{{ bookBalance().balance | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Cleared Balance</strong></td>
+            <td class="text-right">{{ clearedBalance().debit | number:'1.2-2' }}</td>
+            <td class="text-right">{{ clearedBalance().credit | number:'1.2-2' }}</td>
+            <td class="text-right">{{ clearedBalance().balance | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Uncleared Balance</strong></td>
+            <td class="text-right">{{ unclearedBalance().debit | number:'1.2-2' }}</td>
+            <td class="text-right">{{ unclearedBalance().credit | number:'1.2-2' }}</td>
+            <td class="text-right">{{ unclearedBalance().balance | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

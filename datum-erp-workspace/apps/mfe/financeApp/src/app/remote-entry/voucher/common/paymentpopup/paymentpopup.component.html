@@ -1,7 +1,18 @@
 <ng-template #accountCodeTemplate let-data>
-  <ejs-multicolumncombobox [dataSource]="popupData" [fields]="{ text: 'accountcode', value: 'accountname' }"
-    [showClearButton]="true" [allowFiltering]="true" filterType="Contains" placeholder="Search by Item Code or Name..."
-    popupWidth="900px" (change)="onAccountSelect($event, data)">
+  <ejs-multicolumncombobox
+    [dataSource]="popupData"
+    [fields]="{ text: 'accountcode', value: 'id' }"
+    [value]="data.accountId"
+    [showClearButton]="true"
+    [allowFiltering]="true"
+    filterType="Contains"
+    placeholder="Search by Item Code or Name..."
+    popupWidth="900px"
+    (change)="onAccountSelect($event, data)">
+    <e-columns>
+      <e-column field="accountcode" header="Code" width="120"></e-column>
+      <e-column field="accountname" header="Name" width="240"></e-column>
+    </e-columns>
   </ejs-multicolumncombobox>
 </ng-template>
 
@@ -37,7 +48,7 @@
     [showClearButton]="true"
     [allowFiltering]="true"
     filterType="Contains"
-    placeholder="Select PDC Payable..."
+    placeholder="Select Bank..."
     popupWidth="600px"
     (change)="onBankSelect($event, data)">
   </ejs-multicolumncombobox>
@@ -99,6 +110,6 @@
   <ejs-datepicker
     [(ngModel)]="data.chequedate"
     (change)="onChequeDateChange($event, data)"
-    format="dd-MMM-yyyy">
+    format="dd/MM/yyyy">
   </ejs-datepicker>
 </ng-template>

@@ -4,6 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { VoucherRoutingModule } from './voucher-routing.module';
 import { PaymentVoucherComponent } from './payment-voucher/payment-voucher.component';
+import { ReceiptVoucherComponent } from './receipt-voucher/receipt-voucher.component';
+import { OpeningVoucherComponent } from './opening-voucher/opening-voucher.component';
+import { CreditNoteComponent } from './credit-note/credit-note.component';
+import { DebitNoteComponent } from './debit-note/debit-note.component';
+import { JournalVoucherComponent } from './journal-voucher/journal-voucher.component';
+import { ContraVoucherComponent } from './contra-voucher/contra-voucher.component';
+import { PdcClearingVoucherComponent } from './pdc-clearing-voucher/pdc-clearing-voucher.component';
+import { AccountReconciliationComponent } from './account-reconciliation/account-reconciliation.component';
 
 // Syncfusion imports
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
@@ -24,7 +32,17 @@ import { VoucherService } from './common/services/voucher.service';
 import { VoucherCommonService } from './common/services/voucher-common.service';
 
 @NgModule({
-  declarations: [PaymentVoucherComponent],
+  declarations: [
+    PaymentVoucherComponent,
+    ReceiptVoucherComponent,
+    OpeningVoucherComponent,
+    CreditNoteComponent,
+    DebitNoteComponent,
+    JournalVoucherComponent,
+    ContraVoucherComponent,
+    PdcClearingVoucherComponent,
+    AccountReconciliationComponent
+  ],
   imports: [
     CommonModule,
     VoucherRoutingModule,

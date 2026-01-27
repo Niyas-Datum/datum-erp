@@ -45,6 +45,7 @@ export class PaymentpopupComponent {
   @Input() accountList: any[] = [];
   @Input() popupType!: 'cash' | 'card' | 'cheque' | 'epay';
   @Input() initialAmount: number = 0;
+  @Input() existingData: any[] = []; // Existing payment entries for edit mode
   @Output() itemSelected = new EventEmitter<any>();
   @ViewChild('grid') public grid!: GridComponent;
   @ViewChild('accountCodeTemplate', { static: true })
@@ -75,17 +76,64 @@ export class PaymentpopupComponent {
   selectedRowForPopup: any = null;
 
   ngOnInit() {
-    this.popupData1 = [this.getDefaultRow()];
-    // Pre-populate first row amount based on provided initial amount
-    const amt = Number(this.initialAmount) || 0;
-    if (amt > 0 && this.popupData1.length > 0) {
-      this.popupData1[0].amount = parseFloat(amt.toFixed(4));
+    // If existing data is provided (edit mode), use it; otherwise create default row
+    if (this.existingData && this.existingData.length > 0) {
+      // Map existing data to popup grid format
+      this.popupData1 = this.existingData.map((item: any) => ({
+        id: this.rowCounter++,
+        accountcode: item.accountcode || item.accountCode?.code || '',
+        accountname: item.accountname || item.accountCode?.name || '',
+        accountId: item.id || item.accountCode?.id || 0,
+        description: item.description || '',
+        amount: Number(item.amount) || 0,
+        paymentType: this.popupType,
+        // Cheque-specific fields
+        pdcpayable: item.pdcpayable?.accountname || '',
+        pdcpayableId: item.pdcpayable?.id || 0,
+        pdcAlias: item.pdcpayable?.accountcode || '',
+        chequeno: item.chequeno || '',
+        chequedate: item.chequedate ? new Date(item.chequedate) : null,
+        bankName: item.bankName?.accountname || '',
+        bankId: item.bankId || item.bankName?.id || 0,
+        bankAlias: item.bankName?.accountcode || '',
+        clearingdays: item.clearingdays || 0,
+      }));
+
+      // Add an empty row at the end for new entries
+      this.popupData1.push(this.getDefaultRow());
+
+      console.log('✅ Loaded existing payment data:', this.popupData1);
+    } else {
+      // New mode: Create default row
+      this.popupData1 = [this.getDefaultRow()];
+
+      // Pre-populate first row amount based on provided initial amount
+      const amt = Number(this.initialAmount) || 0;
+      if (this.popupData1.length > 0) {
+        this.popupData1[0].amount = parseFloat(amt.toFixed(4));
+      }
+
+      // Auto-select first account if available
+      if (this.popupData && this.popupData.length > 0 && this.popupData1.length > 0) {
+        const firstAccount = this.popupData[0];
+        this.popupData1[0].accountcode = firstAccount.accountcode;
+        this.popupData1[0].accountname = firstAccount.accountname;
+        this.popupData1[0].accountId = firstAccount.id;
+      }
     }
   }
 
 
   ngAfterViewInit(): void {
     this.setPopupConfig(this.popupType);
+
+    // If auto-selected first account filled the only row, add a trailing empty row for split payments.
+    if (this.popupData1?.length && (this.popupData?.length ?? 0) > 1) {
+      const first = this.popupData1[0];
+      if (!this.isRowEmpty(first)) {
+        setTimeout(() => this.ensureTrailingEmptyRow(), 0);
+      }
+    }
   }
 
   // Computed footer total for Amount column
@@ -107,6 +155,7 @@ export class PaymentpopupComponent {
       id: this.rowCounter++,
       accountcode: '',
       accountname: '',
+      accountId: null,
       description: '',
       amount: 0,
       paymentType: this.popupType,
@@ -321,7 +370,7 @@ export class PaymentpopupComponent {
             width: 160,
             allowEditing: true,
             type: 'date',
-            format: { type: 'date', format: 'dd-MMM-yyyy' },
+            format: { type: 'date', format: 'dd/MM/yyyy' },
             editTemplate: this.chequeDateTemplate,
           },
 
@@ -428,6 +477,25 @@ export class PaymentpopupComponent {
         (r.amount ?? 0) === 0;
       return !isEmpty;
     });
+    
+    // 2.1) Validate: if amount is entered, account code must be selected
+    for (const row of filled) {
+      const amount = Number(row.amount) || 0;
+      debugger;
+      if (this.popupType === 'cheque') {
+        // For cheque, check if amount exists but PDC Payable is not selected
+        if (amount > 0 && !row.pdcpayable && !row.pdcpayableId) {
+          alert('Please select PDC Payable for all rows with amount.');
+          return;
+        }
+      } else {
+        // For cash/card/epay, check if amount exists but account code is empty
+        if (amount > 0 && !row.accountcode) {
+          alert('Please select Account Code for all rows with amount.');
+          return;
+        }
+      }
+    }
 
     // 3) Map to the required output shape compatible with the voucher payload builder
     const result = (this.popupType === 'cheque')
@@ -478,6 +546,7 @@ export class PaymentpopupComponent {
 
 
   onPdcSelect(e: any, row: any): void {
+    debugger;
     const sel = e?.item;
     if (!sel) return;
     try {
@@ -508,26 +577,44 @@ export class PaymentpopupComponent {
     );
   }
 
+  private isRowEmpty(r: any): boolean {
+    if (this.popupType === 'cheque') {
+      return this.isChequeRowEmpty(r);
+    }
+    return !(
+      r?.accountcode ||
+      r?.accountname ||
+      (r?.description && r.description.trim() !== '') ||
+      (r?.amount ?? 0) !== 0
+    );
+  }
+
   private ensureTrailingEmptyRow(): void {
-    try {
-      this.grid.saveCell();
-    } catch { }
-    this.mergeBatchChangesIntoSource();
+    if (this.grid) {
+      try {
+        this.grid.saveCell();
+      } catch { }
+      this.mergeBatchChangesIntoSource();
+    }
 
     if (!this.popupData1.length) {
       this.popupData1.push(this.getDefaultRow());
-      this.grid.refresh();
+      if (this.grid) {
+        this.grid.refresh();
+      }
       return;
     }
     const last = this.popupData1[this.popupData1.length - 1];
-    if (!this.isChequeRowEmpty(last)) {
+    if (!this.isRowEmpty(last)) {
       this.popupData1.push(this.getDefaultRow());
-      this.grid.refresh();
+      if (this.grid) {
+        this.grid.refresh();
+      }
     }
   }
 
   onBankSelect(e: any, row: any): void {
-    const sel = e?.item;
+    const sel = e?.item ?? e?.itemData;
     if (!sel) return;
 
     try {
@@ -577,6 +664,7 @@ export class PaymentpopupComponent {
   }
 
   private mergeBatchChangesIntoSource(): void {
+    if (!this.grid) return;
     try {
       this.grid.saveCell();
     } catch {
@@ -600,14 +688,26 @@ export class PaymentpopupComponent {
 
   onChequeDateChange(event: any, row: any) {
     const v: Date | null = event?.value ? new Date(event.value) : null;
-    this.grid.setCellValue(row.id, 'chequedate', v);
-    const ix = this.popupData1.findIndex((r) => r.id === row.id);
-    if (ix > -1) this.popupData1[ix].chequedate = v;
+
+    // Step 1: Save current cell first (exit edit mode)
     try {
       this.grid.saveCell();
-    } catch {
-      /* no-op */
+    } catch { }
+
+    // Step 2: Merge any batch changes
+    this.mergeBatchChangesIntoSource();
+
+    // Step 3: Update the cell value
+    this.grid.setCellValue(row.id, 'chequedate', v);
+
+    // Step 4: Update data source
+    const ix = this.popupData1.findIndex((r) => r.id === row.id);
+    if (ix > -1) {
+      this.popupData1[ix].chequedate = v;
     }
+
+    // Step 5: Refresh grid and ensure empty row (CRITICAL!)
+    this.ensureTrailingEmptyRow();
   }
 
   

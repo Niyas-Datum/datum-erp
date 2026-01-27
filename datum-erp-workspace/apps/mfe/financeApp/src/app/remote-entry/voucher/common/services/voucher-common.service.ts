@@ -17,11 +17,12 @@ export class VoucherCommonService {
    * Same pattern as CommonService.assignRowIds()
    */
   assignAccountRowIds(): void {
+    // Mirror inventory item-list behavior: always stamp rowId/index so updates work on new rows
     this.accountDetailsData.set(
       this.accountDetailsData().map((item: any, index: number) => ({
         ...item,
-        rowId: index + 1,
-        index: index,
+        rowId: item?.rowId ?? index + 1,
+        index: item?.index ?? index,
       }))
     );
   }
@@ -32,11 +33,53 @@ export class VoucherCommonService {
    */
   updateAccountRow(rowData: any): void {
     const rows = this.accountDetailsData();
-    const index = rows.findIndex((row: any) => row.rowId === rowData.rowId);
+
+    // Prefer rowId match; fallback to index; final fallback to strict reference equality
+    let index = rows.findIndex((row: any) => row.rowId === rowData.rowId);
+    if (index === -1 && rowData?.index !== undefined) {
+      index = rows.findIndex((row: any) => row.index === rowData.index);
+    }
+    if (index === -1) {
+      index = rows.findIndex((row: any) => row === rowData);
+    }
 
     if (index !== -1) {
       rows[index] = { ...rowData };
       this.accountDetailsData.set([...rows]);
+    }
+  }
+
+  /**
+   * Ensure there's always an empty editable row at the end
+   * Used so selecting an account on the current last row auto-creates the next row (rowId incremented)
+   */
+  ensureTrailingEmptyAccountRow(): void {
+    const rows = this.accountDetailsData();
+
+    if (rows.length === 0) {
+      this.initializeAccountDetails();
+      return;
+    }
+
+    const last = rows[rows.length - 1] || {};
+    const hasData =
+      (last.accountCode && String(last.accountCode).trim() !== '') ||
+      (last.accountName && String(last.accountName).trim() !== '') ||
+      (Number(last.debit) || 0) !== 0 ||
+      (Number(last.credit) || 0) !== 0 ||
+      (last.description && String(last.description).trim() !== '');
+
+    if (hasData) {
+      rows.push({
+        accountCode: '',
+        accountName: '',
+        description: '',
+        dueDate: '',
+        debit: 0,
+        credit: 0,
+      });
+      this.accountDetailsData.set([...rows]);
+      this.assignAccountRowIds();
     }
   }
 
@@ -52,6 +95,7 @@ export class VoucherCommonService {
         description: '',
         dueDate: '',
         debit: 0,
+        credit: 0,
       },
     ]);
     this.assignAccountRowIds();
@@ -100,7 +144,7 @@ export class VoucherCommonService {
     // Add cheque entries
     this.chequeSelected().forEach((item) => {
       paymentDetails.push({
-        AccountName: item.bankName || '',
+        AccountName: item.pdcpayable.accountname || '',
         Description: item.description || '',
         Amount: parseFloat(item.amount) || 0,
         TranType: 'Cheque',

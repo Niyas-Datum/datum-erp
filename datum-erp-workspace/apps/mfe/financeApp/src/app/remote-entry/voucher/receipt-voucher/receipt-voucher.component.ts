@@ -32,12 +32,12 @@ interface PaymentBreakdownResult {
 
 
 @Component({
-  selector: 'app-payment-voucher',
+  selector: 'app-receipt-voucher',
   standalone: false,
-  templateUrl: './payment-voucher.component.html',
+  templateUrl: './receipt-voucher.component.html',
   styles: [],
 })
-export class PaymentVoucherComponent extends BaseComponent implements OnInit {
+export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   @ViewChild('paymentDetailsGrid') paymentDetailsGrid!: GridComponent;
   @ViewChild('poAllocationPopup') poAllocationPopup!: PoallocationpopupComponent;
 
@@ -47,16 +47,16 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   private baseService = inject(BaseService);
   public voucherCommonService = inject(VoucherCommonService);
   public voucherService = inject(VoucherService);
-  paymentVoucherForm = this.formUtil.thisForm;
-  pageId = 69;
+  receiptVoucherForm = this.formUtil.thisForm;
+  pageId = 70;
 
   // Dropdown data sources (local to this component)
   costCentreData: any[] = [];
   departmentData: any[] = [];
   // accountMasterData moved to voucherService.accountMasterData
 
-  selectedPaymentVoucherId!: number;
-  currentPaymentVoucher: any = null;
+  selectedReceiptVoucherId!: number;
+  currentReceiptVoucher: any = null;
   selectedPaymentType: string = '';
 
   // Store reference to current row being edited for PO allocation
@@ -69,7 +69,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   commonFillData: any = {};
   voucherName: string = '';
   readonly today = new Date();
-  readonly voucherId = 2; // Payment Voucher ID
+  readonly voucherId = 7; // Receipt Voucher ID
 
   // Grid data sources moved to voucherCommonService
   // accountDetailsData, paymentDetailsData
@@ -99,7 +99,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     allowDeleting: true,
     mode: 'Batch'
   };
-  public debitEditParams: IEditCell = {
+  public creditEditParams: IEditCell = {
     params: { format: 'N2', decimals: 2, showSpinButton: false }
   };
   public paymentDetailsEditSettings: EditSettingsModel = {
@@ -146,7 +146,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.onInitBase();
 
-    // Set pageId for payment voucher
+    // Set pageId for receipt voucher
     this.dataSharingService.setPageId(this.pageId);
 
     this.fetchDepartmentData();
@@ -173,7 +173,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   }
 
   override FormInitialize() {
-    this.paymentVoucherForm = new FormGroup({
+    this.receiptVoucherForm = new FormGroup({
       voucherName: new FormControl(
         { value: '', disabled: true },
         Validators.required
@@ -192,22 +192,22 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       referenceNo: new FormControl({ value: '', disabled: false }),
     });
     // Ensure base Save flow validates this form
-    this.formUtil.thisForm = this.paymentVoucherForm;
+    this.formUtil.thisForm = this.receiptVoucherForm;
   }
 
   override SaveFormData() {
     try {
       // Determine if this is an update or create operation
-      const isUpdate = (this.selectedPaymentVoucherId && this.selectedPaymentVoucherId > 0);
+      const isUpdate = !!(this.selectedReceiptVoucherId && this.selectedReceiptVoucherId > 0);
 
       // Block save when form is invalid and show specific errors
-      if (!this.paymentVoucherForm || this.paymentVoucherForm.invalid) {
-        this.paymentVoucherForm?.markAllAsTouched();
+      if (!this.receiptVoucherForm || this.receiptVoucherForm.invalid) {
+        this.receiptVoucherForm?.markAllAsTouched();
         this.formValidationError();
         return;
       }
 
-      const formVals = this.paymentVoucherForm.getRawValue();
+      const formVals = this.receiptVoucherForm.getRawValue();
 
       // Required: voucherNo
       const voucherNo = (formVals.voucherNo ?? '').toString().trim();
@@ -223,10 +223,10 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
         return;
       }
 
-      // Debit side (account details)
+      // Credit side (account details)
       const accRows = this.voucherCommonService.accountDetailsData() || [];
       if (!accRows.length) {
-        this.showError('Add at least one account (debit) row');
+        this.showError('Add at least one account (credit) row');
         return;
       }
 
@@ -248,14 +248,14 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       // Validate that all account rows have valid accountId after resolution
       const invalidAccounts = accRows.filter((r: any) => !r.accountId || Number(r.accountId) <= 0);
       if (invalidAccounts.length > 0) {
-        this.showError('Please select a valid account for all debit rows');
+        this.showError('Please select a valid account for all credit rows');
         console.error('Invalid account rows (could not resolve accountId):', invalidAccounts);
         return;
       }
-
+    
       const accountDetails = accRows.map((r: any) => {
         // Round to 2 decimal places to avoid floating-point precision errors
-        const debitAmount = parseFloat((Number(r.debit) || 0).toFixed(2));
+        const creditAmount = parseFloat((Number(r.credit) || 0).toFixed(2));
 
         const obj: any = {
           accountCode: {
@@ -264,9 +264,9 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
             code: r.accountCode || '',
             description: '',
           },
-          amount: debitAmount,
-          debit: debitAmount,
-          credit: 0,
+          amount: creditAmount,
+          debit: 0,
+          credit: creditAmount,
         };
         if (r.description) obj.description = r.description;
 
@@ -281,53 +281,61 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
         return obj;
       });
-      const debitTotal = parseFloat(accountDetails.reduce((s: number, x: any) => s + (Number(x.debit) || 0), 0).toFixed(2));
-      if (debitTotal <= 0) {
-        this.showError('Total debit must be greater than zero');
+      const creditTotal = parseFloat(accountDetails.reduce((s: number, x: any) => s + (Number(x.credit) || 0), 0).toFixed(2));
+      if (creditTotal <= 0) {
+        this.showError('Total credit must be greater than zero');
         return;
       }
-
-      // Credit side (from selections)
+      debugger;
+      // Debit side (from selections)
       const payment = this.buildPaymentBreakdownFromSelections();
       debugger;
-      const creditTotal = payment.creditTotal;
-      if (creditTotal <= 0) {
+      const debitTotal = payment.creditTotal;
+      if (debitTotal <= 0) {
         this.showError('Add at least one payment (cash/card/cheque/e-pay)');
         return;
       }
-      if (Math.abs(debitTotal - creditTotal) > 0.0001) {
-        this.showError(`Debit and Credit do not match. Debit: ${debitTotal.toFixed(2)}, Credit: ${creditTotal.toFixed(2)}`);
+      if (Math.abs(creditTotal - debitTotal) > 0.0001) {
+        this.showError(`Credit and Debit do not match. Credit: ${creditTotal.toFixed(2)}, Debit: ${debitTotal.toFixed(2)}`);
         return;
       }
-
+    
+      
       // Paydetails summary (optional description)
       const paydetails = this.buildPaydetailsSummary();
 
-      // Build billandRef from PO allocations
-      let billandRef = this.buildBillAndRef(accRows);
-
+      // PO allocations - use original data when updating, or build from scratch for new vouchers
+      let billandRef = this.buildBillAndRef(accRows, isUpdate);
+      debugger;
       if (isUpdate && this.originalBillAndRef.length > 0 && (!billandRef || billandRef.length === 0)) {
-        // When updating and no new allocations, use original billandRef
+        // When updating and original billandRef exists, normalize it to correct format
         billandRef = this.normalizeBillAndRef(this.originalBillAndRef);
         console.log('Using normalized original billandRef for update:', billandRef);
       } else {
+        // Build billandRef from PO allocations (for new vouchers or when allocations changed)
         console.log('Built new billandRef:', billandRef);
       }
-      debugger;
-      // Validate allocation sums per debit row
+
+      
+
+      // Validate allocation sums per credit row
       for (const row of accRows) {
         if (Array.isArray(row.poAllocations) && row.poAllocations.length) {
           const sumAlloc = row.poAllocations.reduce((s: number, a: any) => s + (Number(a.amount) || 0), 0);
-          const rowDebit = Number(row.debit) || 0;
-          if (Math.abs(sumAlloc - rowDebit) > 0.0001) {
-            this.showError(`Allocation total (${sumAlloc.toFixed(2)}) does not match row debit (${rowDebit.toFixed(2)}) for account ${row.accountName || ''}`);
+          const rowCredit = Number(row.credit) || 0;
+
+          if (Math.abs(sumAlloc - rowCredit) > 0.0001) {
+            this.showError(`Allocation total (${sumAlloc.toFixed(2)}) does not match row credit (${rowCredit.toFixed(2)}) for account ${row.accountName || ''}`);
             return;
           }
         }
       }
 
-      // Prepare header fields: keep field keys always; use empty object when not selected
+      
+
+      // Prepare header fields with default values
       let costCentrePayload: any = {};
+        
       if (formVals.costCentre) {
         const cc = this.findById(this.costCentreData, formVals.costCentre);
         if (cc) {
@@ -341,6 +349,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       }
 
       let departmentPayload: any = {};
+        
       if (formVals.department) {
         const dept = this.findById(this.departmentData, formVals.department);
         if (dept) {
@@ -368,7 +377,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
       // Build payload
       const payload: any = {
-        id: this.selectedPaymentVoucherId || 0,
+        id: this.selectedReceiptVoucherId || 0,
         voucherNo: voucherNo,
         voucherDate: voucherDateIso,
         narration: formVals.narration || '',
@@ -393,13 +402,13 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
       // Endpoint with voucherId
       const url = isUpdate
-        ? `${EndpointConstant.UPDATEPAYMENTVOUHER}${this.pageId}&voucherId=${this.voucherId}`
-        : `${EndpointConstant.SAVEPAYMENTVOUHER}${this.pageId}&voucherId=${this.voucherId}`;
+        ? `${EndpointConstant.UPDATERECEIPTVOUCHER}${this.pageId}&voucherId=${this.voucherId}`
+        : `${EndpointConstant.SAVERECEIPTVOUCHER}${this.pageId}&voucherId=${this.voucherId}`;
 
       // Debug: log exact URL and payload being sent
-      console.log('============ PAYMENT VOUCHER SAVE ============');
+      console.log('============ RECEIPT VOUCHER SAVE ============');
       console.log('Operation:', isUpdate ? 'UPDATE' : 'CREATE');
-      console.log('Voucher ID:', this.selectedPaymentVoucherId);
+      console.log('Voucher ID:', this.selectedReceiptVoucherId);
       console.log('URL:', url);
       console.log('BillandRef count:', billandRef.length);
       console.log('Account Details count:', accountDetails.length);
@@ -432,9 +441,10 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
             const isValid = (response as any)?.isValid ?? (response as any)?.data?.isValid;
             const dataMsg = (response as any)?.data?.msg || (response as any)?.message || (response as any)?.data;
             debugger;
+          
             if ((typeof httpCode === 'number' && httpCode >= 400) || isValid === false) {
               const details = typeof dataMsg === 'string' ? dataMsg : this.stringifyError(response);
-              console.error('Save Payment Voucher returned error payload:', response);
+              console.error('Save Receipt Voucher returned error payload:', response);
               this.baseService.showCustomDialogue(`Save failed:\n${details}`);
               return;
             }
@@ -442,37 +452,33 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
             // Get the saved voucher ID from response (response.data is the ID directly)
             const savedVoucherId = (response as any)?.data;
             if (savedVoucherId && typeof savedVoucherId === 'number') {
-              this.selectedPaymentVoucherId = savedVoucherId;
+              this.selectedReceiptVoucherId = savedVoucherId;
             }
 
-            const msg = 'Payment voucher saved successfully';
+            const msg = 'Receipt voucher saved successfully';
             this.baseService.showCustomDialogue(msg);
 
             // After save, switch to view mode and disable Save button via pagetype
             this.SetPageType(3);
             this.updateGridEditSettings();
-            this.paymentVoucherForm.disable({ emitEvent: false });
+            this.receiptVoucherForm.disable({ emitEvent: false });
             this.LeftGridInit();
           },
           error: (error) => {
-            console.error('❌ Save Payment Voucher failed:', error);
-            console.error('Error details:', JSON.stringify(error, null, 2));
-            if (error?.error?.errors) {
-              console.error('Validation errors:', error.error.errors);
-            }
             const details = this.stringifyError(error);
+            console.error('Save Receipt Voucher failed:', error);
             this.baseService.showCustomDialogue(`Save failed:\n${details}`);
           },
         });
     } catch (err: any) {
       const details = this.stringifyError(err);
-      console.error('Save Payment Voucher exception:', err);
+      console.error('Save Receipt Voucher exception:', err);
       this.baseService.showCustomDialogue(`Save failed:\n${details}`);
     }
   }
 
   override async LeftGridInit() {
-    this.pageheading = 'Payment Voucher';
+    this.pageheading = 'Receipt Voucher';
     try {
 
       const apiUrl = `${EndpointConstant.FILLALLPURCHASE}PageId=${this.pageId}`;
@@ -491,7 +497,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
       this.leftGrid.leftGridColumns = [
         {
-          headerText: 'Payment Voucher List',
+          headerText: 'Receipt Voucher List',
           columns: [
             {
               field: 'TransactionNo',
@@ -516,66 +522,65 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
         pageheading: this.pageheading,
       });
     } catch (err) {
-      console.error('Error fetching payment vouchers:', err);
+      console.error('Error fetching receipt vouchers:', err);
     }
   }
 
   override getDataById(data: PVoucherModel) {
     console.log('data', data);
-    this.selectedPaymentVoucherId = data.ID;
-    debugger;
+    this.selectedReceiptVoucherId = data.ID;
+
     // Set page type to view mode
     this.SetPageType(3);
     this.updateGridEditSettings();
 
     // Disable form for viewing (will be enabled when edit is clicked)
-    this.paymentVoucherForm.disable();
+    this.receiptVoucherForm.disable();
 
-    this.fetchPaymentVoucherById();
+    this.fetchReceiptVoucherById();
   }
 
   // Enter edit mode for the selected voucher
   override onEditClick() {
-    const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
+    const selectedId = this.selectedReceiptVoucherId || (this as any).leftgridSelectedData?.ID;
     if (!selectedId || Number(selectedId) <= 0) {
       this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
       return;
     }
 
-    // Check if voucher is beyond editable period
     if (this.isVoucherBeyondEditablePeriod()) {
       this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
-      this.paymentVoucherForm.disable({ emitEvent: false });
+      this.receiptVoucherForm.disable({ emitEvent: false });
       this.SetPageType(3);
       this.updateGridEditSettings();
       return;
     }
 
-    this.selectedPaymentVoucherId = Number(selectedId);
+    this.selectedReceiptVoucherId = Number(selectedId);
 
     // Set page type to edit mode
     this.SetPageType(2);
     this.updateGridEditSettings();
 
     // Enable the form for editing
-    this.paymentVoucherForm.enable();
+    this.receiptVoucherForm.enable();
 
     // Keep voucher name and voucher no disabled (read-only in edit mode)
-    this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
-    this.paymentVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
+    this.receiptVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+    this.receiptVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
 
     // Ensure dropdown data is loaded for editors/popups
     this.voucherService.fetchAccountMaster();
     this.voucherService.fetchBankDetails();
 
     // Only fetch details if not already loaded
-    if (!this.currentPaymentVoucher || this.currentPaymentVoucher.id !== this.selectedPaymentVoucherId) {
-      this.fetchPaymentVoucherById();
+    if (!this.currentReceiptVoucher || this.currentReceiptVoucher.id !== this.selectedReceiptVoucherId) {
+      this.fetchReceiptVoucherById();
     }
   }
 
   override formValidationError() {
-    const c = this.paymentVoucherForm?.controls || {} as any;
+    const c = this.receiptVoucherForm?.controls || {} as any;
     const errors: string[] = [];
     if (c['voucherNo']?.invalid) errors.push('Voucher No is required.');
     if (c['voucherDate']?.invalid) errors.push('Voucher Date is required.');
@@ -585,9 +590,9 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     this.baseService.showCustomDialogue(errors.join('\n'));
   }
 
-  private fetchPaymentVoucherById(): void {
+  private fetchReceiptVoucherById(): void {
     this.httpService
-      .fetch<any>(EndpointConstant.FILLPURCHASEBYID + this.selectedPaymentVoucherId)
+      .fetch<any>(EndpointConstant.FILLPURCHASEBYID + this.selectedReceiptVoucherId)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
@@ -595,37 +600,38 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
           const additionalData = response?.data?.transaction?.fillAdditionals;
           const transactionEntries = response?.data?.transaction?.fillTransactionEntries || [];
           const billAndRefData = response?.data?.voucherAllocation?.data || [];
+          debugger;
       
 
           // Store original billandRef data for use when saving updates
           this.originalBillAndRef = billAndRefData;
 
-          this.currentPaymentVoucher = transactionData ?? null;
-          debugger;
+          this.currentReceiptVoucher = transactionData ?? null;
+
           // Format voucher date
           let formVoucherDate = null;
-          if (this.currentPaymentVoucher?.date) {
+          if (this.currentReceiptVoucher?.date) {
             formVoucherDate = this.datePipe.transform(
-              new Date(this.currentPaymentVoucher.date),
+              new Date(this.currentReceiptVoucher.date),
               'dd/MM/yyyy'
             );
           }
 
           // Fill form fields
-          this.paymentVoucherForm.patchValue({
+          this.receiptVoucherForm.patchValue({
             voucherName: this.voucherName || 'PV', // Use voucher name from common fill data
-            voucherNo: this.currentPaymentVoucher?.transactionNo,
+            voucherNo: this.currentReceiptVoucher?.transactionNo,
             voucherDate: formVoucherDate,
-            narration: this.currentPaymentVoucher?.commonNarration,
-            costCentre: this.currentPaymentVoucher?.costCentreID,
+            narration: this.currentReceiptVoucher?.commonNarration,
+            costCentre: this.currentReceiptVoucher?.costCentreID,
             department: additionalData?.departmentID,
-            referenceNo: this.currentPaymentVoucher?.referenceNo,
+            referenceNo: this.currentReceiptVoucher?.referenceNo,
           });
 
-          // Fill Account Details Grid (Debit entries - DrCr = "D")
+          // Fill Account Details Grid (Credit entries - DrCr = "C")
           const accountMasterData = this.voucherService.accountMasterData();
           const accountDetails = transactionEntries
-            .filter((entry: any) => entry.drCr === 'D')
+            .filter((entry: any) => entry.drCr === 'C')
             .map((entry: any) => {
               // Try to get accountId from entry, or lookup by accountCode
               let accountId = entry.accountID || entry.accountId || 0;
@@ -638,6 +644,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
                   console.log(`Resolved accountId for ${entry.alias}: ${accountId}`);
                 }
               }
+              
 
               const accountRow: any = {
                 accountCode: entry.alias?.toString() || '',
@@ -645,22 +652,22 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
                 accountId: accountId,
                 description: entry.description || '',
                 dueDate: entry.dueDate ? this.datePipe.transform(new Date(entry.dueDate), 'dd/MM/yyyy') : '',
-                debit: entry.debit || 0,
-                originalDebit: entry.debit || 0,
-                originalAccountId: accountId
+                credit: entry.credit || 0,
+                originalCredit: entry.credit || 0,  // Store original credit for validation in edit mode
+                originalAccountId: accountId  // Store original account ID for validation in edit mode
               };
 
               // Restore PO allocations for this account if available
               const poAllocationsForAccount = billAndRefData
-                .filter((bill: any) => Number(bill.AccountID ?? bill.accountID) === Number(accountId || entry.accountID))
+                .filter((bill: any) => Number(bill.AccountID) === Number(entry.accountId))
                 .map((bill: any) => {
                   const invoiceAmount = Number(bill.BillAmount || bill.invoiceAmount || 0);
                   const allocated = Number(bill.Allocated || bill.allocated || 0);
                   const amount = Number(bill.Amount || bill.amount || 0);
                   const balance = invoiceAmount - (allocated + amount);
-                  debugger;
+
                   return {
-                    selection: bill.Selection === true || bill.Selection === 1 || bill.Selection === '1',
+                    selection: !!(bill.Selection || bill.selection),
                     invoiceNo: bill.VNo || bill.invoiceNo || '',
                     invoiceDate: bill.VDate || bill.invoiceDate || '',
                     partyInvNo: bill.partyInvNo || 0,
@@ -677,8 +684,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
                     drCr: bill.drCr || 'D'
                   };
                 });
-                
-              
+
               if (poAllocationsForAccount.length > 0) {
                 accountRow.poAllocations = poAllocationsForAccount;
               }
@@ -689,18 +695,18 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
           this.voucherCommonService.accountDetailsData.set(accountDetails);
           this.voucherCommonService.assignAccountRowIds();
 
-          // Fill Payment Details Grid (Credit entries - DrCr = "C")
-          const creditEntries = transactionEntries.filter((entry: any) => entry.drCr === 'C');
-          const paymentDetails = creditEntries.map((entry: any) => ({
+          // Fill Payment Details Grid (Debit entries - DrCr = "D")
+          const debitEntries = transactionEntries.filter((entry: any) => entry.drCr === 'D');
+          const paymentDetails = debitEntries.map((entry: any) => ({
             AccountName: entry.name || '',
             Description: entry.description || '',
-            Amount: entry.credit || entry.amount || 0,
+            Amount: entry.debit || entry.amount || 0,
             TranType: entry.tranType || ''
           }));
           this.voucherCommonService.paymentDetailsData.set(paymentDetails);
 
-          // Restore payment selections from credit entries (needed for save)
-          this.restorePaymentSelections(creditEntries);
+          // Restore payment selections from debit entries (needed for save)
+          this.restorePaymentSelections(debitEntries);
 
           // Set selected payment type if available
           const paymentDetailsArray = this.voucherCommonService.paymentDetailsData();
@@ -738,18 +744,20 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
 
   override DeleteData(data: PVoucherModel) {
-    console.log('Delete requested for payment voucher:', data);
+    console.log('Delete requested for receipt voucher:', data);
 
+    // Validate data
     if (!data || !data.ID) {
-      this.baseService.showCustomDialogue('Please select a valid payment voucher to delete.');
+      this.baseService.showCustomDialogue('Please select a valid receipt voucher to delete.');
       return;
     }
 
     const voucherId = data.ID;
     const voucherNo = data.TransactionNo || 'Unknown';
 
+    // Show confirmation dialog
     const confirmDelete = confirm(
-      `Are you sure you want to delete Payment Voucher "${voucherNo}"?\n\n` +
+      `Are you sure you want to delete Receipt Voucher "${voucherNo}"?\n\n` +
       `This action cannot be undone.`
     );
 
@@ -758,7 +766,8 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       return;
     }
 
-    this.deletePaymentVoucher(voucherId, voucherNo);
+    // Call delete API
+    this.deleteReceiptVoucher(voucherId, voucherNo);
   }
 
  
@@ -822,7 +831,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     this.voucherName = this.commonFillData?.vNo?.code || 'PV';
     const voucherNo = this.commonFillData?.vNo?.result || '';
 
-    this.paymentVoucherForm.patchValue({
+    this.receiptVoucherForm.patchValue({
       voucherName: this.voucherName,
       voucherNo: voucherNo,
       voucherDate: formattedDate,
@@ -837,6 +846,26 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
+  }
+
+  private isVoucherBeyondEditablePeriod(): boolean {
+    const voucherDate = this.getVoucherDateForEditCheck();
+    if (!voucherDate) return false;
+
+    const msInDay = 1000 * 60 * 60 * 24;
+    const ageInDays = Math.floor((Date.now() - voucherDate.getTime()) / msInDay);
+    return ageInDays > EDITABLE_PERIOD;
+  }
+
+  private getVoucherDateForEditCheck(): Date | null {
+    const rawDate = this.currentReceiptVoucher?.date || this.receiptVoucherForm.get('voucherDate')?.value;
+    if (!rawDate) return null;
+
+    const iso = this.toISO(rawDate);
+    if (!iso) return null;
+
+    const parsed = new Date(iso);
+    return isNaN(parsed.getTime()) ? null : parsed;
   }
 
   // Fetch department data for dropdown
@@ -1103,11 +1132,11 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       });
   }
 
-  // Compute remaining amount = sum(debit in Account Details) - sum(Amount in Payment Details excluding current type)
+  // Compute remaining amount = sum(credit in Account Details) - sum(Amount in Payment Details excluding current type)
   private computePaymentRemaining(): number {
     const accountRows = this.voucherCommonService.accountDetailsData();
     const paymentRows = this.voucherCommonService.paymentDetailsData();
-    const totalDebit = accountRows.reduce((s: number, r: any) => s + (Number(r?.debit) || 0), 0);
+    const totalCredit = accountRows.reduce((s: number, r: any) => s + (Number(r?.credit) || 0), 0);
 
     // Exclude payments of the current popup type to get accurate remaining amount
     const currentType = this.popupType?.toLowerCase();
@@ -1117,8 +1146,61 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     });
 
     const totalPaid = filteredPaymentRows.reduce((s: number, r: any) => s + (Number(r?.Amount) || 0), 0);
-    const remaining = totalDebit - totalPaid;
+    const remaining = totalCredit - totalPaid;
     return remaining > 0 ? parseFloat(remaining.toFixed(4)) : 0;
+  }
+
+  // Enter New mode with clean form and editable grids
+  private enterNewMode(): void {
+    console.log('Entering New mode for receipt voucher');
+
+    this.SetPageType(1);
+    this.updateGridEditSettings();
+
+    this.selectedReceiptVoucherId = 0;
+    this.currentReceiptVoucher = null;
+    this.selectedPaymentType = '';
+    this.originalBillAndRef = [];
+
+    this.voucherCommonService.initializeAccountDetails();
+    this.voucherCommonService.paymentDetailsData.set([]);
+    this.voucherCommonService.cashSelected.set([]);
+    this.voucherCommonService.cardSelected.set([]);
+    this.voucherCommonService.chequeSelected.set([]);
+    this.showPaymentPopup = false;
+
+    this.receiptVoucherForm.enable();
+    this.receiptVoucherForm.patchValue({
+      narration: '',
+      costCentre: null,
+      department: null,
+      referenceNo: ''
+    });
+
+    // Keep voucher name read-only; voucher number stays editable per form config
+    this.receiptVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+
+    // Refresh voucher header info (voucher no/name/date) for a fresh entry
+    this.fetchCommonFillData();
+
+    // Clear any left-grid selection in local state
+    this.leftgridSelectedData = null;
+
+    console.log('Form reset for new receipt voucher');
+  }
+
+  // Switch to topmost voucher in View mode
+  private viewTopVoucherFromLeftGrid(): void {
+    const firstVoucher = Array.isArray(this.leftGrid.leftGridData) && this.leftGrid.leftGridData.length
+      ? this.leftGrid.leftGridData[0]
+      : null;
+
+    if (!firstVoucher) {
+      this.baseService.showCustomDialogue('No vouchers available to view.');
+      return;
+    }
+
+    this.getDataById(firstVoucher);
   }
 
   // Fetch Bank details for cheque popup
@@ -1182,12 +1264,12 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
     if (!selectedAccount) return;
 
-    // Detect if in edit mode and account has changed
     const isEditMode = this.serviceBase.formToolbarService.pagetype === 2;
     const previousAccountId = data.accountId;
     const hasExistingAllocations = Array.isArray(data.poAllocations) && data.poAllocations.length > 0;
     const accountChanged = previousAccountId && previousAccountId !== selectedAccount.id;
 
+    // Handle allocation clearing in edit mode when account changes
     if (isEditMode && accountChanged && hasExistingAllocations) {
       const allocCount = data.poAllocations.length;
       const totalAllocated = data.poAllocations.reduce((sum: number, a: any) =>
@@ -1196,9 +1278,12 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       const warningMsg =
         `Account changed. Clearing ${allocCount} PO allocation(s) ` +
         `(Total: ${totalAllocated.toFixed(2)}) from previous account. ` +
-        `Debit amount (${data.debit}) will be preserved.`;
+        `Credit amount (${data.credit}) will be preserved.`;
 
+      // Show warning (informational, not blocking)
       console.warn(warningMsg);
+
+      // Clear old allocations but keep credit amount
       this.clearAccountAllocations(data, previousAccountId);
     }
 
@@ -1206,17 +1291,16 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     Object.assign(data, {
       accountCode: selectedAccount.accountCode,
       accountName: selectedAccount.accountName,
-      accountId: selectedAccount.id,
+      accountId: selectedAccount.id,  // Store account ID for payload
     });
 
     // Update the row in grid using service (triggers signal change detection)
     this.voucherCommonService.updateAccountRow(data);
 
     // Fetch unpaid POs for this account (for PO allocation feature)
-    // Payment Voucher uses 'C' (Credit side - invoices to pay against)
-    this.voucherService.fetchUnpaidPOs(selectedAccount.id, 'C');
+    this.voucherService.fetchUnpaidPOs(selectedAccount.id, 'D'); // 'D' for Debit (Receipt Voucher)
 
-    console.log(`✅ Account ${accountChanged ? 'changed' : 'selected'}: ${selectedAccount.accountCode} - ${selectedAccount.accountName}${accountChanged ? `, debit preserved: ${data.debit}` : ''}`);
+    console.log(`✅ Account ${accountChanged ? 'changed' : 'selected'}: ${selectedAccount.accountCode} - ${selectedAccount.accountName}${accountChanged ? `, credit preserved: ${data.credit}` : ''}`);
   }
 
   // Handle filtering in AccountCode dropdown
@@ -1238,46 +1322,46 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   // Handle cellSave event in Account Details grid to open PO Allocation popup
   async onAccountDetailsCellSave(args: any): Promise<void> {
     const columnName = args.columnName;
-    const rowData = args.rowData;
-    const value = args.value;
+    const rowData = args.rowData; // Use args.rowData instead of args.data
+    const value = args.value; // Get the newly edited value
 
-    // Handle description edits
+    // Handle description and dueDate edits
     if (columnName === 'description') {
       rowData.description = value;
       this.voucherCommonService.updateAccountRow(rowData);
       return;
     }
 
-    // Handle dueDate edits
     if (columnName === 'dueDate') {
       rowData.dueDate = value;
       this.voucherCommonService.updateAccountRow(rowData);
       return;
     }
 
-    // Check if debit column was edited (Payment Voucher uses Debit)
-    if (columnName === 'debit') {
-      const debitValue = value || 0;
+    // Check if credit column was edited (Receipt Voucher uses Credit)
+    if (columnName === 'credit') {
+      const creditValue = value || 0; // Use the edited value, not rowData.credit
 
-      // Validate that account is selected
+      // Validate that account is selected first
       if (!rowData.accountId || !rowData.accountCode) {
-        this.baseService.showCustomDialogue('Please select an account first before entering debit amount.');
+        this.baseService.showCustomDialogue('Please select an account first before entering credit amount.');
         return;
       }
 
-      // In edit mode, prepare unpaid POs with current allocations
-      const isEditMode = this.serviceBase.formToolbarService.pagetype === 2;
-      if (isEditMode) {
+      // In edit mode, load unpaid POs (if not already) and append saved allocations before opening popup
+      if (this.serviceBase.formToolbarService.pagetype === 2) {
         await this.prepareUnpaidPOsForEdit(rowData);
       }
 
       // Check if account has unpaid POs
       if (this.voucherService.unpaidPOsData().length > 0) {
+        // Open PO allocation popup after a short delay to ensure cell save completes
         setTimeout(() => {
-          this.openPOAllocationPopup(debitValue, rowData);
+          this.openPOAllocationPopup(creditValue, rowData);
         }, 100);
       } else {
-        console.log(`ℹ️ No unpaid POs for account ${rowData.accountCode}. Manual debit entry: ${debitValue}`);
+        // No unpaid POs available - allow manual entry
+        console.log(`ℹ️ No unpaid POs for account ${rowData.accountCode}. Manual credit entry: ${creditValue}`);
       }
     }
   }
@@ -1293,12 +1377,12 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
   // Event handler - called when popup emits allocationComplete event
   onAllocationComplete(result: POAllocationResult): void {
-    // Update debit field in Account Details grid with total allocated amount
-    this.currentRowData.debit = result.totalAllocatedAmount;
+    // Update credit field in Account Details grid with total allocated amount
+    this.currentRowData.credit = result.totalAllocatedAmount;
 
-    // Update reference field in payment voucher header with comma-separated invoice numbers
+    // Update reference field in receipt voucher header with comma-separated invoice numbers
     // Assuming referenceNo is the form control name for reference field
-    this.paymentVoucherForm.get('referenceNo')?.setValue(result.invoiceNosString);
+    this.receiptVoucherForm.get('referenceNo')?.setValue(result.invoiceNosString);
 
     // Store individual PO allocations for final payload submission
     this.currentRowData.poAllocations = result.allocations;
@@ -1311,57 +1395,127 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
   // -------------------- Private helpers --------------------
 
-  // Enter New mode with clean form and editable grids
-  private enterNewMode(): void {
-    console.log('Entering New mode for payment voucher');
+  /**
+   * Clear PO allocations when account changes, but preserve credit amount
+   * @param rowData The row data to clear allocations from
+   * @param oldAccountId The previous account ID (for logging)
+   */
+  private clearAccountAllocations(rowData: any, oldAccountId: number): void {
+    // Store current credit amount BEFORE clearing
+    const currentCredit = rowData.credit || 0;
 
-    this.SetPageType(1);
-    this.updateGridEditSettings();
+    // 1. Clear PO allocations array
+    const clearedCount = rowData.poAllocations?.length || 0;
+    rowData.poAllocations = [];
 
-    this.selectedPaymentVoucherId = 0;
-    this.currentPaymentVoucher = null;
-    this.selectedPaymentType = '';
-    this.originalBillAndRef = [];
+    // 2. PRESERVE credit amount (DO NOT clear it)
+    rowData.credit = currentCredit;  // Keep the amount!
 
-    this.voucherCommonService.initializeAccountDetails();
-    this.voucherCommonService.paymentDetailsData.set([]);
-    this.voucherCommonService.cashSelected.set([]);
-    this.voucherCommonService.cardSelected.set([]);
-    this.voucherCommonService.chequeSelected.set([]);
-    this.showPaymentPopup = false;
+    // 3. Clear unpaid POs from service (old account's POs)
+    this.voucherService.unpaidPOsData.set([]);
 
-    this.paymentVoucherForm.enable();
-    this.paymentVoucherForm.patchValue({
-      narration: '',
-      costCentre: null,
-      department: null,
-      referenceNo: ''
-    });
+    // 4. Update reference field - remove invoice numbers for this row
+    this.updateReferenceFieldOnAccountChange(rowData);
 
-    // Keep voucher name read-only; voucher number stays editable per form config
-    this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
-
-    // Refresh voucher header info (voucher no/name/date) for a fresh entry
-    this.fetchCommonFillData();
-
-    // Clear any left-grid selection in local state
-    this.leftgridSelectedData = null;
-
-    console.log('Form reset for new payment voucher');
+    // 5. Log the change
+    console.log(`✅ Cleared ${clearedCount} allocation(s) for old account ID: ${oldAccountId}, kept credit: ${currentCredit}`);
   }
 
-  // Switch to topmost voucher in View mode
-  private viewTopVoucherFromLeftGrid(): void {
-    const firstVoucher = Array.isArray(this.leftGrid.leftGridData) && this.leftGrid.leftGridData.length
-      ? this.leftGrid.leftGridData[0]
-      : null;
+  /**
+   * Update reference field after account change by removing cleared row's invoice numbers
+   * @param clearedRow The row whose allocations were cleared
+   */
+  private updateReferenceFieldOnAccountChange(clearedRow: any): void {
+    // Get all account rows
+    const allRows = this.voucherCommonService.accountDetailsData();
 
-    if (!firstVoucher) {
-      this.baseService.showCustomDialogue('No vouchers available to view.');
-      return;
+    // Collect invoice numbers from OTHER rows (excluding the one with cleared allocations)
+    const remainingInvoiceNumbers: string[] = [];
+
+    allRows.forEach(row => {
+      // Skip the cleared row (use unique identifier)
+      if (row.rowId !== clearedRow.rowId && Array.isArray(row.poAllocations)) {
+        row.poAllocations.forEach((alloc: any) => {
+          if (alloc.invoiceNo) {
+            remainingInvoiceNumbers.push(alloc.invoiceNo);
+          }
+        });
+      }
+    });
+
+    // Update reference field with remaining invoice numbers
+    const newReferenceNo = remainingInvoiceNumbers.join(', ');
+    this.receiptVoucherForm.get('referenceNo')?.setValue(newReferenceNo);
+
+    console.log(`📝 Updated reference field: "${newReferenceNo}"`);
+  }
+
+  private async prepareUnpaidPOsForEdit(rowData: any): Promise<void> {
+    if (!rowData) return;
+
+    const accountId = rowData.accountId ?? rowData.accountID ?? 0;
+    let unpaidPOs: any[] = [];
+
+    // Fetch unpaid POs for this account
+    if (accountId) {
+      const url = `${EndpointConstant.FILLADVANCE}${accountId}&voucherId=17&drcr=D`;
+      try {
+        const response = await firstValueFrom(
+          this.httpService
+            .fetch<any>(url)
+            .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        );
+        const responseData = response?.data ?? [];
+        unpaidPOs = responseData.map((item: any) => ({
+          selection: item.selection ?? false,
+          invoiceNo: item.vNo ?? item.invoiceNo ?? '',
+          invoiceDate: this.datePipe.transform(item.vDate, 'dd/MM/yyyy') ?? '',
+          partyInvNo: item.partyInvNo ?? null,
+          partyInvDate: item.partyInvDate
+            ? this.datePipe.transform(item.partyInvDate, 'dd/MM/yyyy')
+            : null,
+          description: item.description ?? null,
+          account: item.account ?? null,
+          invoiceAmount: Number(item.billAmount ?? item.invoiceAmount ?? 0),
+          allocated: Number(item.allocated ?? 0),
+          amount: Number(item.amount ?? 0),
+          balance: Number(
+            (item.billAmount ?? item.invoiceAmount ?? 0) - (item.allocated ?? 0)
+          ),
+          vid: item.vid,
+          veid: item.veid,
+          accountID: item.accountID,
+          drCr: item.drCr,
+        }));
+      } catch (err) {
+        console.error('Error fetching unpaid POs for edit mode:', err);
+        unpaidPOs = [];
+      }
     }
+    debugger;
+    // Get allocated POs only from rows with the SAME account (not other accounts)
+    const accountRows = this.voucherCommonService.accountDetailsData() || [];
+    const allocatedPOs = accountRows
+      .filter((row: any) => Number(row.accountId || row.accountID) === Number(accountId))
+      .flatMap((row: any) => row.poAllocations || []);
 
-    this.getDataById(firstVoucher);
+    // Merge: Replace unpaid POs with allocated POs where invoiceNo matches
+    const byInvoice: Record<string, any> = {};
+
+    // First, add all unpaid POs
+    unpaidPOs.forEach(po => {
+      const key = (po.invoiceNo || '').toString();
+      if (key) byInvoice[key] = po;
+    });
+
+    // Then, replace with allocated POs (they take priority)
+    allocatedPOs.forEach((po: any) => {
+      const key = (po.invoiceNo || '').toString();
+      if (key) byInvoice[key] = po;
+    });
+
+    const merged = Object.values(byInvoice);
+    this.voucherService.unpaidPOsData.set(merged);
   }
 
   // Restore payment selections from loaded credit entries (for edit mode)
@@ -1458,6 +1612,73 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
   private showError(msg: string): void {
     this.baseService.showCustomDialogue(msg);
+  }
+
+  /**
+   * Merge payment items - additive in edit mode, replace in new mode
+   * @param existingItems Current selected items
+   * @param newItems Newly selected items from popup
+   * @param isEditMode Whether we're in edit mode
+   * @param isCheque Whether this is a cheque payment (special matching logic)
+   * @returns Merged array of payment items
+   */
+  private mergePaymentItems(
+    existingItems: any[],
+    newItems: any[],
+    isEditMode: boolean,
+    isCheque: boolean = false
+  ): any[] {
+    // In new mode, just replace (current behavior)
+    if (!isEditMode) {
+      return newItems;
+    }
+
+    // In edit mode, merge amounts for matching accounts
+    const merged = [...existingItems];
+
+    for (const newItem of newItems) {
+      if (isCheque) {
+        // For cheques, match by PDC payable ID and cheque number
+        const existingIndex = merged.findIndex(item =>
+          item.pdcpayable?.id === newItem.pdcpayable?.id &&
+          item.chequeno === newItem.chequeno
+        );
+
+        if (existingIndex !== -1) {
+          // Add amounts for matching cheque
+          merged[existingIndex].amount =
+            (Number(merged[existingIndex].amount) || 0) +
+            (Number(newItem.amount) || 0);
+        } else {
+          // New cheque entry
+          merged.push(newItem);
+        }
+      } else {
+        // For cash/card/epay, match by account ID
+        // Get account IDs from both items (handle different field names)
+        const newItemId = newItem.id || newItem.accountId || 0;
+        const existingIndex = merged.findIndex(item => {
+          const existingId = item.id || item.accountId || 0;
+          return existingId > 0 && existingId === newItemId;
+        });
+
+        if (existingIndex !== -1) {
+          // Add amounts for matching account
+          merged[existingIndex].amount =
+            (Number(merged[existingIndex].amount) || 0) +
+            (Number(newItem.amount) || 0);
+          // Update description if new one is provided
+          if (newItem.description) {
+            merged[existingIndex].description = newItem.description;
+          }
+        } else {
+          // New account entry
+          merged.push(newItem);
+        }
+      }
+    }
+
+    return merged;
   }
   private toISO(input: any): string | null {
     const toUtcIso = (y: number, m: number, d: number) =>
@@ -1584,10 +1805,9 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       return obj;
     });
   }
-  // Build billandRef from PO allocations - simpler direct mapping
-  private buildBillAndRef(accRows: any[]): any[] {
+  private buildBillAndRef(accRows: any[], isUpdate: boolean): any[] {
     const out: any[] = [];
-
+    
     for (const r of accRows) {
       if (Array.isArray(r.poAllocations)) {
         for (const alloc of r.poAllocations) {
@@ -1597,17 +1817,21 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
             invoiceAmount: parseFloat((Number(alloc.invoiceAmount) || 0).toFixed(2)),
             allocated: parseFloat((Number(alloc.allocated) || 0).toFixed(2)),
             amount: parseFloat((Number(alloc.amount) || 0).toFixed(2)),
+            balance: parseFloat((Number(alloc.balance) || 0).toFixed(2)),
             description: alloc.description || '',
             account: alloc.account || '',
             vid: Number(alloc.vid) || 0,
             veid: Number(alloc.veid) || 0,
             accountID: Number(alloc.AccountID || alloc.accountID) || 0,
           };
+          // Always include invoiceDate; fallback to current date if missing/invalid
           {
             const iso = this.toISO(alloc.invoiceDate);
             item.invoiceDate = iso || new Date().toISOString();
           }
+          // Always include partyInvNo as a number (backend expects int)
           item.partyInvNo = Number(alloc.partyInvNo) || 0;
+          // Always include partyInvDate; fallback to current date if missing/invalid
           {
             const iso2 = this.toISO(alloc.partyInvDate);
             item.partyInvDate = iso2 || new Date().toISOString();
@@ -1618,7 +1842,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     }
     return out;
   }
-
   private normalizeBillAndRef(source: any[]): any[] {
     if (!Array.isArray(source)) return [];
 
@@ -1648,8 +1871,8 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
         allocated: parseFloat(allocated.toFixed(2)),
         amount: parseFloat(amount.toFixed(2)),
         balance: parseFloat(balance.toFixed(2)),
-        description: item.description ?? item.Description ?? null,
-        account: item.account ?? item.Account ?? null,
+        description: item.description ?? item.Description ?? '',
+        account: item.account ?? item.Account ?? '',
         vid: Number(item.vid ?? item.VID) || 0,
         veid: Number(item.veid ?? item.VEID) || 0,
         accountID: Number(item.AccountID ?? item.accountID) || 0,
@@ -1659,206 +1882,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       };
     });
   }
-
-  // Removed obsolete methods: mergePaymentItems(), setPaymentSelection(), filterPaymentItems()
-  // These are no longer needed with the new simplified approach from Receipt Voucher
-
-  // Prepare unpaid POs for edit mode - simpler invoice-number-based merge (Receipt Voucher model)
-  private async prepareUnpaidPOsForEdit(rowData: any): Promise<void> {
-    if (!rowData) return;
-
-    const accountId = rowData.accountId ?? rowData.accountID ?? 0;
-    let unpaidPOs: any[] = [];
-
-    // Fetch unpaid POs for this account with drcr='C' (Payment Voucher uses Credit side invoices)
-    if (accountId) {
-      const url = `${EndpointConstant.FILLADVANCE}${accountId}&voucherId=17&drcr=C`;
-
-      try {
-        const response = await firstValueFrom(
-          this.httpService
-            .fetch<any>(url)
-            .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-        );
-
-        const responseData = response?.data ?? [];
-
-        // Transform API response to unpaid PO format
-        unpaidPOs = responseData.map((item: any) => ({
-          selection: item.selection ?? false,
-          invoiceNo: item.vNo ?? item.invoiceNo ?? '',
-          invoiceDate: this.datePipe.transform(item.vDate, 'dd/MM/yyyy') ?? '',
-          partyInvNo: item.partyInvNo ?? null,
-          partyInvDate: item.partyInvDate
-            ? this.datePipe.transform(item.partyInvDate, 'dd/MM/yyyy')
-            : null,
-          description: item.description ?? null,
-          account: item.account ?? null,
-          invoiceAmount: Number(item.billAmount ?? item.invoiceAmount ?? 0),
-          allocated: Number(item.allocated ?? 0),
-          amount: Number(item.amount ?? 0),
-          balance: Number(
-            (item.billAmount ?? item.invoiceAmount ?? 0) - (item.allocated ?? 0)
-          ),
-          vid: item.vid,
-          veid: item.veid,
-          accountID: item.accountID,
-          drCr: item.drCr,
-        }));
-      } catch (err) {
-        console.error('Error fetching unpaid POs for edit mode:', err);
-        unpaidPOs = [];
-      }
-    }
-
-    // Get allocated POs only from rows with the SAME account
-    const accountRows = this.voucherCommonService.accountDetailsData() || [];
-    const allocatedPOs = accountRows
-      .filter((row: any) => Number(row.accountId || row.accountID) === Number(accountId))
-      .flatMap((row: any) => row.poAllocations || []);
-
-    // Merge using invoice number as key: unpaid POs first, allocated POs override
-    const byInvoice: Record<string, any> = {};
-
-    // First, add all unpaid POs
-    unpaidPOs.forEach(po => {
-      const key = (po.invoiceNo || '').toString();
-      if (key) byInvoice[key] = po;
-    });
-
-    // Then, replace with allocated POs (they take priority)
-    allocatedPOs.forEach((po: any) => {
-      const key = (po.invoiceNo || '').toString();
-      if (key) byInvoice[key] = po;
-    });
-
-    const merged = Object.values(byInvoice);
-    this.voucherService.unpaidPOsData.set(merged);
-
-    console.log(`✅ Prepared ${merged.length} POs for edit mode (account ID: ${accountId})`);
-  }
-
-  // Clear PO allocations when account changes
-  private clearAccountAllocations(rowData: any, oldAccountId: number): void {
-    const currentDebit = rowData.debit || 0;
-    const clearedCount = rowData.poAllocations?.length || 0;
-    rowData.poAllocations = [];
-    rowData.debit = currentDebit;
-    this.voucherService.unpaidPOsData.set([]);
-    this.updateReferenceFieldOnAccountChange(rowData);
-    console.log(`✅ Cleared ${clearedCount} allocation(s) for old account ID: ${oldAccountId}, kept debit: ${currentDebit}`);
-  }
-
-  // Update reference field when account changes
-  private updateReferenceFieldOnAccountChange(clearedRow: any): void {
-    const allRows = this.voucherCommonService.accountDetailsData();
-    const remainingInvoiceNumbers: string[] = [];
-
-    allRows.forEach(row => {
-      if (row.rowId !== clearedRow.rowId && Array.isArray(row.poAllocations)) {
-        row.poAllocations.forEach((alloc: any) => {
-          if (alloc.invoiceNo) {
-            remainingInvoiceNumbers.push(alloc.invoiceNo);
-          }
-        });
-      }
-    });
-
-    const newReferenceNo = remainingInvoiceNumbers.join(', ');
-    this.paymentVoucherForm.get('referenceNo')?.setValue(newReferenceNo);
-    console.log(`📝 Updated reference field: "${newReferenceNo}"`);
-  }
-
-  // Delete payment voucher by ID
-  private deletePaymentVoucher(voucherId: number, voucherNo: string): void {
-    const deleteUrl = `${EndpointConstant.DELETEPAYMENTVOUCHER}${this.pageId}&TransId=${voucherId}`;
-
-    console.log('Deleting payment voucher:', { voucherId, voucherNo, pageId: this.pageId, url: deleteUrl });
-
-    this.httpService
-      .delete(deleteUrl)
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe({
-        next: (response) => {
-          this.handleDeleteSuccess(response, voucherNo);
-        },
-        error: (error) => {
-          this.handleDeleteError(error, voucherNo);
-        }
-      });
-  }
-
-  // Handle successful delete response
-  private handleDeleteSuccess(response: any, voucherNo: string): void {
-    console.log('Delete response:', response);
-
-    const httpCode = (response as any)?.httpCode ?? (response as any)?.data?.httpCode;
-    const isValid = (response as any)?.isValid ?? (response as any)?.data?.isValid;
-    const dataMsg = (response as any)?.data?.msg || (response as any)?.message;
-
-    if ((typeof httpCode === 'number' && httpCode >= 400) || isValid === false) {
-      const details = typeof dataMsg === 'string' ? dataMsg : this.stringifyError(response);
-      console.error('Delete payment voucher returned error:', response);
-      this.baseService.showCustomDialogue(`Delete failed:\n${details}`);
-      return;
-    }
-
-    const successMsg = dataMsg || `Payment Voucher "${voucherNo}" deleted successfully.`;
-    this.baseService.showCustomDialogue(successMsg);
-
-    this.clearFormAfterDelete();
-    this.LeftGridInit();
-  }
-
-  // Handle delete error
-  private handleDeleteError(error: any, voucherNo: string): void {
-    const details = this.stringifyError(error);
-    console.error('Delete payment voucher failed:', error);
-
-    this.baseService.showCustomDialogue(
-      `Failed to delete Payment Voucher "${voucherNo}":\n${details}`
-    );
-  }
-
-  // Clear form after successful deletion
-  private clearFormAfterDelete(): void {
-    this.selectedPaymentVoucherId = 0;
-    this.currentPaymentVoucher = null;
-    this.selectedPaymentType = '';
-    this.originalBillAndRef = [];
-
-    this.voucherCommonService.clearAllData();
-
-    this.paymentVoucherForm.reset();
-    this.paymentVoucherForm.disable();
-
-    this.SetPageType(0);
-
-    console.log('✅ Form cleared after deletion');
-  }
-
-  // Check if voucher is beyond editable period
-  private isVoucherBeyondEditablePeriod(): boolean {
-    const voucherDate = this.getVoucherDateForEditCheck();
-    if (!voucherDate) return false;
-
-    const msInDay = 1000 * 60 * 60 * 24;
-    const ageInDays = Math.floor((Date.now() - voucherDate.getTime()) / msInDay);
-    return ageInDays > EDITABLE_PERIOD;
-  }
-
-  // Get voucher date for edit period check
-  private getVoucherDateForEditCheck(): Date | null {
-    const rawDate = this.currentPaymentVoucher?.date || this.paymentVoucherForm.get('voucherDate')?.value;
-    if (!rawDate) return null;
-
-    const iso = this.toISO(rawDate);
-    if (!iso) return null;
-
-    const parsed = new Date(iso);
-    return isNaN(parsed.getTime()) ? null : parsed;
-  }
-
   private stringifyError(err: any): string {
     try {
       const parts: string[] = [];
@@ -1875,6 +1898,100 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     } catch {
       try { return JSON.stringify(err); } catch { return String(err); }
     }
+  }
+
+  /**
+   * Delete receipt voucher by calling API
+   * @param voucherId The transaction ID to delete
+   * @param voucherNo The voucher number (for display)
+   */
+  private deleteReceiptVoucher(voucherId: number, voucherNo: string): void {
+    // Build delete URL with PageId and TransId parameters
+    const deleteUrl = `${EndpointConstant.DELETERECEIPTVOUCHER}${this.pageId}&TransId=${voucherId}`;
+
+    console.log('Deleting receipt voucher:', { voucherId, voucherNo, pageId: this.pageId, url: deleteUrl });
+
+    this.httpService
+      .delete(deleteUrl)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          // Handle success response
+          this.handleDeleteSuccess(response, voucherNo);
+        },
+        error: (error) => {
+          // Handle error response
+          this.handleDeleteError(error, voucherNo);
+        }
+      });
+  }
+
+  /**
+   * Handle successful delete response
+   * @param response API response
+   * @param voucherNo Voucher number for display
+   */
+  private handleDeleteSuccess(response: any, voucherNo: string): void {
+    console.log('Delete response:', response);
+
+    // Check if backend returned error in success response
+    const httpCode = (response as any)?.httpCode ?? (response as any)?.data?.httpCode;
+    const isValid = (response as any)?.isValid ?? (response as any)?.data?.isValid;
+    const dataMsg = (response as any)?.data?.msg || (response as any)?.message;
+
+    if ((typeof httpCode === 'number' && httpCode >= 400) || isValid === false) {
+      const details = typeof dataMsg === 'string' ? dataMsg : this.stringifyError(response);
+      console.error('Delete receipt voucher returned error:', response);
+      this.baseService.showCustomDialogue(`Delete failed:\n${details}`);
+      return;
+    }
+
+    // Success - show message
+    const successMsg = dataMsg || `Receipt Voucher "${voucherNo}" deleted successfully.`;
+    this.baseService.showCustomDialogue(successMsg);
+
+    // Clear form and reset state
+    this.clearFormAfterDelete();
+
+    // Refresh left grid to remove deleted voucher
+    this.LeftGridInit();
+  }
+
+  /**
+   * Handle delete error response
+   * @param error Error object
+   * @param voucherNo Voucher number for display
+   */
+  private handleDeleteError(error: any, voucherNo: string): void {
+    const details = this.stringifyError(error);
+    console.error('Delete receipt voucher failed:', error);
+
+    this.baseService.showCustomDialogue(
+      `Failed to delete Receipt Voucher "${voucherNo}":\n${details}`
+    );
+  }
+
+  /**
+   * Clear form and reset state after successful deletion
+   */
+  private clearFormAfterDelete(): void {
+    // Reset selected voucher ID
+    this.selectedReceiptVoucherId = 0;
+    this.currentReceiptVoucher = null;
+    this.selectedPaymentType = '';
+    this.originalBillAndRef = [];
+
+    // Clear all grid data using service method
+    this.voucherCommonService.clearAllData();
+
+    // Reset form
+    this.receiptVoucherForm.reset();
+    this.receiptVoucherForm.disable();
+
+    // Set page type to view/list mode
+    this.SetPageType(0);
+
+    console.log('✅ Form cleared after deletion');
   }
 
 }
