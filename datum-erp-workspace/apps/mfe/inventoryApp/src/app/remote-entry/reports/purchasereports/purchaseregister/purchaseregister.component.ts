@@ -147,7 +147,7 @@ export class PurchaseRegisterComponent extends BaseComponent implements OnInit {
     inventoryColumns = [
         { headerText: 'VType', field: 'VType', width: 140 },
         { headerText: 'VNo', field: 'VNo', width: 200 },
-        { headerText: 'Particulars', field: 'Particulars', width: 420 },
+        { headerText: 'Particulars', field: 'Particulars', width: 490 },
 
         { headerText: 'Debit', field: 'Debit', width: 160, textAlign: 'Right' },
         { headerText: 'Credit', field: 'Credit', width: 160, textAlign: 'Right' },

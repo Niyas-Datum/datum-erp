@@ -62,8 +62,8 @@
       "continuous": true,
       "executor": "@nx/angular:dev-server",
       "options": {
-        "port": 4204,
-        "publicHost": "http://localhost:4204"
+        "port": 4904,
+        "publicHost": "http://localhost:4904"
       },
       "configurations": {
         "production": {
@@ -90,7 +90,7 @@
       "defaultConfiguration": "production",
       "options": {
         "buildTarget": "inventoryApp:build",
-        "port": 4204,
+        "port": 4904,
         "watch": false
       },
       "configurations": {

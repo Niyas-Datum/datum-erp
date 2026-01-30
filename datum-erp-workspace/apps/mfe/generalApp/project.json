@@ -60,8 +60,8 @@
       "continuous": true,
       "executor": "@nx/angular:dev-server",
       "options": {
-        "port": 4203,
-        "publicHost": "http://localhost:4203"
+        "port": 4903,
+        "publicHost": "http://localhost:4903"
       },
       "configurations": {
         "production": {
@@ -88,7 +88,7 @@
       "defaultConfiguration": "production",
       "options": {
         "buildTarget": "generalApp:build",
-        "port": 4203,
+        "port": 4903,
         "watch": false
       },
       "configurations": {

@@ -60,8 +60,8 @@
       "continuous": true,
       "executor": "@nx/angular:dev-server",
       "options": {
-        "port": 4205,
-        "publicHost": "http://localhost:4205"
+        "port": 4905,
+        "publicHost": "http://localhost:4905"
       },
       "configurations": {
         "production": {
@@ -88,7 +88,7 @@
       "defaultConfiguration": "production",
       "options": {
         "buildTarget": "financeApp:build",
-        "port": 4205,
+        "port": 4905,
         "watch": false
       },
       "configurations": {

@@ -60,8 +60,8 @@
       "continuous": true,
       "executor": "@nx/angular:dev-server",
       "options": {
-        "port": 4206,
-        "publicHost": "http://localhost:4206"
+        "port": 4906,
+        "publicHost": "http://localhost:4906"
       },
       "configurations": {
         "production": {
@@ -89,7 +89,7 @@
       "defaultConfiguration": "production",
       "options": {
         "buildTarget": "AuthApp:build",
-        "port": 4206,
+        "port": 4906,
         "watch": false
       },
       "configurations": {

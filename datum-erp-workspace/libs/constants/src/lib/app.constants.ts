@@ -9,7 +9,7 @@ export const APPLICATION_CONSTANT = {
     },
     environment: {
       production: true,
-      apiUrl: 'http://localhost:4200/api',
+      apiUrl: 'http://localhost:4900/api',
     },
 };
 
