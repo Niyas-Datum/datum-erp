@@ -75,6 +75,7 @@ export class AuthloginComponent implements OnInit {
     this.selectedCompany.set(company ?? null);
 
     if (company) {
+      this.loginService.setLocalStorageItem('companyId', company.id.toString());
       this.loginForm.get('branch')?.enable();
       this.loginService.getUUID();
       this.setDBConnection(company.id);

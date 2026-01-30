@@ -1,502 +1,326 @@
 <div class="row g-0">
-    <div class="col-md-9 p-0">
-      <form [formGroup]="branchForm" (ngSubmit)="onSaveClick()">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-2">
-                <label for="hocompanyname" class="form-label" translate="">Company Name<span class="required-asterisk">*</span></label>
-              </div>
-              <div class="col-md-10">
-                <ejs-textbox
-                  id="hocompanyname"
-                  formControlName="hocompanyname"
-                  floatLabelType="Auto"
-                  [enabled]="!isInputDisabled"
-                  cssClass="e-outline">
-                </ejs-textbox>
-                @if (branchForm.get('hocompanyname')?.touched &&
-                (branchForm.get('hocompanyname')?.errors?.['required'] ||
-                branchForm.get('hocompanyname')?.errors?.['invalidhocompanyname']))
-                {
-                <small style="color: red">
-                  @if (branchForm.get('hocompanyname')?.errors?.['required'])
-                  { Company Name is required } @if
-                  (branchForm.get('hocompanyname')?.errors?.['invalidhocompanyname'])
-                  { Invalid format for Company Name }
-                </small>
-                }
-              </div>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-2">
-                <label for="hoarabicname" class="form-label" translate="">Arabic Name</label>
-              </div>
-              <div class="col-md-10">
-                <ejs-textbox
-                  id="hoarabicname"
-                  formControlName="hoarabicname"
-                  floatLabelType="Auto"
-                  [enabled]="!isInputDisabled"
-                  cssClass="e-outline">
-                </ejs-textbox>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <label for="branchtype" class="form-label col-md-2" translate
-            >Branch Type<span class="required-asterisk">*</span></label
-          >
-          <div class="col-md-4">
-            <ejs-dropdownlist
-              id="branchtype"
-              formControlName="branchtype"
-              [dataSource]="branchType"
-              [fields]="{ text: 'name', value: 'value' }"
-              placeholder="Select Branch Type"
-              [enabled]="!isInputDisabled"
-              (change)="onBranchTypeSelect()"
-              cssClass="e-outline">
-            </ejs-dropdownlist>
-            @if (branchForm.get('branchtype')?.touched &&
-            (branchForm.get('branchtype')?.errors?.['required'] ||
-            branchForm.get('branchtype')?.errors?.['invalidBranchType']))
-            {
-            <small style="color: red">
-              @if (branchForm.get('branchtype')?.errors?.['required'])
-              { Branch Type is required } @if
-              (branchForm.get('branchtype')?.errors?.['invalidBranchType'])
-              { Invalid format for Branch Type }
-            </small>
-            }
-          </div>
-          <div class="col-md-2"></div>
-          <div class="col-md-4 flex-wrapper">
-            <label for="isactive" class="form-label col-md-2" translate
-              >Active</label
-            >
-            <input
-              type="checkbox"
-              style="margin-left: 10px"
-              class="form-check-input"
-              id="isactive"
-              formControlName="isactive"
-              [checked]="isActive"
-              (change)="onActiveChange()"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-
-            <div class="col-md-12">
-              <div class="row">
-                <label for="companyname" class="form-label col-md-2" translate>Branch Name<span
-                    class="required-asterisk">*</span></label>
-                <div class="col-md-10">
-                  <input type="text" class="form-control" id="companyname" formControlName="companyname">
-                  <div *ngIf="branchForm.get('companyname')?.hasError('required')">
-                    <small class="text-danger">This field is required.</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-             <div class="col-md-12">
-                <div class="row">
-                  <label for="arabicname" class="form-label col-md-2" translate>Arabic Name</label>
-                  <div class="col-md-10">
-                    <input type="text" class="form-control rtl-textbox" id="arabicname"
-                      formControlName="arabicname">
-                  </div>
-                </div>
-              </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-2">
-            <label for="telephone" class="form-label" translate="">Telephone</label>
-          </div>
-          <div class="col-md-4">
-            <ejs-textbox
-              id="telephone"
-              formControlName="telephone"
-              floatLabelType="Auto"
-              [enabled]="!isInputDisabled"
-              cssClass="e-outline">
-            </ejs-textbox>
-          </div>
-          <div class="col-md-2">
-            <label for="mobile" class="form-label" translate="">Mobile</label>
-          </div>
-          <div class="col-md-4">
-            <ejs-textbox
-              id="mobile"
-              formControlName="mobile"
-              floatLabelType="Auto"
-              [enabled]="!isInputDisabled"
-              cssClass="e-outline">
-            </ejs-textbox>
-            @if (branchForm.get('mobile')?.touched &&
-            (branchForm.get('mobile')?.errors?.['required'] ||
-            branchForm.get('mobile')?.errors?.['invalidPhoneNumber']))
-            {
-            <small style="color: red">
-              @if (branchForm.get('mobile')?.errors?.['required'])
-              { Mobile is required } @if
-              (branchForm.get('mobile')?.errors?.['invalidPhoneNumber'])
-              { Invalid format for Mobile }
-            </small>
-            }
-          </div>
-        </div>
-
-        <div class="row">
-          <label for="faxno" class="form-label col-md-2" translate
-            >Fax</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="faxno"
-              formControlName="faxno"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-          <label for="country" class="form-label col-md-2" translate
-            >Country<span class="required-asterisk">*</span></label
-          >
-          <div class="col-md-4">
-            <ejs-dropdownlist
-              id="country"
-              formControlName="country"
-              [dataSource]="countries()"
-              [fields]="{ text: 'value', value: 'value' }"
-              placeholder="Select Country"
-              [enabled]="!isInputDisabled"
-              (change)="onCountrySelect($event)"
-              cssClass="e-outline">
-            </ejs-dropdownlist>
-            @if (branchForm.get('country')?.touched &&
-            (branchForm.get('country')?.errors?.['required'] ||
-            branchForm.get('country')?.errors?.['invalidCountryName']))
-            {
-            <small style="color: red">
-              @if (branchForm.get('country')?.errors?.['required'])
-              { Country is required } @if
-              (branchForm.get('country')?.errors?.['invalidCountryName'])
-              { Invalid format for Country }
-            </small>
-            }
-          </div>
-        </div>
-
+  <div class="col-md-9 p-0">
+    <form [formGroup]="branchForm" (ngSubmit)="onSaveClick()">
+      <div class="row">
         <div class="col-md-12">
-  <div class="row">
-    <label
-      for="addresslineone"
-      class="form-label col-md-2"
-      translate
-    >
-      AddressLine 1<span class="required-asterisk">*</span>
-    </label>
+          <div class="row">
+            <div class="col-md-2">
+              <label for="hocompanyname" class="form-label" translate="">Company Name<span
+                  class="required-asterisk">*</span></label>
+            </div>
+            <div class="col-md-10">
+              <ejs-textbox id="hocompanyname" formControlName="hocompanyname" [enabled]="!isInputDisabled"
+                cssClass="e-outline">
+              </ejs-textbox>
 
-    <div class="col-md-10">
-      <input
-        type="text"
-        class="form-control"
-        id="addresslineone"
-        formControlName="addresslineone"
-        [disabled]="isInputDisabled"
-      />
+              @if (
+              branchForm.get('hocompanyname')?.touched &&
+              branchForm.get('hocompanyname')?.hasError('required')
+              ) {
+              <small class="text-danger">Company Name is required.</small>
+              }
 
-      @if (
-        branchForm.get('addresslineone')?.touched &&
-        branchForm.get('addresslineone')?.errors?.['required']
-      ) {
-        <small style="color: red">Address Line 1 is required.</small>
-      }
-    </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-2">
+              <label for="hoarabicname" class="form-label" translate="">Arabic Name</label>
+            </div>
+            <div class="col-md-10">
+              <ejs-textbox id="hoarabicname" formControlName="hoarabicname" floatLabelType="Auto"
+                [enabled]="!isInputDisabled" cssClass="e-outline">
+              </ejs-textbox>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <label for="branchtype" class="form-label col-md-2" translate>Branch Type<span
+            class="required-asterisk">*</span></label>
+        <div class="col-md-4">
+          <ejs-dropdownlist id="branchtype" formControlName="branchtype" [dataSource]="branchType"
+            [fields]="{ text: 'name', value: 'value' }" placeholder="Select Branch Type" [enabled]="!isInputDisabled"
+            cssClass="e-outline">
+          </ejs-dropdownlist>
 
-  </div>
-</div>
+          @if (
+          branchForm.get('branchtype')?.touched &&
+          branchForm.get('branchtype')?.hasError('required')
+          ) {
+          <small class="text-danger">Branch Type is required.</small>
+          }
 
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4 flex-wrapper">
+          <label for="isactive" class="form-label col-md-2" translate>Active</label>
+          <input type="checkbox" style="margin-left: 10px" class="form-check-input" id="isactive"
+            formControlName="isactive" [checked]="isActive" [disabled]="isInputDisabled" />
+        </div>
 
         <div class="col-md-12">
           <div class="row">
-            <label
-              for="addresslinetwo"
-              class="form-label col-md-2"
-              translate
-              >AddressLine 2</label
-            >
+            <label for="companyname" class="form-label col-md-2" translate>Branch Name<span
+                class="required-asterisk">*</span></label>
             <div class="col-md-10">
-              <input
-                type="text"
-                class="form-control"
-                id="addresslinetwo"
-                formControlName="addresslinetwo"
-                [disabled]="isInputDisabled"
-              />
+              <input type="text" class="form-control" formControlName="companyname">
+
+              @if (
+              branchForm.get('companyname')?.touched &&
+              branchForm.get('companyname')?.hasError('required')
+              ) {
+              <small class="text-danger">Branch Name is required.</small>
+              }
+
             </div>
           </div>
         </div>
-
-        <div class="row">
-          <label for="city" class="form-label col-md-2" translate
-            >City</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="city"
-              formControlName="city"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-          <label for="emailaddress" class="form-label col-md-2" translate
-            >Email Address</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="emailaddress"
-              formControlName="emailaddress"
-              appEmailInput
-              [disabled]="isInputDisabled"
-            />
-             @if (branchForm.get('emailaddress')?.touched &&
-                (branchForm.get('emailaddress')?.errors?.['required'] ||
-                branchForm.get('emailaddress')?.errors?.['invalidEmail']))
-                {
-                <small style="color: red">
-                  @if (branchForm.get('emailaddress')?.errors?.['required'])
-                  { Email is required } @if
-                  (branchForm.get('emailaddress')?.errors?.['invalidEmail'])
-                  { Invalid format for email }
-                </small>
-                }
-            
+        <div class="col-md-12">
+          <div class="row">
+            <label for="arabicname" class="form-label col-md-2" translate>Arabic Name</label>
+            <div class="col-md-10">
+              <input type="text" class="form-control rtl-textbox" id="arabicname" formControlName="arabicname">
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="row">
-          <label for="pobox" class="form-label col-md-2" translate
-            >PO Box</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="pobox"
-              formControlName="pobox"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-          <label for="district" class="form-label col-md-2" translate
-            >District</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="district"
-              formControlName="district"
-              [disabled]="isInputDisabled"
-            />
-          </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label for="telephone" class="form-label" translate="">Telephone</label>
         </div>
-
-        <div class="row">
-          <label for="buildingno" class="form-label col-md-2" translate
-            >BuildingNo</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="buildingno"
-              formControlName="buildingno"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-          <label for="countrycode" class="form-label col-md-2" translate
-            >CountryCode</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="countrycode"
-              formControlName="countrycode"
-              [disabled]="isInputDisabled"
-            />
-          </div>
+        <div class="col-md-4">
+          <ejs-textbox id="telephone" formControlName="telephone" floatLabelType="Auto" [enabled]="!isInputDisabled"
+            cssClass="e-outline">
+          </ejs-textbox>
         </div>
-
-        <div class="row">
-          <label for="province" class="form-label col-md-2" translate
-            >Province</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="province"
-              formControlName="province"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-          <label for="vatno" class="form-label col-md-2" translate
-            >VAT No</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="vatno"
-              formControlName="vatno"
-              [disabled]="isInputDisabled"
-            />
-          </div>
+        <div class="col-md-2">
+          <label for="mobile" class="form-label" translate="">Mobile</label>
         </div>
-
-        <div class="row">
-          <label
-            for="centralsalestaxno"
-            class="form-label col-md-2"
-            translate
-            >Central Sales TaxNo</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="centralsalestaxno"
-              formControlName="centralsalestaxno"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-          <label for="contactperson" class="form-label col-md-2" translate
-            >Contact Person<span class="required-asterisk">*</span></label
-          >
-          <div class="col-md-4">
-            <ejs-dropdownlist
-              id="contactperson"
-              formControlName="contactperson"
-              [dataSource]="contactPersonList()"
-              [fields]="{ text: 'name', value: 'id' }"
-              placeholder="Select Contact Person"
-              [enabled]="!isInputDisabled"
-              (change)="onContactPersonSelect($event)"
-              cssClass="e-outline">
-            </ejs-dropdownlist>
-            @if (branchForm.get('contactperson')?.touched &&
-            branchForm.get('contactperson')?.errors?.['required'])
-            {
-            <small style="color: red">
-              Contact Person is required
-            </small>
-            }
-          </div>
+        <div class="col-md-4">
+          <ejs-textbox id="mobile" formControlName="mobile" floatLabelType="Auto" [enabled]="!isInputDisabled"
+            cssClass="e-outline">
+          </ejs-textbox>
+          @if (branchForm.get('mobile')?.touched &&
+          (
+          branchForm.get('mobile')?.errors?.['invalidPhoneNumber']))
+          {
+          <small style="color: red">
+            @if
+            (branchForm.get('mobile')?.errors?.['invalidPhoneNumber'])
+            { Invalid format for Mobile }
+          </small>
+          }
         </div>
+      </div>
 
+      <div class="row">
+        <label for="faxno" class="form-label col-md-2" translate>Fax</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="faxno" formControlName="faxno" [disabled]="isInputDisabled" />
+        </div>
+        <label for="country" class="form-label col-md-2" translate>Country<span
+            class="required-asterisk">*</span></label>
+        <div class="col-md-4">
+          <ejs-dropdownlist id="country" formControlName="country" [dataSource]="countries()"
+            [fields]="{ text: 'value', value: 'value' }" placeholder="Select Country" [enabled]="!isInputDisabled"
+            (change)="onCountrySelect($event)" cssClass="e-outline">
+          </ejs-dropdownlist>
+          @if (
+          branchForm.get('country')?.touched &&
+          branchForm.get('country')?.hasError('required')
+          ) {
+          <small class="text-danger">Country is required.</small>
+          }
+
+        </div>
+      </div>
+
+      <div class="col-md-12">
         <div class="row">
-          <label for="remarks" class="form-label col-md-2" translate
-            >Remarks</label
-          >
+          <label for="addresslineone" class="form-label col-md-2" translate>
+            AddressLine 1<span class="required-asterisk">*</span>
+          </label>
+
           <div class="col-md-10">
-            <textarea
-              class="form-control"
-              id="remarks"
-              rows="3"
-              formControlName="remarks"
-              [disabled]="isInputDisabled"
-            ></textarea>
-          </div>
-        </div>
+            <input type="text" class="form-control" id="addresslineone" formControlName="addresslineone"
+              [disabled]="isInputDisabled" />
 
-        <div class="row">
-          <label for="dl1" class="form-label col-md-2" translate>DL1</label>
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="dl1"
-              formControlName="dl1"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-          <label for="dl2" class="form-label col-md-2" translate>DL2</label>
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="dl2"
-              formControlName="dl2"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-        </div>
+            @if (
+            branchForm.get('addresslineone')?.touched &&
+            branchForm.get('addresslineone')?.hasError('required')
+            ) {
+            <small class="text-danger">Address Line 1 is required.</small>
+            }
 
-        <div class="row">
-          <label for="uniqueid" class="form-label col-md-2" translate
-            >UniqueID</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="uniqueid"
-              formControlName="uniqueid"
-              [disabled]="isInputDisabled"
-            />
           </div>
-          <label for="reference" class="form-label col-md-2" translate
-            >Reference</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="reference"
-              formControlName="reference"
-              [disabled]="isInputDisabled"
-            />
-          </div>
-        </div>
 
+        </div>
+      </div>
+
+
+      <div class="col-md-12">
         <div class="row">
-          <label for="bankcode" class="form-label col-md-2" translate
-            >Bank Code</label
-          >
-          <div class="col-md-4">
-            <input
-              type="text"
-              class="form-control"
-              id="bankcode"
-              formControlName="bankcode"
-              [disabled]="isInputDisabled"
-            />
+          <label for="addresslinetwo" class="form-label col-md-2" translate>AddressLine 2</label>
+          <div class="col-md-10">
+            <input type="text" class="form-control" id="addresslinetwo" formControlName="addresslinetwo"
+              [disabled]="isInputDisabled" />
           </div>
         </div>
-      
-      </form>
-    </div>
-  
-      <div class="col-md-3" *ngIf="showImageContainer">
-          <div class="image-upload">
-            <div class="image-upload-container" [class.disabled]="isInputDisabled">
-              <!-- <label *ngIf="!imageData" for="fileInput" class="upload-label">Upload Image</label> -->
-              <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp" (change)="onImageSelected($event)">
-              <div *ngIf="imageData" class="image-preview">
-                <img [src]="imageData" alt="Uploaded Image">
-                <button class="remove-button" (click)="removeImage()">Remove Image</button>
-              </div>
-            </div>
-          </div>
+      </div>
+
+      <div class="row">
+        <label for="city" class="form-label col-md-2" translate>City</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="city" formControlName="city" [disabled]="isInputDisabled" />
         </div>
+        <label for="emailaddress" class="form-label col-md-2" translate>Email Address</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="emailaddress" formControlName="emailaddress" appEmailInput
+            [disabled]="isInputDisabled" />
+          @if (branchForm.get('emailaddress')?.touched &&
+          (
+          branchForm.get('emailaddress')?.errors?.['invalidEmail']))
+          {
+          <small style="color: red">
+            @if
+            (branchForm.get('emailaddress')?.errors?.['invalidEmail'])
+            { Invalid format for email }
+          </small>
+          }
+
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="pobox" class="form-label col-md-2" translate>PO Box</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="pobox" formControlName="pobox" [disabled]="isInputDisabled" />
+        </div>
+        <label for="district" class="form-label col-md-2" translate>District</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="district" formControlName="district"
+            [disabled]="isInputDisabled" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="buildingno" class="form-label col-md-2" translate>BuildingNo</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="buildingno" formControlName="buildingno"
+            [disabled]="isInputDisabled" />
+        </div>
+        <label for="countrycode" class="form-label col-md-2" translate>CountryCode</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="countrycode" formControlName="countrycode"
+            [disabled]="isInputDisabled" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="province" class="form-label col-md-2" translate>Province</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="province" formControlName="province"
+            [disabled]="isInputDisabled" />
+        </div>
+        <label for="vatno" class="form-label col-md-2" translate>VAT No</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="vatno" formControlName="vatno" [disabled]="isInputDisabled" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="centralsalestaxno" class="form-label col-md-2" translate>Central Sales TaxNo</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="centralsalestaxno" formControlName="centralsalestaxno"
+            [disabled]="isInputDisabled" />
+        </div>
+        <label for="contactperson" class="form-label col-md-2" translate>Contact Person<span
+            class="required-asterisk">*</span></label>
+        <div class="col-md-4">
+          <ejs-dropdownlist id="contactperson" formControlName="contactperson" [dataSource]="contactPersonList()"
+            [fields]="{ text: 'name', value: 'id' }" placeholder="Select Contact Person" [enabled]="!isInputDisabled"
+            (change)="onContactPersonSelect($event)" cssClass="e-outline">
+          </ejs-dropdownlist>
+          <div class="text-danger mt-1" *ngIf="branchForm.get('contactperson')?.invalid &&
+            (branchForm.get('contactperson')?.touched ||
+             branchForm.get('contactperson')?.dirty)">
+            Contact Person is required
+          </div>
+
+
+
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="remarks" class="form-label col-md-2" translate>Remarks</label>
+        <div class="col-md-10">
+          <textarea class="form-control" id="remarks" rows="3" formControlName="remarks"
+            [disabled]="isInputDisabled"></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="dl1" class="form-label col-md-2" translate>DL1</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="dl1" formControlName="dl1" [disabled]="isInputDisabled" />
+        </div>
+        <label for="dl2" class="form-label col-md-2" translate>DL2</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="dl2" formControlName="dl2" [disabled]="isInputDisabled" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="uniqueid" class="form-label col-md-2" translate>UniqueID</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="uniqueid" formControlName="uniqueid"
+            [disabled]="isInputDisabled" />
+        </div>
+        <label for="reference" class="form-label col-md-2" translate>Reference</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="reference" formControlName="reference"
+            [disabled]="isInputDisabled" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="bankcode" class="form-label col-md-2" translate>Bank Code</label>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="bankcode" formControlName="bankcode"
+            [disabled]="isInputDisabled" />
+        </div>
+      </div>
+
+    </form>
   </div>
+
+  <!-- image selection -->
+  <div class="col-md-3" *ngIf="showImageContainer">
+    <div class="image-upload">
+      <div class="image-upload-container" [class.disabled]="isInputDisabled" (click)="fileInput.click()">
+
+        <!-- Hidden file input -->
+        <input type="file" #fileInput accept=".jpg,.jpeg,.png,.webp" (change)="onImageSelected($event)" hidden />
+
+        <!-- Placeholder -->
+        <div *ngIf="!imageData" class="image-placeholder">
+          <span>Click to upload image</span>
+        </div>
+
+        <!-- Preview -->
+        <div *ngIf="imageData" class="image-preview">
+          <img [src]="imageData" alt="Uploaded Image" />
+          <button type="button" class="remove-button" (click)="removeImage(); $event.stopPropagation()">
+            ✕
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

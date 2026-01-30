@@ -371,7 +371,9 @@ export const EndpointConstant = {
     FILLACCOUNTRECONCILIATION:'api/v1/fn/accountreco/fill?FromDate=',
 
     // COA Account Popup
-    COAACCOUNTPOPUP:'api/v1/fn/coa/accpopup'
+    COAACCOUNTPOPUP:'api/v1/fn/coa/accpopup',
+    
+    GETBRANCHIMG:'api/v1/branch/fillImg?companyId=',
 }
 
 
