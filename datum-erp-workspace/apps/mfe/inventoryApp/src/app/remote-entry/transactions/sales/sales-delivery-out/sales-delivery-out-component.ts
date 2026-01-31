@@ -97,6 +97,7 @@ export class SalesDeliveryOutComponent extends BaseComponent implements OnInit, 
     this.SetPageType(1);
     this.initializeComponent();
     this.subscribeToTransactionSelection();
+    this.subscribeToPageInfoAndLoadLeftGrid();
     this.initializeServices();
   }
 
@@ -162,11 +163,29 @@ export class SalesDeliveryOutComponent extends BaseComponent implements OnInit, 
   }
 
   //.. END ARCH DESIGN SECTION
-    /**
-   * Subscribes to currentPageInfo changes to get dynamic pageId and voucherId
-   */
-  // Note: BaseComponent already handles currentPageInfo subscription in onInitBase()
-  // This method is kept for any additional logic if needed, but currentPageInfo is available via BaseComponent
+
+  private subscribeToPageInfoAndLoadLeftGrid(): void {
+    this.dataSharingService.currentPageInfo$
+      .pipe(takeUntil(this.destroySubscription))
+      .subscribe((pageInfo) => {
+        this.currentPageInfo = pageInfo;
+        const pageId = pageInfo?.id;
+        const voucherId = pageInfo?.voucherID;
+        if (pageId != null && pageId !== 0 && voucherId != null && voucherId !== 0) {
+          this.loadLeftGridAndRefresh();
+        }
+      });
+  }
+
+  private async loadLeftGridAndRefresh(): Promise<void> {
+    await this.LeftGridInit();
+    this.dataSharingService.setData({
+      columns: this.leftGrid.leftGridColumns,
+      data: this.leftGrid.leftGridData,
+      pageheading: this.pageheading,
+    });
+    setTimeout(() => this.autoSelectLastTransaction(), 300);
+  }
 
   // nest form data 
 
@@ -1104,8 +1123,9 @@ export class SalesDeliveryOutComponent extends BaseComponent implements OnInit, 
       this.isEditMode.set(false);
       this.commonService.newlyAddedRows.set([]);
     } else {
+      const errMsg = (response as any)?.exception ?? response?.data ?? 'Save failed. Please try again.';
       this.baseService.showCustomDialoguePopup(
-        response?.data || 'Save failed. Please try again.',
+        typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg),
         'WARN'
       );
     }

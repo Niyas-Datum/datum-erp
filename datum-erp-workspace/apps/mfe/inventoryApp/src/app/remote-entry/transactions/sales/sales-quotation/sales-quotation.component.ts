@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseComponent } from '@org/architecture';
 import { InventoryAppService } from '../../../http/inventory-app.service';
 import { firstValueFrom } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EndpointConstant } from '@org/constants';
 import { InvoiceHeader } from '../../common/invoice-header/invoice-header';
@@ -25,7 +26,7 @@ import { InvoiceFooter } from '../../common/invoice-footer/invoice-footer';
   templateUrl: './sales-quotation.component.html',
   styleUrl: './sales-quotation.component.scss',
 })
-export class SalesQuotationComponent extends BaseComponent implements OnInit {
+export class SalesQuotationComponent extends BaseComponent implements OnInit, OnDestroy {
   // Local variables
   readonly isNewMode = signal(false);
   readonly isEditMode = signal(false);
@@ -38,8 +39,15 @@ export class SalesQuotationComponent extends BaseComponent implements OnInit {
 
   // ARCH DESIGN SECTION
   private httpService = inject(InventoryAppService); // service inject
+  private readonly destroySubscription = new Subject<void>();
+  private lastSales = 0;
+  private firstSales = 0;
   costCategoryForm = this.formUtil.thisForm;  // form creation method
   pageId = 233;
+
+  get dataSharingService() { return this.serviceBase.dataSharingService; }
+  private get currentPageId(): number | null { return this.currentPageInfo?.id ?? null; }
+  private get currentVoucherId(): number | null { return this.currentPageInfo?.voucherID ?? null; }
 
   constructor() {
     super();
@@ -49,10 +57,19 @@ export class SalesQuotationComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.onInitBase();
     this.SetPageType(1);
+    this.subscribeToPageInfoAndLoadLeftGrid();
+  }
+
+  ngOnDestroy(): void {
+    this.destroySubscription.next();
+    this.destroySubscription.complete();
   }
 
   override async LeftGridInit(): Promise<void> {
     this.pageheading = 'Sales Quotation';
+    if (!this.currentPageId || !this.currentVoucherId) {
+      return;
+    }
     try {
       const res = await firstValueFrom(
         this.httpService
@@ -61,9 +78,12 @@ export class SalesQuotationComponent extends BaseComponent implements OnInit {
       );
 
       // handle data here after await completes
-      this.leftGrid.leftGridData = res.data;
-      console.log('Fetched data:', this.leftGrid.leftGridData);
-
+      const salesData = res.data ?? [];
+      this.leftGrid.leftGridData = salesData;
+      if (salesData.length > 0) {
+        this.firstSales = parseInt(salesData[0]?.ID, 10) || 0;
+        this.lastSales = parseInt(salesData[salesData.length - 1]?.ID, 10) || 0;
+      }
       this.leftGrid.leftGridColumns = [
         {
           headerText: 'Sales Quotation',
@@ -88,6 +108,35 @@ export class SalesQuotationComponent extends BaseComponent implements OnInit {
       this.leftGrid.leftGridColumns = [];
       this.leftGrid.leftGridData = [];
     }
+  }
+
+  private subscribeToPageInfoAndLoadLeftGrid(): void {
+    this.dataSharingService.currentPageInfo$
+      .pipe(takeUntil(this.destroySubscription))
+      .subscribe((pageInfo) => {
+        this.currentPageInfo = pageInfo;
+        const pageId = pageInfo?.id;
+        const voucherId = pageInfo?.voucherID;
+        if (pageId != null && pageId !== 0 && voucherId != null && voucherId !== 0) {
+          this.loadLeftGridAndRefresh();
+        }
+      });
+  }
+
+  private async loadLeftGridAndRefresh(): Promise<void> {
+    await this.LeftGridInit();
+    this.dataSharingService.setData({
+      columns: this.leftGrid.leftGridColumns,
+      data: this.leftGrid.leftGridData,
+      pageheading: this.pageheading,
+    });
+    setTimeout(() => this.autoSelectLastTransaction(), 300);
+  }
+
+  private autoSelectLastTransaction(): void {
+    setTimeout(() => {
+      this.dataSharingService.setSelectedSalesId(this.lastSales);
+    }, 100);
   }
 
   //.. END ARCH DESIGN SECTION

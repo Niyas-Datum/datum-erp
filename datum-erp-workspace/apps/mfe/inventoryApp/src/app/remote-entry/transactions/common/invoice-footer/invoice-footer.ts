@@ -27,6 +27,9 @@ import { PaymentpopupComponent } from 'apps/mfe/inventoryApp/src/app/remote-entr
 import { BaseService, DataSharingService } from '@org/services';
 import { ItemService } from '../services/item.services';
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
+import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
+import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 import { CommonService } from '../services/common.services';
 
 @Component({
@@ -36,6 +39,9 @@ import { CommonService } from '../services/common.services';
     PaymentpopupComponent,
     ReactiveFormsModule,
     DatePickerModule,
+    TextBoxModule,
+    DropDownListModule,
+    ButtonModule,
   ],
   templateUrl: './invoice-footer.html',
   styleUrl: './invoice-footer.scss',
@@ -916,10 +922,13 @@ export class InvoiceFooter implements OnInit {
 
 
 
-  onChangePayType() {
-    const paytype: PayType = this.salesForm.get('paytype')?.value;
+  onChangePayType(event?: { itemData?: PayType }) {
+    const paytype: PayType = event?.itemData ?? this.salesForm.get('paytype')?.value;
 
     if (paytype) {
+      if (event?.itemData) {
+        this.salesForm.patchValue({ paytype }, { emitEvent: false });
+      }
       this.selectedPayType = paytype.name;
       this.selectedPayTypeObj = paytype;
 

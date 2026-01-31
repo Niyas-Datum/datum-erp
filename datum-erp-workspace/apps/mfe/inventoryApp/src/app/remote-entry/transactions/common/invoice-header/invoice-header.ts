@@ -13,9 +13,8 @@ import {
   input,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { InventoryPopupService } from '../../../common/popupModule/inventory.popup.service';
+import { Observable, Subject } from 'rxjs';
+import { map, take, takeUntil, tap } from 'rxjs/operators';
 import { TransactionService } from '../services/transaction.services';
 import { EndpointConstant } from '@org/constants';
 import { ItemService } from '../services/item.services';
@@ -38,6 +37,7 @@ import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 import { BasetransactionComponent } from '../../architecture/transactionComponent.base';
+import { InventoryPopupService } from '../../../common/popupModule/inventory.popup.service';
 
 // Type definitions
 interface GridSettings {
@@ -282,6 +282,19 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
         next: (response) => this.handleCommonFillResponse(response),
         error: (error) => this.handleError('Error loading common fill data', error),
       });
+  }
+
+  /**
+   * Refreshes common fill data (including next voucher number) from the backend.
+   * Call this before entering new mode after a save so the second save gets a fresh voucher number.
+   */
+  public refreshCommonFillDataForNewMode(): Observable<void> {
+    const endpoint = `${EndpointConstant.FILLCOMMONPURCHASEDATA}${this.pageId}&voucherId=${this.voucherNo}`;
+    return this.transactionService.getDetails(endpoint).pipe(
+      take(1),
+      tap((response) => this.handleCommonFillResponse(response)),
+      map(() => void 0)
+    );
   }
 
   private fetchTransactionById(): void {

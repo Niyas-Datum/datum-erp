@@ -4,7 +4,7 @@
     <div class="terms-discount-section">
       <div class="terms-outer">
         <label for="terms" class="form-label terms-label">Terms</label>
-        <input type="text" class="form-control terms-input" id="terms" formControlName="terms" tabindex="13" />
+        <ejs-textbox class="terms-input" id="terms" formControlName="terms" [tabindex]="13" cssClass="e-input"></ejs-textbox>
       </div>
 
       <!-- <div class="discount-outer">
@@ -28,19 +28,19 @@
         <label for="commoditydiscount" class="form-label disc-label">Total Disc
           Comm.Disc</label>
         <label for="%" class="form-label">%</label>
-        <input type="text" class="form-control" id="totaldiscpercent" formControlName="totaldiscpercent"
-          (change)="onChangeCommonDiscountPercent($event)" tabindex="14" appNumberFormat />
+        <ejs-textbox id="totaldiscpercent" formControlName="totaldiscpercent"
+          (change)="onChangeCommonDiscountPercent($event)" [tabindex]="14" appNumberFormat cssClass="e-input"></ejs-textbox>
 
         <label for="discountamount" class="form-label amt-label">Amt</label>
-        <input type="text" id="discountamount" formControlName="discountamount"
-          (change)="onChangeCommonDiscountAmount($event)" tabindex="15" appNumberFormat />
-        <button type="button" class="disc-amt-apl" [disabled]="true" ngbTooltip="Import" placement="top">
+        <ejs-textbox id="discountamount" formControlName="discountamount"
+          (change)="onChangeCommonDiscountAmount($event)" [tabindex]="15" appNumberFormat cssClass="e-input"></ejs-textbox>
+        <button type="button" ejs-button class="disc-amt-apl" [disabled]="true" ngbTooltip="Import" placement="top">
           Apl
         </button>
 
         <label for="discsellamt" class="form-label amt-label">Disc Sell Amt</label>
-        <input type="text" id="discsellamt" class="form-control" formControlName="discsellamt" tabindex="10"
-          (change)="onChangeDiscSellAmount($event)" appNumberFormat>
+        <ejs-textbox id="discsellamt" formControlName="discsellamt" [tabindex]="10"
+          (change)="onChangeDiscSellAmount($event)" appNumberFormat cssClass="e-input"></ejs-textbox>
       </div>
 
     </div>
@@ -50,16 +50,16 @@
         <div class="tax-roundoff-section">
           <label for="roundoff" class="form-label">Round Off</label>
           <div class="flex-wrapper">
-            <input type="text" class="form-control" id="roundoff" formControlName="roundoff" tabindex="16" />
-            <button type="button" class="btn btn-secondary" (click)="onClickRoundOff()">...</button>
+            <ejs-textbox id="roundoff" formControlName="roundoff" [tabindex]="16" cssClass="e-input"></ejs-textbox>
+            <button type="button" ejs-button class="btn btn-secondary" (click)="onClickRoundOff()">...</button>
           </div>
         </div>
 
         <div class="tax-roundoff-section">
           <label for="tax" class="form-label">Tax</label>
           <div class="flex-wrapper">
-            <input type="text" class="form-control" id="tax" formControlName="tax" appNumberFormat />
-            <button type="button" class="btn btn-secondary" ngbTooltip="Create" placement="top" (click)="fetchtax()">
+            <ejs-textbox id="tax" formControlName="tax" appNumberFormat cssClass="e-input"></ejs-textbox>
+            <button type="button" ejs-button class="btn btn-secondary" ngbTooltip="Create" placement="top" (click)="fetchtax()">
               ...
             </button>
           </div>
@@ -68,8 +68,8 @@
         <div class="tax-roundoff-section">
           <label for="addcharges" class="form-label">Add. Charges</label>
           <div class="flex-wrapper">
-            <input type="text" class="form-control" id="addcharges" formControlName="addcharges" />
-            <button type="button" class="btn btn-secondary" ngbTooltip="Create" placement="top"
+            <ejs-textbox id="addcharges" formControlName="addcharges" cssClass="e-input"></ejs-textbox>
+            <button type="button" ejs-button class="btn btn-secondary" ngbTooltip="Create" placement="top"
               (click)="fetchAdditionalChargesPopup()">
               ...
             </button>
@@ -78,13 +78,13 @@
 
         <div class="tax-roundoff-section">
           <label for="netamount" class="form-label">Net Amount</label>
-          <input type="text" class="form-control" id="netamount" formControlName="netamount" readonly appNumberFormat />
+          <ejs-textbox id="netamount" formControlName="netamount" [readonly]="true" appNumberFormat cssClass="e-input"></ejs-textbox>
         </div>
       </div>
 
       <div class="grandtotal-section">
         <label for="grandtotal" class="form-label">Grand Total</label>
-        <input type="text" class="form-control" id="grandtotal" formControlName="grandtotal" readonly />
+        <ejs-textbox id="grandtotal" formControlName="grandtotal" [readonly]="true" cssClass="e-input"></ejs-textbox>
       </div>
     </div>
 
@@ -104,19 +104,18 @@
         <div class="paytype-label-input">
           <label class="label-pay-type">Pay Types</label>
           <div class="pay-type-select">
-            <select formControlName="paytype" (change)="onChangePayType()">
-              <option *ngFor="let pt of payTypeObj" [ngValue]="pt">{{ pt.name }}</option>
-            </select>
-
-
+            <ejs-dropdownlist id="paytype" [dataSource]="payTypeObj" [fields]="{ text: 'name', value: 'id' }"
+              [value]="salesForm.get('paytype')?.value?.id" (change)="onChangePayType($event)"
+              placeholder="Select pay type">
+            </ejs-dropdownlist>
           </div>
         </div>
 
         <div class="cash-label-input">
           <label for="cash" class="label-cash">Cash</label>
           <div class="cash-input-popup">
-            <input type="text" class="form-control" id="cash" formControlName="cash" />
-            <button type="button" class="btn btn-secondary" ngbTooltip="Create" placement="top"
+            <ejs-textbox id="cash" formControlName="cash" cssClass="e-input"></ejs-textbox>
+            <button type="button" ejs-button class="btn btn-secondary" ngbTooltip="Create" placement="top"
               (click)="fetchCashPopup()">
               ...
             </button>
@@ -126,8 +125,8 @@
         <div class="cash-label-input">
           <label for="card" class="label-card">Card</label>
           <div class="card-input-popup">
-            <input type="text" class="form-control" id="card" formControlName="card" />
-            <button type="button" class="btn btn-secondary" ngbTooltip="Create" placement="top"
+            <ejs-textbox id="card" formControlName="card" cssClass="e-input"></ejs-textbox>
+            <button type="button" ejs-button class="btn btn-secondary" ngbTooltip="Create" placement="top"
               (click)="fetchCardPopup()">
               ...
             </button>
@@ -139,8 +138,8 @@
         <div class="advance-label-input">
           <label for="advance" class="advance-label">Advance</label>
           <div class="advance-popup-btn">
-            <input type="text" class="form-control" id="advance" formControlName="advance" />
-            <button type="button" class="btn btn-secondary" ngbTooltip="Create" placement="top">
+            <ejs-textbox id="advance" formControlName="advance" cssClass="e-input"></ejs-textbox>
+            <button type="button" ejs-button class="btn btn-secondary" ngbTooltip="Create" placement="top">
               ...
             </button>
           </div>
@@ -149,13 +148,11 @@
         <div class="cheque-label-input">
           <label for="cheque" class="cheque-label">Cheque</label>
           <div class="cheque-popup-input">
-            <!-- The control itself is enabled/disabled via form state above -->
-            <input type="text" class="form-control cheque-input" id="cheque" formControlName="cheque" />
-            <button type="button" class="btn btn-secondary" ngbTooltip="Create" placement="top"
+            <ejs-textbox id="cheque" formControlName="cheque" cssClass="e-input cheque-input"></ejs-textbox>
+            <button type="button" ejs-button class="btn btn-secondary" ngbTooltip="Create" placement="top"
               (click)="fetchChequePopup()" [disabled]="!isChequeButtonEnabled">
               ...
             </button>
-
           </div>
         </div>
 
@@ -177,13 +174,13 @@
         <div class="total-paid-label-input">
           <label for="totalpaid" class="form-label total-paid-label">Total Paid</label>
           <div class="total-paid-input">
-            <input type="text" class="form-control" id="totalpaid" formControlName="totalpaid" readonly />
+            <ejs-textbox id="totalpaid" formControlName="totalpaid" [readonly]="true" cssClass="e-input"></ejs-textbox>
           </div>
         </div>
 
         <div class="balance-label-input">
           <label for="balance" class="form-label balance-label"><b>Balance</b></label>
-          <input type="text" class="form-control balance-input" id="balance" formControlName="balance" readonly />
+          <ejs-textbox id="balance" formControlName="balance" [readonly]="true" cssClass="e-input balance-input"></ejs-textbox>
         </div>
       </div>
     </div>

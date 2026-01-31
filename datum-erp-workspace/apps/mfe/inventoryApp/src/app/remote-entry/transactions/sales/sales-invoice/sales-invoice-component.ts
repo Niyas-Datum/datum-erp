@@ -114,6 +114,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.SetPageType(1);
     this.initializeComponent();
     this.subscribeToTransactionSelection();
+    this.subscribeToPageInfoAndLoadLeftGrid();
     this.initializeServices();
     
     // Check AutoNew setting and open in new mode if true, else open last invoice
@@ -273,6 +274,34 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
           }, 0);
         }
       });
+  }
+
+  /**
+   * Load left grid when currentPageInfo becomes available (e.g. after NavigationEnd).
+   * Fixes "no data load" when page loads before router has set page info.
+   */
+  private subscribeToPageInfoAndLoadLeftGrid(): void {
+    this.dataSharingService.currentPageInfo$
+      .pipe(takeUntil(this.destroySubscription))
+      .subscribe((pageInfo) => {
+        this.currentPageInfo = pageInfo;
+        const pageId = pageInfo?.id;
+        const voucherId = pageInfo?.voucherID;
+        if (pageId != null && pageId !== 0 && voucherId != null && voucherId !== 0) {
+          this.loadLeftGridAndRefresh();
+        }
+      });
+  }
+
+  private async loadLeftGridAndRefresh(): Promise<void> {
+    await this.LeftGridInit();
+    this.dataSharingService.setData({
+      columns: this.leftGrid.leftGridColumns,
+      data: this.leftGrid.leftGridData,
+      pageheading: this.pageheading,
+    });
+    // Auto-select last invoice or enter new mode once data is loaded
+    setTimeout(() => this.checkAutoNewAndInitialize(), 300);
   }
 
   // ========== Transaction Loading Methods ==========
@@ -583,23 +612,65 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
 
     // If Cash and balance > 0, ask to change to Credit
     if (isCashPayment && balanceAmount > 0 && totalPaid > 0) {
-      if (confirm('Do you want to update paytype as Credit?')) {
-        const creditPayType = this.invoiceFooter?.payTypeObj?.find((p: any) => p.name === 'Credit');
-        if (creditPayType) {
-          this.invoiceFooter?.salesForm?.patchValue({ paytype: creditPayType.id });
-          footerForm.paytype = { id: creditPayType.id, value: 'Credit', name: 'Credit' };
-        }
-      }
+      this.viewDialog(
+        'Do you want to update paytype as Credit?',
+        'Payment Type',
+        '450px',
+        [
+          {
+            click: () => {
+              this.alertService.hideDialog();
+              const creditPayType = this.invoiceFooter?.payTypeObj?.find((p: any) => p.name === 'Credit');
+              if (creditPayType) {
+                this.invoiceFooter?.salesForm?.patchValue({ paytype: creditPayType.id });
+              }
+              this.runCashCheckAndSave();
+            },
+            buttonModel: { content: 'Yes', isPrimary: true },
+          },
+          {
+            click: () => {
+              this.alertService.hideDialog();
+              this.runCashCheckAndSave();
+            },
+            buttonModel: { content: 'No' },
+          },
+        ]
+      );
+      return;
     }
 
     if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
       if (!this.isDefaultCash) {
-        if (confirm('Do you want to allocate the payment amount to default cash account?')) {
-          this.settingCashAmountOnSave();
-        } else {
-          alert('Cash payment entries are required for cash transactions');
-          return;
-        }
+        this.viewDialog(
+          'Do you want to allocate the payment amount to default cash account?',
+          'Default Cash',
+          '450px',
+          [
+            {
+              click: () => {
+                this.alertService.hideDialog();
+                this.settingCashAmountOnSave();
+                if (this.invoiceFooter?.cashSelected?.length === 0) {
+                  this.ensureCashEntriesForCashPayment(grandTotal);
+                }
+                this.continueSaveFlow();
+              },
+              buttonModel: { content: 'Yes', isPrimary: true },
+            },
+            {
+              click: () => {
+                this.alertService.hideDialog();
+                this.baseService.showCustomDialoguePopup(
+                  'Cash payment entries are required for cash transactions',
+                  'WARN'
+                );
+              },
+              buttonModel: { content: 'No' },
+            },
+          ]
+        );
+        return;
       } else {
         this.settingCashAmountOnSave();
       }
@@ -609,11 +680,63 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       }
     }
 
-    // Adjust roundoff to ensure debit equals credit (from old code)
-    this.adjustRoundoffForDebitCreditBalance();
+    this.continueSaveFlow();
+  }
 
+  private continueSaveFlow(): void {
+    this.adjustRoundoffForDebitCreditBalance();
     const payload = this.collectTransactionData();
     this.performSave(payload);
+  }
+
+  /**
+   * Runs the default-cash check and then save. Used after the Credit dialog so we don't duplicate onSaveClick.
+   */
+  private runCashCheckAndSave(): void {
+    const footerForm = this.invoiceFooter?.salesForm?.value || {};
+    const payType = footerForm.paytype;
+    const grandTotal = parseFloat(footerForm.grandtotal) || 0;
+    const cashSelectedLength = this.invoiceFooter?.cashSelected?.length || 0;
+    const isCashPayment = payType && (payType.name === 'Cash' || payType.value === 'Cash');
+
+    if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
+      if (!this.isDefaultCash) {
+        this.viewDialog(
+          'Do you want to allocate the payment amount to default cash account?',
+          'Default Cash',
+          '450px',
+          [
+            {
+              click: () => {
+                this.alertService.hideDialog();
+                this.settingCashAmountOnSave();
+                if (this.invoiceFooter?.cashSelected?.length === 0) {
+                  this.ensureCashEntriesForCashPayment(grandTotal);
+                }
+                this.continueSaveFlow();
+              },
+              buttonModel: { content: 'Yes', isPrimary: true },
+            },
+            {
+              click: () => {
+                this.alertService.hideDialog();
+                this.baseService.showCustomDialoguePopup(
+                  'Cash payment entries are required for cash transactions',
+                  'WARN'
+                );
+              },
+              buttonModel: { content: 'No' },
+            },
+          ]
+        );
+        return;
+      }
+      this.settingCashAmountOnSave();
+      if (this.invoiceFooter?.cashSelected?.length === 0) {
+        this.ensureCashEntriesForCashPayment(grandTotal);
+      }
+    }
+    this.continueSaveFlow();
   }
 
   private collectTransactionData(): any {
@@ -637,13 +760,14 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     
     // Use UPDATE endpoint for edit mode, SAVE endpoint for new mode
     const isUpdate = !this.isNewMode() && transactionData.id > 0;
+    const transactionId = transactionData?.id ?? this.selectedTransactionId();
     const endpoint = isUpdate
-      ? `${EndpointConstant.UPDATESALES}${pageId}&voucherId=${voucherId}`
+      ? `${EndpointConstant.UPDATESALES}${pageId}&voucherId=${voucherId}&transactionId=${transactionId}`
       : `${EndpointConstant.SAVESALES}${pageId}&voucherId=${voucherId}`;
 
     this.isLoading.set(true);
 
-    // Use patchDetails for updates (PATCH method), saveDetails for new records (POST method)
+    // Backend expects PATCH for update (POST returns 405 Method Not Allowed)
     const saveOperation = isUpdate
       ? this.transactionService.patchDetails(endpoint, transactionData)
       : this.transactionService.saveDetails(endpoint, transactionData);
@@ -676,12 +800,21 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
         'SUCCESS'
       );
 
-      setTimeout(() => {
-        this.enterNewMode();
-      }, 500);
+      // Refresh common fill data (next voucher number) before entering new mode so second save gets a fresh voucher
+      const refresh$ = this.invoiceHeader?.refreshCommonFillDataForNewMode?.();
+      if (refresh$) {
+        refresh$.pipe(takeUntil(this.destroySubscription)).subscribe({
+          next: () => setTimeout(() => this.enterNewMode(), 300),
+          error: () => setTimeout(() => this.enterNewMode(), 300),
+        });
+      } else {
+        setTimeout(() => this.enterNewMode(), 500);
+      }
     } else {
+      // Show server error message when httpCode is 500 or other non-success
+      const errMsg = (response as any)?.exception ?? response?.data ?? 'Save failed. Please try again.';
       this.baseService.showCustomDialoguePopup(
-        response?.data || 'Save failed. Please try again.',
+        typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg),
         'WARN'
       );
     }

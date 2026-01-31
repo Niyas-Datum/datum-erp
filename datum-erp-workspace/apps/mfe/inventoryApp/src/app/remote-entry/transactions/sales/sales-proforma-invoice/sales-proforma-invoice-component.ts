@@ -97,6 +97,7 @@ export class SalesProformaInvoiceComponent extends BaseComponent implements OnIn
     this.SetPageType(1);
     this.initializeComponent();
     this.subscribeToTransactionSelection();
+    this.subscribeToPageInfoAndLoadLeftGrid();
     this.initializeServices();
   }
 
@@ -161,12 +162,31 @@ export class SalesProformaInvoiceComponent extends BaseComponent implements OnIn
     }
   }
 
-  //.. END ARCH DESIGN SECTION
-    /**
-   * Subscribes to currentPageInfo changes to get dynamic pageId and voucherId
+  /**
+   * Load left grid when currentPageInfo becomes available (same as sales-invoice).
    */
-  // Note: BaseComponent already handles currentPageInfo subscription in onInitBase()
-  // This method is kept for any additional logic if needed, but currentPageInfo is available via BaseComponent
+  private subscribeToPageInfoAndLoadLeftGrid(): void {
+    this.dataSharingService.currentPageInfo$
+      .pipe(takeUntil(this.destroySubscription))
+      .subscribe((pageInfo) => {
+        this.currentPageInfo = pageInfo;
+        const pageId = pageInfo?.id;
+        const voucherId = pageInfo?.voucherID;
+        if (pageId != null && pageId !== 0 && voucherId != null && voucherId !== 0) {
+          this.loadLeftGridAndRefresh();
+        }
+      });
+  }
+
+  private async loadLeftGridAndRefresh(): Promise<void> {
+    await this.LeftGridInit();
+    this.dataSharingService.setData({
+      columns: this.leftGrid.leftGridColumns,
+      data: this.leftGrid.leftGridData,
+      pageheading: this.pageheading,
+    });
+    setTimeout(() => this.autoSelectLastTransaction(), 300);
+  }
 
   // nest form data 
 
@@ -1061,16 +1081,19 @@ export class SalesProformaInvoiceComponent extends BaseComponent implements OnIn
   private performSave(transactionData: any): void {
     const pageId = this.invoiceHeader?.pageId ?? this.currentPageId ?? 149;
     const voucherId = this.invoiceHeader?.voucherNo ?? this.currentVoucherId ?? 23;
-    const endpoint = `${EndpointConstant.SAVESALES}${pageId}&voucherId=${voucherId}`;
-
-    console.log('=== SAVE OPERATION ===');
-    console.log('Endpoint:', endpoint);
-    console.log('PageId:', pageId, 'VoucherId:', voucherId);
+    const transactionId = transactionData?.id ?? this.selectedTransactionId();
+    const isUpdate = !this.isNewMode() && transactionData?.id > 0;
+    const endpoint = isUpdate
+      ? `${EndpointConstant.UPDATESALES}${pageId}&voucherId=${voucherId}&transactionId=${transactionId}`
+      : `${EndpointConstant.SAVESALES}${pageId}&voucherId=${voucherId}`;
 
     this.isLoading.set(true);
 
-    this.transactionService
-      .saveDetails(endpoint, transactionData)
+    const saveOperation = isUpdate
+      ? this.transactionService.patchDetails(endpoint, transactionData)
+      : this.transactionService.saveDetails(endpoint, transactionData);
+
+    saveOperation
       .pipe(
         takeUntil(this.destroySubscription),
         finalize(() => this.isLoading.set(false))
@@ -1104,8 +1127,9 @@ export class SalesProformaInvoiceComponent extends BaseComponent implements OnIn
       this.isEditMode.set(false);
       this.commonService.newlyAddedRows.set([]);
     } else {
+      const errMsg = (response as any)?.exception ?? response?.data ?? 'Save failed. Please try again.';
       this.baseService.showCustomDialoguePopup(
-        response?.data || 'Save failed. Please try again.',
+        typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg),
         'WARN'
       );
     }

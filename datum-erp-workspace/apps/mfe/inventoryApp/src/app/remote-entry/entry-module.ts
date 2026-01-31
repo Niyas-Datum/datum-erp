@@ -20,19 +20,20 @@ import { AlertDialogComponent, AlertDialogModule } from '@org/ui';
 import { InventoryAppService } from './http/inventory-app.service';
 import { ReportsModule } from './reports/reports.module';
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { InventoryPopupContainerComponent } from './common/popupModule/inventory.popup-container.component';
 
 @NgModule({
   declarations: [RemoteEntry], 
 
-  imports: [CommonModule, FormToolbarComponent,RouterModule.forChild(remoteRoutes),InvoiceHeader,ItemList,InvoiceFooter,AdditionalDetailsComponent,TransactionsComponent,TransactionsModule
-    ,SalesReturnComponent, GridAllModule,
+  imports: [CommonModule, FormToolbarComponent, RouterModule.forChild(remoteRoutes), InvoiceHeader, ItemList, InvoiceFooter, AdditionalDetailsComponent, TransactionsComponent, TransactionsModule
+    , SalesReturnComponent, GridAllModule,
     LeftGridComponent,    
     SidebarModule,
     AlertDialogModule,
     ReportsModule,
     GridModule,
-        DatePickerModule
-
+    DatePickerModule,
+    InventoryPopupContainerComponent
    ],
 
   providers: [InventoryAppService],

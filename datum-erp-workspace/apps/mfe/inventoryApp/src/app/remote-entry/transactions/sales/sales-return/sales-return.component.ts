@@ -127,6 +127,7 @@ export class SalesReturnComponent extends BaseComponent implements OnInit, OnDes
     // Additional initialization specific to SalesReturnComponent
     this.initializeComponent();
     this.subscribeToTransactionSelection();
+    this.subscribeToPageInfoAndLoadLeftGrid();
     this.initializeServices();
     this.initializeAdditionalDetailsForm();
     this.subscribeToTabChanges();
@@ -198,6 +199,32 @@ export class SalesReturnComponent extends BaseComponent implements OnInit, OnDes
       this.leftGrid.leftGridColumns = [];
       this.leftGrid.leftGridData = [];
     }
+  }
+
+  /**
+   * Load left grid when currentPageInfo becomes available (same as sales-invoice).
+   */
+  private subscribeToPageInfoAndLoadLeftGrid(): void {
+    this.dataSharingService.currentPageInfo$
+      .pipe(takeUntil(this.destroySubscription))
+      .subscribe((pageInfo) => {
+        this.currentPageInfo = pageInfo;
+        const pageId = pageInfo?.id;
+        const voucherId = pageInfo?.voucherID;
+        if (pageId != null && pageId !== 0 && voucherId != null && voucherId !== 0) {
+          this.loadLeftGridAndRefresh();
+        }
+      });
+  }
+
+  private async loadLeftGridAndRefresh(): Promise<void> {
+    await this.LeftGridInit();
+    this.dataSharingService.setData({
+      columns: this.leftGrid.leftGridColumns,
+      data: this.leftGrid.leftGridData,
+      pageheading: this.pageheading,
+    });
+    setTimeout(() => this.autoSelectLastTransaction(), 300);
   }
 
   // ========== BaseComponent Method Overrides ==========
@@ -1016,20 +1043,21 @@ onSaveClick(): void {
   // ========== Server Operations ==========
 
   private performSave(transactionData: any): void {
-    // Use Sales Return specific pageId and voucherId
-    const pageId = this.SALES_RETURN_PAGE_ID;
-    const voucherId = this.SALES_RETURN_VOUCHER_ID;
-    const endpoint = `${EndpointConstant.SAVESALES}${pageId}&voucherId=${voucherId}`;
-
-    console.log('=== SAVE OPERATION DEBUG ===');
-    console.log('Endpoint:', endpoint);
-    console.log('PageId:', pageId, 'VoucherId:', voucherId);
-    console.log('Transaction Data:', JSON.stringify(transactionData, null, 2));
+    const pageId = this.invoiceHeader?.pageId ?? this.currentPageId ?? this.SALES_RETURN_PAGE_ID;
+    const voucherId = this.invoiceHeader?.voucherNo ?? this.currentVoucherId ?? this.SALES_RETURN_VOUCHER_ID;
+    const transactionId = transactionData?.id ?? this.selectedTransactionId();
+    const isUpdate = !this.isNewMode() && transactionData?.id > 0;
+    const endpoint = isUpdate
+      ? `${EndpointConstant.UPDATESALES}${pageId}&voucherId=${voucherId}&transactionId=${transactionId}`
+      : `${EndpointConstant.SAVESALES}${pageId}&voucherId=${voucherId}`;
 
     this.isLoading.set(true);
 
-    this.transactionService
-      .saveDetails(endpoint, transactionData)
+    const saveOperation = isUpdate
+      ? this.transactionService.patchDetails(endpoint, transactionData)
+      : this.transactionService.saveDetails(endpoint, transactionData);
+
+    saveOperation
       .pipe(
         takeUntil(this.destroySubscription),
         finalize(() => this.isLoading.set(false))
@@ -1063,8 +1091,9 @@ onSaveClick(): void {
       this.isEditMode.set(false);
       this.commonService.newlyAddedRows.set([]);
     } else {
+      const errMsg = (response as any)?.exception ?? response?.data ?? 'Save failed. Please try again.';
       this.baseService.showCustomDialoguePopup(
-        response?.data || 'Save failed. Please try again.',
+        typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg),
         'WARN'
       );
     }

@@ -1,1 +1,142 @@
-//@import url('../../../../../../../../../libs/assets/src/styles/invoice-footer.scss');
+@import url('../../../../../../../../../libs/assets/src/lib/styles/invoice-footer.scss');
+
+/* Syncfusion component overrides so footer layout matches design */
+:host {
+  /* Terms & discount: ejs-textbox should fill and match height */
+  .terms-input.e-input-group,
+  .terms-input.e-input-group .e-input {
+    height: 25px;
+    min-height: 25px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+
+  .discount-outer ejs-textbox,
+  .discount-outer .e-input-group {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+
+  .discount-outer .e-input-group .e-input {
+    height: 25px;
+    min-height: 25px;
+    border-radius: 4px;
+    font-size: 10px;
+    text-align: right;
+  }
+
+  .terms-discount-section #totaldiscpercent.e-input-group,
+  .terms-discount-section #totaldiscpercent.e-input-group .e-input {
+    height: 25px;
+    min-height: 25px;
+  }
+
+  /* Round off, tax, add charges, net amount row */
+  .tax-roundoff-section ejs-textbox,
+  .tax-roundoff-section .e-input-group {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+
+  .tax-roundoff-section .e-input-group .e-input {
+    height: 25px;
+    min-height: 25px;
+    text-align: right;
+  }
+
+  .flex-wrapper ejs-textbox,
+  .flex-wrapper .e-input-group {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+
+  .flex-wrapper button {
+    flex-shrink: 0;
+  }
+
+  /* Grand total */
+  .grandtotal-section ejs-textbox,
+  .grandtotal-section .e-input-group {
+    display: flex;
+    flex: 1 0 0;
+    height: 2.5rem;
+    min-height: 2.5rem;
+  }
+
+  .grandtotal-section .e-input-group .e-input {
+    height: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: 4px;
+    border: 0.5px solid #000;
+    font-weight: 800;
+    font-size: 18px;
+    text-align: right;
+  }
+
+  /* Payment section: pay type dropdown and inputs */
+  .pay-type-select ejs-dropdownlist,
+  .pay-type-select .e-input-group {
+    flex: 1 0 0;
+    min-width: 0;
+    height: 25px;
+  }
+
+  .pay-type-select .e-input-group .e-input {
+    height: 25px;
+    min-height: 25px;
+  }
+
+  .cash-input-popup ejs-textbox,
+  .card-input-popup ejs-textbox,
+  .advance-popup-btn ejs-textbox,
+  .cheque-popup-input ejs-textbox,
+  .total-paid-input ejs-textbox {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+
+  .cash-input-popup .e-input-group .e-input,
+  .card-input-popup .e-input-group .e-input,
+  .advance-popup-btn .e-input-group .e-input,
+  .cheque-popup-input .e-input-group .e-input,
+  .total-paid-input .e-input-group .e-input {
+    height: 25px;
+    min-height: 25px;
+    text-align: right;
+  }
+
+  /* Balance input - prominent style */
+  .balance-input ejs-textbox,
+  .balance-input .e-input-group {
+    flex: 1 0 0;
+    height: 2.5rem;
+    min-height: 2.5rem;
+  }
+
+  .balance-input .e-input-group .e-input {
+    height: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: 4px;
+    border: 0.5px solid #000;
+    font-weight: 800;
+    font-size: 18px;
+    text-align: right;
+  }
+
+  /* Net amount readonly */
+  #netamount.e-input-group .e-input {
+    text-align: right;
+  }
+
+  /* Due date calendar wrapper */
+  .duedate-input ejs-datepicker,
+  .duedate-input .e-date-wrapper {
+    flex: 1 0 0;
+    min-width: 0;
+  }
+
+  .duedate-input .e-input-group {
+    height: 25px;
+    min-height: 25px;
+  }
+}
