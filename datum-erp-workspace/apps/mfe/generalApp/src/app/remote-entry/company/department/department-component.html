@@ -22,36 +22,25 @@
           Select Company<span class="required-asterisk">*</span>
         </label>
         <div class="col-md-3">
+          <div>
+            <ejs-grid #grid [dataSource]="allBranches" [allowSorting]="true" [allowPaging]="true"
+              [allowSelection]="isGridEnabled" [selectionSettings]="{ type: 'Multiple', checkboxOnly: true }"
+              (dataBound)="preselectCompanies()" (rowSelected)="onRowSelected($event)" height="300px" width="500"
+              gridLines="Both">
 
-<div>
-  <ejs-grid
-    #grid
-    [dataSource]="allBranches"
-    [allowSorting]="true" 
-    [allowPaging]="true" 
-    [allowSelection]="isGridEnabled"
-    [selectionSettings]="{ type: 'Multiple', checkboxOnly: true }"
-    (dataBound)="preselectCompanies()"
-    (rowSelected)="onRowSelected($event)"
-    height="300px"
-    width="500"
-    gridLines="Both">
+              <e-columns>
+                <e-column type="checkbox" width="50"></e-column>
 
-    <e-columns>
-       <e-column type="checkbox"  width="50"></e-column> 
+                <e-column field="company" headerText="Company" textAlign="Left" width="400"></e-column>
+              </e-columns>
+            </ejs-grid>
+          </div>
 
-      <e-column field="company" headerText="Company" textAlign="Left" width="400"></e-column>
-    </e-columns>
-  </ejs-grid>
-</div>
-
-@if(departmentForm.get('company')?.hasError('required')) {
-  <small class="text-danger">Please select at least one company.</small>
-}
-
+          @if(departmentForm.get('company')?.hasError('required')) {
+          <small class="text-danger">Please select at least one company.</small>
+          }
 
         </div>
-
       </div>
     </div>
   </div>
