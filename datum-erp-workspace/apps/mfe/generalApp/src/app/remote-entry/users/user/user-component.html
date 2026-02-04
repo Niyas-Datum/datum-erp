@@ -197,8 +197,7 @@
         [dataSource]="allAccounts"
         [fields]="{ text: 'name', value: 'id' }"
         [columns]="accountColumns"
-        [disabled]="!isInputDisabled"
-        [value]="selectedAccountName"
+        [value]="selectedAccountId"
         popupHeight="300px"
         (change)="onAccountSelected($event)">
       </ejs-multicolumncombobox>
@@ -244,14 +243,17 @@
       <e-columns>
         <e-column
           headerText="Action"
-          width="50"
+          width="80"
           textAlign="Center"
           [allowEditing]="false">
+        <ng-template #headerTemplate>
+          <button type="button" class="btn btn-sm btn-outline-primary" [disabled]="!isInputDisabled"
+            (click)="addRow(true)">+ Add row</button>
+        </ng-template>
         <ng-template #template let-data let-rowIndex="index">
-          <button class="btn" [disabled]="!isInputDisabled"
-                                *ngIf="rowIndex == currentBranchTableIndex" (click)="addRow(true)">+</button>
-            {{ data.rowId  }}
-          </ng-template>
+          <button type="button" class="btn btn-sm" [disabled]="!isInputDisabled"
+            *ngIf="rowIndex === currentBranchTableIndex" (click)="addRow(true)">+</button>
+        </ng-template>
         </e-column>
         
      <e-column
@@ -277,7 +279,7 @@
     <input
       type="checkbox"
       [checked]="data.isMainBranch"
-      (change)="onClickMainBranch($event, data,data)"
+      (change)="onClickMainBranch($event, data)"
       (keydown)="onKeyDown($event, data, 'isMainBranch')"
     />
   </ng-template>
@@ -293,7 +295,7 @@
     <ejs-combobox
       [dataSource]="departmentData"
       [fields]="{ text: 'name', value: 'id' }"
-      [value]="data.departmentName"
+      [value]="data.departmentID"
       [enabled]="isNewMode() || isEditMode()"
       [allowFiltering]="true"
       [showClearButton]="true"
@@ -319,7 +321,7 @@
     <ejs-combobox
       [dataSource]="branchOptions"
       [fields]="{ text: 'company', value: 'id' }"
-      [value]="data.branchName"
+      [value]="data.branchID"
       [enabled]="isNewMode() || isEditMode()"
       [allowFiltering]="true"
       [showClearButton]="true"
@@ -359,7 +361,7 @@
   </ng-template>
 </e-column>
 <e-column field="userRole" headerText="User Role" width="200">
-  <ng-template #editTemplate let-data let-rowIndex="rowIndex">
+  <ng-template #editTemplate let-data let-rowIndex="index">
     <button
       class="btn btn-link text-primary"
       type="button"
