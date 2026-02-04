@@ -5,6 +5,7 @@ import {
     AfterViewInit,
     signal,
     ViewChild,
+    Input,
   } from '@angular/core';
   import { BaseComponent } from '@org/architecture';
   import { FinanceAppService } from '../../http/finance-app.service';
@@ -17,6 +18,7 @@ import { TreeViewComponent } from '@syncfusion/ej2-angular-navigations';
 import { MaskedTextBoxComponent } from "@syncfusion/ej2-angular-inputs";
 import { Router, ActivatedRoute } from '@angular/router';
 import { DialogComponent } from '@syncfusion/ej2-angular-popups';
+import { FinancialPopupService } from '../../common/popup/finance.popup.service';
   
   @Component({
     selector: 'app-chart-of-account',
@@ -29,9 +31,16 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
   export class ChartOfAccountComponent extends BaseComponent implements OnInit, AfterViewInit{
     @ViewChild('accountDialog') accountDialog!: DialogComponent;
     @ViewChild('accountCombo') accountCombo?: MultiColumnComboBoxComponent;
+    
+@ViewChild('pageMenuDialog') pageMenuDialog!: DialogComponent;
+
+@Input() skipDataLoad = false; // Flag to prevent nested components from loading data
+
+showPageMenuPopup = false;
     fillaccountpopupData = signal<any[]>([]);
     chartOfAccountForm = this.formUtil.thisForm;
     private httpService = inject(FinanceAppService);
+    private popupService = inject(FinancialPopupService);
     private router = inject(Router);
     private activatedRoute = inject(ActivatedRoute);
     fillcategoryData = signal<any[]>([]);
@@ -70,13 +79,25 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
         this.commonInit();
     }
     
+    /**
+     * Angular lifecycle hook - Initializes the component
+     * Sets up the page type and loads initial chart of account data
+     */
     ngOnInit(): void {
       this.onInitBase();
       this.SetPageType(2);
-      console.log("pageid",this.currentPageInfo?.menuText);
       this.loadInitialData();
+      
+      // Only load data if this is not a nested component instance
+      if (!this.skipDataLoad) {
+        this.loadInitialData();
+      }
     }
     
+    /**
+     * Angular lifecycle hook - Called after the view is initialized
+     * Enables tree view icons and refreshes the tree component
+     */
     ngAfterViewInit(): void {
       // Enable icons after view is initialized
       setTimeout(() => {
@@ -86,19 +107,31 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
           try {
             this.listTreeObj.refresh();
           } catch (e) {
-            console.log('Tree refresh in AfterViewInit:', e);
+            // Tree refresh error handled silently
           }
         }
       }, 300);
     }
     
-   
-    loadInitialData() {
+    /**
+     * Loads initial chart of account data from the API
+     * Fetches all accounts and transforms them into a tree structure
+     */
+    async loadInitialData() {
+      // const ref = await this.popupService.openLazy('test', {voucherId: 30, pageId: 20});
+
+      // ref?.afterClosed?.subscribe((result: any) => {
+      //   if (result?.action === 'import') {
+      //     // Handle import result
+      //   }
+      // });
+      
+
+
       this.httpService.fetch<any>(EndpointConstant.FILLCHARTOFACCOUNTS)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
-          console.log('Chart of Account data response:', response?.data);
           const accountData = response?.data || [];
           // Update signal - this will trigger Angular change detection
           this.chartOfAccountData.set([...accountData]);
@@ -108,11 +141,16 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
           this.updateTreeData(treeStructure);
         },
         error: (error) => {
-          console.error('Error loading account data:', error);
+          // Error loading account data
         }
       });
     }
 
+    /**
+     * Builds a hierarchical tree structure from flat account data
+     * @param data - Array of flat account items with parent references
+     * @returns Array of root tree nodes with nested children
+     */
     private buildTreeStructure(data: any[]): any[] {
       if (!data || data.length === 0) {
         return [];
@@ -138,10 +176,6 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
           subItems: [],
           ...item
         };
-        // Debug: log icon assignment
-        if (item.isGroup === true) {
-          console.log('Folder icon assigned to:', item.name, 'iconCss:', iconCss);
-        }
         itemMap.set(item.id, treeNode);
       });
 
@@ -174,6 +208,12 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       return rootItems;
     }
 
+    /**
+     * Formats the display text for a tree node
+     * Format: [Code] Arabic Name / English Name
+     * @param item - Account item with name, alternateName, and alias properties
+     * @returns Formatted string for tree node display
+     */
     private formatTreeNodeText(item: any): string {
       const name = item.name || '';
       const alternateName = item.alternateName || '';
@@ -195,6 +235,10 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       return formattedText;
     }
 
+    /**
+     * Recursively sorts tree items by their sortField property
+     * @param items - Array of tree items to sort (including nested children)
+     */
     private sortTreeItems(items: any[]): void {
       items.forEach(item => {
         if (item.subItems && item.subItems.length > 0) {
@@ -204,6 +248,12 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       });
     }
 
+    /**
+     * Updates the tree data and refreshes the tree view component
+     * Preserves expanded nodes state if preserveExpansion is true
+     * @param treeStructure - New tree structure to display
+     * @param preserveExpansion - Whether to preserve currently expanded nodes (default: true)
+     */
     private updateTreeData(treeStructure: any[], preserveExpansion = true): void {
       this.treeData.set(treeStructure);
       
@@ -274,26 +324,37 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
                 }, 50);
               }
             } catch (e) {
-              console.log('Tree refresh:', e);
+              // Tree refresh error handled silently
             }
           }
         }, 100);
       }
     }
 
+    /**
+     * Expands all nodes in the tree view
+     */
     expandAllNodes() {
       if (this.listTreeObj) {
         this.listTreeObj.expandAll();
       }
     }
 
+    /**
+     * Collapses all nodes in the tree view
+     */
     collapseAllNodes() {
       if (this.listTreeObj) {
         this.listTreeObj.collapseAll();
       }
     }
     
-    //Filtering the TreeNodes
+    /**
+     * Filters tree nodes based on search text
+     * Searches in account name, alternate name, and alias
+     * Includes parent nodes of matching items to maintain tree structure
+     * @param args - Event arguments (not used, search text comes from maskObj)
+     */
     searchNodes(args: any) {
       const searchText = this.maskObj?.element.value || '';
       const allData = this.chartOfAccountData();
@@ -327,6 +388,12 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       }, 100);
     }
 
+    /**
+     * Builds a filtered tree structure that includes matching items and their parent nodes
+     * @param allData - Complete dataset of all accounts
+     * @param filteredData - Filtered subset of accounts matching search criteria
+     * @returns Tree structure containing filtered items and their parent hierarchy
+     */
     private buildFilteredTree(allData: any[], filteredData: any[]): any[] {
       const itemMap = new Map<number, any>();
       const rootItems: any[] = [];
@@ -381,6 +448,13 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       return rootItems;
     }
 
+    /**
+     * Recursively marks parent nodes for inclusion in filtered tree
+     * Ensures parent chain is included so filtered items remain accessible
+     * @param allData - Complete dataset of all accounts
+     * @param parentId - ID of the parent node to mark
+     * @param includedIds - Set of node IDs to include in the filtered tree
+     */
     private markParents(allData: any[], parentId: number | null, includedIds: Set<number>): void {
       if (!parentId || parentId === null) {
         return;
@@ -393,35 +467,49 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       }
     }
 
+    /**
+     * Handles tree node selection event
+     * Updates selected node ID and loads account data
+     * @param event - Tree node selection event containing nodeData
+     */
     onNodeSelected(event: any): void {
       if (event.nodeData) {
-        console.log('Selected node:', event.nodeData);
+        this.selectedNodeId = event.nodeData.id;
         this.getDataById(event.nodeData);
       }
     }
     
+    /**
+     * Handles tree node expansion event
+     * Tracks expanded nodes to preserve state during tree updates
+     * @param event - Tree node expansion event containing nodeData
+     */
     onNodeExpanded(event: any): void {
-      // Track expanded nodes to preserve state during tree updates
       if (event.nodeData && event.nodeData.id) {
         this.expandedNodes.add(event.nodeData.id.toString());
-        console.log('Node expanded:', event.nodeData);
       }
     }
     
+    /**
+     * Handles tree node collapse event
+     * Removes node from expanded set when collapsed
+     * @param event - Tree node collapse event containing nodeData
+     */
     onNodeCollapsed(event: any): void {
-      // Remove from expanded set when collapsed
       if (event.nodeData && event.nodeData.id) {
         this.expandedNodes.delete(event.nodeData.id.toString());
-        console.log('Node collapsed:', event.nodeData);
       }
     }
     
+    /**
+     * Gets account data by ID and loads child accounts if needed
+     * Handles lazy loading of child accounts when a parent node is selected
+     * @param data - Account data object containing the account ID
+     */
     override getDataById(data: any) {
-      console.log('Selected account data:', data);
       if (data && data.id) {
         this.selectedAccountId = data.id;
         const selectedNodeId = this.selectedAccountId.toString();
-        console.log('selectedAccountId', this.selectedAccountId);
         
         // Mark this node as expanded
         this.expandedNodes.add(selectedNodeId);
@@ -432,7 +520,6 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
         
         // If children already exist in data, ensure node stays expanded
         if (hasChildrenInData) {
-          console.log('Children already loaded for this node');
           // Only rebuild if we need to preserve expansion - don't rebuild unnecessarily
           // Just ensure the node is expanded
           setTimeout(() => {
@@ -457,9 +544,7 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
-          console.log('Chart of Account child data response:', response?.data);
           const childchartOfAccountData = response?.data || [];
-          console.log('childchartOfAccountData', childchartOfAccountData);
           
           if (childchartOfAccountData.length > 0) {
             // Merge child data into existing data
@@ -485,20 +570,22 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
                   this.listTreeObj.expandAll([this.selectedAccountId.toString()]);
                 }
               }, 350);
-            } else {
-              console.log('No new children to add');
             }
-          } else {
-            console.log('No children found for this account');
           }
         },
         error: (error) => {
-          console.error('Error loading account child data:', error);
+          // Error loading account child data
         }
       });
       }
     }
     
+    /**
+     * Recursively finds a node in the tree structure by ID
+     * @param treeData - Tree structure to search in
+     * @param nodeId - ID of the node to find
+     * @returns Found node object or null if not found
+     */
     private findNodeInTree(treeData: any[], nodeId: number): any | null {
       for (const node of treeData) {
         if (node.id === nodeId) {
@@ -514,38 +601,49 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       return null;
     }
     
+    /**
+     * Initializes the form for chart of account
+     * Overrides base component method - minimal form needed for tree view
+     */
     override FormInitialize() {
-      // Form initialization not needed for tree view
       this.chartOfAccountForm = new FormGroup({});
-      console.log('Chart of Account form initialized');
     }
     
+    /**
+     * Initializes the left grid component
+     * Sets the page heading - data loading is handled by loadInitialData
+     */
     override async LeftGridInit() {
-      // Left grid initialization handled by loadInitialData
       this.pageheading = 'Chart of Account';
-      console.log('Left grid initialized');
     }
     
+    /**
+     * Saves the chart of account form data
+     * Validates form before saving
+     */
     override SaveFormData() {
-      console.log('Saving chart of account data');
       if (this.chartOfAccountForm && this.chartOfAccountForm.invalid) {
-        console.log('Form is invalid');
         return;
       }
       // Implement save logic here
-      console.log('Form data:', this.chartOfAccountForm?.value);
     }
     
+    /**
+     * Handles edit button click event
+     * Enables form editing and sets update flag
+     */
     override onEditClick() {
-      console.log('Edit button');
       this.isUpdate = true;
       if (this.chartOfAccountForm) {
         this.chartOfAccountForm.enable();
       }
     }
     
+    /**
+     * Handles new button click event
+     * Resets form, enables editing, and clears selected account
+     */
     override newbuttonClicked(): void {
-      console.log('New button clicked');
       if (this.chartOfAccountForm) {
         this.chartOfAccountForm.enable();
         this.chartOfAccountForm.reset();
@@ -554,12 +652,20 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       this.selectedAccountId = 0;
     }
     
+    /**
+     * Handles delete operation for account data
+     * @param data - Account data to delete
+     * @returns true if delete operation should proceed
+     */
     override DeleteData(data: any) {
-      console.log('Delete requested for:', data);
-      // Implement delete logic here
       return true;
     }
     
+    /**
+     * Handles tab click event
+     * Opens popup dialog for specific tabs that require it
+     * @param tabName - Name of the tab that was clicked
+     */
     onTabClick(tabName: string): void {
       this.activeTab.set(tabName);
       
@@ -571,9 +677,12 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       }
     }
     
+    /**
+     * Opens a popup dialog for the specified tab
+     * Sets appropriate dialog header based on tab name
+     * @param tabName - Name of the tab to open in popup
+     */
     openPopup(tabName: string): void {
-      console.log('Opening popup for tab:', tabName);
-      // Set dialog header based on tab - matching routes from ledger component
       const headers: { [key: string]: string } = {
         'accountsList': 'Accounts List',
         'accountsortorder': 'Account Sort Order',
@@ -584,22 +693,22 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
       };
       
       this.dialogHeader.set(headers[tabName] || '');
-      console.log('Dialog header set to:', this.dialogHeader());
       this.accountDialog.show();
     }
     
+    /**
+     * Handles dialog open event
+     * Sets flag to render component content inside dialog
+     */
     onDialogOpen(): void {
-      // Set flag to true when dialog opens - this will render the component
-      console.log('Dialog opened, activeTab:', this.activeTab());
-      console.log('showDialogContent BEFORE:', this.showDialogContent());
       this.showDialogContent.set(true);
-      console.log('showDialogContent AFTER:', this.showDialogContent());
-      console.log('activeTab value:', this.activeTab());
-      console.log('Will render accountsortorder?', this.activeTab() === 'accountsortorder');
     }
     
+    /**
+     * Handles dialog close event
+     * Hides dialog and sets flag to destroy component content
+     */
     onDialogClose(): void {
-      // Set flag to false when dialog closes - this will destroy the component
       this.showDialogContent.set(false);
       this.accountDialog.hide();
     }
@@ -619,6 +728,11 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
   //   this.selectedNodeId = args.nodeData.id;
   // }
 
+  /**
+   * Handles context menu item selection
+   * Routes to appropriate action based on selected menu item
+   * @param args - Menu selection event containing item ID
+   */
   onMenuSelect(args: any) {
     switch (args.item.id) {
       case 'open':
@@ -643,24 +757,77 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
     }
   }
 
+  /**
+   * Opens the selected node in a dialog
+   * Sets selectedAccountId and displays page menu dialog
+   */
   openNode() {
-    console.log('Open', this.selectedNodeId);
+    if (this.selectedNodeId) {
+      this.selectedAccountId = typeof this.selectedNodeId === 'string' ? parseInt(this.selectedNodeId, 10) : this.selectedNodeId;
+    }
+    // Set showPageMenuPopup before showing dialog to ensure component is created
+    this.showPageMenuPopup = true;
+    this.pageMenuDialog.show();
   }
 
+  /**
+   * Handles page menu dialog open event
+   * Ensures popup component is shown when dialog opens
+   */
+  onPageMenuDialogOpen(): void {
+    this.showPageMenuPopup = true;
+  }
+
+  /**
+   * Handles page menu dialog close event
+   * Hides popup component and resets state when dialog closes
+   */
+  onPageMenuDialogClose(): void {
+    this.showPageMenuPopup = false;
+  }
+
+  /**
+   * Creates a new group account
+   * Opens page menu dialog for group creation
+   */
   createGroup() {
-    console.log('New Group under', this.selectedNodeId);
+    this.showPageMenuPopup = true;
+    this.pageMenuDialog.show();
   }
 
+  /**
+   * Creates a new account
+   * Opens page menu dialog for account creation
+   */
   createAccount() {
-    console.log('New Account under', this.selectedNodeId);
+    this.showPageMenuPopup = true;
+    this.pageMenuDialog.show();
   }
 
+  /**
+   * Deletes the selected node
+   * Implements delete logic for tree nodes
+   */
   deleteNode() {
-    console.log('Delete', this.selectedNodeId);
+    // Delete node logic
   }
 
+  /**
+   * Opens statement for the selected account
+   * Implements statement viewing logic
+   */
   openStatement() {
-    console.log('Statement for', this.selectedNodeId);
+    // Open statement logic
   }
+  
+  /**
+   * Handles data saved event from popup component
+   * Refreshes the tree data after save/update/delete operations
+   */
+  onDataSaved(): void {
+    // Reload tree data to reflect changes
+    this.loadInitialData();
+  }
+
 }
 

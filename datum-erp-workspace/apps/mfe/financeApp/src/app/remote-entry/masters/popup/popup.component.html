@@ -1,0 +1,207 @@
+<!-- Menu Bar -->
+<div class="menu-bar mb-3">
+    <button class="btn btn-sm btn-outline-primary me-2" (click)="onNew()">New</button>
+    <button class="btn btn-sm btn-outline-primary me-2" (click)="onSave()">Save</button>
+    <button class="btn btn-sm btn-outline-primary me-2" (click)="onEdit()">Edit</button>
+    <button class="btn btn-sm btn-outline-primary me-2" (click)="onDelete()">Delete</button>
+    <button class="btn btn-sm btn-outline-primary me-2" (click)="onPrint()">Print</button>
+    <button class="btn btn-sm btn-outline-primary" (click)="onPreview()">Preview</button>
+  </div>
+  
+  <!-- Form Container -->
+  <div class="form-container" style="background-color: #f5f5f5; padding: 15px;">
+    <form [formGroup]="accountForm">
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+          <!-- Account Code -->
+          <div class="row mb-3">
+            <label for="accountCode" class="form-label col-md-4">Account Code</label>
+            <div class="col-md-8">
+              <ejs-textbox
+                id="accountCode"
+                formControlName="accountCode"
+                placeholder="Account Code"
+                cssClass="e-input">
+              </ejs-textbox>
+            </div>
+          </div>
+  
+          <!-- Group -->
+          <div class="row mb-3">
+            <label for="group" class="form-label col-md-4">Group</label>
+            <div class="col-md-8">
+              <ejs-dropdownlist
+                  id="group"
+                  formControlName="group"
+                  [dataSource]="groupdata()"
+                  [fields]="{ text: 'name', value: 'id' }"
+                  [enabled]="isEditMode() || isNewMode()"
+                  (change)="onGroupChange($event)"
+                  floatLabelType="Auto">
+              </ejs-dropdownlist>
+            </div>
+          </div>
+  
+          <!-- Sub Group -->
+          <div class="row mb-3">
+            <label for="subGroup" class="form-label col-md-4">Sub Group</label>
+            <div class="col-md-8">
+              <ejs-dropdownlist
+                  id="SubGroup"
+                  formControlName="SubGroup"
+                  [dataSource]="subGroupData()"
+                  [fields]="{ text: 'description', value: 'id' }"
+                  [enabled]="(isEditMode() || isNewMode()) && isSubGroupEnabled()"
+                  (change)="onSubGroupChange($event)"
+                  floatLabelType="Auto">
+              </ejs-dropdownlist>
+            </div>
+          </div>
+  
+          <!-- Prevent Extra Pay -->
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <ejs-checkbox
+                label="Prevent Extra Pay"
+                labelPosition="After"
+                formControlName="preventExtraPay">
+              </ejs-checkbox>
+            </div>
+          </div>
+  
+          <!-- Maintain Cost Center -->
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <ejs-checkbox
+                label="Maintain Cost Center"
+                labelPosition="After"
+                formControlName="maintainCostCenter">
+              </ejs-checkbox>
+            </div>
+          </div>
+  
+          <!-- Narration -->
+          <div class="row mb-3">
+            <label for="narration" class="form-label col-md-4">Narration</label>
+            <div class="col-md-8">
+              <ejs-textbox
+                id="narration"
+                formControlName="narration"
+                placeholder="Narration"
+                cssClass="e-input">
+              </ejs-textbox>
+            </div>
+          </div>
+  
+          <!-- Alternate Name -->
+          <div class="row mb-3">
+            <label for="alternateName" class="form-label col-md-4">Alternate Name</label>
+            <div class="col-md-8">
+              <ejs-textbox
+                id="alternateName"
+                formControlName="alternateName"
+                placeholder="Alternate Name"
+                cssClass="e-input">
+              </ejs-textbox>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Right Column -->
+        <div class="col-md-6">
+          <!-- Account Name -->
+          <div class="row mb-3">
+            <label for="accountName" class="form-label col-md-4">Account Name</label>
+            <div class="col-md-8">
+              <ejs-textbox
+                id="accountName"
+                formControlName="accountName"
+                placeholder="Account Name"
+                cssClass="e-input">
+              </ejs-textbox>
+            </div>
+          </div>
+  
+          <!-- Is Group -->
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <ejs-checkbox
+                label="Is Group"
+                labelPosition="After"
+                formControlName="isGroup">
+              </ejs-checkbox>
+            </div>
+          </div>
+  
+          <!-- Account Category -->
+          <div class="row mb-3">
+              <label for="accountCategory" class="form-label col-md-2">Account Category</label>
+              <div class="col-md-4">
+                  <ejs-dropdownlist
+                      id="accountCategory"
+                      formControlName="accountCategory"
+                      [dataSource]="accountCategoryData()"
+                      [enabled]="isEditMode() || isNewMode()"
+                      (change)="onAccountCategoryChange($event)"
+                      [fields]="{ text: 'description', value: 'id' }"
+                      floatLabelType="Auto">
+                  </ejs-dropdownlist>
+              </div>
+          </div>
+  
+          <!-- Maintain Bill wise -->
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <ejs-checkbox
+                label="Maintain Bill wise"
+                labelPosition="After"
+                formControlName="maintainBillWise">
+              </ejs-checkbox>
+            </div>
+          </div>
+  
+          <!-- Maintain Item wise -->
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <ejs-checkbox
+                label="Maintain Item wise"
+                labelPosition="After"
+                formControlName="maintainItemWise">
+              </ejs-checkbox>
+            </div>
+          </div>
+  
+          <!-- Track Collection -->
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <ejs-checkbox
+                label="Track Collection"
+                labelPosition="After"
+                formControlName="trackCollection">
+              </ejs-checkbox>
+            </div>
+          </div>
+  
+          <!-- Active -->
+          <div class="row mb-3">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <ejs-checkbox
+                label="Active"
+                labelPosition="After"
+                formControlName="active">
+              </ejs-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  

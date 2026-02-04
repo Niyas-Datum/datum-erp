@@ -10,7 +10,7 @@ import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { MastersComponent } from "./masters-component";
 import { CurrencyComponent } from "./currency/currency-component";
 import { FinancialYearComponent } from "./financialYear/financialYear-component";
-import { GridModule } from "@syncfusion/ej2-angular-grids";
+import { GridAllModule } from "@syncfusion/ej2-angular-grids";
 import { ContextMenuModule, TreeViewModule } from "@syncfusion/ej2-angular-navigations";
 import { CardComponent } from "./card-master/cardmaster-component";
 import { AccountSortorderComponent } from "./account-sortorder/account-sortorder";
@@ -19,9 +19,9 @@ import { AccountConfigurationComponent } from "./account-configuartion/Account-c
 import { AccountsListComponent } from "./accounts-list/accounts-list";
 import { VouchersComponent } from "./vouchers/vouchers-component";
 import { ChartOfAccountComponent } from "./chart-of-account/chart-of-account.component";
-import { LedgerComponent } from "./ledger/ledger-component";
-import { Popup } from "./popup/popup.component";
+import { LedgerComponent } from "./ledger/ledger-component"
 import { DialogModule } from "@syncfusion/ej2-angular-popups";
+import { PopupComponent } from "./popup/popup.component";
 
 const costcenterRoutes: Routes = [
   {
@@ -57,7 +57,7 @@ const costcenterRoutes: Routes = [
      FinancialYearComponent, CardComponent, AccountSortorderComponent,
       BranchAccounts,
      AccountConfigurationComponent, AccountsListComponent, VouchersComponent, 
-     ChartOfAccountComponent, LedgerComponent,Popup],
+     ChartOfAccountComponent, LedgerComponent,PopupComponent],
 
   imports: [CommonModule,     
   ReactiveFormsModule,DialogModule, ContextMenuModule
@@ -74,7 +74,7 @@ const costcenterRoutes: Routes = [
     MultiColumnComboBoxModule,
     DropDownListModule, 
     DatePickerModule,
-    GridModule,
+    GridAllModule,
     MultiColumnComboBoxModule,
     ButtonModule,
     TreeViewModule
