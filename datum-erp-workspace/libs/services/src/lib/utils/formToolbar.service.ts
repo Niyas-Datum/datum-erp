@@ -1,5 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+
+export interface ToolbarState {
+  isNewMode?: boolean;
+  isEditMode?: boolean;
+  isNewBtnDisabled?: boolean;
+  isEditBtnDisabled?: boolean;
+  isDeleteBtnDisabled?: boolean;
+  isSaveBtnDisabled?: boolean;
+  isPrintBtnDisabled?: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class FormToolbarService {
@@ -10,6 +20,13 @@ export class FormToolbarService {
   pagetype:number ;
   constructor(){this.pagetype = 1}
 
+  /** Toolbar state pushed by child (e.g. sales-invoice) so entry can show New + Save on initial load */
+  private toolbarState$ = new BehaviorSubject<ToolbarState>({});
+  getToolbarState$ = () => this.toolbarState$.asObservable();
+
+  setToolbarState(state: Partial<ToolbarState>): void {
+    this.toolbarState$.next(state);
+  }
 
   private newClickedSource = new Subject<void>();
   newClicked$ = this.newClickedSource.asObservable();

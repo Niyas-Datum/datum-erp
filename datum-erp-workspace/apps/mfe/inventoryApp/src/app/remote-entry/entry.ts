@@ -49,7 +49,18 @@ export class RemoteEntry  {
       
       this.pageType = this.formToolbarService.pagetype;   
       console.log(this.formToolbarService.pagetype);
-    })
+    });
+
+    // Sync toolbar state from child (e.g. when page opens in New mode, show Save button)
+    this.formToolbarService.getToolbarState$().subscribe((state) => {
+      if (state.isNewMode !== undefined) this.isNewMode = state.isNewMode;
+      if (state.isEditMode !== undefined) this.isEditMode = state.isEditMode;
+      if (state.isSaveBtnDisabled !== undefined) this.isSaveBtnDisabled = state.isSaveBtnDisabled;
+      if (state.isNewBtnDisabled !== undefined) this.isNewBtnDisabled = state.isNewBtnDisabled;
+      if (state.isEditBtnDisabled !== undefined) this.isEditBtnDisabled = state.isEditBtnDisabled;
+      if (state.isDeleteBtnDisabled !== undefined) this.isDeleteBtnDisabled = state.isDeleteBtnDisabled;
+      if (state.isPrintBtnDisabled !== undefined) this.isPrintBtnDisabled = state.isPrintBtnDisabled;
+    });
   }
 
   ngAfterViewInit() {

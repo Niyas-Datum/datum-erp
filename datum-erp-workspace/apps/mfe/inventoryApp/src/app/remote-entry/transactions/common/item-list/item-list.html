@@ -92,13 +92,15 @@
             {{ data.unit?.unit || data.unit || '' }}
           </ng-template>
           <ng-template #editTemplate let-data>
-            <input
-              type="text"
-              [value]="data.unit?.unit || data.unit"
-              (blur)="onUnitChange($event, data)"
+            <ejs-dropdownlist
+              [dataSource]="getUnitsForRow(data)"
+              [fields]="{ text: 'unit', value: 'unit' }"
+              [value]="data.unit?.unit || data.unit || null"
+              [allowFiltering]="true"
+              placeholder="Search or select unit"
+              (change)="onUnitChange($event, data)"
               (keydown)="onKeyDown($event, data, 'unit')"
-              placeholder="Enter unit"
-            />
+            ></ejs-dropdownlist>
           </ng-template>
         </e-column>
         <e-column

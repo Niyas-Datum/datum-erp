@@ -28,6 +28,7 @@ import {
   GridComponent,
 } from '@syncfusion/ej2-angular-grids';
 import { MultiColumnComboBoxModule } from '@syncfusion/ej2-angular-multicolumn-combobox';
+import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 
 import { TransactionService } from '../services/transaction.services';
 import { TransactionsComponent } from '../../transactions-component';
@@ -36,7 +37,7 @@ import { CommonService } from '../services/common.services';
 
 @Component({
   selector: 'app-item-list',
-  imports: [CommonModule, GridModule, MultiColumnComboBoxModule, FormsModule],
+  imports: [CommonModule, GridModule, MultiColumnComboBoxModule, DropDownListModule, FormsModule],
   templateUrl: './item-list.html',
   styleUrl: './item-list.scss',
   providers: [FilterService, VirtualScrollService, EditService, ToolbarService],
@@ -220,8 +221,23 @@ public itemService = inject(ItemService);
 
   /** -------------------- Grid Edit Handlers -------------------- **/
   onItemSelect(args: any, data: any): void {
-    const selectedItem = this.itemService.fillItemDataOptions()
-      .find((item: any) => item.itemCode === args.value);
+    const value = (args?.value ?? args?.itemData?.itemCode ?? args?.itemData?.itemName ?? '').toString().trim();
+    const options = this.itemService.fillItemDataOptions();
+    // Resolve selected item from master only (so typed "test1" with no match shows invalid)
+    let selectedItem: any = null;
+    if (args?.itemData && typeof args.itemData === 'object' && (args.itemData.itemCode != null || args.itemData.itemName != null)) {
+      const code = (args.itemData.itemCode ?? args.itemData.itemName ?? '').toString().trim();
+      selectedItem = options.find((item: any) =>
+        (item.itemCode || '') === code || (item.itemName || '') === code
+      ) ?? null;
+      if (selectedItem) selectedItem = this.normalizeSelectedItem({ ...selectedItem, ...args.itemData });
+    }
+    if (!selectedItem && value) {
+      selectedItem = options.find((item: any) =>
+        (item.itemCode || item.itemName || '') === value
+      ) ?? null;
+      if (selectedItem) selectedItem = this.normalizeSelectedItem(selectedItem);
+    }
 
     if (selectedItem) {
       // Check if the same item already exists in the grid (same itemId and unit)
@@ -271,17 +287,18 @@ public itemService = inject(ItemService);
           this.itemService.addNewRow();
         }, 100);
       } else {
-        // New item - add it normally
+        // New item - add it normally (store taxPerc on row for qty/rate recalc)
         Object.assign(data, {
-          itemId: selectedItem.id,  
+          itemId: selectedItem.id,
           itemCode: selectedItem.itemCode,
           itemName: selectedItem.itemName,
           unit: selectedItem.unitname,
           qty: 1,
           rate: selectedItem.rate,
+          taxPerc: selectedItem.taxPerc ?? 0,
         });
 
-        this.calculateRowTotals(data, selectedItem.taxPerc);
+        this.calculateRowTotals(data, selectedItem.taxPerc ?? 0);
         this.updateRowInGrid(data);
 
         setTimeout(() => {
@@ -290,7 +307,26 @@ public itemService = inject(ItemService);
         }, 100);
       }
     } else {
-      // Item not found - still add new row
+      // Invalid entry: not in item master - show error and clear field
+      if (value) {
+        this.baseService.showCustomDialoguePopup(
+          'Entered item is not in item master. Please select a valid item.',
+          'Invalid Entry',
+          'WARN'
+        );
+        Object.assign(data, {
+          itemId: '',
+          itemCode: '',
+          itemName: '',
+          unit: '',
+          qty: 0,
+          rate: 0,
+          amount: 0,
+          taxValue: 0,
+          totalAmount: 0,
+        });
+        this.updateRowInGrid(data);
+      }
       setTimeout(() => {
         this.grid.endEdit();
         this.itemService.addNewRow();
@@ -298,36 +334,93 @@ public itemService = inject(ItemService);
     }
   }
 
+  private normalizeSelectedItem(eventItem: any): any {
+    if (!eventItem || typeof eventItem !== 'object' || (eventItem.itemCode == null && eventItem.itemName == null)) return null;
+    return {
+      id: eventItem.id ?? eventItem.itemId,
+      itemId: eventItem.itemId ?? eventItem.id,
+      itemCode: eventItem.itemCode ?? '',
+      itemName: eventItem.itemName ?? '',
+      unitname: eventItem.unitname ?? eventItem.unit ?? '',
+      rate: eventItem.rate ?? 0,
+      taxPerc: eventItem.taxPerc ?? 0,
+      ...eventItem,
+    };
+  }
+
 
   onQTYChange(event: any, data: any): void {
-    data.qty = parseFloat(event.target.value) || 0;
+    const qty = event?.target?.value != null
+      ? parseFloat(String(event.target.value)) || 0
+      : (data?.qty != null ? parseFloat(String(data.qty)) : 0);
+    data.qty = qty;
     this.recalculateAndUpdateRow(data);
   }
 
   onRateChange(event: any, data: any): void {
-    data.rate = parseFloat(event.target.value) || 0;
+    const rate = event?.target?.value != null
+      ? parseFloat(String(event.target.value)) || 0
+      : (data?.rate != null ? parseFloat(String(data.rate)) : 0);
+    data.rate = rate;
     this.recalculateAndUpdateRow(data);
   }
 
+  /** Get allowed units for this row from item master (current item's unitPopup or distinct units). */
+  getUnitsForRow(data: any): { unit: string }[] {
+    const options = this.itemService.fillItemDataOptions();
+    if (!options?.length) return [];
+    const itemCode = (data?.itemCode ?? '').toString().trim();
+    if (itemCode) {
+      const item = options.find((i: any) => (i.itemCode || i.itemName) === itemCode);
+      if (item?.unitPopup?.length) return item.unitPopup.map((u: any) => ({ unit: u.unit || u }));
+      if (item?.unitname) return [{ unit: item.unitname }];
+    }
+    const distinct = new Set<string>();
+    options.forEach((i: any) => {
+      const u = (i.unitname || i.unit || '').toString().trim();
+      if (u) distinct.add(u);
+    });
+    return Array.from(distinct).map((u) => ({ unit: u }));
+  }
+
   onUnitChange(event: any, data: any): void {
-    data.unit = event.target.value;
+    const raw = event?.value ?? event?.target?.value ?? event?.itemData?.unit ?? '';
+    const value = (typeof raw === 'object' ? (raw?.unit ?? raw) : raw).toString().trim();
+    const allowed = this.getUnitsForRow(data).map((x) => (x.unit || '').toString().trim());
+    const valid = !value || (allowed.length ? allowed.includes(value) : false);
+    if (value && !valid) {
+      this.baseService.showCustomDialoguePopup(
+        'Unit must be from item master. Please select a valid unit.',
+        'Invalid Unit',
+        'WARN'
+      );
+      data.unit = '';
+      this.updateRowInGrid(data);
+      return;
+    }
+    data.unit = value || '';
     this.updateRowInGrid(data);
   }
 
   private recalculateAndUpdateRow(data: any): void {
-    const selectedItem = this.itemService.fillItemDataOptions()
-      .find((item: any) => item.itemCode === data.itemCode);
-
-    if (selectedItem) {
-      this.calculateRowTotals(data, selectedItem.taxPerc);
-      this.updateRowInGrid(data);
-    }
+    const options = this.itemService.fillItemDataOptions();
+    const itemCode = (data?.itemCode ?? '').toString().trim();
+    const selectedItem = options.find((item: any) =>
+      (item.itemCode || item.itemName || '') === itemCode ||
+      (item.itemCode || '') === (data?.itemName ?? '')
+    );
+    const taxPerc = selectedItem?.taxPerc ?? data?.taxPerc ?? 0;
+    this.calculateRowTotals(data, taxPerc);
+    this.updateRowInGrid(data);
   }
 
   private calculateRowTotals(data: any, taxPerc: number): void {
-    data.grossAmt = parseFloat((data.qty * data.rate).toFixed(4));
-    data.amount = parseFloat((data.grossAmt - (data.discount || 0)).toFixed(4));
-    data.taxValue = parseFloat(((data.amount * taxPerc) / 100).toFixed(4));
+    const qty = parseFloat(String(data.qty)) || 0;
+    const rate = parseFloat(String(data.rate)) || 0;
+    const discount = parseFloat(String(data.discount)) || 0;
+    data.grossAmt = parseFloat((qty * rate).toFixed(4));
+    data.amount = parseFloat((data.grossAmt - discount).toFixed(4));
+    data.taxValue = parseFloat(((data.amount * (taxPerc || 0)) / 100).toFixed(4));
     data.totalAmount = parseFloat((data.amount + data.taxValue).toFixed(4));
   }
 

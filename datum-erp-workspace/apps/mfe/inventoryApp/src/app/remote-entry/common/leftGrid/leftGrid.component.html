@@ -4,10 +4,19 @@
     <p translate>Disabled</p>
   </div>
 
+  <div class="left-grid-search" *ngIf="columns?.length">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search by Invoice No, Customer, VAT..."
+      [ngModel]="searchText()"
+      (ngModelChange)="onSearchChange($event)"
+    />
+  </div>
 
 <ejs-grid
   #grid
-  [dataSource]="this.leftdata$ | async  "  
+  [dataSource]="filteredData$ | async"  
   [allowResizing]="true"
   [allowTextWrap]="true"
   [enableHover]="false"

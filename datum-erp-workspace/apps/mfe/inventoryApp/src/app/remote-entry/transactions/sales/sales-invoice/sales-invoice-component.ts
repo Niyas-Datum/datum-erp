@@ -124,17 +124,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   }
 
   private checkAutoNewAndInitialize(): void {
-    // Check if AutoNew is enabled in commonFillData
-    const commonFillData = this.invoiceHeader?.commonFillData || {};
-    const autoNew = (commonFillData as any)?.autoNew;
-    
-    if (autoNew === true) {
-      // Open in new mode
-      this.enterNewMode();
-    } else {
-      // Open last invoice
-      this.autoSelectLastTransaction();
-    }
+    // Page must open in New mode: Save enabled, fields editable, item grid ready
+    this.enterNewMode();
   }
 
   ngOnDestroy(): void {
@@ -304,6 +295,17 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     setTimeout(() => this.checkAutoNewAndInitialize(), 300);
   }
 
+  /** Refresh left grid data only (e.g. when entering New mode). Does not run checkAutoNewAndInitialize. */
+  private async refreshLeftGridOnly(): Promise<void> {
+    if (!this.currentPageId || !this.currentVoucherId) return;
+    await this.LeftGridInit();
+    this.dataSharingService.setData({
+      columns: this.leftGrid.leftGridColumns,
+      data: this.leftGrid.leftGridData,
+      pageheading: this.pageheading,
+    });
+  }
+
   // ========== Transaction Loading Methods ==========
   private loadTransactionDetails(salesId: number): void {
     if (!this.currentPageId || !this.currentVoucherId) {
@@ -338,6 +340,13 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.isNewMode.set(false);
     this.isEditMode.set(false);
     this.dataSharingService.setSelectedSalesId(this.selectedTransactionId());
+    this.formToolbarService.setToolbarState({
+      isNewMode: false,
+      isEditMode: false,
+      isSaveBtnDisabled: true,
+      isEditBtnDisabled: false,
+      isDeleteBtnDisabled: false,
+    });
   }
 
   // ========== Mode Management Methods ==========
@@ -370,6 +379,17 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.resetFormsForNewMode();
     this.commonService.newlyAddedRows.set([]);
 
+    this.formToolbarService.setToolbarState({
+      isNewMode: true,
+      isEditMode: false,
+      isSaveBtnDisabled: false,
+      isEditBtnDisabled: true,
+      isDeleteBtnDisabled: true,
+    });
+
+    // Refresh left grid so it shows latest invoice list when starting a new invoice
+    setTimeout(() => this.refreshLeftGridOnly(), 150);
+
     setTimeout(() => {
       this.itemService.initializeGridForNewMode();
       // Ensure grid is editable immediately
@@ -389,6 +409,13 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.isEditMode.set(false);
     this.clearAllComponents(true);
     this.resetInitialValues();
+    this.formToolbarService.setToolbarState({
+      isNewMode: false,
+      isEditMode: false,
+      isSaveBtnDisabled: true,
+      isEditBtnDisabled: false,
+      isDeleteBtnDisabled: false,
+    });
     this.autoSelectLastTransaction();
   }
 
@@ -400,14 +427,23 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.isEditMode.set(true);
     this.isNewMode.set(false);
     this.loadTransactionForEdit();
+
+    this.formToolbarService.setToolbarState({
+      isNewMode: false,
+      isEditMode: true,
+      isSaveBtnDisabled: false,
+      isEditBtnDisabled: true,
+      isDeleteBtnDisabled: true,
+    });
     
-    // Ensure grid is editable in edit mode
+    // Ensure grid is editable and add one new row for new items in edit mode
     setTimeout(() => {
       if (this.itemList?.grid) {
         this.itemList.grid.editSettings.allowEditing = true;
         this.itemList.grid.editSettings.allowAdding = true;
       }
-    }, 200);
+      this.itemService.addNewRow();
+    }, 400);
   }
 
   private exitEditMode(): void {
@@ -417,6 +453,13 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.isEditMode.set(false);
     this.isNewMode.set(false);
     this.clearAllComponents(true);
+    this.formToolbarService.setToolbarState({
+      isNewMode: false,
+      isEditMode: false,
+      isSaveBtnDisabled: true,
+      isEditBtnDisabled: false,
+      isDeleteBtnDisabled: false,
+    });
   }
 
   private loadTransactionForEdit(): void {
@@ -641,7 +684,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     }
 
     if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
-      if (!this.isDefaultCash) {
+      // Always show default payment confirmation popup when no cash entries are allocated
+      setTimeout(() => {
         this.viewDialog(
           'Do you want to allocate the payment amount to default cash account?',
           'Default Cash',
@@ -670,14 +714,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
             },
           ]
         );
-        return;
-      } else {
-        this.settingCashAmountOnSave();
-      }
-
-      if (this.invoiceFooter?.cashSelected?.length === 0) {
-        this.ensureCashEntriesForCashPayment(grandTotal);
-      }
+      }, 0);
+      return;
     }
 
     this.continueSaveFlow();
@@ -685,8 +723,28 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
 
   private continueSaveFlow(): void {
     this.adjustRoundoffForDebitCreditBalance();
+    const footerForm = this.invoiceFooter?.salesForm;
+    if (footerForm && !this.isDebitCreditBalanced(footerForm)) {
+      this.baseService.showCustomDialoguePopup(
+        'Credit and debit are not equal. Please correct payment/round off before saving.',
+        'Cannot Save',
+        'WARN'
+      );
+      return;
+    }
     const payload = this.collectTransactionData();
     this.performSave(payload);
+  }
+
+  /** Returns true if debit (grandTotal) equals credit (netAmount + tax + addCharges + roundoff) within tolerance. */
+  private isDebitCreditBalanced(footerForm: any): boolean {
+    const grandTotal = parseFloat(footerForm.get('grandtotal')?.value || 0);
+    const netAmount = parseFloat(footerForm.get('netamount')?.value || 0);
+    const taxTotal = parseFloat(footerForm.get('tax')?.value || 0);
+    const addCharges = parseFloat(footerForm.get('addcharges')?.value || 0);
+    const roundoff = parseFloat(footerForm.get('roundoff')?.value || 0);
+    const credit = netAmount + taxTotal + addCharges + roundoff;
+    return Math.abs(grandTotal - credit) <= 0.01;
   }
 
   /**
@@ -700,7 +758,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     const isCashPayment = payType && (payType.name === 'Cash' || payType.value === 'Cash');
 
     if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
-      if (!this.isDefaultCash) {
+      setTimeout(() => {
         this.viewDialog(
           'Do you want to allocate the payment amount to default cash account?',
           'Default Cash',
@@ -729,12 +787,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
             },
           ]
         );
-        return;
-      }
-      this.settingCashAmountOnSave();
-      if (this.invoiceFooter?.cashSelected?.length === 0) {
-        this.ensureCashEntriesForCashPayment(grandTotal);
-      }
+      }, 0);
+      return;
     }
     this.continueSaveFlow();
   }
@@ -1114,8 +1168,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       transactionId: transactionId,
       terms: footerForm.terms || null,
       warehouse: this.extractWarehouseInfo(headerForm.warehouse),
-      partyInvoiceNo: additionalForm.invoiceno || headerForm.partyinvoiceno || null,
-      partyDate: this.convertToISODate(additionalForm.invoicedate || headerForm.partyinvoicedate),
+      partyInvoiceNo: this.coerceToString(additionalForm.partyInvoiceNo ?? additionalForm.invoiceno ?? headerForm.partyinvoiceno),
+      partyDate: this.convertToISODate(additionalForm.partyInvoiceDate || additionalForm.invoicedate || headerForm.partyinvoicedate),
       orderDate: this.convertToISODate(additionalForm.orderdate),
       orderNo: additionalForm.orderno || null,
       partyNameandAddress: additionalForm.partyaddress || this.invoiceHeader?.address || null,
@@ -1445,18 +1499,29 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   }
 
   // ========== Utility Methods ==========
-  private convertToISODate(dateStr: string | Date): string | null {
-    if (!dateStr) return null;
+  private coerceToString(value: any): string | null {
+    if (value == null) return null;
+    if (typeof value === 'object') return null;
+    return String(value).trim() || null;
+  }
+
+  private convertToISODate(dateStr: string | Date | null | undefined): string | null {
+    if (dateStr == null) return null;
 
     if (dateStr instanceof Date) {
-      return dateStr.toISOString();
+      return isNaN(dateStr.getTime()) ? null : dateStr.toISOString();
     }
 
     if (typeof dateStr === 'string') {
-      const parts = dateStr.split('/');
+      const s = dateStr.trim();
+      if (!s) return null;
+      const d = new Date(s);
+      if (!isNaN(d.getTime())) return d.toISOString();
+      const parts = s.split('/');
       if (parts.length === 3) {
         const [day, month, year] = parts;
-        return new Date(`${year}-${month}-${day}`).toISOString();
+        const d2 = new Date(`${year}-${month}-${day}`);
+        return isNaN(d2.getTime()) ? null : d2.toISOString();
       }
     }
 

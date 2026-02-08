@@ -728,19 +728,19 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   // ========== Popup Management ==========
 
   openCustomerPopup(): void {
-    // Prevent popup during initialization, when setting default values, or if no user interaction
-    if (!this.isComponentInitialized || !this.isUserInteraction || this.isSettingDefaultValues) {
+    this.isUserInteraction = true; // Open on typing (input), not only after prior click
+    if (!this.isComponentInitialized || this.isSettingDefaultValues) {
       return;
     }
-    // Only open if we have customer data loaded
     if (!this.customerData || this.customerData.length === 0) {
       return;
     }
+    const initialSearch = (this.salesForm.get('customer')?.value ?? '').toString().trim();
     this.openPopup('customer', this.customerData, {
       allowEditing: true,
       allowAdding: true,
       allowDeleting: false,
-    });
+    }, initialSearch);
   }
 
   openProjectPopup(): void {
@@ -752,25 +752,31 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   openSalesmanPopup(): void {
+    let initialSearch: string = (this.salesForm?.get('salesman')?.value ?? '').toString().trim();
+    if (typeof this.salesForm?.get('salesman')?.value === 'object' && this.salesForm?.get('salesman')?.value != null) {
+      const v = this.salesForm.get('salesman')?.value as any;
+      initialSearch = (v?.name ?? v?.accountName ?? '').toString().trim();
+    }
     this.openPopup('salesman', this.salesmanData, {
       allowEditing: false,
       allowAdding: false,
       allowDeleting: false,
-    });
+    }, initialSearch);
   }
 
   openReferencePopup(): void {
     this.isPopuprefVisible = true;
   }
 
-  private async openPopup(type: PopupType, data: any[], gridSettings: GridSettings): Promise<void> {
+  private async openPopup(type: PopupType, data: any[], gridSettings: GridSettings, initialSearchText = ''): Promise<void> {
     this.currentPopupType = type;
     
     try {
       const ref = await this.popupService.openLazy('generic', {
         popupData: data,
         gridSettings: gridSettings,
-        popupType: type
+        popupType: type,
+        initialSearchText: initialSearchText || '',
       });
 
       ref?.afterClosed?.subscribe((result: any) => {
@@ -1104,11 +1110,9 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       : `${EndpointConstant.FILLSALESCUSTOMER}&voucherId=${this.voucherNo}&pageId=${this.pageId}`;
   }
 
+  /** Format date using system locale (DD/MM/YYYY or MM/DD/YYYY). */
   private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return date.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
   private handleError(message: string, error: any): void {

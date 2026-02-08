@@ -1031,11 +1031,18 @@ export class InvoiceFooter implements OnInit {
       .subscribe({
         next: (response) => {
           const responseData = response?.data;
-          this.additonalChargesPopupObj = responseData.map((item: any) => ({
-            accountcode: item.alias,
-            accountname: item.name,
-            id: item.id,
-          }));
+          const list = Array.isArray(responseData) ? responseData : [];
+          this.additonalChargesPopupObj = list.map((item: any) => {
+            const code = item.alias ?? item.accountcode ?? '';
+            const name = item.name ?? item.accountname ?? '';
+            return {
+              accontcode: code,
+              accontname: name,
+              id: item.id,
+              accountcode: code,
+              accountname: name,
+            } as additonalChargesPopup;
+          });
           this.popupData = this.additonalChargesPopupObj;
           this.showPopup = true;
         },

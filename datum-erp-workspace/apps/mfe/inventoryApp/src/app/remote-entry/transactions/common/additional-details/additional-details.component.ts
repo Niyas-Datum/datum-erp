@@ -88,7 +88,9 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
 
   private createForm(): void {
     this.additionalDetailsForm = this.fb.group({
-      // General section
+      // General section (party invoice - ensure string/date to avoid [object Object])
+      partyInvoiceNo: [''],
+      partyInvoiceDate: [''],
       invoiceno: [''],
       invoicedate: [''],
       orderno: ['', Validators.required],
@@ -334,10 +336,26 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
     this.partyBalance = data.partyBalance || '0.0000';
   }
 
+  /** Format date for display using system locale */
+  private formatDateForInput(date: Date | string | null): string {
+    if (date == null) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(d.getTime())) return '';
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
+  }
+
   bindAdditionalDetailsFromTransaction(fillAdditionals: any): void {
     if (!fillAdditionals) return;
 
+    const partyInvNo = fillAdditionals.partyInvoiceNo ?? fillAdditionals.entryNo ?? '';
+    const partyInvNoStr = typeof partyInvNo === 'object' ? '' : String(partyInvNo);
+    const partyInvDate = fillAdditionals.partyInvoiceDate ?? fillAdditionals.entryDate;
     const formData: any = {
+      partyInvoiceNo: partyInvNoStr,
+      partyInvoiceDate: partyInvDate ? this.formatDateForInput(partyInvDate) : '',
       invoiceno: fillAdditionals.entryNo || '',
       invoicedate: fillAdditionals.entryDate ? new Date(fillAdditionals.entryDate) : null,
       orderno: fillAdditionals.referenceNo || '',

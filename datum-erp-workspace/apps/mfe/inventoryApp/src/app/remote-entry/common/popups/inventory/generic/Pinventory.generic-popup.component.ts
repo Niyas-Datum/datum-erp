@@ -3,17 +3,23 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
 
 @Component({
   selector: 'generic-popup',
   standalone: true,
-  imports: [CommonModule, GridModule],
+  imports: [CommonModule, GridModule, FormsModule],
   template: `
+    <div class="popup-search" style="margin-bottom: 8px;">
+      <input type="text" class="form-control" placeholder="Search..."
+        [ngModel]="searchText"
+        (ngModelChange)="onSearchChange($event)" />
+    </div>
     <!-- Syncfusion Grid Implementation -->
     <ejs-grid
       #grid
-      [dataSource]="popupGridData"
+      [dataSource]="filteredGridData"
       [allowPaging]="false"
       [enableVirtualization]="true"
       [editSettings]="editSettings"
@@ -43,6 +49,8 @@ import { GridModule } from '@syncfusion/ej2-angular-grids';
 export class PinventoryGenericPopupComponent implements OnInit {
   // Inputs from popup service (will be assigned via Object.assign)
   popupData: any[] = [];
+  /** Pre-fill search when opening (e.g. current customer name). */
+  initialSearchText = '';
   gridSettings: { allowEditing: boolean; allowAdding: boolean; allowDeleting: boolean } = {
     allowEditing: false,
     allowAdding: false,
@@ -55,10 +63,14 @@ export class PinventoryGenericPopupComponent implements OnInit {
 
   selectionSettings = { type: 'Multiple', mode: 'Row' };
   private cachedPopupGridData: any[] = [];
+  searchText = '';
 
   ngOnInit(): void {
     if (this.popupData && this.popupData.length > 0) {
       this.cachedPopupGridData = this.transformPopupGridData(this.popupData);
+    }
+    if (this.initialSearchText != null && this.initialSearchText !== '') {
+      this.searchText = String(this.initialSearchText).trim();
     }
   }
 
@@ -73,8 +85,19 @@ export class PinventoryGenericPopupComponent implements OnInit {
     return [];
   }
 
-  get popupGridData() {
-    return this.cachedPopupGridData;
+  onSearchChange(value: string): void {
+    this.searchText = (value || '').trim();
+  }
+
+  /** Filter by search: cumulative (each keystroke filters current list). */
+  get filteredGridData(): any[] {
+    const q = this.searchText.toLowerCase();
+    if (!q) return this.cachedPopupGridData;
+    return this.cachedPopupGridData.filter((row: any) => {
+      return Object.values(row).some((v) =>
+        String(v ?? '').toLowerCase().includes(q)
+      );
+    });
   }
 
   get editSettings() {
