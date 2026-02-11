@@ -285,6 +285,7 @@ public itemService = inject(ItemService);
           
           // Add a new empty row so user can continue adding items
           this.itemService.addNewRow();
+          this.refreshGridAfterRowChange();
         }, 100);
       } else {
         // New item - add it normally (store taxPerc on row for qty/rate recalc)
@@ -304,6 +305,7 @@ public itemService = inject(ItemService);
         setTimeout(() => {
           this.grid.endEdit();
           this.itemService.addNewRow();
+          this.refreshGridAfterRowChange();
         }, 100);
       }
     } else {
@@ -330,8 +332,19 @@ public itemService = inject(ItemService);
       setTimeout(() => {
         this.grid.endEdit();
         this.itemService.addNewRow();
+        this.refreshGridAfterRowChange();
       }, 100);
     }
+  }
+
+  /** Ensures the grid re-renders after tempItemFillDetails is updated (e.g. new row added). */
+  private refreshGridAfterRowChange(): void {
+    setTimeout(() => {
+      if (this.grid) {
+        this.grid.dataSource = this.commonService.tempItemFillDetails();
+        this.grid.refresh();
+      }
+    }, 50);
   }
 
   private normalizeSelectedItem(eventItem: any): any {

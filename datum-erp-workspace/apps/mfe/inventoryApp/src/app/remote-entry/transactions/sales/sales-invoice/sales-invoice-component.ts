@@ -436,13 +436,12 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       isDeleteBtnDisabled: true,
     });
     
-    // Ensure grid is editable and add one new row for new items in edit mode
+    // Ensure grid is editable; empty row for new items is added by invoice-footer when transaction data is bound
     setTimeout(() => {
       if (this.itemList?.grid) {
         this.itemList.grid.editSettings.allowEditing = true;
         this.itemList.grid.editSettings.allowAdding = true;
       }
-      this.itemService.addNewRow();
     }, 400);
   }
 
@@ -821,7 +820,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
 
     this.isLoading.set(true);
 
-    // Backend expects PATCH for update (POST returns 405 Method Not Allowed)
+    // Backend [FromBody] binds the whole body to InventoryTransactionDto - send transaction object as root
     const saveOperation = isUpdate
       ? this.transactionService.patchDetails(endpoint, transactionData)
       : this.transactionService.saveDetails(endpoint, transactionData);
@@ -1331,7 +1330,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     return {
       totalDisc: formatAmount(parseFloat(footerForm.discountamount) || 0),
       amt: formatAmount(parseFloat(this.calculateTotalGrossAmount(items))),
-      roundoff: this.parseFloatOrZero(footerForm.roundoff),
+      roundoff: formatAmount(this.parseFloatOrZero(footerForm.roundoff)),
       netAmount: formatAmount(parseFloat(footerForm.netamount) || 0),
       grandTotal: formatAmount(parseFloat(footerForm.grandtotal) || 0),
       payType: this.extractPayType(footerForm.paytype),
@@ -1426,14 +1425,20 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   private extractPayType(paytype: any): any {
     if (!paytype) return null;
 
+    // API expects payType.value as string (not number)
+    const rawValue = typeof paytype === 'object'
+      ? (paytype.value ?? paytype.name ?? null)
+      : paytype;
+    const valueStr = rawValue != null ? String(rawValue) : null;
+
     if (typeof paytype === 'object') {
       return {
-        id: paytype.id || null,
-        value: paytype.value || paytype.name || null,
+        id: paytype.id ?? null,
+        value: valueStr,
       };
     }
 
-    return { id: null, value: paytype };
+    return { id: null, value: valueStr };
   }
 
   private extractIdValue(value: any): any {
@@ -1528,15 +1533,20 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     return null;
   }
 
+  /** Normalize unit to { unit, basicunit, factor } - backend C# model expects lowercase "basicunit", not "basicUnit". */
   private buildUnitInfo(item: any): any {
-    if (item.unit && typeof item.unit === 'object') {
-      return item.unit;
+    const u = item.unit;
+    if (u && typeof u === 'object') {
+      const unitStr = (u.unit ?? u).toString?.() ?? '';
+      const basic = u.basicunit ?? u.basicUnit ?? unitStr;
+      return {
+        unit: unitStr,
+        basicunit: typeof basic === 'string' ? basic : String(basic ?? ''),
+        factor: u.factor != null ? parseFloat(String(u.factor)) : 1,
+      };
     }
-    return {
-      unit: item.unit || '',
-      factor: 1,
-      basicunit: item.unit || '',
-    };
+    const s = (u ?? '').toString();
+    return { unit: s, basicunit: s, factor: 1 };
   }
 
   private buildUniqueItems(uniqueItems: any): any[] {

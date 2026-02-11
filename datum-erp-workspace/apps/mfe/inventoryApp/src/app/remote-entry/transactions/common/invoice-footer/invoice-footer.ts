@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, EventEmitter, inject, OnInit, Output, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
@@ -73,6 +73,8 @@ export class InvoiceFooter implements OnInit {
     { id: 1, accountcode: '', accountname: '', description: '', amount: 0 },
   ];
   @Output() footerPopUpData = new EventEmitter<any>();
+  /** When true, one empty row is added after loading transaction items so user can insert new lines. */
+  @Input() editMode = false;
   //second popup
   showPopup = false;
   additonalChargesPopupObj = [] as Array<additonalChargesPopup>;
@@ -258,8 +260,12 @@ export class InvoiceFooter implements OnInit {
     // 👉 UPDATE: Map items to grid format and update tempItemFillDetails
     const mappedItems = this.mapItemsToGridFormat(fillItems);
     this.commonService.tempItemFillDetails.set(mappedItems);
-    
-    
+
+    // In edit mode, add one empty row so user can insert new items (fix: new row not appearing)
+    if (this.editMode) {
+      setTimeout(() => this.itemService.addNewRow(), 50);
+    }
+
     // Force change detection to ensure grid updates
     this.cdr.markForCheck();
 
@@ -550,7 +556,11 @@ export class InvoiceFooter implements OnInit {
     this.commonService.invTransactions.set(items);
     const mappedItems = this.mapItemsToGridFormat(items);
     this.commonService.tempItemFillDetails.set(mappedItems);
-    
+
+    if (this.editMode) {
+      setTimeout(() => this.itemService.addNewRow(), 50);
+    }
+
     // Force change detection to ensure grid updates
     this.cdr.markForCheck();
 
