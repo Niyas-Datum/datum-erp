@@ -226,6 +226,10 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     this.isInputDisabled = false;
     this.customerSupplierForm.reset();
     this.customerSupplierForm.enable();
+    this.customerSupplierForm.patchValue({
+      active:true,
+      letsystemgeneratenewaccountforparty:true
+    });
     this.imageData = null;
   }
 
@@ -540,6 +544,9 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         next: (response) => {
           const data = response?.data ?? [];
           this.accountGroupData.set(data);
+          if (data.length > 0) {
+          this.customerSupplierForm.get('accountgroup')?.setValue(data[0].id);
+        }
         },
         error: (error) => {
           this.toast.error('An Error Occured', error);
@@ -958,11 +965,11 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   override SaveFormData(): void {
     //this.formSubmitted = true;   // 🔥 trigger validation display
 
-    if (this.customerSupplierForm.invalid) {
-      this.customerSupplierForm.markAllAsTouched(); // optional
-      console.log('❌ Form invalid');
-      return; // stop save
-    }
+    // if (this.customerSupplierForm.invalid) {
+    //   this.customerSupplierForm.markAllAsTouched(); // optional
+    //   console.log('❌ Form invalid');
+    //   return; // stop save
+    // }
 
     let countryName = null;
     const payload = {
@@ -1090,6 +1097,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
       },
       "deliveryDetails": this.allDeliveryDetails
     }
+    console.log("PAyload:"+JSON.stringify(payload,null,2))
     if (this.isUpdate()) {
       this.updateCallback(payload);
     } else {

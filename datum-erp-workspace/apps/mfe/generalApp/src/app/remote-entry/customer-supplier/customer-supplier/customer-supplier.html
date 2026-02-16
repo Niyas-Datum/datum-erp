@@ -159,12 +159,22 @@
                   <div class="form-row form-row-inline">
                     <label>Credit Period</label>
                     <ejs-textbox formControlName="creditperiod" [readonly]="isInputDisabled"></ejs-textbox>
+                     <small
+                    *ngIf="isInvalid('creditperiod') && customerSupplierForm.get('creditperiod')?.errors?.['decimalOnly']"
+                    style="color:red">
+                    Must be a valid decimal number
+                  </small>
                   </div>
 
                   <!-- creditlimit -->
                   <div class="form-row form-row-inline">
                     <label>Credit Limit</label>
                     <ejs-textbox formControlName="creditlimit" [readonly]="isInputDisabled"></ejs-textbox>
+                     <small
+                    *ngIf="isInvalid('creditlimit') && customerSupplierForm.get('creditlimit')?.errors?.['decimalOnly']"
+                    style="color:red">
+                    Must be a valid decimal number
+                  </small>
                   </div>
                 </div>
                 <div class="grid-3">
@@ -497,7 +507,7 @@
                 <div class="input-with-suffix">
                   <ejs-textbox id="valueofproperty" formControlName="valueofproperty"
                     [readonly]="isInputDisabled"></ejs-textbox>
-                     <small
+                  <small
                     *ngIf="isInvalid('valueofproperty') && customerSupplierForm.get('valueofproperty')?.errors?.['decimalOnly']"
                     style="color:red">
                     Must be a valid decimal number
