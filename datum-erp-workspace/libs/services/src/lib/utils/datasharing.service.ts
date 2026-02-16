@@ -99,7 +99,9 @@ export class DataSharingService {
   public triggerRecalculateTotal$ = new Subject<void>();
   public triggerRTaxValueTotal$ = new Subject<void>();
   public triggerNetAmountTotal$ = new Subject<void>();
-    public triggerGrossAmountTotal$ = new Subject<void>();
+  public triggerGrossAmountTotal$ = new Subject<void>();
+  /** Emit to force footer (and item grid) to re-fetch current transaction without clearing header. */
+  public reloadTransactionForEdit$ = new Subject<void>();
   
 
   private branchesSubject = new BehaviorSubject<COSTCATEGORIES[]>([]);

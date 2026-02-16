@@ -466,7 +466,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     if (!this.selectedTransactionId()) {
       return;
     }
-    this.dataSharingService.setSelectedSalesId(this.selectedTransactionId());
+    // Force footer to re-fetch current transaction (no clear of header/grid – avoids edit binding issues).
+    this.dataSharingService.reloadTransactionForEdit$.next();
   }
 
   private confirmExitIfNewlyAddedRows(modeName: string): boolean {
@@ -1231,6 +1232,18 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       }
     }
 
+    const unitInfo = this.buildUnitInfo(item);
+    const qty = parseFloat(String(item.qty || 0));
+    const rate = parseFloat(parseFloat(String(item.rate || 0)).toFixed(4));
+    const discount = parseFloat(parseFloat(String(item.discount || 0)).toFixed(4));
+    const taxPerc = parseFloat(String(item.taxPerc || 0));
+    const grossAmt = parseFloat((qty * rate).toFixed(4));
+    const amount = parseFloat((grossAmt - discount).toFixed(4));
+    const taxValue = parseFloat(((amount * taxPerc) / 100).toFixed(4));
+    const total = parseFloat((amount + taxValue).toFixed(4));
+    const factor = unitInfo?.factor ?? 1;
+    const basicQty = factor === 1 ? Math.round(qty) : parseInt(String(item.basicQty ?? item.qty ?? 0));
+
     return {
       transactionId: itemTransactionId,
       itemId: parseInt(String(item.itemId || item.id || 0)),
@@ -1238,32 +1251,27 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       itemName: item.itemName,
       location: item.location || '',
       batchNo: item.batchNo || '',
-      unit: this.buildUnitInfo(item),
-      qty: parseFloat(String(item.qty || 0)),
+      unit: unitInfo,
+      qty,
       focQty: parseInt(String(item.focQty || 0)),
-      basicQty: parseInt(String(item.basicQty || 0)),
+      basicQty,
       additional: parseInt(String(item.additional || 0)),
-      rate: parseFloat(parseFloat(String(item.rate || 0)).toFixed(4)),
+      rate,
       otherRate: parseFloat(parseFloat(String(item.otherRate || 0)).toFixed(4)),
       margin: parseFloat(parseFloat(String(item.margin || 0)).toFixed(4)),
       rateDisc: parseFloat(parseFloat(String(item.rateDisc || 0)).toFixed(4)),
-      grossAmt: (() => {
-        const existingGrossAmt = parseFloat(String(item.grossAmt || item.grossAmount || 0));
-        const calculatedGrossAmt = parseFloat(String(item.qty || 0)) * parseFloat(String(item.rate || 0));
-        const finalGrossAmt = existingGrossAmt || calculatedGrossAmt;
-        return parseFloat(finalGrossAmt.toFixed(4));
-      })(),
-      discount: parseFloat(parseFloat(String(item.discount || 0)).toFixed(4)),
+      grossAmt,
+      discount,
       discountPerc: parseFloat(parseFloat(String(item.discountPerc || 0)).toFixed(4)),
-      amount: parseFloat(parseFloat(String(item.amount || 0)).toFixed(4)),
-      taxValue: parseFloat(parseFloat(String(item.taxValue || 0)).toFixed(4)),
-      taxPerc: parseFloat(String(item.taxPerc || 0)),
+      amount,
+      taxValue,
+      taxPerc,
       printedMRP: parseFloat(String(item.printedMRP || 0)),
       ptsRate: parseFloat(String(item.ptsRate || 0)),
       ptrRate: parseFloat(String(item.ptrRate || 0)),
       pcs: parseInt(String(item.pcs || 0)),
       stockItemId: parseInt(String(item.stockItemId || 0)),
-      total: parseFloat(String(item.total || item.totalAmount || 0)),
+      total,
       expiryDate: item.expiryDate || null,
       description: item.description || null,
       lengthFt: parseFloat(String(item.lengthFt || 0)),
@@ -1339,13 +1347,14 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       balance: formatAmount(parseFloat(footerForm.balance) || 0),
       advance: [],
       cash: (this.invoiceFooter?.cashSelected ?? []).map((entry: any) => {
-        const accountId = parseInt(String(entry.id || entry.accountCode?.id || 61));
+        // entry.id = transaction entry id (for updates); accountCode.id/accountId = account master id
+        const accountMasterId = parseInt(String(entry.accountCode?.id ?? entry.accountId ?? 61));
         return {
-          id: accountId,
+          id: entry.id ?? 0,
           accountCode: {
             alias: entry.accountCode?.alias || '',
             name: entry.accountCode?.name || '',
-            id: accountId,
+            id: accountMasterId,
           },
         description: entry.description || '',
           amount: formatAmount(parseFloat(String(entry.amount || 0))),
@@ -1425,20 +1434,35 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   private extractPayType(paytype: any): any {
     if (!paytype) return null;
 
-    // API expects payType.value as string (not number)
+    // API expects payType.id as number and payType.value as string (e.g. "Credit" or "Cash")
     const rawValue = typeof paytype === 'object'
       ? (paytype.value ?? paytype.name ?? null)
       : paytype;
     const valueStr = rawValue != null ? String(rawValue) : null;
 
-    if (typeof paytype === 'object') {
-      return {
-        id: paytype.id ?? null,
-        value: valueStr,
-      };
+    // Resolve id: prefer paytype.id, or parse value when it looks like an id
+    let id: number | null = typeof paytype === 'object' && paytype.id != null
+      ? Number(paytype.id)
+      : null;
+    let value: string | null = valueStr;
+
+    // If id is null but value looks like a numeric id, look up in payTypeObj for proper id + name
+    const payTypeObj = this.invoiceFooter?.payTypeObj ?? [];
+    if ((id == null || valueStr === String(id)) && payTypeObj.length > 0) {
+      const numericVal = valueStr != null && /^\d+$/.test(valueStr) ? Number(valueStr) : NaN;
+      const lookupId = Number.isFinite(id) ? id : (Number.isFinite(numericVal) ? numericVal : null);
+      const matched = payTypeObj.find(
+        (p: any) => p.id === lookupId || p.id == valueStr || String(p.id) === valueStr
+      );
+      if (matched) {
+        id = Number(matched.id);
+        value = matched.name ?? valueStr;
+      } else if (Number.isFinite(numericVal)) {
+        id = numericVal;
+      }
     }
 
-    return { id: null, value: valueStr };
+    return { id: Number.isFinite(id) ? id : null, value };
   }
 
   private extractIdValue(value: any): any {

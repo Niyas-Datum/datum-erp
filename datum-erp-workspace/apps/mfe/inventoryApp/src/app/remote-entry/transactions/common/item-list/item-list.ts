@@ -288,17 +288,18 @@ public itemService = inject(ItemService);
           this.refreshGridAfterRowChange();
         }, 100);
       } else {
-        // New item - add it normally (store taxPerc on row for qty/rate recalc)
+        // New item - bind to row (unit as object so grid display and save stay consistent)
+        const unitStr = (selectedItem.unitname ?? selectedItem.unit ?? '').toString();
+        const unitObj = { unit: unitStr, basicunit: unitStr, factor: 1 };
         Object.assign(data, {
           itemId: selectedItem.id,
           itemCode: selectedItem.itemCode,
           itemName: selectedItem.itemName,
-          unit: selectedItem.unitname,
+          unit: unitObj,
           qty: 1,
           rate: selectedItem.rate,
           taxPerc: selectedItem.taxPerc ?? 0,
         });
-
         this.calculateRowTotals(data, selectedItem.taxPerc ?? 0);
         this.updateRowInGrid(data);
 
@@ -341,7 +342,8 @@ public itemService = inject(ItemService);
   private refreshGridAfterRowChange(): void {
     setTimeout(() => {
       if (this.grid) {
-        this.grid.dataSource = this.commonService.tempItemFillDetails();
+        const next = [...this.commonService.tempItemFillDetails()];
+        this.grid.dataSource = next;
         this.grid.refresh();
       }
     }, 50);
@@ -442,13 +444,14 @@ public itemService = inject(ItemService);
     const index = rows.findIndex((row: any) => row.rowId === rowData.rowId);
 
     if (index !== -1) {
-      rows[index] = { ...rowData };
+      // Preserve existing row identity and server fields (e.g. transactionId), overlay updated fields
+      rows[index] = { ...rows[index], ...rowData };
       this.commonService.tempItemFillDetails.set([...rows]);
 
-      // Trigger all necessary recalculations
       this.dataSharingService.triggerRecalculateTotal$.next();
       this.dataSharingService.triggerRTaxValueTotal$.next();
       this.dataSharingService.triggerNetAmountTotal$.next();
+      this.dataSharingService.triggerGrossAmountTotal$.next();
     }
   }
 
