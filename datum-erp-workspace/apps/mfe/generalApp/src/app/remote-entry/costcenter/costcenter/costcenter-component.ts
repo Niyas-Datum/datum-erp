@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { ChangeDetectorRef, Component, inject, NgZone, OnInit, signal } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, NgZone, OnInit, signal, ViewChild } from "@angular/core";
 import { BaseComponent } from "@org/architecture";
 import { GeneralAppService } from "../../http/general-app.service";
 import { ClientDropdown, ConsultancyDropdown, CostCategories, CostCenter, CostCentreStatus, CreateUnder, Nature, StaffDropdown } from "../model/pCostCenter.model";
@@ -8,6 +8,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BaseService } from "@org/services";
+import { MultiColumnComboBoxComponent } from '@syncfusion/ej2-angular-multicolumn-combobox';
+
 @Component({
   selector: 'app-costcategory-Main',
   standalone: false,
@@ -15,6 +17,9 @@ import { BaseService } from "@org/services";
   styles: [],
 })
 export class CostCenterComponent extends BaseComponent implements OnInit  {
+  @ViewChild('clientCombo') clientCombo!:MultiColumnComboBoxComponent;
+  public fullClientData: any[] = [];
+  
        
 selectedCategoryId!: string;  
 selectedCategory = signal<CostCategories | null>(null);
@@ -62,12 +67,15 @@ createUnderData=signal<CreateUnder[]>([]);
 clientOptions= signal<ClientDropdown[]>([]);
 consultancyOptions= signal<ConsultancyDropdown[]>([]);
 staffOptions= signal<StaffDropdown[]>([]);
+
+
 public columns = [
   { field: 'id', header: 'ID', width: 80 },
   { field: 'code', header: 'Code', width: 120 },
   { field: 'name', header: 'Name', width: 150 }
 ];
-public gridSettings = { rowHeight: 40, enableAltRow: true, gridLines: 'Both' };
+//public gridSettings = { rowHeight: 40, enableAltRow: true, gridLines: 'Both' };
+public gridSettings = { enableVirtualization: true, rowHeight: 38 };
  
 private httpService = inject(GeneralAppService);
 private baseService = inject(BaseService);
@@ -80,9 +88,10 @@ constructor() {
   }
  
 ngOnInit(): void {
+ // this.loadDropdown();
   this.onInitBase();
   this.SetPageType(1);
-  this.loadDropdown();
+ this.loadDropdown();
   this.costCenterForm.disable();
 }
 
@@ -91,7 +100,7 @@ private loadDropdown(): void{
   this.fetchStatus();
   this.fetchCreateUnder();
   this.fetchClient();
-  this.fetchConsultancy();
+   this.fetchConsultancy();
   this.fetchStaffs();
 
 }
@@ -125,24 +134,81 @@ private loadDropdown(): void{
   }
 
   override newbuttonClicked(): void {
+    console.log('newbuttonClicked');
     this.costCenterForm.enable();
     this.costCenterForm.reset();
+
   }
 
- fetchClient(): void {
+  fetchClient(): void {
+    const startTime = performance.now();
+    this.httpService
+      .fetch<any[]>(EndpointConstant.FILLCLIENTPOPUP)
+      .subscribe({
+        next: (response) => {
+          this.fullClientData = response?.data ?? [];
+  
+          // ✅ Only first 10 for initial load
+          this.clientOptions.set(this.fullClientData);
+  
+          const endTime = performance.now();
+          console.log(`Client loaded ${this.fullClientData.length} records in ${(endTime - startTime).toFixed(2)} ms`);
+        },
+        error: (error) => {
+          console.error('An error occurred:', error);
+          this.clientOptions.set([]);
+        }
+      });
+  }
+  
+// loadFullClientData(): void {
+//   this.clientOptions.set(this.fullClientData);
+//   console.log('fullClientData', this.fullClientData);
+//   setTimeout(() => {
+//     this.clientOptions.set(this.fullClientData);
+//     this.clientOptions.refresh();
+//     console.log('clientOptions', this.clientOptions());
+//   });
+// }
+// loadFullClientData(): void {
+//   if (this.fullClientData && this.fullClientData.length > 0) {
+//     // Update the Angular Signal with full data
+//     this.clientOptions.set(this.fullClientData);
+    
+//     // Force the Syncfusion ComboBox to rebind with full data
+//     setTimeout(() => {
+//       if (this.clientCombo) {
+//         this.clientCombo.dataSource = this.fullClientData;
+//         this.clientCombo.dataBind();
+//       }
+//     }, 0);
+//   }
+// }
+
+
+
+onClientFiltering(e: any) {
+  const searchText = e.text?.trim() || '';
+
+  // If no search text, show all full client data (for virtualization)
+  if (!searchText) {
+    e.updateData(this.fullClientData);
+    return;
+  }
+
+  // Otherwise, fetch filtered data from API
   this.httpService
-    .fetch<any[]>(EndpointConstant.FILLCLIENTPOPUP)
+    .fetch<any[]>(EndpointConstant.FILLCLIENTPOPUP + '?search=' + searchText)
     .subscribe({
-      next: (response) => {
-        // ✅ Use .set() for signals
-        this.clientOptions.set(response?.data ?? []);
+      next: (res) => {
+        e.updateData(res?.data ?? []);
       },
-      error: (error) => {
-        console.error('An Error Occurred', error);
-        this.clientOptions.set([]);
+      error: () => {
+        e.updateData([]);
       }
     });
 }
+
 
 fetchConsultancy(): void {
   this.httpService
@@ -150,6 +216,7 @@ fetchConsultancy(): void {
     .subscribe({
       next: (response) => {
         this.consultancyOptions.set(response?.data ?? []);
+        console.log('consultancyOptions', this.consultancyOptions());
       },
       error: (error) => {
         console.error('An Error Occurred', error);
@@ -164,6 +231,7 @@ fetchStaffs(): void {
     .subscribe({
       next: (response) => {
         this.staffOptions.set(response?.data ?? []);
+        console.log('staffOptions', this.staffOptions());
       },
       error: (error) => {
         console.error('An Error Occurred', error);
@@ -286,7 +354,7 @@ onForemanSelected(event: any): void {
   const found = this.staffOptions().find(item => item.id === selectedId);
 
    if (found) {
-    this.engineerValue = found.name;
+    this.foremanValue = found.name;
     // ✅ Patch form with ID
     this.costCenterForm.patchValue({ foreman: found.id });
   } else {
