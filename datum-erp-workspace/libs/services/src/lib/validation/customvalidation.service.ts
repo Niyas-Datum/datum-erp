@@ -44,4 +44,30 @@ export function validEmail(control: AbstractControl): ValidationErrors | null {
   }
    return Object.keys(errors).length ? errors : null;
 }
+
+export function integerOnly(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+
+  if (value === null || value === undefined || value === '') {
+    return null; // allow empty unless required
+  }
+
+  return Number.isInteger(Number(value)) ? null : { integerOnly: true };
+}
+
+export function decimalOnly(control: AbstractControl): ValidationErrors | null {
+  const value = (control.value || '').toString().trim();
+
+  // allow empty → let required validator handle mandatory
+  if (!value) return null;
+
+  // Decimal regex: 123 | 123.45 | 0.5 | 10.0
+  const decimalRegex = /^\d+(\.\d+)?$/;
+
+  if (!decimalRegex.test(value)) {
+    return { decimalOnly: true };
+  }
+
+  return null;
+}
  
