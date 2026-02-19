@@ -145,7 +145,7 @@
                       id="accountCategory"
                       formControlName="accountCategory"
                       [dataSource]="accountCategoryData()"
-                      [enabled]="isEditMode() || isNewMode()"
+                      [enabled]="isEditMode() || isNewMode()||isCreateSignal()"
                       (change)="onAccountCategoryChange($event)"
                       [fields]="{ text: 'description', value: 'id' }"
                       floatLabelType="Auto">

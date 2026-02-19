@@ -29,7 +29,9 @@ export class PopupComponent extends BaseComponent implements OnInit, AfterViewIn
 subGroupData = signal<subgroupdataModel[]>([]);
   @Input() nodeId: string | null = null;
   @Output() dataSaved = new EventEmitter<void>();
-  
+  @Input() isGroup: boolean = false;
+  @Input() isCreate: boolean = false;
+  isCreateSignal = signal<boolean>(false);
   private httpService = inject(FinanceAppService);
   
   accountForm!: FormGroup;
@@ -59,6 +61,11 @@ subGroupData = signal<subgroupdataModel[]>([]);
           }
         }, 150);
       }
+    }
+    
+    // Update isGroup form control when isGroup input changes
+    if (changes['isGroup'] && this.accountForm) {
+      this.accountForm.get('isGroup')?.setValue(this.isGroup ?? false);
     }
   }
 
@@ -113,13 +120,13 @@ subGroupData = signal<subgroupdataModel[]>([]);
       maintainBillWise: new FormControl(false),
       maintainItemWise: new FormControl(false),
       trackCollection: new FormControl(false),
-      isGroup: new FormControl(false),
+      isGroup: new FormControl(this.isGroup),
       active: new FormControl(true),
       narration: new FormControl(''),
       alternateName: new FormControl('')
     });
   }
-
+//load data for the account
   
   loadAccountData(nodeId: string): void {
     this.httpService
@@ -186,6 +193,27 @@ subGroupData = signal<subgroupdataModel[]>([]);
               .subscribe({
                 next: (subGroupResponse) => {
                   const subgroupArray = subGroupResponse.data?.subgroup || [];
+                  if(this.isCreate){
+                    console.log("isCreate",this.isCreate);
+                    this.isCreateSignal.set(true);
+                    
+                    
+                    console.log("subGroupResponse",subGroupResponse);
+                    this.accountForm.get('accountcategory')?.enable();
+                    this.accountForm.get('accountCode')?.setValue(subGroupResponse.data?.nextCode);
+                    this.accountForm.get('accountName')?.setValue('');
+                    this.accountForm.get('preventExtraPay')?.setValue(false);
+                    this.accountForm.get('maintainCostCenter')?.setValue(false);
+                    this.accountForm.get('maintainBillWise')?.setValue(false);
+                    this.accountForm.get('maintainItemWise')?.setValue(false);
+                    this.accountForm.get('trackCollection')?.setValue(false);
+                    this.accountForm.get('isGroup')?.setValue(this.isGroup?true:false);
+                    this.accountForm.get('active')?.setValue(true);
+                    this.accountForm.get('narration')?.setValue('');
+                    this.accountForm.get('alternateName')?.setValue('');
+
+
+                  }
                   this.subGroupData.set(subgroupArray);
                   
                   if (subgroupArray.length > 0) {
@@ -290,7 +318,8 @@ subGroupData = signal<subgroupdataModel[]>([]);
     this.subGroupData.set([]);
     this.isSubGroupEnabled.set(false);
     this.accountForm.patchValue({
-      active: true
+      active: true,
+      isGroup: this.isGroup ?? false // Set isGroup based on input value
     });
   }
 
@@ -382,6 +411,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
         
         if(this.isEditMode() && this.nodeId){
           console.log('update ledger');
+          console.log("update payload",payload);
           this.httpService.patch<any[]>(EndpointConstant.UPDATELEDGER+this.nodeId,payload).pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
           .subscribe({
             next: async (response) => {
@@ -415,6 +445,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
             },
           });
         } else {
+          console.log("create payload",savepayload);
           this.httpService.post<any[]>(EndpointConstant.SAVELEDGER,savepayload).pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
           .subscribe({
             next: async (response) => {
@@ -426,12 +457,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
                 // Wait for grid data to refresh before updating
                 await this.LeftGridInit();
                 
-                // Update data sharing service with fresh data after grid is refreshed
-                // this.serviceBase.dataSharingService.setData({
-                //   columns: this.leftGrid.leftGridColumns,
-                //   data: this.leftGrid.leftGridData,
-                //   pageheading: this.pageheading,
-                // });
+              
                 
                 this.accountForm.reset();
                 this.accountForm.disable();

@@ -138,6 +138,8 @@
   <app-pagemenu-popup
     *ngIf="showPageMenuPopup"
     [nodeId]="selectedAccountId.toString()"
+    [isCreate]="isCreate"
+    [isGroup]="isGroup"
     (dataSaved)="onDataSaved()">
   </app-pagemenu-popup>
 
