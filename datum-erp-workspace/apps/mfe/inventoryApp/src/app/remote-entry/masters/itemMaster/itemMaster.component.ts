@@ -1,36 +1,16 @@
-import {
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef,Component,DestroyRef, inject,Input,OnInit,signal, ViewChild } from '@angular/core';
 import { BaseComponent } from '@org/architecture';
 import { filter, firstValueFrom, take } from 'rxjs';
 import { InventoryAppService } from '../../http/inventory-app.service';
 import { EndpointConstant } from '@org/constants';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  Category,
-  CountryOfOrigin,
-  ItemBrand,
-  ItemColor,
-  ItemHistory,
-  ItemMaster,
-  parentItem,
-  SelectedCategory,
-  TaxType,
-  UnitData,
-  Account,
-  Quality,
-} from '../model/pItemMasters.model';
+import { Category,CountryOfOrigin, ItemBrand,ItemColor,ItemHistory,ItemMaster,parentItem,SelectedCategory,  TaxType,  UnitData,  Account,  Quality} from '../model/pItemMasters.model';
 import { MultiColumnComboBoxComponent } from '@syncfusion/ej2-angular-multicolumn-combobox';
-
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BaseService, LocalStorageService } from '@org/services';
 import { BranchDto } from '@org/models';
 import { GridComponent } from '@syncfusion/ej2-angular-grids';
+import { DialogComponent } from '@syncfusion/ej2-angular-popups';
 
 @Component({
   selector: 'app-itemmaster',
@@ -43,13 +23,12 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   public multicomboBoxObj?: MultiColumnComboBoxComponent;
   @ViewChild('unitDetailsGrid', { static: false })
   unitDetailsGrid!: GridComponent;
-
-  private httpService = inject(InventoryAppService);
-
+  @ViewChild('addUnitDialog', { static: false })
+  addUnitDialog!: DialogComponent;
   itemMasterForm = this.formUtil.thisForm;
-
+  private httpService = inject(InventoryAppService);
   private destroyRef = inject(DestroyRef);
-
+  private cdr = inject(ChangeDetectorRef);
   private localstorageService = inject(LocalStorageService);
   private baseService = inject(BaseService);
 
@@ -65,12 +44,82 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   forceComboReset = signal(0);
 
   allBranches = signal<BranchDto[]>([]);
-  selectedBranches: { id: number; company: string; nature: string }[] = [];
+  selectedBranches: BranchDto[] = [];
+
   selectedBranchId = 0;
   filledBranchId = 0;
   currentBranchID = signal<number>(1);
   currentBranch = signal<number>(1);
   itemUnitDetails = signal<any[]>([]);
+
+  addUnitDialogVisible = false;
+  addUnitDialogSelectedUnitObj: any = null;
+  /** When set, Save in Add Unit dialog updates this row index instead of adding */
+  editingUnitIndex: number | null = null;
+  addUnitFormData: {
+    unit: string;
+    basicUnit: string;
+    factor: number;
+    purchaseRate: number;
+    sellingPrice: number;
+    mrp: number;
+    wholeSalePrice: number;
+    retailPrice: number;
+    wholeSalePrice2: number;
+    retailPrice2: number;
+    lowestRate: number;
+    barcode: string | null;
+    active: boolean;
+  } = this.getDefaultAddUnitFormData();
+  /** Unique basic units for Add Unit dialog dropdown */
+  addUnitDialogBasicUnitOptions: { unit: string }[] = [];
+  addUnitDialogButtons = [
+    {
+      click: () => this.saveAddUnitFromDialog(),
+      buttonModel: { content: 'Save', cssClass: 'e-flat', isPrimary: true },
+    },
+    {
+      click: () => this.closeAddUnitDialog(),
+      buttonModel: { content: 'Cancel', cssClass: 'e-flat', isPrimary: false },
+    },
+  ];
+
+  getDefaultAddUnitFormData() {
+    return {
+      unit: '',
+      basicUnit: '',
+      factor: 0,
+      purchaseRate: 0,
+      sellingPrice: 0,
+      mrp: 0,
+      wholeSalePrice: 0,
+      retailPrice: 0,
+      wholeSalePrice2: 0,
+      retailPrice2: 0,
+      lowestRate: 0,
+      barcode: null as string | null,
+      active: true,
+    };
+  }
+
+  /** Safely get unit display string (handles object { unit: "PCS" } or plain string) */
+  
+  getUnitDisplay(unit: any): string {
+  if (!unit) return '';
+
+  // If it's object
+  if (typeof unit === 'object') {
+    return unit.unit ?? '';
+  }
+
+  // If it's string
+  if (typeof unit === 'string') {
+    return unit;
+  }
+
+  return '';
+}
+
 
   // Filter out empty rows in view mode
   get filteredUnitDetails(): Array<any> {
@@ -234,23 +283,53 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   }
   ngOnInit(): void {
     this.onInitBase();
+    this.getPageID();
     this.SetPageType(1);
     this.fetchAllBranches();
     this.fetchUnitDropdown();
     this.fetchAllTaxTypes();
+    this.fetchItemQuality();
     this.fetchCategories();
+   // this.itemMasterForm.disable();
+   this.disableFormControls();
+   this.itemMasterForm.get('basicunit')?.disable();
+  }
+
+  updateUnitDetail(index: number, field: string, value: any): void {
+    const updatedDetails = [...this.itemUnitDetails()];
+    if (index >= 0 && index < updatedDetails.length) {
+      const row = updatedDetails[index];
+      const numericFields = ['factor', 'purchaseRate', 'sellingPrice', 'mrp', 'wholeSalePrice', 'retailPrice', 'wholeSalePrice2', 'retailPrice2', 'lowestRate'];
+      if (field === 'unit' && typeof value === 'object') {
+        updatedDetails[index] = { ...row, unit: value };
+      } else if (field === 'active') {
+        updatedDetails[index] = { ...row, [field]: !!value };
+      } else if (field === 'barcode') {
+        updatedDetails[index] = { ...row, [field]: value ?? '' };
+      } else if (numericFields.includes(field)) {
+        updatedDetails[index] = { ...row, [field]: parseFloat(value) || 0 };
+      } else {
+        updatedDetails[index] = { ...row, [field]: value };
+      }
+      this.itemUnitDetails.set(updatedDetails);
+    }
   }
 
   override async LeftGridInit() {
     this.pageheading = 'Item Master';
     try {
+      const url = this.pageId
+        ? `${EndpointConstant.FILLALLITEMMASTER}?pageId=${this.pageId}`
+        : EndpointConstant.FILLALLITEMMASTER;
       const res = await firstValueFrom(
         this.httpService
-          .fetch<any[]>(EndpointConstant.FILLALLITEMMASTER)
+          .fetch<any[]>(url)
           .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       );
-      this.leftGrid.leftGridData = res.data;
-this.lastItemID = res.data?.[res.data.length - 1]?.id;
+      const rawData = res?.data ?? (Array.isArray(res) ? res : []);
+      this.leftGrid.leftGridData = Array.isArray(rawData) ? [...rawData] : [];
+      const arr = this.leftGrid.leftGridData;
+      this.lastItemID = arr.length > 0 ? (arr[arr.length - 1]?.id ?? 0) : 0;
       this.selectedItemMasterId.set(this.lastItemID);
       this.leftGrid.leftGridColumns = [
         {
@@ -275,6 +354,44 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       console.error('Error fetching item master:', err);
     }
   }
+
+  // override async LeftGridInit() {
+  //       this.pageheading = 'Item Master';
+  //       try {
+  //         const res = await firstValueFrom(
+  //           this.httpService
+  //             .fetch<any[]>(EndpointConstant.FILLALLITEMMASTER)
+  //             .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+  //         );
+    
+  //         this.leftGrid.leftGridData = res.data;
+  //         console.log('Fetched data:', this.leftGrid.leftGridData);
+    
+  //         this.leftGrid.leftGridColumns = [
+  //           {
+  //             headerText: 'Category List',
+  //             columns: [
+  //               {
+  //                 field: 'itemCode',
+  //                 datacol: 'itemCode',
+  //                 headerText: 'Code',
+  //                 textAlign: 'Left',
+  //               },
+  //               {
+  //                 field: 'itemName',
+  //                 datacol: 'itemName',
+  //                 headerText: 'Name',
+  //                 textAlign: 'Left',
+  //               },
+  //             ],
+  //           },
+  //         ];
+           
+  //       } catch (err) {
+  //         console.error('Error fetching item master:', err);
+  //       }
+  //   }
+
   fetchItemMasterById(): void {
     this.selectedBranches = [];
     this.selectedBranchId = 0;
@@ -299,47 +416,59 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       .subscribe({
         next: (response) => {
           this.currentItemMaster = response?.data as any;
-          const itemDetails = this.currentItemMaster.item;
-          if (Array.isArray(this.currentItemMaster.unit?.data)) {
-            const units = this.currentItemMaster.unit.data.map(
-              (itemunit: any) => ({
-                unitID: itemunit.id,
-                unit: {
-                  unit: itemunit.unit,
-                  basicUnit: itemunit.basicUnit,
-                  factor: itemunit.factor,
-                },
+          const itemDetails = this.currentItemMaster?.item;
+          if (!itemDetails) {
+            return;
+          }
+          // Support multiple API response shapes: unit.data, unit (array), itemUnit
+          const master = this.currentItemMaster as any;
+          const rawUnits =
+            master.unit?.data ??
+            (Array.isArray(master.unit) ? master.unit : null) ??
+            master.itemUnit ??
+            [];
+          const unitArray = Array.isArray(rawUnits) ? rawUnits : [];
+          if (unitArray.length > 0) {
+            const units = unitArray.map((itemunit: any) => ({
+              unitID: itemunit.id,
+              unit: {
+                unit: itemunit.unit,
                 basicUnit: itemunit.basicUnit,
                 factor: itemunit.factor,
-                sellingPrice:
-                  itemunit.sellingPrice != null
-                    ? Number(itemunit.sellingPrice)
-                    : 0,
-                purchaseRate: itemunit.purchaseRate,
-                mrp: itemunit.mrp,
-                wholeSalePrice: itemunit.wholeSalePrice,
-                retailPrice: itemunit.retailPrice,
-                wholeSalePrice2: itemunit.discountPrice,
-                retailPrice2: itemunit.otherPrice,
-                lowestRate: itemunit.lowestRate,
-                barcode: itemunit.barcode,
-                active: itemunit.active,
-                branchID: itemunit.branchID,
-              })
-            );
-
+              },
+              basicUnit: itemunit.basicUnit,
+              factor: itemunit.factor,
+              sellingPrice:
+                itemunit.sellingPrice != null
+                  ? Number(itemunit.sellingPrice)
+                  : 0,
+              purchaseRate: itemunit.purchaseRate,
+              mrp: itemunit.mrp,
+              wholeSalePrice: itemunit.wholeSalePrice,
+              retailPrice: itemunit.retailPrice,
+              wholeSalePrice2: itemunit.discountPrice,
+              retailPrice2: itemunit.otherPrice,
+              lowestRate: itemunit.lowestRate,
+              barcode: itemunit.barcode,
+              active: itemunit.active,
+              branchID: itemunit.branchID,
+            }));
             this.itemUnitDetails.set(units);
-            // make sure grid sees the new source
-            if (this.unitDetailsGrid) {
-              this.unitDetailsGrid.dataSource = this.itemUnitDetails();
-              this.unitDetailsGrid?.refresh();
-            }
+            this.cdr.detectChanges();
+            setTimeout(() => {
+              if (this.unitDetailsGrid) {
+                this.unitDetailsGrid.dataSource = this.itemUnitDetails();
+                this.unitDetailsGrid.refresh();
+              }
+            }, 0);
           }
 
           //Assign history details of an item ....
-          this.allItemHistoryDetails = this.currentItemMaster.history.data;
+          this.allItemHistoryDetails =
+            this.currentItemMaster.history?.data ?? [];
           //set stock value...
-          this.stockToDisplay = this.currentItemMaster.stock.data[0].stock;
+          this.stockToDisplay =
+            this.currentItemMaster.stock?.data?.[0]?.stock ?? 0;
           //set form values...
           this.itemMasterForm.patchValue({
             itemcode: itemDetails.itemCode,
@@ -462,11 +591,15 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
         },
       });
   }
+
   protected override getDataById(data: any): void {
     this.selectedItemMasterId.set(data.id);
     this.fetchItemMasterById();
   }
+
   protected override SaveFormData(): void {
+    // Use getRawValue() so disabled controls are included (form.value excludes them)
+    const fv = this.itemMasterForm.getRawValue();
     if (this.itemMasterForm.invalid) {
       for (const field of Object.keys(this.itemMasterForm.controls)) {
         const control: any = this.itemMasterForm.get(field);
@@ -510,108 +643,194 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
         }
       });
     }
-    // this.itemUnitDetails.pop();
+
+    // Resolve unit: use selectedBasicUnitObj, or from form basicunit so payload unit is never empty
+    const rawBasicUnit = this.itemMasterForm.get('basicunit')?.value;
+    const basicUnitStr =
+      rawBasicUnit != null && typeof rawBasicUnit === 'object' && (rawBasicUnit as any).unit != null
+        ? (rawBasicUnit as any).unit
+        : rawBasicUnit != null && rawBasicUnit !== ''
+          ? String(rawBasicUnit)
+          : '';
+    const payloadUnit =
+      this.selectedBasicUnitObj && (this.selectedBasicUnitObj as any).unit != null
+        ? this.selectedBasicUnitObj
+        : basicUnitStr !== ''
+          ? this.allBasicUnits.find((u) => u.unit === basicUnitStr) ?? {
+              unit: basicUnitStr,
+              basicUnit: basicUnitStr,
+              factor: 1,
+            }
+          : ({} as UnitData);
+
+    // Read signal value so itemUnit is a real array, not the signal reference
+    const rawItemUnitArray = this.itemUnitDetails();
+    // Build itemUnit array to match API: { unitID, unit: {unit, basicUnit, factor}, basicUnit, factor, sellingPrice, purchaseRate, mrp, wholeSalePrice, retailPrice, wholeSalePrice2, retailPrice2, lowestRate, barcode, active }
+    const itemUnitArray = (Array.isArray(rawItemUnitArray) ? rawItemUnitArray : []).map((row: any) => {
+      let unitObj = row?.unit;
+      const unitStr = typeof unitObj?.unit === 'string' ? unitObj.unit : (unitObj?.unit?.unit ?? '');
+      const hasUnit = unitObj != null && (unitStr !== '' || (unitObj?.basicUnit != null && unitObj.basicUnit !== ''));
+      if (!hasUnit && (row?.basicUnit != null || row?.basicunit != null)) {
+        const bu = row.basicUnit ?? row.basicunit;
+        if (typeof bu === 'object' && bu !== null) {
+          unitObj = {
+            unit: bu.unit ?? bu.basicUnit ?? '',
+            basicUnit: bu.basicUnit ?? bu.basicunit ?? bu.unit ?? '',
+            factor: bu.factor ?? row.factor ?? 1,
+          };
+        } else {
+          const buStr = String(bu ?? '').trim();
+          unitObj = { unit: buStr, basicUnit: buStr, factor: row?.factor ?? 1 };
+        }
+      }
+      const u = unitObj ?? { unit: '', basicUnit: '', factor: 1 };
+      const buStr = u.basicUnit ?? u.basicunit ?? u.unit ?? row?.basicUnit ?? row?.basicunit ?? '';
+      return {
+        unitID: row?.unitID ?? 0,
+        unit: { unit: u.unit ?? '', basicUnit: buStr, factor: u.factor ?? row?.factor ?? 1 },
+        basicUnit: buStr,
+        factor: row?.factor ?? u.factor ?? 1,
+        sellingPrice: row?.sellingPrice ?? 0,
+        purchaseRate: row?.purchaseRate ?? 0,
+        mrp: row?.mrp ?? null,
+        wholeSalePrice: row?.wholeSalePrice ?? null,
+        retailPrice: row?.retailPrice ?? null,
+        wholeSalePrice2: row?.wholeSalePrice2 ?? null,
+        retailPrice2: row?.retailPrice2 ?? null,
+        lowestRate: row?.lowestRate ?? 0,
+        barcode: row?.barcode ?? null,
+        active: row?.active ?? true,
+      };
+    });
+
+    // Category payload: API expects { id, code, category } - never null. Use selectedCategoryObj or form value (combo may bind full row).
+    const cat =
+      this.selectedCategoryObj &&
+      ((this.selectedCategoryObj as any).id != null || (this.selectedCategoryObj as any).code != null)
+        ? this.selectedCategoryObj
+        : this.itemMasterForm.get('category')?.value != null &&
+            typeof this.itemMasterForm.get('category')?.value === 'object'
+          ? this.itemMasterForm.get('category')?.value
+          : null;
+    let categoryName = (cat as any)?.category ?? (cat as any)?.description ?? '';
+    if (!categoryName && cat != null && ((cat as any).id != null || (cat as any).code != null)) {
+      const found = this.allCategories.find(
+        (c: any) => c.id === (cat as any).id || c.code === (cat as any).code
+      );
+      categoryName = found?.description ?? found?.code ?? '';
+    }
+    const payloadCategory =
+      cat != null && ((cat as any).id != null || (cat as any).code != null || categoryName !== '')
+        ? {
+            id: (cat as any).id ?? 0,
+            code: (cat as any).code ?? '',
+            category: String(categoryName),
+          }
+        : { id: 0, code: '', category: '' };
+
+    // Normalize unit objects to API format: { unit, basicunit, factor } (lowercase basicunit for top-level)
+    const toUnitPayload = (u: any) => {
+      if (!u) return { unit: '', basicunit: '', factor: 1 };
+      const unitStr = typeof u.unit === 'string' ? u.unit : (u.unit?.unit ?? '');
+      const bu = u.basicUnit ?? u.basicunit ?? unitStr ?? '';
+      return { unit: unitStr || bu, basicunit: bu, factor: u.factor ?? 1 };
+    };
+    const parentObj = this.selectedParentItemObj && Object.keys(this.selectedParentItemObj).length > 0
+      ? this.selectedParentItemObj
+      : { id: 0, itemCode: '', itemName: '' };
+    const parentPayload = {
+      id: (parentObj as any).id ?? 0,
+      itemCode: String((parentObj as any).itemCode ?? ''),
+      itemName: String((parentObj as any).itemName ?? ''),
+    };
 
     const payload = {
-      itemCode: this.itemMasterForm.value.itemcode,
-      itemName: this.itemMasterForm.value.itemname,
-      arabicName: this.itemMasterForm.value.arabicname,
-      unit: this.selectedBasicUnitObj,
+      id: this.isUpdate ? this.selectedItemMasterId() : 0,
+      itemCode: fv.itemcode ?? '',
+      itemName: fv.itemname ?? '',
+      arabicName: fv.arabicname ?? '',
+      unit: toUnitPayload(payloadUnit),
       barCode:
         this.itemMasterForm.get('barcodeno')?.value != null
           ? this.itemMasterForm.get('barcodeno')?.value.toString()
           : '',
-      category: this.selectedCategoryObj ? this.selectedCategoryObj : {},
-      isUniqueItem: this.itemMasterForm.value.unique ?? false,
-      stockItem: this.itemMasterForm.value.stockitem ?? false,
-      costPrice: this.itemMasterForm.value.costprice,
-      sellingPrice: this.itemMasterForm.value.sellingprice,
-      mrp: this.itemMasterForm.value.mrp,
-      margin: this.itemMasterForm.value.margin,
-      marginValue: this.itemMasterForm.value.marginvalue,
-      taxType: this.selectedTaxTypeObj,
-      isExpiry: this.itemMasterForm.value.expiryitem ?? false,
-      expiryPeriod: this.itemMasterForm.value.expirydays ?? 0,
-      isFinishedGood: this.itemMasterForm.value.finishedgoods ?? false,
-      isRawMaterial: this.itemMasterForm.value.rawmaterials ?? false,
-      location: this.itemMasterForm.value.racklocation,
-      itemDisc: this.itemMasterForm.value.discount ?? 0,
-      hsn: this.itemMasterForm.value.hsncode,
-      parent: this.selectedParentItemObj,
-      quality: this.selectedItemQualityObj,
-      modelNo: this.itemMasterForm.value.modelno,
-      color: this.selectedItemColorObj,
-      brand: this.selectedItemBrandObj,
-      countryOfOrigin: this.selectedCountryOfOriginObj,
-      rol: this.itemMasterForm.value.rol ?? 0,
-      partNo: this.itemMasterForm.value.stockcode,
-      roq: this.itemMasterForm.value.roq ?? 0,
-      manufacturer: this.itemMasterForm.value.manufacturer,
-      weight: this.itemMasterForm.value.weight ?? 0,
-      shipMark: this.itemMasterForm.value.shipmark,
-      paintMark: this.itemMasterForm.value.paintmark,
-      sellingUnit: this.selectedSellingUnitObj,
-      oemNo: this.itemMasterForm.value.oemno,
-      purchaseUnit: this.selectedPurchaseUnitObj,
-      isGroup: this.itemMasterForm.value.groupitem ?? false,
-      active: this.itemMasterForm.value.active,
-      invAccount: {
-        id: this.selectedInvAccountId,
-        name: this.selectedInvAccountName,
-      },
-      salesAccount: {
-        id: this.selectedSalesAccountId,
-        name: this.selectedSalesAccountName,
-      },
-      costAccount: {
-        id: this.selectedCostAccountId,
-        name: this.selectedCostAccountName,
-      },
-      purchaseAccount: {
-        id: this.selectedPurchaseAccountId,
-        name: this.selectedPurchaseAccountName,
-      },
-      remarks: this.itemMasterForm.value.remarks,
-      itemUnit: this.itemUnitDetails,
-      branch: this.selectedBranches,
-      imageFile: this.imageData,
+      category: payloadCategory,
+      isUniqueItem: fv.unique ?? false,
+      stockItem: fv.stockitem ?? true,
+      costPrice: fv.costprice ?? 0,
+      sellingPrice: fv.sellingprice ?? 0,
+      mrp: fv.mrp ?? null,
+      margin: fv.margin ?? 0,
+      marginValue: fv.marginvalue ?? null,
+      taxType: this.selectedTaxTypeObj ?? {},
+      isExpiry: fv.expiryitem ?? false,
+      expiryPeriod: fv.expirydays ?? 0,
+      isFinishedGood: fv.finishedgoods ?? true,
+      isRawMaterial: fv.rawmaterials ?? false,
+      location: fv.racklocation ?? '',
+      itemDisc: fv.discount ?? 0,
+      hsn: fv.hsncode ?? '',
+      parent: parentPayload,
+      quality: this.selectedItemQualityObj ?? {},
+      modelNo: fv.modelno ?? '',
+      color: this.selectedItemColorObj ?? {},
+      brand: this.selectedItemBrandObj ?? {},
+      countryOfOrigin: this.selectedCountryOfOriginObj ?? {},
+      rol: fv.rol ?? 0,
+      roq: fv.roq ?? 0,
+      manufacturer: fv.manufacturer ?? null,
+      weight: fv.weight ?? 0,
+      sellingUnit: toUnitPayload(this.selectedSellingUnitObj),
+      oemNo: fv.oemno ?? '',
+      purchaseUnit: toUnitPayload(this.selectedPurchaseUnitObj),
+      isGroup: fv.groupitem ?? true,
+      active: fv.active ?? true,
+      invAccount: { id: this.selectedInvAccountId ?? 0, name: this.selectedInvAccountName ?? '' },
+      salesAccount: { id: this.selectedSalesAccountId ?? 0, name: this.selectedSalesAccountName ?? '' },
+      costAccount: { id: this.selectedCostAccountId ?? 0, name: this.selectedCostAccountName ?? '' },
+      purchaseAccount: { id: this.selectedPurchaseAccountId ?? 0, name: this.selectedPurchaseAccountName ?? '' },
+      remarks: fv.remarks ?? '',
+      itemUnit: Array.isArray(itemUnitArray) ? itemUnitArray : [],
+      branch: Array.isArray(this.selectedBranches) ? this.selectedBranches : [],
+      imageFile: this.imageData ?? null,
     };
+    console.log("save payload:", payload);
     if (this.isUpdate) {
-      this.updateCallback(payload, this.selectedItemMasterId);
+      this.updateCallback(payload, this.selectedItemMasterId());
     } else {
       this.createCallback(payload);
     }
   }
 
-  updateCallback(payload: any, itemMasterId: any) {
-    this.httpService
-      .patch(
-        EndpointConstant.UPDATEITEMMASTER +
-          itemMasterId +
-          '&pageId=' +
-          this.pageId,
-        payload
-      )
+  updateCallback(payload: any, selectedItemMasterId: any) {
+    console.log('Updating ID:', selectedItemMasterId);
+     console.log('Payload:', payload);
+    this.httpService.patch( EndpointConstant.UPDATEITEMMASTER + selectedItemMasterId+'&pageId='+this.pageId, payload)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: async (response: any) => {
-          const resp = response as any; // cast to any and guard access
-          const message = resp?.data?.msg ?? 'category update successfully!';
-          if (resp?.isValid) {
+          const resp = response as any;
+          const message = resp?.data?.msg ?? 'Item updated successfully!';
+          const httpCode = resp?.httpCode ?? resp?.data?.httpCode;
+          const isFailure = resp?.isValid === false || (typeof httpCode === 'number' && httpCode >= 400);
+          const ok = !isFailure;
+          if (ok) {
             this.toast.success(message);
-          } else {
-            this.toast.error('Save failed: ' + (message || ''));
-          }
-          await this.LeftGridInit();
+            await this.LeftGridInit();
           this.serviceBase.dataSharingService.setData({
             columns: this.leftGrid.leftGridColumns,
             data: this.leftGrid.leftGridData,
             pageheading: this.pageheading,
           });
+          this.cdr.detectChanges();
+          this.itemMasterForm.disable();
+          } else {
+            this.toast.error('Update failed: ' + (message || ''));
+          }
         },
         error: (error) => {
-          // this.isLoading = false;
-          this.baseService.showCustomDialogue('Please try again');
+          const message = this.getSaveErrorMessage(error);
+          this.baseService.showCustomDialogue(message);
         },
       });
   }
@@ -622,26 +841,49 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: async (response) => {
-          //this.isLoading = false;
-          const resp = response as any; // cast to any and guard access
-          const message = resp?.data?.msg ?? 'Item save successfully!';
-          if (resp?.isValid) {
+          const resp = response as any;
+          const message = resp?.data?.msg ?? 'Item saved successfully!';
+          const httpCode = resp?.httpCode ?? resp?.data?.httpCode;
+          const isFailure = resp?.isValid === false || (typeof httpCode === 'number' && httpCode >= 400);
+          const ok = !isFailure;
+          if (ok) {
             this.toast.success(message);
-          } else {
-            this.toast.error('Save failed: ' + (message || ''));
-          }
-          await this.LeftGridInit();
+            await this.LeftGridInit();
           this.serviceBase.dataSharingService.setData({
             columns: this.leftGrid.leftGridColumns,
             data: this.leftGrid.leftGridData,
             pageheading: this.pageheading,
           });
+          this.cdr.detectChanges();
+          this.itemMasterForm.disable();
+          } else {
+            this.toast.error('Save failed: ' + (message || ''));
+          }
         },
         error: (error) => {
-          //this.isLoading = false;
-          console.error('Error saving branch', error);
+          const message = this.getSaveErrorMessage(error);
+          this.baseService.showCustomDialogue(message);
         },
       });
+  }
+
+  private getSaveErrorMessage(error: any): string {
+    const body = error?.error;
+    if (body?.errors && typeof body.errors === 'object') {
+      const lines: string[] = [];
+      for (const [key, messages] of Object.entries(body.errors)) {
+        const list = Array.isArray(messages) ? messages : [String(messages)];
+        const label = key.replace(/^\$\.?/, '') || 'Field'; // e.g. "$.costPrice" -> "costPrice"
+        list.forEach((msg: string) => lines.push(`${label}: ${msg}`));
+      }
+      if (lines.length > 0) return lines.join('\n');
+    }
+    return (
+      body?.title ||
+      body?.message ||
+      error?.message ||
+      'Save failed. Please try again.'
+    );
   }
 
   protected override newbuttonClicked(): void {
@@ -662,9 +904,27 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       this.disableFormControls();
     } else {
       this.enableFormControls();
+      this.generateItemCode();
     }
   }
   
+    generateItemCode() {
+    this.httpService
+      .fetch(EndpointConstant.FETCHNEWITEMCODE)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          // this.isLoading = false;
+          this.itemMasterForm.patchValue({
+            itemcode: response.data
+          });
+        },
+        error: (error) => {
+          // this.isLoading = false;
+          console.error('An Error Occured', error);
+        },
+      });
+  }
   itemmasterFormReset(): void {
     // Prevent reactive triggers (e.g., onBasicUnitSelected firing again)
     this.isManualChange = true;
@@ -734,7 +994,9 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     // Allow reactive triggers again
     this.isManualChange = false;
   }
+
   protected override onEditClick(): void {
+    this.isUpdate=true;
     //this.isInputDisabled = !this.isInputDisabled;
     this.isEditBtnDisabled = !this.isInputDisabled;
     this.isDeleteBtnDisabled = !this.isInputDisabled;
@@ -791,6 +1053,22 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     }
   }
 
+  generateBarCodeForAddUnitDialog(): void {
+    this.httpService
+      .fetch(EndpointConstant.GENERATEBARCODE)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          const barcode = (response?.data as any)?.[0]?.barcode?.toString() ?? null;
+          this.addUnitFormData.barcode = barcode;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Generate barcode failed', error);
+        },
+      });
+  }
+
   fetchAllTaxTypes(): void {
     // this.isLoading = true;
     this.httpService
@@ -801,9 +1079,9 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
           //this.isLoading = false;
 
           this.allTaxTypes = response?.data as any;
-          this.itemMasterForm.patchValue({
-            taxtype: this.allTaxTypes ? this.allTaxTypes[0].id : null,
-          });
+          // this.itemMasterForm.patchValue({
+          //   taxtype: this.allTaxTypes ? this.allTaxTypes[0].id : null,
+          // });
         },
         error: (error) => {
           // this.isLoading = false;
@@ -811,6 +1089,27 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
         },
       });
   }
+  
+  fetchItemQuality(): void {
+    this.httpService
+      .fetch(EndpointConstant.FILLQUALITY)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          const raw = response?.data as any;
+          // API returns data as [ [ {...}, {...} ] ] - use first element
+          const list = Array.isArray(raw) && raw.length > 0
+            ? (Array.isArray(raw[0]) ? raw[0] : raw)
+            : (raw?.Quality ?? raw?.data ?? []);
+          this.allQualities = Array.isArray(list) ? list : [];
+        },
+        error: (error) => {
+          console.error('An Error Occured', error);
+        },
+      });
+  }
+
+
   fetchUnitDropdown(): void {
     // this.isLoading = true;
     this.httpService
@@ -834,6 +1133,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
         },
       });
   }
+
   async fetchCategories(): Promise<void> {
     // this.isLoading = true;
     this.httpService
@@ -859,14 +1159,20 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
   }
 
   onBranchChange(event: any): void {
-    // Update the service's current branch ID
-    this.currentBranchID.set(event.value);
+    const branchId = event?.value ?? event?.itemData?.id;
+    this.currentBranchID.set(branchId);
 
-    // Update the form control
     this.itemMasterForm.patchValue({
-      branch: event.value,
+      branch: branchId,
     });
+
+    // Keep selectedBranches in sync so payload has the selected branch
+    const branch = this.allBranches()?.find((b: any) => b.id == branchId || b.id === branchId);
+    if (branch) {
+      this.selectedBranches = [branch];
+    }
   }
+
   onBasicUnitSelected(option: string, rowIndex: any): any {
     let selectedBasicUnit: any = {};
     if (rowIndex == 0) {
@@ -1000,9 +1306,251 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     return true;
   }
 
+  openAddUnitDialog(): void {
+    const details = this.itemUnitDetails();
+    const firstAvailableUnit =
+      (this.allBasicUnits || []).length > 0
+        ? (this.allBasicUnits as any[])[0]
+        : null;
+    const defaultUnitObj = firstAvailableUnit
+      ? {
+          unit: firstAvailableUnit.unit ?? firstAvailableUnit.basicUnit ?? '',
+          basicUnit:
+            typeof firstAvailableUnit.basicUnit === 'object'
+              ? (firstAvailableUnit.basicUnit as any)?.unit ??
+                firstAvailableUnit.basicUnit
+              : firstAvailableUnit.basicUnit ?? firstAvailableUnit.unit ?? '',
+          factor: firstAvailableUnit.factor ?? 1,
+        }
+      : { unit: '', basicUnit: '', factor: 1 };
+
+    if (details.length > 0 && firstAvailableUnit) {
+      const hasEmptyUnit = details.some(
+        (unititem: any) => !unititem.unit?.unit || unititem.unit.unit.trim() === ''
+      );
+      if (hasEmptyUnit) {
+        const updatedDetails = details.map((unititem: any) => {
+          if (!unititem.unit?.unit || unititem.unit.unit.trim() === '') {
+            return {
+              ...unititem,
+              unit: { ...defaultUnitObj },
+              basicUnit:
+                unititem.basicUnit ??
+                (typeof firstAvailableUnit.basicUnit === 'object'
+                  ? firstAvailableUnit.basicUnit
+                  : { unit: defaultUnitObj.basicUnit }),
+            };
+          }
+          return unititem;
+        });
+        this.itemUnitDetails.set(updatedDetails);
+        if (this.unitDetailsGrid) {
+          this.unitDetailsGrid.dataSource = this.itemUnitDetails();
+          this.unitDetailsGrid.refresh();
+        }
+        this.cdr.detectChanges();
+      }
+    }
+    this.addUnitFormData = this.getDefaultAddUnitFormData();
+    this.addUnitDialogSelectedUnitObj = null;
+    this.editingUnitIndex = null;
+    // Build basic unit options (unique unit names from allBasicUnits for use as basic units)
+    const seen = new Set<string>();
+    const names: string[] = [];
+    (this.allBasicUnits || []).forEach((u: any) => {
+      const name = typeof u?.basicUnit === 'object' ? (u.basicUnit as any)?.unit : (u?.basicUnit ?? u?.unit ?? '');
+      const s = name ? String(name).trim() : '';
+      if (s && !seen.has(s)) {
+        seen.add(s);
+        names.push(s);
+      }
+    });
+    if (names.length === 0 && (this.allBasicUnits || []).length > 0) {
+      (this.allBasicUnits as any[]).forEach((u: any) => {
+        const s = (u?.unit ?? '').trim();
+        if (s && !seen.has(s)) {
+          seen.add(s);
+          names.push(s);
+        }
+      });
+    }
+    this.addUnitDialogBasicUnitOptions = names.map((unit) => ({ unit }));
+    if (this.itemUnitDetails().length > 0) {
+      const first = this.itemUnitDetails()[0].basicUnit;
+      this.addUnitFormData.basicUnit =
+        typeof first === 'object' && first != null
+          ? (first as any)?.unit ?? ''
+          : first != null && first !== undefined
+            ? String(first)
+            : '';
+    }
+    if (this.itemUnitDetails().length === 0) {
+      this.addUnitFormData.barcode =
+        this.itemMasterForm.get('barcodeno')?.value != null
+          ? this.itemMasterForm.get('barcodeno')?.value.toString()
+          : null;
+      this.addUnitFormData.purchaseRate =
+        this.itemMasterForm.get('costprice')?.value != null
+          ? parseFloat(this.itemMasterForm.get('costprice')?.value)
+          : 0;
+      this.addUnitFormData.sellingPrice =
+        this.itemMasterForm.get('sellingprice')?.value != null
+          ? parseFloat(this.itemMasterForm.get('sellingprice')?.value)
+          : 0;
+      this.addUnitFormData.mrp =
+        this.itemMasterForm.get('mrp')?.value != null
+          ? parseFloat(this.itemMasterForm.get('mrp')?.value)
+          : 0;
+    }
+    this.addUnitDialogVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  closeAddUnitDialog(): void {
+    this.addUnitDialogVisible = false;
+    this.addUnitFormData = this.getDefaultAddUnitFormData();
+    this.addUnitDialogSelectedUnitObj = null;
+    this.editingUnitIndex = null;
+    this.cdr.detectChanges();
+  }
+
+  onAddUnitDialogOpen(): void {}
+  onAddUnitDialogCreated(): void {}
+
+  onAddUnitDialogUnitChange(event: any): void {
+    this.addUnitDialogSelectedUnitObj = event?.itemData ?? null;
+    if (this.addUnitDialogSelectedUnitObj) {
+      const bu = this.addUnitDialogSelectedUnitObj.basicUnit ?? this.addUnitDialogSelectedUnitObj.unit;
+      this.addUnitFormData.basicUnit =
+        typeof bu === 'object' && bu != null ? (bu as any)?.unit ?? '' : bu != null && bu !== undefined ? String(bu) : '';
+    }
+  }
+
+  onAddUnitFormNumberChange(
+    field: keyof typeof this.addUnitFormData,
+    event: any
+  ): void {
+    const val = event?.value ?? event?.target?.value;
+    const num = parseFloat(val);
+    if (field in this.addUnitFormData && typeof this.addUnitFormData[field] === 'number') {
+      (this.addUnitFormData as any)[field] = isNaN(num) ? 0 : num;
+    }
+  }
+
+  saveAddUnitFromDialog(): void {
+    const unitStr = this.addUnitFormData.unit?.trim() ?? '';
+    if (!unitStr) {
+      this.baseService.showCustomDialogue('Please select a Unit.');
+      return;
+    }
+    let selectedUnitObj = this.addUnitDialogSelectedUnitObj;
+    if (!selectedUnitObj && this.allBasicUnits?.length) {
+      selectedUnitObj = this.allBasicUnits.find((u: any) => u.unit === unitStr) ?? null;
+    }
+    if (!selectedUnitObj) {
+      this.baseService.showCustomDialogue('Invalid unit selection.');
+      return;
+    }
+    // Use Basic Unit from popup if set; otherwise derive from first row or selected unit
+    let basicUnitStr: string = (this.addUnitFormData.basicUnit ?? '').trim();
+    if (!basicUnitStr && this.itemUnitDetails().length > 0) {
+      const first = this.itemUnitDetails()[0].basicUnit;
+      basicUnitStr =
+        typeof first === 'object' && first != null
+          ? (first as any)?.unit ?? ''
+          : (first != null && first !== undefined ? String(first) : '');
+    }
+    if (!basicUnitStr) {
+      const bu = selectedUnitObj?.basicUnit ?? selectedUnitObj?.unit ?? unitStr;
+      basicUnitStr =
+        typeof bu === 'object' && bu != null
+          ? (bu as any)?.unit ?? selectedUnitObj?.unit ?? unitStr
+          : bu != null && bu !== undefined
+            ? String(bu)
+            : unitStr;
+    }
+    if (!basicUnitStr || basicUnitStr.trim() === '') {
+      this.baseService.showCustomDialogue('Please select or enter a Basic unit.');
+      return;
+    }
+    const newUnitItem = {
+      unitID: 0,
+      unit: selectedUnitObj,
+      basicUnit: basicUnitStr,
+      factor: Number(this.addUnitFormData.factor) || 0,
+      sellingPrice: Number(this.addUnitFormData.sellingPrice) || 0,
+      purchaseRate: Number(this.addUnitFormData.purchaseRate) || 0,
+      mrp: Number(this.addUnitFormData.mrp) || 0,
+      wholeSalePrice: Number(this.addUnitFormData.wholeSalePrice) || 0,
+      retailPrice: Number(this.addUnitFormData.retailPrice) || 0,
+      wholeSalePrice2: Number(this.addUnitFormData.wholeSalePrice2) || 0,
+      retailPrice2: Number(this.addUnitFormData.retailPrice2) || 0,
+      lowestRate: Number(this.addUnitFormData.lowestRate) || 0,
+      barcode: this.addUnitFormData.barcode ?? null,
+      active: !!this.addUnitFormData.active,
+      status: 0,
+    };
+    if (this.editingUnitIndex !== null) {
+      const arr = [...this.itemUnitDetails()];
+      arr[this.editingUnitIndex] = { ...newUnitItem, unitID: arr[this.editingUnitIndex]?.unitID ?? 0 };
+      this.itemUnitDetails.set(arr);
+    } else {
+      this.itemUnitDetails.set([...this.itemUnitDetails(), newUnitItem]);
+    }
+    this.closeAddUnitDialog();
+  }
+
+  editUnitRow(index: number): void {
+    const row = this.itemUnitDetails()[index];
+    if (!row) return;
+    const unitObj = row.unit;
+    const unitStr = typeof unitObj === 'object' && unitObj?.unit != null ? String(unitObj.unit) : (row.unit?.unit ?? '');
+    const basicUnitStr =
+      typeof row.basicUnit === 'object' && row.basicUnit != null
+        ? (row.basicUnit as any)?.unit ?? (row.basicUnit as any)?.basicUnit ?? ''
+        : row.basicUnit != null && row.basicUnit !== undefined
+          ? String(row.basicUnit)
+          : '';
+    this.addUnitFormData = this.getDefaultAddUnitFormData();
+    Object.assign(this.addUnitFormData, {
+      unit: unitStr,
+      basicUnit: basicUnitStr || unitStr,
+      factor: Number(row.factor) || 0,
+      purchaseRate: Number(row.purchaseRate) || 0,
+      sellingPrice: Number(row.sellingPrice) || 0,
+      mrp: Number(row.mrp) || 0,
+      wholeSalePrice: Number(row.wholeSalePrice) || 0,
+      retailPrice: Number(row.retailPrice) || 0,
+      wholeSalePrice2: Number(row.wholeSalePrice2) || 0,
+      retailPrice2: Number(row.retailPrice2) || 0,
+      lowestRate: Number(row.lowestRate) || 0,
+      barcode: row.barcode ?? null,
+      active: !!row.active,
+    });
+    this.addUnitDialogSelectedUnitObj = unitObj && typeof unitObj === 'object' ? unitObj : null;
+    if (!this.addUnitDialogSelectedUnitObj && unitStr && this.allBasicUnits?.length) {
+      this.addUnitDialogSelectedUnitObj = this.allBasicUnits.find((u: any) => u.unit === unitStr) ?? null;
+    }
+    this.editingUnitIndex = index;
+    this.addUnitDialogVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  deleteUnitRow(index: number): void {
+    if (!confirm('Are you sure you want to delete this unit?')) return;
+    const updated = this.itemUnitDetails().filter((_, i) => i !== index);
+    this.itemUnitDetails.set(updated);
+    if (this.unitDetailsGrid) {
+      this.unitDetailsGrid.dataSource = this.itemUnitDetails();
+      this.unitDetailsGrid.refresh();
+    }
+    this.cdr.detectChanges();
+  }
+
   onActiveChange(event: any) {
     this.active = event.target.checked ? true : false;
   }
+
   onStockItemChange(event: Event) {
     const checkbox = event.target as HTMLInputElement;
     this.isStockItem = checkbox.checked;
@@ -1018,22 +1566,42 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       this.itemMasterForm.get('purchaseaccount')?.disable();
     }
   }
-  onCategorySelected(option: string): any {
+
+  onCategorySelected(option: string | any): any {
+    // Combo may emit full row object { id, code, description } or a string/number value
+    const isObj = option != null && typeof option === 'object';
+    const codeStr = isObj ? (option.code ?? option.id ?? '') : String(option ?? '');
     this.itemMasterForm.patchValue({
-      category: option,
+      category: isObj ? (option.id ?? option.code) : option,
     });
-    const selectedCategory: any = {};
-    this.allCategories.forEach(function (item) {
-      if (item.code === option) {
-        selectedCategory.id = item.id;
-        selectedCategory.code = item.code;
-        selectedCategory.category = item.description;
-        selectedCategory.categoryType = '';
-      }
-    });
+    let selectedCategory: any = {};
+    if (isObj && (option.id != null || option.code != null)) {
+      selectedCategory = {
+        id: option.id ?? 0,
+        code: option.code ?? '',
+        category: option.description ?? option.category ?? '',
+        categoryType: '',
+      };
+    } else {
+      this.allCategories.forEach((item: any) => {
+        if (item.code === codeStr || item.id === option) {
+          selectedCategory = {
+            id: item.id,
+            code: item.code,
+            category: item.description,
+            categoryType: '',
+          };
+        }
+      });
+    }
     this.selectedCategoryObj = selectedCategory;
-    this.selectedCategory = option;
+    this.selectedCategory = selectedCategory.code ?? codeStr;
+    console.log('Category selected from dropdown:', {
+      option,
+      selectedCategoryObj: this.selectedCategoryObj,
+    });
   }
+  
   onParentItemSelected(option: string): any {
     let selectedParentItem: any = {};
     const value = option || this.itemMasterForm.get('parentitem')?.value || '';
@@ -1272,6 +1840,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       this.isManualChange = false;
     }
   }
+
   onChangeTaxType(event?: any): void {
     const selectedTaxTypeId =
       event?.value ??
@@ -1285,6 +1854,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       name: selectedTaxTypeName || '',
     };
   }
+
   onSellingUnitSelected(option: string): any {
     const value = option || this.itemMasterForm.get('sellingunit')?.value || '';
     this.itemMasterForm.patchValue({
@@ -1300,6 +1870,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     this.selectedSellingUnitObj = selectedSellingUnit;
     this.updatedSellingUnit = value;
   }
+
   onPurchaseUnitSelected(option: string): any {
     const value =
       option || this.itemMasterForm.get('purchaseunit')?.value || '';
@@ -1315,16 +1886,20 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     this.selectedPurchaseUnitObj = selectedPurchaseUnit;
     this.updatedPurchaseUnit = value;
   }
-  onChangeQuality(): void {
-    const selectedQualityId = this.itemMasterForm.get('quality')?.value;
-    const selectedQualityValue = this.allQualities.find(
-      (quality) => quality.id == selectedQualityId
-    )?.value;
-    this.selectedItemQualityObj = {
-      id: selectedQualityId,
-      value: selectedQualityValue || '',
-    };
+
+  onChangeQuality(event: any): void {
+  if (!event || event.value == null) return;
+
+  const selectedQuality = this.allQualities.find(
+    q => q.id === event.value
+  );
+
+  this.selectedItemQualityObj = {
+    id: event.value,
+    value: selectedQuality?.value || ''
+  };
   }
+
   onInvAccountSelected(option: string): any {
     const value = option || this.itemMasterForm.get('invaccount')?.value || '';
     let selectedInvAccountId = 0;
@@ -1336,6 +1911,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     this.selectedInvAccountId = selectedInvAccountId;
     this.selectedInvAccountName = value;
   }
+
   onCostAccountSelected(option: string): any {
     const value = option || this.itemMasterForm.get('costaccount')?.value || '';
     let selectedCostAccountId = 0;
@@ -1360,6 +1936,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     this.selectedSalesAccountId = selectedSalesAccountId;
     this.selectedSalesAccountName = value;
   }
+
   onPurchaseAccountSelected(option: string): any {
     const value =
       option || this.itemMasterForm.get('purchaseaccount')?.value || '';
@@ -1376,127 +1953,58 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
   itemmasterformshow(): void {
     console.log('itemmasterformshow', this.itemMasterForm);
   }
+
   protected override FormInitialize(): void {
-    this.itemMasterForm = new FormGroup({
-      branch: new FormControl(
-        { value: this.currentBranchID(), disabled: this.isInputDisabled },
-        Validators.required
-      ),
-      itemcode: new FormControl(
-        { value: '', disabled: this.isInputDisabled },
-        Validators.required
-      ),
-      active: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      itemname: new FormControl(
-        { value: '', disabled: this.isInputDisabled },
-        Validators.required
-      ),
-      arabicname: new FormControl(
-        { value: '', disabled: this.isInputDisabled },
-        Validators.required
-      ),
-      basicunit: new FormControl(
-        { value: '', disabled: this.isInputDisabled },
-        Validators.required
-      ),
-      barcodeno: new FormControl({ value: '', disabled: this.isInputDisabled }), //, Validators.required
-      category: new FormControl({
-        value: null,
-        disabled: this.isInputDisabled,
-      }), //, Validators.required
-      unique: new FormControl({ value: false, disabled: this.isInputDisabled }),
-      stockitem: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      costprice: new FormControl({ value: '', disabled: this.isInputDisabled }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
-      sellingprice: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
-      mrp: new FormControl({ value: '', disabled: this.isInputDisabled }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
-      taxtype: new FormControl({ value: null, disabled: this.isInputDisabled }),
-      margin: new FormControl({ value: '', disabled: this.isInputDisabled }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
-      marginvalue: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
-      isdisabled: new FormControl({
-        value: false,
-        disabled: this.isInputDisabled,
-      }),
-      expiryitem: new FormControl({
-        value: false,
-        disabled: this.isInputDisabled,
-      }),
-      finishedgoods: new FormControl({
-        value: false,
-        disabled: this.isInputDisabled,
-      }),
-      rawmaterials: new FormControl({
-        value: false,
-        disabled: this.isInputDisabled,
-      }),
-      expirydays: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }),
-      racklocation: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }),
+    const form = new FormGroup({
+      branch: new FormControl({ value: this.currentBranchID(), disabled: false },Validators.required),
+      itemcode: new FormControl({ value: '', disabled: false },Validators.required),
+      active: new FormControl({ value: '', disabled: false }),
+      itemname: new FormControl({ value: '', disabled: false },Validators.required),
+      arabicname: new FormControl({ value: '', disabled: false }),
+      basicunit: new FormControl({ value: '',disabled: false },Validators.required),
+      barcodeno: new FormControl({ value: '', disabled: false }), 
+      category: new FormControl({value: null,disabled: false,}), 
+      unique: new FormControl({ value: false, disabled: false }),
+      stockitem: new FormControl({ value: '', disabled: false }),
+      costprice: new FormControl({ value: '', disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
+      sellingprice: new FormControl({ value: '',disabled: false,}), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
+      mrp: new FormControl({ value: '', disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
+      taxtype: new FormControl({ value: null, disabled: false }),
+      margin: new FormControl({ value: '', disabled: false }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
+      marginvalue: new FormControl({value: '', disabled: false,}), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
+      isdisabled: new FormControl({value: false,disabled: false,}),
+      expiryitem: new FormControl({value: false,disabled: false,}),
+      finishedgoods: new FormControl({value: false,disabled: false}),
+      rawmaterials: new FormControl({value: false,disabled: false}),
+      expirydays: new FormControl({ value: '',disabled: this.isInputDisabled}),
+      racklocation: new FormControl({value: '',disabled: this.isInputDisabled}),
       discount: new FormControl({ value: '', disabled: this.isInputDisabled }),
       hsncode: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      parentitem: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }), //,Validators.required
+      parentitem: new FormControl({value: '', disabled: this.isInputDisabled}), //,Validators.required
       quality: new FormControl({ value: '', disabled: this.isInputDisabled }),
       modelno: new FormControl({ value: '', disabled: this.isInputDisabled }),
       color: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      brancdname: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }),
-      countryoforigin: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }),
-      manufacturer: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }),
+      brancdname: new FormControl({value: '',disabled: this.isInputDisabled}),
+      countryoforigin: new FormControl({value: '',disabled: this.isInputDisabled}),
+      manufacturer: new FormControl({ value: '', disabled: this.isInputDisabled}),
       rol: new FormControl({ value: '', disabled: this.isInputDisabled }),
       roq: new FormControl({ value: '', disabled: this.isInputDisabled }),
       shipmark: new FormControl({ value: '', disabled: this.isInputDisabled }),
       paintmark: new FormControl({ value: '', disabled: this.isInputDisabled }),
       stockcode: new FormControl({ value: '', disabled: this.isInputDisabled }),
       weight: new FormControl({ value: 0, disabled: this.isInputDisabled }),
-      purchaseunit: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }), //,Validators.required
-      sellingunit: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled,
-      }), //,Validators.required
+      purchaseunit: new FormControl({ value: '',disabled: this.isInputDisabled}), //,Validators.required
+      sellingunit: new FormControl({value: '',disabled: this.isInputDisabled}), //,Validators.required
       oemno: new FormControl({ value: '', disabled: this.isInputDisabled }),
       groupitem: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      invaccount: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled || this.isStockItem,
-      }),
-      salesaccount: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled || this.isStockItem,
-      }),
-      costaccount: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled || this.isStockItem,
-      }),
-      purchaseaccount: new FormControl({
-        value: '',
-        disabled: this.isInputDisabled || this.isStockItem,
-      }),
+      invaccount: new FormControl({ value: '',disabled: this.isInputDisabled || this.isStockItem}),
+      salesaccount: new FormControl({ value: '',disabled: this.isInputDisabled || this.isStockItem}),
+      costaccount: new FormControl({ value: '',disabled: this.isInputDisabled || this.isStockItem}),
+      purchaseaccount: new FormControl({value: '',disabled: this.isInputDisabled || this.isStockItem}),
       remarks: new FormControl({ value: '', disabled: this.isInputDisabled }),
     });
+    this.itemMasterForm = form;
+    this.formUtil.thisForm = form;
   }
 
   enableFormControls(): void {
@@ -1541,6 +2049,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       this.itemMasterForm.get('purchaseaccount')?.enable();
     }
   }
+
   disableFormControls(): void {
     this.itemMasterForm.get('branch')?.disable();
     this.itemMasterForm.get('itemcode')?.disable();
@@ -1581,6 +2090,7 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     this.itemMasterForm.get('costaccount')?.disable();
     this.itemMasterForm.get('purchaseaccount')?.disable();
   }
+
   getPageID(): void {
     this.serviceBase.dataSharingService.currentPageInfo$
       .pipe(
@@ -1623,4 +2133,5 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
       this.onBasicUnitSelected(selectedUnit, rowIndex);
     }
   }
+
 }
