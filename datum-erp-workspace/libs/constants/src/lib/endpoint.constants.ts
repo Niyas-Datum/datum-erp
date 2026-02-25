@@ -30,7 +30,11 @@ export const EndpointConstant = {
     FILLBASICTYPE:'api/v1/fn/financeregister/Fillbtype',
     FILLVOUCHERTYPE:'api/v1/fn/financeregister/Fillvtype',
     FILLFINANCEREGISTER:'api/v1/fn/financeregister/Finreg?',
-    
+    FILLVOUCHERNUMBERING:'api/v1/fn/vchr/fillnumbering?Id=',
+    GENERATEITEMCODE:'api/v1/ItemMaster/NxtItemCode',
+    UPDATEVOUCHERNUMBERING:'api/v1/fn/vchr/updateNumbering?Id=',
+    SAVEVOUCHERNUMBERING:'api/v1/fn/vchr/savenumbering',
+    DELETEVOUCHERNUMBERING:'api/v1/fn/vchr/delnumbering?Id=',
     FILLCATEGORY:'api/v1/cussupp/getcat',
     FILLACCOUNTACCOUNTPOPUP:'api/v1/fn/coa/accpopupgs',
     FILLCHARTOFACCOUNTS:'api/v1/fn/coa/getall?Id=0&tree=true',

@@ -239,6 +239,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     this.fetchUnitDropdown();
     this.fetchAllTaxTypes();
     this.fetchCategories();
+    this.newitemcode();
   }
 
   override async LeftGridInit() {
@@ -645,6 +646,8 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
   }
 
   protected override newbuttonClicked(): void {
+    this.newitemcode();
+    
     // Toggle input enable/disable state
     this.isInputDisabled = !this.isInputDisabled;
   
@@ -663,6 +666,17 @@ this.lastItemID = res.data?.[res.data.length - 1]?.id;
     } else {
       this.enableFormControls();
     }
+  }
+  newitemcode(): void {
+    this.httpService.fetch(EndpointConstant.GENERATEITEMCODE).pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+    .subscribe({
+      next: (response) => {
+        console.log(response.data);
+        this.itemMasterForm.patchValue({
+          itemcode: response.data as string,
+        });
+      },
+    });
   }
   
   itemmasterFormReset(): void {

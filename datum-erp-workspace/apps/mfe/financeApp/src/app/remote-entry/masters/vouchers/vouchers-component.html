@@ -98,7 +98,7 @@
           [allowEditing]="false"
         ></e-column>
 
-        <!-- 8. Numbering (Editable) -->
+        <!-- 8. Numbering (Editable, Click to open numbering config popup) -->
         <e-column
           field="numbering"
           headerText="Numbering"
@@ -108,14 +108,22 @@
           type="number"
         >
           <ng-template #template let-data>
-            <ejs-textbox
-              *ngIf="!isInputDisabled"
-              [value]="data.numbering || ''"
-              placeholder="Enter numbering"
-              (change)="onNumberingChange($event, data)"
-              (blur)="onNumberingChange($event, data)"
-            ></ejs-textbox>
-            <span *ngIf="isInputDisabled">{{ data.numbering || 0 }}</span>
+            <div
+              class="numbering-cell"
+              (click)="onNumberingCellClick(data)"
+              style="cursor: pointer; min-height: 28px;"
+              title="Click to configure numbering"
+            >
+              <ejs-textbox
+                *ngIf="!isInputDisabled"
+                [value]="data.numbering || ''"
+                placeholder="Enter numbering"
+                (click)="$event.stopPropagation()"
+                (change)="onNumberingChange($event, data)"
+                (blur)="onNumberingChange($event, data)"
+              ></ejs-textbox>
+              <span *ngIf="isInputDisabled">{{ data.numbering || 0 }}</span>
+            </div>
           </ng-template>
         </e-column>
 
@@ -278,3 +286,19 @@
   </div>
 </div>
 
+<!-- Numbering Configuration Popup Dialog -->
+<ejs-dialog
+  #numberingDialog
+  [visible]="false"
+  width="70%"
+  height="60%"
+  [isModal]="true"
+  [showCloseIcon]="true"
+  header="Voucher Numbering Configuration"
+  (open)="onNumberingDialogOpen()"
+  (close)="onNumberingDialogClose()">
+  <app-voucher-popup
+    *ngIf="showNumberingPopup && selectedVoucherForNumbering"
+    [numbering]="selectedVoucherForNumbering.toString()">
+  </app-voucher-popup>
+</ejs-dialog>
