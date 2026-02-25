@@ -26,6 +26,17 @@
 
   <!-- Scrollable Grid Container -->
   <div class="scrollable-grid-container">
+    <div class="grid-search-bar">
+      <ejs-textbox
+        #searchByName
+        [(ngModel)]="searchName"
+        placeholder="Search by voucher name..."
+        (input)="onSearchByName()"
+        floatLabelType="Never"
+        cssClass="e-outline"
+        style="max-width: 320px;">
+      </ejs-textbox>
+    </div>
     <ejs-grid
       #voucherGrid
       id="voucherGrid"

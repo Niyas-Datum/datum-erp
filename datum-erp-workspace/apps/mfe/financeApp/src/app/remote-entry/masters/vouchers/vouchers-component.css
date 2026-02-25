@@ -54,3 +54,13 @@
   box-sizing: border-box;
 }
 
+.grid-search-bar {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.grid-search-bar .e-input-group {
+  min-width: 280px;
+}
+

@@ -62,7 +62,9 @@ import {
     }
   
     vouchersData: any[] = [];
+    allVouchersData: any[] = []; // Full list for search filtering
     originalData: any[] = []; // Store original data for comparison
+    searchName = '';
     
     editSettings: EditSettingsModel = {
       allowEditing: false,
@@ -84,8 +86,8 @@ import {
         .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
         .subscribe({
           next: (response) => {
-           
-            this.vouchersData = response.data;
+            this.allVouchersData = response.data ?? [];
+            this.applyNameFilter();
             this.cdr.detectChanges();
             
         //     // Handle different response formats
@@ -252,6 +254,22 @@ import {
       console.log('Total rows with changes:', payload.length);
       console.log('=== END CHANGE CHECK ===');
       return payload;
+    }
+
+    onSearchByName(): void {
+      this.applyNameFilter();
+      this.cdr.detectChanges();
+    }
+
+    applyNameFilter(): void {
+      const term = (this.searchName || '').trim().toLowerCase();
+      if (!term) {
+        this.vouchersData = [...this.allVouchersData];
+        return;
+      }
+      this.vouchersData = this.allVouchersData.filter(
+        (row) => (row.name && String(row.name).toLowerCase().includes(term))
+      );
     }
 
     onGridActionComplete(args: any): void {
