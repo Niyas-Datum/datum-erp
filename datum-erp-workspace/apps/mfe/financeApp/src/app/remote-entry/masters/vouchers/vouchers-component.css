@@ -69,7 +69,13 @@
 
 .toolbar-section .action-buttons {
   display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: 10px;
+}
+
+.toolbar-section .action-buttons .e-btn {
+  margin: 0;
 }
 
 .grid-search-bar {
