@@ -540,7 +540,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     }
 
     this.selectedPaymentVoucherId = Number(selectedId);
-
     // Set page type to edit mode
    // this.SetPageType(2);
     this.updateGridEditSettings();
