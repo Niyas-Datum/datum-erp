@@ -1,32 +1,40 @@
-
-<div class="page-layout">
-  <!-- Fixed Header with Action Buttons -->
+<div class="page-layout margin-top-100">
+  <!-- Fixed Header with Title -->
   <div class="fixed-header">
     <h2>Vouchers Configuration</h2>
-    <div class="action-buttons">
-      <button
-        type="button"
-        class="e-btn e-primary"
-        style="margin-right: 10px;"
-        [disabled]="!isInputDisabled"
-        (click)="onClickEditAccountList()">
-        <span class="e-btn-icon e-icons e-edit"></span>
-        Edit
-      </button>
-      <button
-        type="button"
-        class="e-btn e-success"
-        [disabled]="isInputDisabled"
-        (click)="onClickSaveAccountList()">
-        <span class="e-btn-icon e-icons e-check"></span>
-        Save
-      </button>
-    </div>
   </div>
 
   <!-- Scrollable Grid Container -->
   <div class="scrollable-grid-container">
-    <div class="grid-search-bar">
+    <div class="toolbar-section">
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="e-btn e-primary"
+          style="margin-right: 10px;"
+          [disabled]="!isInputDisabled"
+          (click)="onClickEditAccountList()">
+          <span class="e-btn-icon e-icons e-edit"></span>
+          Edit
+        </button>
+        <button
+          type="button"
+          class="e-btn e-success"
+          [disabled]="isInputDisabled"
+          (click)="onClickSaveAccountList()">
+          <span class="e-btn-icon e-icons e-check"></span>
+          Save
+        </button>
+        <button
+        type="settings"
+        class="e-btn e-info"
+        [disabled]="isInputDisabled"
+        (click)="onClickSettings()">
+        <span class="e-btn-icon e-icons e-check"></span>
+        Settings
+      </button>
+      </div>
+      <div class="grid-search-bar">
       <ejs-textbox
         #searchByName
         [(ngModel)]="searchName"
@@ -36,6 +44,7 @@
         cssClass="e-outline"
         style="max-width: 320px;">
       </ejs-textbox>
+      </div>
     </div>
     <ejs-grid
       #voucherGrid
@@ -118,7 +127,7 @@
           textAlign="Right"
           type="number"
         >
-          <ng-template #template let-data>
+          <!-- <ng-template #template let-data>
             <div
               class="numbering-cell"
               (click)="onNumberingCellClick(data)"
@@ -134,6 +143,29 @@
                 (blur)="onNumberingChange($event, data)"
               ></ejs-textbox>
               <span *ngIf="isInputDisabled">{{ data.numbering || 0 }}</span>
+            </div>
+          </ng-template> -->
+          <ng-template #template let-data>
+            <div
+              class="numbering-cell"
+              style="cursor: pointer; min-height: 28px;"
+              title="Click to configure numbering"
+            >
+              <ejs-textbox
+                *ngIf="!isInputDisabled"
+                [value]="data.numbering || ''"
+                placeholder="Enter numbering"
+                (focus)="onNumberingCellClick(data)"
+                (change)="onNumberingChange($event, data)"
+                (blur)="onNumberingChange($event, data)"
+              ></ejs-textbox>
+          
+              <span
+                *ngIf="isInputDisabled"
+                (click)="onNumberingCellClick(data)"
+              >
+                {{ data.numbering || 0 }}
+              </span>
             </div>
           </ng-template>
         </e-column>
@@ -309,7 +341,7 @@
   (open)="onNumberingDialogOpen()"
   (close)="onNumberingDialogClose()">
   <app-voucher-popup
-    *ngIf="showNumberingPopup && selectedVoucherForNumbering"
+    *ngIf="showNumberingPopup && selectedVoucherForNumbering !== null"
     [numbering]="selectedVoucherForNumbering.toString()">
   </app-voucher-popup>
 </ejs-dialog>

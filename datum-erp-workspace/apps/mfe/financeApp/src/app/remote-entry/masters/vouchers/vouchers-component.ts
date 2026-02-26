@@ -28,12 +28,14 @@ import {
   export class VouchersComponent extends BaseComponent implements OnInit{
     @ViewChild('voucherGrid') voucherGrid?: GridComponent;
     @ViewChild('numberingDialog') numberingDialog!: DialogComponent;
+    public showNumberingPopup = false;
+    public selectedVoucherForNumbering: any = null;
     private httpService = inject(FinanceAppService);
     private cdr = inject(ChangeDetectorRef);
     isEditGrid = false;
 
-    showNumberingPopup = false;
-    selectedVoucherForNumbering: any = null;
+    
+  
     isEdit = true;
     isInputDisabled = true;
     payload={
@@ -78,7 +80,9 @@ import {
       this.SetPageType(2);
       this.fetchVouchers();
     }
- 
+    onClickSettings(): void {
+      console.log('Settings clicked');
+    }
 
     fetchVouchers(): void {
       this.httpService
@@ -284,6 +288,10 @@ import {
     }
 
     onNumberingCellClick(data: any): void {
+        // 🚫 Prevent opening if not in edit mode
+  if (this.isInputDisabled) {
+    return;
+  }
       this.selectedVoucherForNumbering = data.numbering;
       console.log('selectedVoucherForNumbering is', this.selectedVoucherForNumbering);
       this.showNumberingPopup = true;
@@ -295,9 +303,15 @@ import {
     }
 
     onNumberingDialogClose(): void {
+      if (!this.showNumberingPopup) return;
       this.showNumberingPopup = false;
       this.selectedVoucherForNumbering = null;
-      this.fetchVouchers(); // Refresh data when popup closes
+      this.isInputDisabled = true;
+      if (this.numberingDialog) {
+        this.numberingDialog.hide();
+      }
+      this.fetchVouchers();
+      this.cdr.detectChanges();
     }
 
     onNumberingChange(event: any, data: any): void {
