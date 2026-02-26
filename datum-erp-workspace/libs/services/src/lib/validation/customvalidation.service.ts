@@ -18,6 +18,18 @@ export function validCompanyName(control: AbstractControl): ValidationErrors | n
  
   return Object.keys(errors).length ? errors : null;
 }
+
+export function validName(control: AbstractControl) {
+  if (!control.value) return null;
+
+  const regex = /^[a-zA-Z\s]+$/;   // only letters + space
+  if (!regex.test(control.value)) {
+    return { validName: true };   // 👈 must match template
+  }
+
+  return null;
+}
+
  
 export function validPhoneNumber(control: AbstractControl): ValidationErrors | null {
   const phoneRegex = /^[0-9]{10}$/;
