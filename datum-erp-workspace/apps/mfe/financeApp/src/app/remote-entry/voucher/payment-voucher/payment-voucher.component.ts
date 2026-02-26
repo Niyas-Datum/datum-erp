@@ -1,14 +1,5 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component,inject,OnInit,ViewChild} from '@angular/core';
+import { FormControl,FormGroup,Validators} from '@angular/forms';
 import { FinanceAppService } from '../../http/finance-app.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EDITABLE_PERIOD, EndpointConstant } from '@org/constants';
@@ -17,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { PVoucherModel, PaymentDetailsModel, AccountMasterModel, POAllocationResult } from '../../model/PVoucherModel';
 import { DatePipe } from '@angular/common';
 import { DataSharingService, BaseService } from '@org/services';
-import { EditSettingsModel, GridComponent, IEditCell } from '@syncfusion/ej2-angular-grids';
+import { EditSettingsModel, GridComponent, IEditCell, SelectionSettingsModel } from '@syncfusion/ej2-angular-grids';
 import { VoucherCommonService } from '../common/services/voucher-common.service';
 import { VoucherService } from '../common/services/voucher.service';
 import { PoallocationpopupComponent } from '../common/poallocationpopup/poallocationpopup.component';
@@ -29,7 +20,6 @@ interface PaymentBreakdownResult {
   cheque: any[];
   creditTotal: number;
 }
-
 
 @Component({
   selector: 'app-payment-voucher',
@@ -107,15 +97,65 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     allowAdding: false,
     allowDeleting: false
   };
+  public accountDetailsSelectionSettings: SelectionSettingsModel = {
+    type: 'Single',
+    mode: 'Row'
+  };
+  public paymentDetailsSelectionSettings: SelectionSettingsModel = {
+    type: 'Single',
+    mode: 'Row'
+  };
 
   constructor() {
     super();
     this.commonInit();
   }
 
+  ngOnInit(): void {
+    this.onInitBase();
+    this.SetPageType(1);
+    this.paymentVoucherForm.disable();
+    // // Set pageId for payment voucher
+     this.dataSharingService.setPageId(this.pageId);
+     this.fetchDepartmentData();
+    // // Fetch dropdown data from services
+     this.voucherService.fetchAccountMaster();
+     this.voucherService.fetchBankDetails();
+    // // Subscribe to pageId from DataSharingService
+    this.dataSharingService.pageId$
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe((id) => {
+        if (id !== this.pageId) {
+          this.pageId = id;
+          console.log('PageId updated to:', this.pageId);
+          // Re-fetch data when pageId changes
+          this.LeftGridInit();
+        }
+      });
+    // New mode: enable voucher no auto generation and one empty row for Account Details
+    this.fetchCommonFillData();
+    this.voucherCommonService.initializeAccountDetails();
+    this.updateGridEditSettings();
+    this.LeftGridInit();
+  }
+
+  override FormInitialize() {
+    this.paymentVoucherForm = new FormGroup({ 
+      voucherName: new FormControl({ value: '', disabled: true }, Validators.required),
+      voucherNo: new FormControl({ value: '', disabled: false }, Validators.required),
+      voucherDate: new FormControl( { value: '', disabled: false },Validators.required),
+      narration: new FormControl({ value: '', disabled: false }),
+      costCentre: new FormControl({ value: '', disabled: false }),
+      department: new FormControl({ value: '', disabled: false }),
+      referenceNo: new FormControl({ value: '', disabled: false }),
+    });
+    // Ensure base Save flow validates this form
+    this.formUtil.thisForm = this.paymentVoucherForm;
+   
+  }
+
   private updateGridEditSettings(): void {
     const pageType = this.serviceBase.formToolbarService.pagetype;
-
     if (pageType === 3) {
       this.accountDetailsEditSettings = {
         allowEditing: false,
@@ -141,58 +181,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
         allowDeleting: false
       };
     }
-  }
-
-  ngOnInit(): void {
-    this.onInitBase();
-
-    // Set pageId for payment voucher
-    this.dataSharingService.setPageId(this.pageId);
-
-    this.fetchDepartmentData();
-
-    // Fetch dropdown data from services
-    this.voucherService.fetchAccountMaster();
-    this.voucherService.fetchBankDetails();
-
-    // Subscribe to pageId from DataSharingService
-    this.dataSharingService.pageId$
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe((id) => {
-        if (id !== this.pageId) {
-          this.pageId = id;
-          console.log('PageId updated to:', this.pageId);
-          // Re-fetch data when pageId changes
-
-          this.LeftGridInit();
-        }
-      });
-
-    // Default to New mode on load with editable grids
-    this.enterNewMode();
-  }
-
-  override FormInitialize() {
-    this.paymentVoucherForm = new FormGroup({
-      voucherName: new FormControl(
-        { value: '', disabled: true },
-        Validators.required
-      ),
-      voucherNo: new FormControl(
-        { value: '', disabled: false },
-        Validators.required
-      ),
-      voucherDate: new FormControl(
-        { value: '', disabled: false },
-        Validators.required
-      ),
-      narration: new FormControl({ value: '', disabled: false }),
-      costCentre: new FormControl({ value: '', disabled: false }),
-      department: new FormControl({ value: '', disabled: false }),
-      referenceNo: new FormControl({ value: '', disabled: false }),
-    });
-    // Ensure base Save flow validates this form
-    this.formUtil.thisForm = this.paymentVoucherForm;
   }
 
   override SaveFormData() {
@@ -554,7 +542,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     this.selectedPaymentVoucherId = Number(selectedId);
 
     // Set page type to edit mode
-    this.SetPageType(2);
+   // this.SetPageType(2);
     this.updateGridEditSettings();
 
     // Enable the form for editing
@@ -721,21 +709,17 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   override newbuttonClicked() {
     const currentPageType = this.serviceBase.formToolbarService.pagetype;
     const isNewMode = currentPageType === 1;
-
+    console.info("NewMode:", isNewMode);
     if (isNewMode) {
-      // From New mode, switch to topmost voucher in View mode
-      this.viewTopVoucherFromLeftGrid();
+      this.paymentVoucherForm.enable();
+      // Refresh voucher no auto generation for new entry
+      this.fetchCommonFillData();
       return;
     }
 
     // From other modes, return to New mode
     this.enterNewMode();
   }
-
-
-
-
-
 
   override DeleteData(data: PVoucherModel) {
     console.log('Delete requested for payment voucher:', data);
@@ -760,8 +744,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
     this.deletePaymentVoucher(voucherId, voucherNo);
   }
-
- 
 
   onPaymentTypeClick(paymentType: string): void {
     this.selectedPaymentType = paymentType;
@@ -1282,6 +1264,14 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     }
   }
 
+  // After grid action (e.g. cell edit), ensure trailing empty row in new/edit mode so user can add more rows
+  onAccountDetailsActionComplete(args: any): void {
+    const pageType = this.serviceBase.formToolbarService.pagetype;
+    if (pageType === 1 || pageType === 2) {
+      this.voucherCommonService.ensureTrailingEmptyAccountRow();
+    }
+  }
+
   // Open PO Allocation popup
   openPOAllocationPopup(crdrAmount: number, rowData: any): void {
     // Store reference to current row
@@ -1314,39 +1304,31 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   // Enter New mode with clean form and editable grids
   private enterNewMode(): void {
     console.log('Entering New mode for payment voucher');
-
-    this.SetPageType(1);
+    //this.SetPageType(1);
     this.updateGridEditSettings();
-
     this.selectedPaymentVoucherId = 0;
     this.currentPaymentVoucher = null;
     this.selectedPaymentType = '';
     this.originalBillAndRef = [];
-
     this.voucherCommonService.initializeAccountDetails();
     this.voucherCommonService.paymentDetailsData.set([]);
     this.voucherCommonService.cashSelected.set([]);
     this.voucherCommonService.cardSelected.set([]);
     this.voucherCommonService.chequeSelected.set([]);
     this.showPaymentPopup = false;
-
-    this.paymentVoucherForm.enable();
+   // this.paymentVoucherForm.enable();
     this.paymentVoucherForm.patchValue({
       narration: '',
       costCentre: null,
       department: null,
       referenceNo: ''
     });
-
     // Keep voucher name read-only; voucher number stays editable per form config
     this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
-
     // Refresh voucher header info (voucher no/name/date) for a fresh entry
     this.fetchCommonFillData();
-
     // Clear any left-grid selection in local state
     this.leftgridSelectedData = null;
-
     console.log('Form reset for new payment voucher');
   }
 
@@ -1459,6 +1441,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   private showError(msg: string): void {
     this.baseService.showCustomDialogue(msg);
   }
+
   private toISO(input: any): string | null {
     const toUtcIso = (y: number, m: number, d: number) =>
       new Date(Date.UTC(y, m, d)).toISOString();
@@ -1487,11 +1470,13 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       return null;
     }
   }
+
   private findById<T>(arr: T[], id: any): T | undefined {
     if (!Array.isArray(arr)) return undefined;
     const num = Number(id);
     return arr.find((x: any) => (x?.id ?? x?.ID) == num);
   }
+
   private buildPaymentBreakdownFromSelections(): PaymentBreakdownResult {
     const cashSel = this.voucherCommonService.cashSelected() || [];
     const cardSel = this.voucherCommonService.cardSelected() || [];
