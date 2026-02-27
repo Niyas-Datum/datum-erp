@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, input, output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -9,23 +9,40 @@ import { EndpointConstant } from '@org/constants';
 import { TransactionService } from '../services/transaction.services';
 import { CommonService } from '../services/common.services';
 import { TabCommunicationService } from '../services/tab-communication.service';
-
+import { NumericTextBoxModule, TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { CalendarModule, DatePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { NgModule } from '@angular/core'
+import { BrowserModule } from '@angular/platform-browser'
+import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
+import { log } from 'console';
 @Component({
   selector: 'app-additional-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TextBoxModule,
+    CalendarModule,
+    DatePickerModule,
+    NumericTextBoxModule,
+    DropDownListModule
+
+  ],
   templateUrl: './additional-details.component.html',
   styleUrl: './additional-details.component.scss'
 })
 export class AdditionalDetailsComponent implements OnInit, OnDestroy {
+  [x: string]: any;
   private fb = inject(FormBuilder);
   private baseService = inject(BaseService);
   private dataSharingService = inject(DataSharingService);
   private transactionService = inject(TransactionService);
   private commonService = inject(CommonService);
   private tabCommunicationService = inject(TabCommunicationService);
-  
+
   private destroy$ = new Subject<void>();
+  // Calender
 
   // Input signals
   isNewMode = input(false);
@@ -60,6 +77,7 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   updatedSalesman = '';
   updatedVehicleNo = '';
   updatedDeliveryLocation = '';
+  dateValue: any;
 
   constructor() {
     this.createForm();
@@ -88,24 +106,30 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
 
   private createForm(): void {
     this.additionalDetailsForm = this.fb.group({
-      // General section (party invoice - ensure string/date to avoid [object Object])
+      // General section
+      // invoiceno: [''],
+      // invoicedate: [''],
+      // orderno: ['', Validators.required],
+      // orderdate: [''],
+      // partyname: [''],
+      // partyaddress: ['', Validators.required],
+      // expirydate: [''],
+      // transportationtype: [''],
+      // creditperiod: ['', Validators.required],
       partyInvoiceNo: [''],
-      partyInvoiceDate: [''],
-      invoiceno: [''],
-      invoicedate: [''],
-      orderno: ['', Validators.required],
-      orderdate: [''],
-      partyname: [''],
-      partyaddress: ['', Validators.required],
-      expirydate: [''],
-      transportationtype: [''],
-      creditperiod: ['', Validators.required],
-      
+      partyInvoiceDate: [null],
+      orderNo: ['', Validators.required],
+      orderDate: [null],
+      partyName: [''],
+      partyAddress: ['', Validators.required],
+      expiryDate: [null],
+      creditPeriod: ['', Validators.required],
+
       // Sales section
       salesman: [''],
       salesarea: [''],
       staffincentive: [''],
-      staffincentiveperc: [''],
+      // staffincentiveperc: [''],
       mobilenumber: [''],
       
       // Delivery Details section
@@ -336,26 +360,10 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
     this.partyBalance = data.partyBalance || '0.0000';
   }
 
-  /** Format date for display using system locale */
-  private formatDateForInput(date: Date | string | null): string {
-    if (date == null) return '';
-    const d = typeof date === 'string' ? new Date(date) : date;
-    if (isNaN(d.getTime())) return '';
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${year}-${month}-${day}`;
-  }
-
   bindAdditionalDetailsFromTransaction(fillAdditionals: any): void {
     if (!fillAdditionals) return;
 
-    const partyInvNo = fillAdditionals.partyInvoiceNo ?? fillAdditionals.entryNo ?? '';
-    const partyInvNoStr = typeof partyInvNo === 'object' ? '' : String(partyInvNo);
-    const partyInvDate = fillAdditionals.partyInvoiceDate ?? fillAdditionals.entryDate;
     const formData: any = {
-      partyInvoiceNo: partyInvNoStr,
-      partyInvoiceDate: partyInvDate ? this.formatDateForInput(partyInvDate) : '',
       invoiceno: fillAdditionals.entryNo || '',
       invoicedate: fillAdditionals.entryDate ? new Date(fillAdditionals.entryDate) : null,
       orderno: fillAdditionals.referenceNo || '',
@@ -411,14 +419,15 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   }
 
   // NEW  PAGE DESIGN METHODS ***********************************************************************
-     activeSection = 'general'; // default active tab
+  activeSection = 'general'; // default active tab
 
   setActive(section: string) {
-    this.activeSection = section;
+   console.log("Sales button clikced")
+    this.activeSection = section
   }
 
   isActive(section: string): boolean {
-    return this.activeSection === section;
+    return this.activeSection === section
   }
 
   ///END NEW PAGE DESIGN METHODS*****************************************************************************

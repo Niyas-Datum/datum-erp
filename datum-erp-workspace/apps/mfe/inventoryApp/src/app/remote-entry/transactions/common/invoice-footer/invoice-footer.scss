@@ -2,13 +2,25 @@
 
 /* Syncfusion component overrides so footer layout matches design */
 :host {
+
+
+
   /* Terms & discount: ejs-textbox should fill and match height */
-  .terms-input.e-input-group,
-  .terms-input.e-input-group .e-input {
+  .terms-input .e-input-group,
+  .terms-input .e-input-group .e-input {
     height: 25px;
     min-height: 25px;
     border-radius: 4px;
     font-size: 10px;
+  }
+
+  .terms-input .e-input-group,
+  .terms-input .e-input-group.e-control-wrapper {
+    border-radius: 0 !important;
+  }
+
+  .terms-input .e-input-group .e-input {
+    border-radius: 0 !important;
   }
 
   .discount-outer ejs-textbox,
@@ -139,4 +151,10 @@
     height: 25px;
     min-height: 25px;
   }
+
+  // .section-content {
+  //   padding-inline: 12px;
+  // }
+
+
 }

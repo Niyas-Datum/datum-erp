@@ -29,6 +29,7 @@ import { FinancialPopupService } from '../../common/popup/finance.popup.service'
     providers: [EditService],
   })
   export class ChartOfAccountComponent extends BaseComponent implements OnInit, AfterViewInit{
+[x: string]: boolean;
     @ViewChild('accountDialog') accountDialog!: DialogComponent;
     @ViewChild('accountCombo') accountCombo?: MultiColumnComboBoxComponent;
     

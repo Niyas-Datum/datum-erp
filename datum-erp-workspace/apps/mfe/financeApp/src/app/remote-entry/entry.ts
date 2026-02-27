@@ -6,34 +6,28 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'app-financeApp-entry',
   standalone: false,
-    template: `
-    <div class="container-fluid mt-3">
-<div class="row">
+  template: `
+    <div class="container-fluid">
+    <div class="row align-items-center">
         <!-- Left Grid -->
-        <div class="col-md-2">
-          <div class="row">
-                  <div [ngSwitch]="pageType" class="col-md-2 col-sm-2" >
-                         
-                                        <div  *ngSwitchCase="1">
-                                          <button (click)="toggleSidebar()" class="e-btn-sm">
-                                            <span
-                                              class="e-btn-icon e-icons  e-elaborate"
-                                              style="color: $secondary; font-size: 1.8rem;"
-                                            ></span>
-                                          </button>
-                                        </div>
-                             
+        <div class="col-12 col-md-2">
+          <div class="d-flex align-items-center gap-2">
+                  <div [ngSwitch]="pageType">   
+                    <div  *ngSwitchCase="1">
+                        <button (click)="toggleSidebar()" class="e-btn-sm">
+                          <span class="e-icons e-menu"></span>
+                        </button>
                     </div>
-            <div class="col-md-
-            9 col-sm-10">
-              <div style="font-size: 1.3rem; font-weight: 500; color: #666666;">
+                  </div>
+           
+              <div class="fs-6 fw-medium text-secondary">
                 {{ pageheading }}
               </div>
-            </div>
+           
           </div>
         </div>
         <!-- col -2-d end -->
-        <div class="col-md-9">
+        <div class="col-12 col-md-10">
           <app-form-toolbar
             [isNewMode]="isNewMode"
             [isEditMode]="isEditMode"
@@ -50,18 +44,12 @@ import { BehaviorSubject } from 'rxjs';
           >
           </app-form-toolbar>
         </div>
-        <!-- col-9 end -->
-      </div>
+    </div>
       
-      <!-- row end -->
-
-
-      <div [ngSwitch]="pageType">
-         <div *ngSwitchDefault>
-
-      <!-- SIDEBAR OUTSIDE OF THE ROW -->
+    <div [ngSwitch]="pageType">
+      <div *ngSwitchDefault>
       <!-- SIDEBAR -->
-      <section class="leftgrid-section" >
+      <section class="leftgrid-section overflow-hidden" >
         <ejs-sidebar
           id="sideTree"
           [(isOpen)]="isSidebarVisible"
@@ -71,27 +59,21 @@ import { BehaviorSubject } from 'rxjs';
           [type]="sidebarType"
           position="Left"
         >
-          <div class="p-1">
-            <!-- Replace with real component -->
+          <div class="p-2">
             <app-left-grid
               (rowSelected)="onCostCategorySelected($event)"
-              [columns]="leftgridchildData.columns"
-            >
+              [columns]="leftgridchildData.columns">
             </app-left-grid>
           </div>
         </ejs-sidebar>
 
         <!-- MAIN CONTENT WRAPPER -->
-        <!-- pagetype 1 [leftgrid and page] -->
-        <div class="main-content-wrapper container-fluid">
-          <div class="row mt-2" style="min-height: 70vh;">
-            <div
-              [ngClass]="isSidebarVisible ? 'col-8' : 'col-12'"
-              class="transition-col"
-            >
+        <div class="main-content-wrapper px-2 w-100">
+          <div class="row">
+            <div class="col-12 transition-col">
               <div
                 class="odoo-form-bg row"
-                style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 18px 18px 18px; margin-bottom: 18px;"
+                style="background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"
               >
                 <router-outlet></router-outlet>
               </div>
@@ -102,7 +84,7 @@ import { BehaviorSubject } from 'rxjs';
 
       </section>
        </div>
-      <div *ngSwitchCase="2"                 style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 18px 18px 18px; margin-bottom: 18px;"
+      <div *ngSwitchCase="2" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 18px 18px 18px; margin-bottom: 18px;"
 >
           <router-outlet></router-outlet>
 
@@ -122,7 +104,7 @@ export class RemoteEntry implements OnInit,AfterViewInit{
   // Sidebar config
   isSidebarVisible = true;
   sidebarType = 'Push'; // or 'Slide'
-  width = '300px';
+  width = '256px';
   target = '.main-content-wrapper';
   mediaQuery = '(min-width: 768px)';
 

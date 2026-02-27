@@ -1,6 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, DestroyRef, input, computed, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { BaseService, DataSharingService } from '@org/services';
 import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService } from '@syncfusion/ej2-angular-grids';
 import { BehaviorSubject } from 'rxjs';
@@ -11,7 +10,7 @@ import { LeftGridDto } from '@org/models';
 
 @Component({
   selector: 'app-left-grid',
-  imports: [CommonModule, GridModule, FormsModule],
+  imports: [CommonModule,GridModule],
   templateUrl: './leftGrid.component.html',
   styleUrl: './leftGrid.component.scss',
   providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService],
@@ -19,7 +18,7 @@ import { LeftGridDto } from '@org/models';
 })
 export class LeftGridComponent {
 
-  sharedService = inject(DataSharingService);
+  sharedService = inject(DataSharingService); 
 
   public columns$ = new BehaviorSubject<any[]>([]);
   public leftdata$ = new BehaviorSubject<any[]>([]);

@@ -56,7 +56,7 @@
 //           color: #007bff;
 //           background: transparent;
 //           font-weight: 500;
-          
+
 //           &:hover {
 //             background: #007bff;
 //             color: #fff;
@@ -142,30 +142,30 @@
 //   .additional-details-container {
 //     .tab-navigation {
 //       padding: 10px 15px;
-      
+
 //       .tab-item {
 //         padding: 8px 15px;
 //         font-size: 13px;
 //       }
-      
+
 //       .control-buttons {
 //         gap: 15px;
-        
+
 //         .barcode-button .btn {
 //           padding: 6px 12px;
 //           font-size: 11px;
 //         }
-        
+
 //         .gross-amount-edit,
 //         .approve-control {
 //           .form-label {
 //             font-size: 11px;
 //           }
-          
+
 //           .switch {
 //             width: 40px;
 //             height: 22px;
-            
+
 //             .slider:before {
 //               height: 16px;
 //               width: 16px;
@@ -173,7 +173,7 @@
 //           }
 //         }
 //       }
-      
+
 //       .party-balance {
 //         margin-left: 15px;
 //         font-size: 13px;
@@ -188,12 +188,12 @@
 //     .tab-navigation {
 //       flex-wrap: wrap;
 //       padding: 8px 12px;
-      
+
 //       .tab-item {
 //         padding: 6px 12px;
 //         font-size: 12px;
 //       }
-      
+
 //       .control-buttons {
 //         gap: 12px;
 //         margin-top: 8px;
@@ -402,4 +402,59 @@
 //       border-radius: 6px 6px 0 0;
 //     }
 //   }
+// }
+
+
+
+
+.odoo-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    border-bottom: 2px solid #F29718;
+    font-weight: 500;
+}
+
+.inline-label {
+    width: 110px;
+    flex-shrink: 0;
+    margin-bottom: 0;
+    font-size: 13px;
+}
+
+.tab-btn-text-custom{
+    color:#187C9A;
+}
+
+::ng-deep .sales-custom-data .e-input {
+    height: 12px !important;
+    width: 12px !important;
+}
+
+::ng-deep .sales-custom-data .e-input-group {
+    height: 12px !important;
+    width: 2px !important;
+}
+
+/* Mobile specific improvement */
+// @media (max-width: 576px) {
+//     .odoo-tabs {
+//         flex-direction: column;
+//     }
+
+//     .tab-btn {
+//         width: 100%;
+//         text-align: left;
+//     }
 // }

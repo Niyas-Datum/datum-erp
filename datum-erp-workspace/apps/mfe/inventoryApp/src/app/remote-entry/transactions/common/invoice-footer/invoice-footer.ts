@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, EventEmitter, inject, Input, OnInit, Output, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
