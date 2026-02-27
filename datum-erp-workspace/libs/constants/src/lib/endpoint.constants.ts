@@ -52,7 +52,7 @@ export const EndpointConstant = {
     FILLROLEBYID:'api/v1/user/fillrole?RoleId=',
     FILLROLEDROPDOWN:'api/v1/user/getrole',
     FILLACCOUNTPOPUP:'api/v1/fn/acclist/PopUp',
-    FILLALLITEMMASTER:'api/v1/ItemMaster/Fillmaster',
+    FILLALLITEMMASTER:'api/v1/ItemMaster/fillmaster',
     FILTERITEMS:'api/v1/ItemMaster/filter?',
     FETCHNEWITEMCODE:'api/v1/ItemMaster/NxtItemCode',
     FILLITEMMASTERSBYID:'api/v1/ItemMaster/FillById?',

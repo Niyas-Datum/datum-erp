@@ -9,9 +9,12 @@
               formControlName="branch"
               [dataSource]="allBranches()"
               [fields]="{ text: 'name', value: 'id' }"
-              (change)="onBranchChange($event)"
-            >
+              (change)="onBranchChange($event)">
             </ejs-dropdownlist>
+            <div *ngIf="itemMasterForm.get('branch')?.touched && itemMasterForm.get('branch')?.invalid"
+     style="color:red; font-size:12px;">
+  Branch is required
+</div>
           </div>
           <div class="e-tab-header">
             <div>Item Details</div>
@@ -27,12 +30,15 @@
                       class="d-flex align-items-center gap-2 item-code-section"
                     >
                       <label for="ItemCode" style="width: 100px"
-                        >Item Code</label
-                      >
+                        >Item Code</label>
                       <ejs-textbox
                         [multiline]="false"
                         formControlName="itemcode"
                       ></ejs-textbox>
+                      <div *ngIf="itemMasterForm.get('itemcode')?.touched && itemMasterForm.get('itemcode')?.invalid"
+                       style="color:red; font-size:12px;">
+                       Item Code is required
+                      </div>
                     </div>
                     <div
                       class="d-flex align-items-center gap-2 barcode-section"
@@ -70,8 +76,7 @@
                   <div class="item-master-row-right">
                     <div class="item-master-checkbox-single">
                       <label for="active" class="form-label" translate
-                        >Active</label
-                      >
+                        >Active</label>
                       <label class="custom-checkbox">
                         <input
                           type="checkbox"
@@ -87,8 +92,7 @@
 
                     <div class="item-master-checkbox-single">
                       <label for="unique" class="form-label" translate
-                        >Unique</label
-                      >
+                        >Unique</label>
                       <label class="custom-checkbox">
                         <input
                           type="checkbox"
@@ -127,7 +131,9 @@
                     formControlName="itemname"
                     class="flex-grow-1"
                   ></ejs-textbox>
-                </div>
+                  <div *ngIf="itemMasterForm.get('itemname')?.touched  && itemMasterForm.get('itemname')?.invalid"
+                       style="color:red; font-size:12px;">Item Name is required</div>
+                  </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="arabicname" style="width: 100px"
                     >Arabic Name</label
@@ -141,8 +147,7 @@
                 <div class="item-master-row">
                   <div class="item-master-basicunit">
                     <label for="basicunit" style="width: 100px"
-                      >Basic Unit</label
-                    >
+                      >Basic Unit</label>
 
                     <app-multiColumnComboBox
                       formControlName="basicunit"
@@ -150,16 +155,14 @@
                       [fields]="{ text: 'unit', value: 'unit' }"
                       [columns]="basicUnitFields"
                       popupWidth="450px"
+                      [disabled]="!isInputDisabled"
                       [resetTrigger]="forceComboReset()"
-                      (rowSelected)="onBasicUnitSelected($event, 0)"
-                    >
-                      ></app-multiColumnComboBox
-                    >
+                      (rowSelected)="onBasicUnitSelected($event, 0)">
+                      ></app-multiColumnComboBox>
                   </div>
                   <div class="item-master-category">
                     <label for="category" class="form-label col-md-2"
-                      >Category</label
-                    >
+                      >Category</label>
                     <app-multiColumnComboBox
                       formControlName="category"
                       [dataSource]="allCategories"
@@ -167,10 +170,8 @@
                       popupWidth="450px"
                       [resetTrigger]="forceComboReset()"
                       (rowSelected)="onCategorySelected($event)"
-                      [columns]="categoryFields"
-                    >
-                      ></app-multiColumnComboBox
-                    >
+                      [columns]="categoryFields">
+                      </app-multiColumnComboBox>
 
                     <div class="itemmaster-category">
                       <span>{{
@@ -184,8 +185,7 @@
               <div class="item-master-row">
                 <div class="d-flex align-items-center gap-2">
                   <label for="costprice" style="width: 100px">
-                    Cost Price</label
-                  >
+                    Cost Price</label>
                   <ejs-textbox
                     #costprice
                     [multiline]="false"
@@ -206,8 +206,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="marginvalue" style="width: 100px">
-                    Margin Value</label
-                  >
+                    Margin Value</label>
                   <ejs-textbox
                     #marginvalue
                     [multiline]="false"
@@ -220,8 +219,7 @@
               <div class="item-master-row">
                 <div class="d-flex align-items-center gap-2">
                   <label for="sellingprice" style="width: 100px">
-                    Selling Price</label
-                  >
+                    Selling Price</label>
                   <ejs-textbox
                     #sellingprice
                     [multiline]="false"
@@ -232,8 +230,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="marginvalue" style="width: 100px">
-                    MRP Value</label
-                  >
+                    MRP Value</label>
                   <ejs-textbox
                     #mrp
                     [multiline]="false"
@@ -244,27 +241,35 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="taxtype" style="width: 100px"> Tax Type</label>
+                  
                   <ejs-dropdownlist
-                    #taxtype
-                    (change)="onChangeTaxType($event)"
-                    formControlName="taxtype"
-                    [dataSource]="allTaxTypes"
-                    [fields]="{ text: 'name', value: 'id' }"
-                    class="flex-grow-1"
-                  ></ejs-dropdownlist>
+                  id="taxtype"
+                  formControlName="taxtype"
+                  [dataSource]="allTaxTypes"
+                  [fields]="{ text: 'name', value: 'id' }"
+                  (change)="onChangeTaxType($event)"
+                  class="flex-grow-1">
+                  </ejs-dropdownlist>
+
                 </div>
               </div>
 
               <div class="col-md-2">
                 <!-- <lib-image-uploader></lib-image-uploader> -->
               </div>
-              <div class="row">
-                <!--- Unit details -->
+              <div class="row" *ngIf="itemMasterForm.get('basicunit')?.value">
+                <!--- Unit details - shown only when basic unit is selected -->
                 <h5 class="form-heading price-details-heading">Unit Details</h5>
                     <div class="price-head-line-bottom"></div>
+                <div class="mb-2" *ngIf="!isInputDisabled || isUpdate">
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="openAddUnitDialog()">
+                    + Add Unit
+                  </button>
+                </div>
                 <div class="row">                                            
                     <div class="item-units-table item-purchase-table">
-                        <ejs-grid
+<!--                     
+                      <ejs-grid
                             #unitDetailsGrid
                             id="unitDetailsGrid"
                             [dataSource]="filteredUnitDetails"
@@ -305,7 +310,11 @@
                                     width="120"
                                     textAlign="Left"
                                     [allowEditing]="false"
-                                ></e-column>
+                                >
+                                    <ng-template #template let-data>
+                                        {{ data.basicUnit?.unit ?? data.basicUnit?.basicUnit ?? data.basicUnit ?? '' }}
+                                    </ng-template>
+                                </e-column>
                                 <e-column
                                     field="factor"
                                     headerText="Factor"
@@ -448,12 +457,110 @@
                                     [allowEditing]="!isInputDisabled"
                                 ></e-column>
                             </e-columns>
-                        </ejs-grid>
-                    </div>
-                </div>
-            </div>
+                        </ejs-grid> -->
+                   <div class="table-responsive mt-3">
 
-            </div>
+  <table class="table table-bordered table-striped table-sm align-middle">
+
+    <!-- ================= HEADER ================= -->
+    <thead class="table-light text-center">
+      <tr>
+        <th>#</th>
+        <th>Unit</th>
+        <th>Basic Unit</th>
+        <th>Factor</th>
+        <th>Cost Price</th>
+        <th>Selling Price</th>
+        <th>MRP</th>
+        <th>Wholesale Price</th>
+        <th>Retail Price</th>
+        <th>Wholesale Price 2</th>
+        <th>Retail Price 2</th>
+        <th>Lowest Rate</th>
+        <th>Barcode</th>
+        <th>Active</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <!-- ================= BODY ================= -->
+    <tbody>
+
+      <tr *ngFor="let item of itemUnitDetails(); let i = index">
+
+        <!-- Serial Number -->
+        <td class="text-center">{{ i + 1 }}</td>
+
+        <!-- unit -->
+        <td>
+         {{ item.unit?.unit || item.basicUnit?.unit || '' }}
+        </td>
+        
+        <!-- Basic unit -->
+        <td>
+         {{ item.basicUnit?.unit || item.basicUnit || '' }}
+        </td>
+
+        <!-- Factor -->
+        <td class="text-end">{{ item.factor }}</td>
+
+        <!-- Purchase Rate (Cost Price) -->
+        <td class="text-end">{{ item.purchaseRate }}</td>
+
+        <!-- Selling Price -->
+        <td class="text-end">{{ item.sellingPrice }}</td>
+
+        <!-- MRP -->
+        <td class="text-end">{{ item.mrp }}</td>
+
+        <!-- Wholesale Price -->
+        <td class="text-end">{{ item.wholeSalePrice }}</td>
+
+        <!-- Retail Price -->
+        <td class="text-end">{{ item.retailPrice }}</td>
+
+        <!-- Wholesale Price 2 -->
+        <td class="text-end">{{ item.wholeSalePrice2 }}</td>
+
+        <!-- Retail Price 2 -->
+        <td class="text-end">{{ item.retailPrice2 }}</td>
+
+        <!-- Lowest Rate -->
+        <td class="text-end">{{ item.lowestRate }}</td>
+
+        <!-- Barcode -->
+        <td>{{ item.barcode ?? '' }}</td>
+
+        <!-- Active -->
+        <td class="text-center">{{ item.active ? 'Yes' : 'No' }}</td>
+
+        <!-- Actions -->
+        <td class="text-center">
+          <button *ngIf="!isInputDisabled || isUpdate" type="button" class="btn btn-outline-primary btn-sm me-1" (click)="editUnitRow(i)" title="Edit">
+            Edit
+          </button>
+          <button *ngIf="!isInputDisabled || isUpdate" type="button" class="btn btn-outline-danger btn-sm" (click)="deleteUnitRow(i)" title="Delete">
+            Delete
+          </button>
+        </td>
+      </tr>
+
+      <!-- If No Records -->
+      <tr *ngIf="!itemUnitDetails().length">
+        <td colspan="15" class="text-center text-muted">
+          No unit details found
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
             <div>
               <div class="row">
                 <div class="other-details-section">
@@ -491,8 +598,7 @@
                     <div class="checkbox-row">
                         <div class="checkbox-one">
                             <div class="input-label-box">
-                                <label for="expirydays" translate>Expiry
-                                    Days
+                                <label for="expirydays" translate>Expiry Days
                                 </label>
                             </div>
                             <input type="text" class="form-control" id="expirydays"
@@ -501,8 +607,7 @@
 
                         <div class="checkbox-one">
                             <div class="input-label-box">
-                                <label for="racklocation" translate>Rack
-                                    Location
+                                <label for="racklocation" translate>Rack Location
                                 </label>
 
                             </div>
@@ -548,17 +653,22 @@
                             ></app-multiColumnComboBox>
                         </div>
 
-                        <div class="checkbox-one">
+                        <div>
                             <div class="input-label-box">
                                 <label for="quality" translate>Quality
                                 </label>
 
                             </div>
-                            <select id="quality" class="form-select" formControlName="quality"
-                                (change)="onChangeQuality()">
-                                <option *ngFor="let quality of allQualities" [value]="quality?.id">
-                                    {{ quality?.value }}</option>
-                            </select>
+                           
+                            <ejs-dropdownlist
+                            id="quality"
+                            formControlName="quality"
+                            [dataSource]="allQualities"
+                            [fields]="{text: 'value',value: 'id'}"
+                            (change)="onChangeQuality($event)"
+                            >
+                            </ejs-dropdownlist>
+
                         </div>
 
                         <div class="checkbox-one">
@@ -918,6 +1028,99 @@
           </div>
         </ejs-tab>
       </form>
+
+  <!-- Add Unit Dialog -->
+  <ejs-dialog
+    #addUnitDialog
+    [visible]="addUnitDialogVisible"
+    [isModal]="true"
+    [showCloseIcon]="true"
+    width="520px"
+    header="Add Unit"
+    [buttons]="addUnitDialogButtons"
+    (open)="onAddUnitDialogOpen()"
+    (close)="closeAddUnitDialog()"
+    (created)="onAddUnitDialogCreated()">
+    <div class="add-unit-dialog-form p-3">
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Unit</label>
+          <div class="col-md-8">
+            <ejs-dropdownlist
+              [(value)]="addUnitFormData.unit"
+              [dataSource]="allBasicUnits"
+              [fields]="{ text: 'unit', value: 'unit' }"
+              placeholder="Select unit"
+              (change)="onAddUnitDialogUnitChange($event)"
+              style="width: 100%;">
+            </ejs-dropdownlist>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Basic Unit</label>
+          <div class="col-md-8">
+            <ejs-dropdownlist
+              [(value)]="addUnitFormData.basicUnit"
+              [dataSource]="addUnitDialogBasicUnitOptions"
+              [fields]="{ text: 'unit', value: 'unit' }"
+              placeholder="Select basic unit"
+              style="width: 100%;">
+            </ejs-dropdownlist>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Factor</label>
+          <div class="col-md-8">
+            <ejs-textbox type="number" [(value)]="addUnitFormData.factor" format="N2" (change)="onAddUnitFormNumberChange('factor', $event)"></ejs-textbox>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Purchase Rate</label>
+          <div class="col-md-8">
+            <ejs-textbox type="number" [(value)]="addUnitFormData.purchaseRate" format="N2" (change)="onAddUnitFormNumberChange('purchaseRate', $event)"></ejs-textbox>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Selling Price</label>
+          <div class="col-md-8">
+            <ejs-textbox type="number" [(value)]="addUnitFormData.sellingPrice" format="N2" (change)="onAddUnitFormNumberChange('sellingPrice', $event)"></ejs-textbox>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">MRP</label>
+          <div class="col-md-8">
+            <ejs-textbox type="number" [(value)]="addUnitFormData.mrp" format="N2" (change)="onAddUnitFormNumberChange('mrp', $event)"></ejs-textbox>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Wholesale Price</label>
+          <div class="col-md-8">
+            <ejs-textbox type="number" [(value)]="addUnitFormData.wholeSalePrice" format="N2" (change)="onAddUnitFormNumberChange('wholeSalePrice', $event)"></ejs-textbox>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Retail Price</label>
+          <div class="col-md-8">
+            <ejs-textbox type="number" [(value)]="addUnitFormData.retailPrice" format="N2" (change)="onAddUnitFormNumberChange('retailPrice', $event)"></ejs-textbox>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Barcode</label>
+          <div class="col-md-8 d-flex align-items-center gap-2">
+            <span class="text-muted small flex-grow-1">{{ addUnitFormData.barcode || '—' }}</span>
+            <button type="button" class="btn btn-primary btn-sm" (click)="generateBarCodeForAddUnitDialog()">
+              Generate
+            </button>
+          </div>
+        </div>
+        <div class="row g-2 mb-2">
+          <label class="col-md-4 col-form-label">Active</label>
+          <div class="col-md-8 d-flex align-items-center">
+            <ejs-checkbox [(checked)]="addUnitFormData.active"></ejs-checkbox>
+          </div>
+        </div>
+    </div>
+  </ejs-dialog>
+
     </div>
   </div>
 </div>
