@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-8">
                                  <ejs-dropdownlist id="warehouse" formControlName="warehouse" [dataSource]="warehouseData"
-                                [fields]="{ text: 'value', value: 'id' }" [value]="salesForm.get('warehouse')?.value"
+                                [fields]="{ text: 'value', value: 'id' }" [value]="salesForm.get('warehouse')?.value ?? null"
                                 (change)="onChangeWarehouse($event)" placeholder="Select warehouse"
                                 [disabled]="isMobile">
                             </ejs-dropdownlist>

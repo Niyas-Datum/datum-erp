@@ -105,7 +105,7 @@
           <label class="label-pay-type">Pay Types</label>
           <div class="pay-type-select">
             <ejs-dropdownlist id="paytype" [dataSource]="payTypeObj" [fields]="{ text: 'name', value: 'id' }"
-              [value]="salesForm.get('paytype')?.value?.id" (change)="onChangePayType($event)"
+              [value]="salesForm.get('paytype')?.value?.id ?? null" (change)="onChangePayType($event)"
               placeholder="Select pay type">
             </ejs-dropdownlist>
           </div>
