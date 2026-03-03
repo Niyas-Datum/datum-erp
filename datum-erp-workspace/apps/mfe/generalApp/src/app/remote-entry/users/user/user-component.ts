@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit, signal, ViewChild } from "@angular/core";
 import { BaseComponent } from "@org/architecture";
 import { firstValueFrom, Subject } from "rxjs";
 import { GeneralAppService } from "../../http/general-app.service";
@@ -18,6 +18,8 @@ import { Branches } from "@org/models/lib/general/branch.dto";
   styleUrls: ['./user-component.css']
 })
 export class UserComponent extends BaseComponent implements OnInit {
+
+  @ViewChild('accountCombo') accountCombo: any;
 
   isLoading = signal(false);
   showChild = false;
@@ -46,8 +48,8 @@ export class UserComponent extends BaseComponent implements OnInit {
   warehouseData = [] as Array<Warehouse>;
 
   accountOptions: any = [];
-  selectedAccountId: number = 0;
-  selectedAccountName: string = "";
+  selectedAccountId = null;
+  selectedAccountName = null;
 
   //for searching roles
   searchText: string = '';
@@ -75,7 +77,7 @@ export class UserComponent extends BaseComponent implements OnInit {
   supervisorData = [] as Array<Supervisor>;
   departmentOptions: { id: number; name: string }[] = [];
   branchOptions: any = [];
-   userBranchPayload: any = null;
+  userBranchPayload: any = null;
 
   employeeType: EmployeeType[] = [
     {
@@ -93,10 +95,12 @@ export class UserComponent extends BaseComponent implements OnInit {
     { field: 'name', header: 'Name', width: 150 }
   ];
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
     super();
     this.commonInit();
   }
+
+
   async ngOnInit(): Promise<void> {
     this.onInitBase();
     this.SetPageType(1);
@@ -113,8 +117,6 @@ export class UserComponent extends BaseComponent implements OnInit {
 
   override FormInitialize() {
     this.userForm = new FormGroup({
-      //firstName: new FormControl( { value: '', disabled: false },Validators.required ),
-
       firstName: new FormControl({ value: '', disabled: false }, [Validators.required, validName]),
       middleName: new FormControl({ value: '', disabled: false }, [validName]),
       lastName: new FormControl({ value: '', disabled: false }, [Validators.required, validName]),
@@ -149,10 +151,11 @@ export class UserComponent extends BaseComponent implements OnInit {
       (control.touched || control.dirty || this.formSubmitted)
     );
   }
-
   initialize() {
     this.userForm.reset();
+
     this.imagePreview = null;
+
     /* ---------- Clear Branch Grid ---------- */
     this.branchDetails = [];
 
@@ -163,17 +166,25 @@ export class UserComponent extends BaseComponent implements OnInit {
     /* ---------- Clear Role Selection ---------- */
     this.selectedBranchRow = null;
     this.selectedRoleId = null;
-  }
 
+    /* ---------- 🔥 CLEAR ACCOUNT FIELD ---------- */
+    this.userForm.get('account')?.setValue(null);   // reactive form
+    this.userForm.get('account')?.markAsPristine();
+    this.userForm.get('account')?.markAsUntouched();
+
+    this.selectedAccountId = null;
+    this.selectedAccountName = null;
+  }
 
   override newbuttonClicked(): void {
     this.isInputDisabled = false;
     this.userForm.enable();
+    this.initialize();
     this.userForm.patchValue({
       active: true,
-      letsystemgeneratenewaccountforparty: true
+      letsystemgeneratenewaccountforparty: true,
     });
-    this.initialize();
+
   }
 
   override onEditClick() {
@@ -222,6 +233,14 @@ export class UserComponent extends BaseComponent implements OnInit {
           ],
         },
       ];
+
+      const data = res.data;
+      const lastItem = data?.length ? data[data.length - 1] : null;
+      if (lastItem) {
+        this.currentUser = lastItem;
+        this.selectedUserId = lastItem.id;
+        this.fetchUserById(this.selectedUserId);
+      }
     } catch (err) {
       this.toast.error('Error fetching companies:' + err);
     }
@@ -236,18 +255,15 @@ export class UserComponent extends BaseComponent implements OnInit {
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
-    const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
-    // Image-only validation
     if (!file.type.startsWith('image/')) {
       this.toast.error('Only image files are allowed');
       input.value = '';
       return;
     }
 
-    // Size validation
-    if (file.size > maxSizeInBytes) {
-      this.toast.error('File size exceeds 5MB. Please upload an image less than 5MB');
+    if (file.size > 5 * 1024 * 1024) {
+      this.toast.error('File size exceeds 5MB');
       input.value = '';
       return;
     }
@@ -255,11 +271,17 @@ export class UserComponent extends BaseComponent implements OnInit {
     this.selectedImageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      const base64 = reader.result as string;
-      this.imagePreview = base64;
+      this.imagePreview = reader.result as string;   // ✅ base64 ready  
+      this.cd.detectChanges();                       // optional
     };
+
     reader.readAsDataURL(file);
   }
+  removeImage(): void {
+    this.imagePreview = null;
+
+  }
+
 
   async fetchAllDesignations(): Promise<void> {
     try {
@@ -308,26 +330,40 @@ export class UserComponent extends BaseComponent implements OnInit {
     }
   }
   onAccountSelected(event: any): void {
-    let selectedAccountId = 0;
-    this.allAccounts.forEach(function (item) {
-      if (item.name === event) {
-        selectedAccountId = item.id;
-      }
-    });
-    this.selectedAccountId = selectedAccountId;
-    this.selectedAccountName = event;
-
+    const selectedItem = event?.itemData;
+    if (!selectedItem) {
+      this.selectedAccountId = null;
+      this.selectedAccountName = null;
+      return;
+    }
+    console.log("Selected account:", selectedItem.value)
+    this.selectedAccountId = selectedItem.value;
   }
+
+
 
   //fill by id
   override getDataById(data: PUserModel) {
-    console.log('data', data);
     this.selectedUserId = data.id;
     this.fetchUserById(this.selectedUserId);
   }
 
+  clearAccountControl() {
+
+    // clear Angular form value
+    this.userForm.get('account')?.setValue(null);
+
+    // clear Syncfusion UI value
+    if (this.accountCombo) {
+      this.accountCombo.value = null;
+      this.accountCombo.text = '';
+    }
+  }
+
   fetchUserById(id: number) {
     this.initialize();
+    this.selectedAccountId = null;
+    this.selectedAccountName = null;
     this.httpService
       .fetch(EndpointConstant.FILLALLUSERSBYID + id)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -335,7 +371,7 @@ export class UserComponent extends BaseComponent implements OnInit {
         next: (res: any) => {
           const user = res?.data?.user;
           if (!user) {
-            console.error('❌ user object not found', res);
+            this.toast.error('User object not found', res);
             return;
           }
 
@@ -346,9 +382,6 @@ export class UserComponent extends BaseComponent implements OnInit {
           if (imageString != null)
             this.imagePreview = `data:image/jpeg;base64,${imageString}`;
 
-          console.log("User data:" + JSON.stringify(userDetails))
-          console.log("Branch data:" + JSON.stringify(branchDetails))
-          console.log("Roles data:" + JSON.stringify(userRights))
           // ================= USER FORM =================
           this.userForm.patchValue({
             firstName: userDetails.firstName,
@@ -370,6 +403,11 @@ export class UserComponent extends BaseComponent implements OnInit {
             warehouse: userDetails.warehouseId,
             account: userDetails.accountID
           });
+          //          if (userDetails.accountID == null) {
+          //   this.clearAccountControl();   // 🔥 correct clearing
+          // } else {
+          //   this.userForm.get('account')?.setValue(userDetails.accountID);
+          // }
 
           // ================= FILL BRANCH GRID =================
           this.branchDetails = branchDetails.map((bd: any) => ({
@@ -416,6 +454,35 @@ export class UserComponent extends BaseComponent implements OnInit {
             }));
 
           });
+
+          // store existing branch data directly into payload source
+          this.userBranchPayload = {
+            userBranchDetails: this.branchDetails.map(row => ({
+              employeeId: userDetails.employeeID || this.selectedUserId || 0,
+
+              departmentName: {
+                id: row.departmentName,
+                value: this.departmentOptions.find(d => d.id === row.departmentName)?.name || ''
+              },
+
+              activeFlag: row.activeFlag ? 1 : 0,
+              isMainBranch: !!row.isMainBranch,
+
+              branchName: {
+                id: row.branchName,
+                value: this.branchOptions.find((b: any) => b.id === row.branchName)?.company || ''
+              },
+
+              supervisor: {
+                id: row.supervisor,
+                value: this.supervisorOptions.find((s: any) => s.id === row.supervisor)?.name || ''
+              },
+
+              maRoleId: Number(row.selectedRoleId) || 0,
+
+              mapagemenuDto: Array.isArray(row.mapagemenuDto) ? row.mapagemenuDto : []
+            }))
+          };
         },
         error: (error: any) => {
           this.toast.error('Fill by ID failed', error);
@@ -429,6 +496,78 @@ export class UserComponent extends BaseComponent implements OnInit {
 
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
+      //return;
+    }
+    if (this.userForm.value.firstName === null) {
+      this.toast.warning('First Name is Mandatory.');
+      return;
+    }
+    if (this.userForm.value.lastName === null) {
+      this.toast.warning('Last Name is Mandatory.');
+      return;
+    }
+    if (this.userForm.value.address === null) {
+      this.toast.warning('Address is Mandatory.');
+      return;
+    }
+    if (this.userForm.value.emailId === null) {
+      this.toast.warning('Email ID is Mandatory.');
+      return;
+    }
+
+    if (this.userForm.value.gmailId === null) {
+      this.toast.warning('Gmail ID is Mandatory.');
+      return;
+    }
+
+    if (this.userForm.value.username === null) {
+      this.toast.warning('Username is Mandatory.');
+      return;
+    }
+
+    if (this.userForm.value.password === null) {
+      this.toast.warning('Password is Mandatory.');
+      return;
+    }
+    if (this.userForm.value.employeeType === null) {
+      this.toast.warning('Please select Employee Type');
+      return;
+    }
+    if (this.userForm.value.designation === null) {
+      this.toast.warning('Please select Designation.');
+      return;
+    }
+    const emailControl = this.userForm.get('emailId');
+    if (emailControl?.value && emailControl.errors?.['invalidEmail']) {
+      this.toast.warning('Please enter a valid Email Address.');
+      return;
+    }
+    const mobileControl = this.userForm.get('mobileNumber');
+    if (!mobileControl?.value) {
+      this.toast.warning('Mobile Number is Mandatory.');
+      return;
+    }
+
+    if (mobileControl.errors?.['invalidPhoneNumber']) {
+      this.toast.warning('Mobile Number must be 10 to 14 digits.');
+      return;
+    }
+
+    const officeNumber = this.userForm.get('officeNumber');
+    if (!officeNumber?.value) {
+      this.toast.warning('office Number is Mandatory.');
+      return;
+    }
+
+    if (mobileControl.errors?.['invalidPhoneNumber']) {
+      this.toast.warning('Mobile Number must be 10 to 14 digits.');
+      return;
+    }
+
+    //check whether branch details are empty
+    if (!this.userBranchPayload?.userBranchDetails ||
+      this.userBranchPayload.userBranchDetails.length === 0) {
+      this.toast.error("Branch details are empty");
       return;
     }
     const f = this.userForm.value;
@@ -457,7 +596,7 @@ export class UserComponent extends BaseComponent implements OnInit {
       "isLocationRestrictedUser": this.userForm.value.isLocationRestrictedUser ? this.userForm.value.isLocationRestrictedUser : false,
       "photoId": null,
       "account": {
-        "id": this.userForm.value.account ? this.userForm.value.account : null,
+        "id": this.selectedAccountId ? this.selectedAccountId : null, //this.userForm.value.account ? this.userForm.value.account : null,
         "value": null
       },
       "imagePath": this.imagePreview,
@@ -479,14 +618,17 @@ export class UserComponent extends BaseComponent implements OnInit {
   }
 
   createCallback(payload: any) {
+    console.log("payload:", JSON.stringify(payload, null, 2));
+
     this.httpService.post(EndpointConstant.SAVEUSER, payload)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
-        next: async (response) => {
-          if (response.httpCode == 201) {
+        next: async (response: any) => {
+
+          if (response.httpCode === 201) {
             this.toast.success('Successfully saved user');
             this.userForm.disable();
-            // Refresh the left grid and update the data sharing service
+
             await this.LeftGridInit();
             this.serviceBase.dataSharingService.setData({
               columns: this.leftGrid.leftGridColumns,
@@ -495,11 +637,22 @@ export class UserComponent extends BaseComponent implements OnInit {
             });
 
           } else {
-            this.toast.error('Some error occured');
+            // ✅ Show backend message
+            const msg = response?.data || 'Some error occurred';
+            this.toast.error(msg);
           }
         },
-        error: (error) => {
+
+        error: (error: any) => {
           console.error('Error saving user', error);
+
+          // ✅ Handle API error responses also
+          const backendMsg =
+            error?.error?.data ||
+            error?.error?.message ||
+            'Server error occurred';
+
+          this.toast.error(backendMsg);
         },
       });
   }
@@ -543,7 +696,7 @@ export class UserComponent extends BaseComponent implements OnInit {
       }));
 
     } catch (error) {
-      this.toast.error('An error occurred while fetching departments:'+ error);
+      this.toast.error('An error occurred while fetching departments:' + error);
     }
   }
 
@@ -556,7 +709,7 @@ export class UserComponent extends BaseComponent implements OnInit {
 
       this.branchOptions = dataArray.map((item: any) => ({
         id: item.id,
-        company: item.company 
+        company: item.company
       }));
 
       console.log('Branches:', this.branchOptions);
@@ -581,7 +734,7 @@ export class UserComponent extends BaseComponent implements OnInit {
       console.log('Supervisors:', JSON.stringify(this.supervisorOptions, null, 2));
 
     } catch (error) {
-      this.toast.error('An error occurred while fetching supervisors:'+ error);
+      this.toast.error('An error occurred while fetching supervisors:' + error);
     }
   }
 
@@ -601,14 +754,13 @@ export class UserComponent extends BaseComponent implements OnInit {
       departmentName: null,
       branchName: null,
       supervisor: null,
-      maRoleId: null,      
-      mapagemenuDto: []    
+      maRoleId: null,
+      mapagemenuDto: []
     });
   }
- 
+
 
   saveBranchDetails() {
-
     this.userBranchPayload = {
       userBranchDetails: this.branchDetails.map(row => {
 
@@ -674,27 +826,39 @@ export class UserComponent extends BaseComponent implements OnInit {
     this.showBranchPopup = false;
   }
 
-onMainBranchChange(row: any, index: number) {
+  onMainBranchChange(row: any, index: number) {
 
-  if (row.isMainBranch === true) {
+    if (row.isMainBranch === true) {
 
-    const alreadyMain = this.branchDetails.find(
-      (r: any, i: number) => r.isMainBranch === true && i !== index
-    );
+      const alreadyMain = this.branchDetails.find(
+        (r: any, i: number) => r.isMainBranch === true && i !== index
+      );
 
-    if (alreadyMain) {
-      // ❌ block
-      row.isMainBranch = false;   // revert model
+      if (alreadyMain) {
+        // ❌ block
+        row.isMainBranch = false;   // revert model
 
-      alert('Only one branch can be set as Main Branch');
-      return;
+        alert('Only one branch can be set as Main Branch');
+        return;
+      }
     }
   }
-}
 
 
   //rols popup
   openRolesPopup(row: any) {
+    if (!row.departmentName) {
+      this.toast.error('Please select Department');
+      return;
+    }
+    if (!row.branchName) {
+      this.toast.error('Please select Branch')
+      return;
+    }
+    if (!row.supervisor) {
+      this.toast.error('Please select Supervisor')
+      return;
+    }
     this.selectedBranchRow = row;
     this.selectedRoleId = row.selectedRoleId;
     this.onRoleChange();
@@ -711,7 +875,7 @@ onMainBranchChange(row: any, index: number) {
           this.allUserRoles = Array.isArray(data) ? data : [];
         },
         error: (error: any) => {
-          this.toast.error('An Error Occurred while fetching roles'+ error);
+          this.toast.error('An Error Occurred while fetching roles' + error);
         }
       });
   }
@@ -786,6 +950,11 @@ onMainBranchChange(row: any, index: number) {
       console.error('No branch row selected');
       return;
     }
+    // Validation: roles grid empty
+    if (!this.rolesGridData || this.rolesGridData.length === 0) {
+      this.toast.error('Please select a Role and assign at least one permission before saving');
+      return;
+    }
     const userDetailsId = 0;
     const mappedRoles = this.rolesGridData.map(r => ({
       userDetailsId: userDetailsId,
@@ -850,7 +1019,6 @@ onMainBranchChange(row: any, index: number) {
         .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
         .subscribe({
           next: (response) => {
-            this.LeftGridInit();
             this.toast.success("User Deleted Successfully");
             this.LeftGridInit();
           },

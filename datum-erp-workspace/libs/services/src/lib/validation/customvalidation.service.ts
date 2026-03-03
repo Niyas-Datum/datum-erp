@@ -32,7 +32,7 @@ export function validName(control: AbstractControl) {
 
  
 export function validPhoneNumber(control: AbstractControl): ValidationErrors | null {
-  const phoneRegex = /^[0-9]{10}$/;
+  const phoneRegex = /^[0-9]{10,14}$/;
   const value = (control.value || '').trim();
   const errors: ValidationErrors = {};
   // return phoneRegex.test(control.value || '') ? null : { invalidPhone: true };

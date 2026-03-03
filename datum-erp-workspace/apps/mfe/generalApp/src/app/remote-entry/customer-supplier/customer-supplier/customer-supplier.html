@@ -24,13 +24,17 @@
                       [readonly]="isInputDisabled" [enabled]="!isInputDisabled" (change)="onTypeSelect($event)"
                       cssClass="e-outline">
                     </ejs-dropdownlist>
+                    @if (customerSupplierForm.get('type')?.touched &&
+                    customerSupplierForm.get('type')?.errors?.['required']) {
+                    <small class="text-danger">Type is required.</small>
+                    }
 
-                    <small *ngIf="
+                    <!-- <small *ngIf="
                         customerSupplierForm.get('type')?.touched &&
                         customerSupplierForm.get('type')?.errors?.['required']
                       " style="color: red">
                       Please select the type
-                    </small>
+                    </small> -->
                   </div>
 
                   <!-- category dropdown -->
@@ -159,22 +163,22 @@
                   <div class="form-row form-row-inline">
                     <label>Credit Period</label>
                     <ejs-textbox formControlName="creditperiod" [readonly]="isInputDisabled"></ejs-textbox>
-                     <small
-                    *ngIf="isInvalid('creditperiod') && customerSupplierForm.get('creditperiod')?.errors?.['decimalOnly']"
-                    style="color:red">
-                    Must be a valid decimal number
-                  </small>
+                    <small
+                      *ngIf="isInvalid('creditperiod') && customerSupplierForm.get('creditperiod')?.errors?.['decimalOnly']"
+                      style="color:red">
+                      Must be a valid decimal number
+                    </small>
                   </div>
 
                   <!-- creditlimit -->
                   <div class="form-row form-row-inline">
                     <label>Credit Limit</label>
                     <ejs-textbox formControlName="creditlimit" [readonly]="isInputDisabled"></ejs-textbox>
-                     <small
-                    *ngIf="isInvalid('creditlimit') && customerSupplierForm.get('creditlimit')?.errors?.['decimalOnly']"
-                    style="color:red">
-                    Must be a valid decimal number
-                  </small>
+                    <small
+                      *ngIf="isInvalid('creditlimit') && customerSupplierForm.get('creditlimit')?.errors?.['decimalOnly']"
+                      style="color:red">
+                      Must be a valid decimal number
+                    </small>
                   </div>
                 </div>
                 <div class="grid-3">
@@ -244,9 +248,9 @@
                 <!-- salesman -->
                 <div class="form-row form-row-inline">
                   <label>SalesMan</label>
-                  <ejs-multicolumncombobox id="salesman" formControlName="salesman" [dataSource]="salesmanData()"
-                    [fields]="{ text: 'name', value: 'id' }" [columns]="salesmanKeys" popupWidth="400px"
-                    [disabled]="isInputDisabled" [allowFiltering]="true" sortType="Ascending"
+                  <ejs-multicolumncombobox #salesmanCombo id="salesman" formControlName="salesman"
+                    [dataSource]="salesmanData()" [fields]="{ text: 'name', value: 'id' }" [columns]="salesmanKeys"
+                    popupWidth="400px" [disabled]="isInputDisabled" [allowFiltering]="true" sortType="Ascending"
                     placeholder="-- Select Salesman --" [readonly]="isInputDisabled">
                   </ejs-multicolumncombobox>
                 </div>
@@ -329,31 +333,28 @@
                 </div>
               </div>
 
-              <!-- Image uploading -->
-              <div class="col-md-3" *ngIf="showImageContainer">
-                <div class="image-upload">
-                  <div class="image-upload-container" [class.disabled]="isInputDisabled" (click)="fileInput.click()">
 
-                    <!-- Hidden file input -->
-                    <input type="file" #fileInput accept=".jpg,.jpeg,.png,.webp" (change)="onImageSelected($event)"
-                      hidden />
+              <!-- Right: Image Upload -->
+              <div class="image-container">
 
-                    <!-- Placeholder -->
-                    <div *ngIf="!imageData" class="image-placeholder">
-                      <span>Click to upload image</span>
-                    </div>
+                <!-- Image Preview -->
+                <img *ngIf="imageData" [src]="imageData" class="preview-img">
 
-                    <!-- Preview -->
-                    <div *ngIf="imageData" class="image-preview">
-                      <img [src]="imageData" alt="Uploaded Image" />
-                      <button type="button" class="remove-button" (click)="removeImage(); $event.stopPropagation()">
-                        ✕
-                      </button>
-                    </div>
+                <!-- Upload Button -->
+                <label class="upload-btn">
+                  Upload Photo
+                  <input type="file" hidden accept="image/*" (change)="onImageSelect($event)"
+                    [disabled]="isInputDisabled">
+                </label>
 
-                  </div>
-                </div>
+                <!-- Remove Button -->
+                <button type="button" class="remove-btn" (click)="removeImage()" *ngIf="imageData">
+                  Remove Photo
+                </button>
+
               </div>
+
+
             </div>
           </ng-template>
         </e-tabitem>
@@ -621,35 +622,67 @@
         </e-tabitem>
 
         <!-- ===== DELIVERY DETAILS ===== -->
+        <!-- ===== DELIVERY DETAILS ===== -->
+
         <e-tabitem [header]="headerText[2]">
           <ng-template #content>
+            <div class="delivery-container">
+              <!-- Header -->
+              <div class="delivery-header">
+                <h5>Delivery Details</h5>
+                <button type="button" class="btn btn-primary" (click)="addDeliveryRow()">
+                  ➕ Add Row
+                </button>
+              </div>
 
-            <!-- Add Button -->
-            <div style="margin-bottom: 10px; text-align: right;">
-              <button class="btn btn-primary" (click)="addDeliveryRow()">
-                ➕ Add Delivery Row
-              </button>
+              <!-- Grid -->
+              <div class="delivery-grid-wrapper">
+                <table class="delivery-grid">
+                  <thead>
+                    <tr>
+                      <th>LocationName</th>
+                      <th>ProjectName</th>
+                      <th>ContactPerson</th>
+                      <th>ContactNo</th>
+                      <th>Address</th>
+                      <th style="width:60px;">Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngFor="let row of deliveryRows; let i = index">
+                      <td>
+                        <input type="text" [(ngModel)]="row.locationName" [ngModelOptions]="{ standalone: true }">
+                      </td>
+
+                      <td>
+                        <input type="text" [(ngModel)]="row.projectName" [ngModelOptions]="{ standalone: true }">
+                      </td>
+
+                      <td>
+                        <input type="text" [(ngModel)]="row.contactPerson" [ngModelOptions]="{ standalone: true }">
+                      </td>
+
+                      <td>
+                        <input type="text" [(ngModel)]="row.contactNo" [ngModelOptions]="{ standalone: true }">
+                      </td>
+
+                      <td>
+                        <input type="text" [(ngModel)]="row.address" [ngModelOptions]="{ standalone: true }">
+                      </td>
+
+                      <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeDeliveryRow(i)">
+                          ✕
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-
-            <!-- Grid -->
-            <ejs-grid #deliveryDetailsGrid [dataSource]="allDeliveryDetails"
-              [editSettings]="deliveryDetailsEditSettings" [toolbar]="deliveryToolbar" height="250px" gridLines="Both">
-
-              <e-columns>
-                <e-column field="locationName" headerText="Location Name" width="150" [isPrimaryKey]="true"></e-column>
-                <e-column field="projectName" headerText="Project Name" width="150"></e-column>
-                <e-column field="contactPerson" headerText="Contact Person" width="150"></e-column>
-                <e-column field="contactNo" headerText="Contact No" width="150"></e-column>
-                <e-column field="address" headerText="Address" width="200"></e-column>
-              </e-columns>
-
-            </ejs-grid>
-
-
           </ng-template>
         </e-tabitem>
-
-
 
 
       </e-tabitems>
@@ -657,6 +690,9 @@
 
   </form>
 </div>
+
+
+
 <style>
   .customer-form {
     width: 100%;
