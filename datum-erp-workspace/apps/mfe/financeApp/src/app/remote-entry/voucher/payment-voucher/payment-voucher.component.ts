@@ -52,6 +52,9 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   // Store reference to current row being edited for PO allocation
   private currentRowData: any;
 
+  /** True while loading unpaid POs after account selection (shows loading indicator) */
+  accountSelectionLoading = false;
+
   // Store original billandRef data when loading for edit
   private originalBillAndRef: any[] = [];
 
@@ -136,7 +139,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     this.fetchCommonFillData();
     this.voucherCommonService.initializeAccountDetails();
     this.updateGridEditSettings();
-    this.LeftGridInit();
+    this.LeftGridInit().then(() => this.loadLastSavedEntry());
   }
 
   override FormInitialize() {
@@ -523,43 +526,78 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   }
 
   // Enter edit mode for the selected voucher
+  // override onEditClick() {
+  //   const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
+  //   if (!selectedId || Number(selectedId) <= 0) {
+  //     this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
+  //     return;
+  //   }
+
+  //   // Check if voucher is beyond editable period
+  //   if (this.isVoucherBeyondEditablePeriod()) {
+  //     this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
+  //     this.updateGridEditSettings();
+  //     return;
+  //   }
+
+  //   this.selectedPaymentVoucherId = Number(selectedId);
+  //   // Set page type to edit mode
+  //   this.updateGridEditSettings();
+
+  //   // Enable the form for editing
+  //   this.paymentVoucherForm.enable();
+
+  //   // Keep voucher name and voucher no disabled (read-only in edit mode)
+  //   this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+  //   this.paymentVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
+
+  //   // Ensure dropdown data is loaded for editors/popups
+  //   this.voucherService.fetchAccountMaster();
+  //   this.voucherService.fetchBankDetails();
+
+  //   // Only fetch details if not already loaded
+  //   if (!this.currentPaymentVoucher || this.currentPaymentVoucher.id !== this.selectedPaymentVoucherId) {
+  //     this.fetchPaymentVoucherById();
+  //   }
+  // }
   override onEditClick() {
-    const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
-    if (!selectedId || Number(selectedId) <= 0) {
-      this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
-      return;
-    }
+  const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
 
-    // Check if voucher is beyond editable period
-    if (this.isVoucherBeyondEditablePeriod()) {
-      this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
-      this.paymentVoucherForm.disable({ emitEvent: false });
-      this.SetPageType(3);
-      this.updateGridEditSettings();
-      return;
-    }
-
-    this.selectedPaymentVoucherId = Number(selectedId);
-    // Set page type to edit mode
-   // this.SetPageType(2);
-    this.updateGridEditSettings();
-
-    // Enable the form for editing
-    this.paymentVoucherForm.enable();
-
-    // Keep voucher name and voucher no disabled (read-only in edit mode)
-    this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
-    this.paymentVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
-
-    // Ensure dropdown data is loaded for editors/popups
-    this.voucherService.fetchAccountMaster();
-    this.voucherService.fetchBankDetails();
-
-    // Only fetch details if not already loaded
-    if (!this.currentPaymentVoucher || this.currentPaymentVoucher.id !== this.selectedPaymentVoucherId) {
-      this.fetchPaymentVoucherById();
-    }
+  if (!selectedId || Number(selectedId) <= 0) {
+    this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
+    return;
   }
+
+  if (this.isVoucherBeyondEditablePeriod()) {
+    this.baseService.showCustomDialogue(
+      `Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`
+    );
+
+    this.serviceBase.formToolbarService.pagetype = 3; // View mode
+    this.updateGridEditSettings();
+    return;
+  }
+
+  this.selectedPaymentVoucherId = Number(selectedId);
+
+  // ✅ THIS IS THE ACTUAL REQUIRED FIX
+  this.serviceBase.formToolbarService.pagetype = 2; // Edit mode
+
+  this.updateGridEditSettings();
+
+  this.paymentVoucherForm.enable();
+
+  this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+  this.paymentVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
+
+  this.voucherService.fetchAccountMaster();
+  this.voucherService.fetchBankDetails();
+
+  if (!this.currentPaymentVoucher || 
+      this.currentPaymentVoucher.id !== this.selectedPaymentVoucherId) {
+    this.fetchPaymentVoucherById();
+  }
+}
 
   override formValidationError() {
     const c = this.paymentVoucherForm?.controls || {} as any;
@@ -878,10 +916,10 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       paymentRemaining: this.paymentRemaining
     });
 
-    if (this.cashPopupObj.length > 0) {
-      this.popupData = this.cashPopupObj;
-      this.showPaymentPopup = true;
-    } else {
+    // Open popup immediately (first click); data may load after if not cached
+    this.popupData = this.cashPopupObj;
+    this.showPaymentPopup = true;
+    if (this.cashPopupObj.length === 0) {
       this.httpService
         .fetch<any>(EndpointConstant.FILLCASHPOPUP)
         .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -895,7 +933,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
             }));
             this.popupData = this.cashPopupObj;
             console.log('Cash Popup Data:', this.popupData);
-            this.showPaymentPopup = true;
           },
           error: (error) => {
             console.error('Error fetching cash popup:', error);
@@ -943,25 +980,28 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       paymentRemaining: this.paymentRemaining
     });
 
-    this.httpService
-      .fetch<any>(EndpointConstant.FILLCARDPOPUP)
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const responseData = response?.data;
-          this.cardPopupObj = responseData.map((item: any) => ({
-            accountcode: item.alias,
-            accountname: item.name,
-            id: item.id,
-          }));
-          this.popupData = this.cardPopupObj;
-          console.log('Card Popup Data:', this.popupData);
-          this.showPaymentPopup = true;
-        },
-        error: (error) => {
-          console.error('Error fetching card popup:', error);
-        },
-      });
+    this.popupData = this.cardPopupObj;
+    this.showPaymentPopup = true;
+    if (this.cardPopupObj.length === 0) {
+      this.httpService
+        .fetch<any>(EndpointConstant.FILLCARDPOPUP)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+          next: (response) => {
+            const responseData = response?.data;
+            this.cardPopupObj = responseData.map((item: any) => ({
+              accountcode: item.alias,
+              accountname: item.name,
+              id: item.id,
+            }));
+            this.popupData = this.cardPopupObj;
+            console.log('Card Popup Data:', this.popupData);
+          },
+          error: (error) => {
+            console.error('Error fetching card popup:', error);
+          },
+        });
+    }
   }
 
   // Fetch Cheque popup data
@@ -1003,25 +1043,28 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       paymentRemaining: this.paymentRemaining
     });
 
-    this.httpService
-      .fetch<any>(EndpointConstant.FILLCHEQUEPOPUP)
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const responseData = response?.data;
-          this.chequePopupObj = responseData.map((item: any) => ({
-            accountcode: item.alias,
-            accountname: item.name,
-            id: item.id,
-          }));
-          this.popupData = this.chequePopupObj;
-          console.log('Cheque Popup Data:', this.popupData);
-          this.showPaymentPopup = true;
-        },
-        error: (error) => {
-          console.error('Error fetching cheque popup:', error);
-        },
-      });
+    this.popupData = this.chequePopupObj;
+    this.showPaymentPopup = true;
+    if (this.chequePopupObj.length === 0) {
+      this.httpService
+        .fetch<any>(EndpointConstant.FILLCHEQUEPOPUP)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+          next: (response) => {
+            const responseData = response?.data;
+            this.chequePopupObj = responseData.map((item: any) => ({
+              accountcode: item.alias,
+              accountname: item.name,
+              id: item.id,
+            }));
+            this.popupData = this.chequePopupObj;
+            console.log('Cheque Popup Data:', this.popupData);
+          },
+          error: (error) => {
+            console.error('Error fetching cheque popup:', error);
+          },
+        });
+    }
   }
 
   // Fetch E-Pay popup data
@@ -1063,25 +1106,28 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       paymentRemaining: this.paymentRemaining
     });
 
-    this.httpService
-      .fetch<any>(EndpointConstant.FILLEPAYPOPUP)
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const responseData = response?.data;
-          this.epayPopupObj = responseData.map((item: any) => ({
-            accountcode: item.alias,
-            accountname: item.name,
-            id: item.id,
-          }));
-          this.popupData = this.epayPopupObj;
-          console.log('E-Pay Popup Data:', this.popupData);
-          this.showPaymentPopup = true;
-        },
-        error: (error) => {
-          console.error('Error fetching e-pay popup:', error);
-        },
-      });
+    this.popupData = this.epayPopupObj;
+    this.showPaymentPopup = true;
+    if (this.epayPopupObj.length === 0) {
+      this.httpService
+        .fetch<any>(EndpointConstant.FILLEPAYPOPUP)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+          next: (response) => {
+            const responseData = response?.data;
+            this.epayPopupObj = responseData.map((item: any) => ({
+              accountcode: item.alias,
+              accountname: item.name,
+              id: item.id,
+            }));
+            this.popupData = this.epayPopupObj;
+            console.log('E-Pay Popup Data:', this.popupData);
+          },
+          error: (error) => {
+            console.error('Error fetching e-pay popup:', error);
+          },
+        });
+    }
   }
 
   // Compute remaining amount = sum(debit in Account Details) - sum(Amount in Payment Details excluding current type)
@@ -1193,9 +1239,11 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     // Update the row in grid using service (triggers signal change detection)
     this.voucherCommonService.updateAccountRow(data);
 
-    // Fetch unpaid POs for this account (for PO allocation feature)
-    // Payment Voucher uses 'C' (Credit side - invoices to pay against)
-    this.voucherService.fetchUnpaidPOs(selectedAccount.id, 'C');
+    // Fetch unpaid POs for this account (for PO allocation feature) and show loading
+    this.accountSelectionLoading = true;
+    this.voucherService.fetchUnpaidPOs(selectedAccount.id, 'C', () => {
+      this.accountSelectionLoading = false;
+    });
 
     console.log(`✅ Account ${accountChanged ? 'changed' : 'selected'}: ${selectedAccount.accountCode} - ${selectedAccount.accountName}${accountChanged ? `, debit preserved: ${data.debit}` : ''}`);
   }
@@ -1229,9 +1277,14 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       return;
     }
 
-    // Handle dueDate edits
+    // Handle dueDate edits - store as date-only (dd/MM/yyyy) so grid shows no time
     if (columnName === 'dueDate') {
-      rowData.dueDate = value;
+      const dateOnly = value instanceof Date
+        ? this.datePipe.transform(value, 'dd/MM/yyyy')
+        : (typeof value === 'string' && /^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/.test(value)
+          ? value
+          : this.datePipe.transform(new Date(value), 'dd/MM/yyyy'));
+      rowData.dueDate = dateOnly ?? '';
       this.voucherCommonService.updateAccountRow(rowData);
       return;
     }
@@ -1252,11 +1305,9 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
         await this.prepareUnpaidPOsForEdit(rowData);
       }
 
-      // Check if account has unpaid POs
+      // Check if account has unpaid POs - open popup immediately when Enter/debit is pressed
       if (this.voucherService.unpaidPOsData().length > 0) {
-        setTimeout(() => {
-          this.openPOAllocationPopup(debitValue, rowData);
-        }, 100);
+        this.openPOAllocationPopup(debitValue, rowData);
       } else {
         console.log(`ℹ️ No unpaid POs for account ${rowData.accountCode}. Manual debit entry: ${debitValue}`);
       }
@@ -1303,7 +1354,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   // Enter New mode with clean form and editable grids
   private enterNewMode(): void {
     console.log('Entering New mode for payment voucher');
-    //this.SetPageType(1);
+    this.SetPageType(1);
     this.updateGridEditSettings();
     this.selectedPaymentVoucherId = 0;
     this.currentPaymentVoucher = null;
@@ -1315,7 +1366,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     this.voucherCommonService.cardSelected.set([]);
     this.voucherCommonService.chequeSelected.set([]);
     this.showPaymentPopup = false;
-   // this.paymentVoucherForm.enable();
+    this.paymentVoucherForm.enable();
     this.paymentVoucherForm.patchValue({
       narration: '',
       costCentre: null,
@@ -1329,6 +1380,28 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     // Clear any left-grid selection in local state
     this.leftgridSelectedData = null;
     console.log('Form reset for new payment voucher');
+  }
+
+  /** Load the last saved entry into the form (called after LeftGridInit in ngOnInit). */
+  private loadLastSavedEntry(): void {
+    const list = this.leftGrid?.leftGridData;
+    if (!Array.isArray(list) || list.length === 0) {
+      this.SetPageType(1);
+      this.updateGridEditSettings();
+      this.paymentVoucherForm.enable();
+      this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+      return;
+    }
+    const first = list[0];
+    const id = first?.ID ?? first?.id;
+    if (!id) {
+      this.SetPageType(1);
+      this.updateGridEditSettings();
+      this.paymentVoucherForm.enable();
+      this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+      return;
+    }
+    this.getDataById({ ...first, ID: id } as PVoucherModel);
   }
 
   // Switch to topmost voucher in View mode
