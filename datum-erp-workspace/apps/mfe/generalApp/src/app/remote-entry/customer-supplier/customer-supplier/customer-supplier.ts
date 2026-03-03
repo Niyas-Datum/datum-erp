@@ -1,8 +1,8 @@
-import { Component, inject, OnInit, signal, ViewChild, viewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit, signal, ViewChild, viewChild } from "@angular/core";
 import { BaseComponent } from "@org/architecture";
 import { filter, firstValueFrom, take } from "rxjs";
 import { GeneralAppService } from "../../http/general-app.service";
-import { BaseService, validEmail, validPhoneNumber,integerOnly, decimalOnly } from "@org/services";
+import { BaseService, validEmail, validPhoneNumber, integerOnly, decimalOnly } from "@org/services";
 import { ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { EndpointConstant } from "@org/constants";
@@ -23,7 +23,9 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
   // @ViewChild('grid', { static: false })
   // public grid!: GridComponent;
-  @ViewChild('deliveryDetailsGrid') deliveryDetailsGrid!: GridComponent;
+  //@ViewChild('deliveryDetailsGrid') deliveryDetailsGrid!: GridComponent;
+  @ViewChild('salesman') salesmanCombo!: any;
+  @ViewChild('areaDropdown') areaCombo!: any;
 
   public deliveryDetailsEditSettings: EditSettingsModel = {
     allowEditing: true,
@@ -31,6 +33,8 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     allowDeleting: true,
     mode: 'Normal'
   };
+
+  formSubmitted = false;
 
   public deliveryToolbar: string[] = ['Add', 'Edit', 'Delete', 'Update', 'Cancel'];
 
@@ -66,6 +70,8 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   categoryfixed = signal<Array<{ id: number; name: string }>>([]);
 
   currentCustomerSupplier = signal<any | null>(null);
+  selectedCustomerSupplierId!: number;
+  firstCustomerSupplier!: number;
 
 
   /*=======================Static lookup values==================*/
@@ -202,7 +208,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   pageId = 0;
   mode = signal<Mode>('view');
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
     super();
     this.commonInit();
   }
@@ -220,6 +226,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     this.fetchPlaceOfSupply();
     this.fetchcategoryfixed();
     this.fetchCommoditySoughts();
+    //this.newbuttonClicked();
   }
 
   override newbuttonClicked(): void {
@@ -227,8 +234,8 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     this.customerSupplierForm.reset();
     this.customerSupplierForm.enable();
     this.customerSupplierForm.patchValue({
-      active:true,
-      letsystemgeneratenewaccountforparty:true
+      active: true,
+      letsystemgeneratenewaccountforparty: true
     });
     this.imageData = null;
   }
@@ -281,7 +288,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         remarks: new FormControl({ value: '', disabled: this.isInputDisabled }),
         commoditysought: new FormControl<string[]>([]),
         salestype: new FormControl({ value: '', disabled: this.isInputDisabled }), // Dropdown 
-        quantityplanned: new FormControl({ value: '', disabled: this.isInputDisabled },[integerOnly]),// int
+        quantityplanned: new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]),// int
         basicunit: new FormControl({ value: '', disabled: this.isInputDisabled }), // decimal
         creditcollectiontype: new FormControl({ value: '', disabled: this.isInputDisabled }), // Dropdown
         dl1: new FormControl({ value: '', disabled: this.isInputDisabled }), // string
@@ -293,20 +300,20 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         businessnature: new FormControl({ value: '', disabled: this.isInputDisabled }), // Dropdown
         othermerchantsofcustomer: new FormControl({ value: '', disabled: this.isInputDisabled }), // string
         businessaddress: new FormControl({ value: '', disabled: this.isInputDisabled }), // Dropdown
-        valueofproperty: new FormControl({ value: '', disabled: this.isInputDisabled },[decimalOnly]), // decimal
-        yearsofbusiness: new FormControl({ value: '', disabled: this.isInputDisabled },[integerOnly]), // int
-        yearlyturnover: new FormControl({ value: '', disabled: this.isInputDisabled },[decimalOnly]), // decimal
+        valueofproperty: new FormControl({ value: '', disabled: this.isInputDisabled }, [decimalOnly]), // decimal
+        yearsofbusiness: new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]), // int
+        yearlyturnover: new FormControl({ value: '', disabled: this.isInputDisabled }, [decimalOnly]), // decimal
         marketreputation: new FormControl({ value: '', disabled: this.isInputDisabled }), // string
         categoryrecommended: new FormControl({ value: '', disabled: this.isInputDisabled }), // Dropdown
         limitrecommended: new FormControl({ value: '', disabled: this.isInputDisabled }),
         categoryfixed: new FormControl({ value: '', disabled: this.isInputDisabled }), // Dropdown
-        limitfixedforcustomer:  new FormControl({ value: '', disabled: this.isInputDisabled },[integerOnly]), // int
-        creditperiodpermitted:new FormControl({ value: '', disabled: this.isInputDisabled },[integerOnly]), // int
-        overdueamountlimit: new FormControl({ value: '', disabled: this.isInputDisabled },[decimalOnly]), // decimal
-        overdueperiodlimit: new FormControl({ value: '', disabled: this.isInputDisabled },[integerOnly]), // int
-        chequebouncecountlimit:new FormControl({ value: '', disabled: this.isInputDisabled },[integerOnly]), // int
-        salespricelowvarlimit: new FormControl({ value: '', disabled: this.isInputDisabled },[decimalOnly]), // decimal
-        salespriceupVarlimit: new FormControl({ value: '', disabled: this.isInputDisabled },[decimalOnly]), // decimal
+        limitfixedforcustomer: new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]), // int
+        creditperiodpermitted: new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]), // int
+        overdueamountlimit: new FormControl({ value: '', disabled: this.isInputDisabled }, [decimalOnly]), // decimal
+        overdueperiodlimit: new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]), // int
+        chequebouncecountlimit: new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]), // int
+        salespricelowvarlimit: new FormControl({ value: '', disabled: this.isInputDisabled }, [decimalOnly]), // decimal
+        salespriceupVarlimit: new FormControl({ value: '', disabled: this.isInputDisabled }, [decimalOnly]), // decimal
       });
 
     // 🔁 Auto-enable / disable account based on checkbox
@@ -344,13 +351,82 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
 
   //for left grid data
+  // override async LeftGridInit() {
+  //   try {
+  //     const res = await firstValueFrom(
+  //       this.httpService
+  //         .fetch<any[]>(EndpointConstant.FILLALLCUSTOMERSUPPLIER)
+  //     );
+  //     let dataToUse: any[] = [];
+  //     if (Array.isArray(res)) {
+  //       dataToUse = res;
+  //     }
+  //     else if (res && res.data !== undefined) {
+  //       if (Array.isArray(res.data)) {
+  //         if (Array.isArray(res.data[0])) {
+  //           dataToUse = res.data[0];
+  //         } else {
+  //           dataToUse = res.data;
+  //         }
+  //       } else {
+  //         console.warn('res.data exists but is not an array:', res.data);
+  //         dataToUse = [];
+  //       }
+  //     } else {
+  //       console.error('Unexpected response structure:', res);
+  //       dataToUse = [];
+  //     }
+
+  //     this.leftGrid.leftGridData = dataToUse;
+
+  //     this.leftGrid.leftGridColumns = [
+  //       {
+  //         headerText: 'Customer Supplier List',
+  //         columns: [
+  //           {
+  //             field: 'code',
+  //             datacol: 'code',
+  //             headerText: 'Code',
+  //             textAlign: 'Left',
+  //           },
+  //           {
+  //             field: 'name',
+  //             datacol: 'name',
+  //             headerText: 'Name',
+  //             textAlign: 'Left',
+  //           },
+  //           {
+  //             field: 'nature',
+  //             datacol: 'nature',
+  //             headerText: 'Nature',
+  //             textAlign: 'Left',
+  //           }
+  //         ],
+  //       },
+  //     ];
+
+  //     // Update the data sharing service to populate the left grid
+  //     this.serviceBase.dataSharingService.setData({
+  //       columns: this.leftGrid.leftGridColumns,
+  //       data: this.leftGrid.leftGridData,
+  //       pageheading: this.pageheading,
+  //     });
+
+
+  //   } catch (err) {
+  //     this.toast.error('Error fetching companies:' + err);
+  //   }
+  // }
+
   override async LeftGridInit() {
     try {
       const res = await firstValueFrom(
         this.httpService
           .fetch<any[]>(EndpointConstant.FILLALLCUSTOMERSUPPLIER)
       );
+
       let dataToUse: any[] = [];
+
       if (Array.isArray(res)) {
         dataToUse = res;
       }
@@ -370,8 +446,24 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         dataToUse = [];
       }
 
+      // ✅ Assign to left grid
       this.leftGrid.leftGridData = dataToUse;
 
+      // ✅ Get Last Record Safely
+      if (dataToUse.length > 0) {
+        const lastRecord = dataToUse[dataToUse.length - 1];
+        console.log('Last Record:', lastRecord);
+        if (lastRecord) {
+          
+          this.currentCustomerSupplier.set(lastRecord);
+          this.selectedCustomerSupplierId = lastRecord.id;
+          this.FillById();
+        }
+      } else {
+        console.log('No records found from API');
+      }
+
+      // ✅ Define Columns
       this.leftGrid.leftGridColumns = [
         {
           headerText: 'Customer Supplier List',
@@ -398,16 +490,18 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         },
       ];
 
-      // Update the data sharing service to populate the left grid
+      // ✅ Update Data Sharing Service
       this.serviceBase.dataSharingService.setData({
         columns: this.leftGrid.leftGridColumns,
         data: this.leftGrid.leftGridData,
         pageheading: this.pageheading,
       });
+
     } catch (err) {
-      this.toast.error('Error fetching companies:' + err);
+      this.toast.error('Error fetching companies: ' + err);
     }
   }
+
 
   fetchCustomerSupplierTypes(): void {
     this.httpService
@@ -545,8 +639,8 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
           const data = response?.data ?? [];
           this.accountGroupData.set(data);
           if (data.length > 0) {
-          this.customerSupplierForm.get('accountgroup')?.setValue(data[0].id);
-        }
+            this.customerSupplierForm.get('accountgroup')?.setValue(data[0].id);
+          }
         },
         error: (error) => {
           this.toast.error('An Error Occured', error);
@@ -581,33 +675,43 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
       });
   }
 
-  //image uploading
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
 
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
+
+  //Image uploading
+  imagePreview: string | null = null;
+  selectedImageFile: File | null = null;
+
+  onImageSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
 
+    if (!file.type.startsWith('image/')) {
+      this.toast.error('Only image files are allowed');
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.toast.error('File size exceeds 5MB');
+      input.value = '';
+      return;
+    }
+
+    this.selectedImageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      const fullBase64 = reader.result as string;
-      this.imageData = fullBase64;
-      // ✅ For payload (REMOVE data:image/...;base64,)
-      this.imageBase64 = fullBase64.split(',')[1];
+      this.imageData = reader.result as string;   // ✅ base64 ready  
+      this.cd.detectChanges();                       // optional
     };
+
     reader.readAsDataURL(file);
   }
-
-
   removeImage(): void {
     this.imageData = null;
-    this.imageBase64 = null;
+
   }
-
-
 
   /*===================================== CUSTOMER DETAILS =======================================*/
 
@@ -811,24 +915,31 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   override getDataById(data: PCustomerSupplierModel) {
     this.currentCustomerSupplier.set(data);
     this.mode.set('view');
-    this.patchFormFromCurrent();
+    this.FillById();
 
   }
 
-  private patchFormFromCurrent(): void {
+  private FillById(): void {
+    this.customerSupplierForm.reset();
     const cur = this.currentCustomerSupplier();
-    this.selectedCustomerSupplierId = cur.id;
+    this.selectedCustomerSupplierId = cur?.id ?? null;
+    this.imageData = null;
+
     if (!cur?.id) return;
+
     this.httpService
-      .fetch<any>(EndpointConstant.FILLCUSTOMERSUPPLIERBYID + cur.id + '&pageId=105')
+      .fetch<any>(EndpointConstant.FILLCUSTOMERSUPPLIERBYID + this.selectedCustomerSupplierId + '&pageId=105')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response: any) => {
 
-          const payload = response?.data ?? response;   // support wrapped & direct
+          const payload = response?.data ?? response;
           const result = payload?.result;
           const custDetails = payload?.custDetails ?? null;
-          this.allDeliveryDetails = payload?.delDetails ?? null;
+
+          this.allDeliveryDetails = payload?.delDetails ?? [];
+
+
           const imageString = payload?.img ?? null;
           const accGrp = payload?.accountGroup ?? [];
           this.accountGroupData.set(accGrp);
@@ -836,8 +947,10 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
           const accountGroupId = accGrp?.[0]?.id ? Number(accGrp[0].id) : null;
           this.fetchAccount(accountGroupId);
 
-          if (imageString != null)
+          if (imageString) {
             this.imageData = `data:image/jpeg;base64,${imageString}`;
+          }
+
           if (!result) {
             this.toast.warning('Customer supplier payload missing result', payload);
             return;
@@ -850,62 +963,59 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
           this.customerSupplierForm.patchValue({
             type: result.nature === 'C' ? 1 : 2,
-            code: result.code,
-            name: result.name,
-            category: result.partyCategoryID,
-            active: result.active,
-            salutation: result.salutation,
-            arabicname: result.arabicName,
+            code: result.code ?? null,
+            name: result.name ?? null,
+            category: result.partyCategoryID ?? null,
+            active: result.active ?? false,
+            salutation: result.salutation ?? null,
+            arabicname: result.arabicName ?? null,
 
-            contactpersonname: result.contactPerson,
-            telephoneno: result.telephoneNo,
-            addresslineone: result.addressLineOne,
-            addressarabic: result.addressLineTwo,
-            mobileno: result.mobileNo,
-            vatno: result.salesTaxNo,
+            contactpersonname: result.contactPerson ?? null,
+            telephoneno: result.telephoneNo ?? null,
+            addresslineone: result.addressLineOne ?? null,
+            addressarabic: result.addressLineTwo ?? null,
+            mobileno: result.mobileNo ?? null,
+            vatno: result.salesTaxNo ?? null,
 
-            creditlimit: result.creditLimit,
-            salesman: result.salesManID,
+            creditlimit: result.creditLimit ?? null,
+            salesman: result.salesManID ?? null,
 
-            city: result.city,
-            pobox: result.pobox,
-            countrycode: result.countryCode,
-            country: result.country,
-            buildingno: result.bulidingNo,
-            district: result.district,
-            districtarabic: result.districtArabic,
-            cityarabic: result.cityArabic,
-            provincearabic: result.provinceArabic,
-            //image:this.imageData,
-            area: result.areaID,               // ✅ FIXED
-            province: result.province,
+            city: result.city ?? null,
+            pobox: result.pobox ?? null,
+            countrycode: result.countryCode ?? null,
+            country: result.country ?? null,
+            buildingno: result.bulidingNo ?? null,
+            district: result.district ?? null,
+            districtarabic: result.districtArabic ?? null,
+            cityarabic: result.cityArabic ?? null,
+            provincearabic: result.provinceArabic ?? null,
 
-            faxno: result.faxNo,
-            contactperson2: result.contactPerson2,
-            emailaddress: result.emailAddress,
-            telephoneno2: result.telephoneNo2,
-            centralsalestaxno: result.centralSalesTaxNo,
+            area: result.areaID ?? null,
+            province: result.province ?? null,
 
-            actassupplieralso: result.isMultiNature,
-            panno: result.panNo,
+            faxno: result.faxNo ?? null,
+            contactperson2: result.contactPerson2 ?? null,
+            emailaddress: result.emailAddress ?? null,
+            telephoneno2: result.telephoneNo2 ?? null,
+            centralsalestaxno: result.centralSalesTaxNo ?? null,
+
+            actassupplieralso: result.isMultiNature ?? false,
+            panno: result.panNo ?? null,
 
             letsystemgeneratenewaccountforparty: false,
 
-            // accountgroup: payload?.accountGroup?.id ?? null, 
-
             accountgroup: accountGroupId,
-            //payload?.accountGroup?.[0]?.id ?? null,
-            account: Number(result.accountID),
-            remarks: result.remarks,
+            account: result.accountID ? Number(result.accountID) : null,
+            remarks: result.remarks ?? null,
 
-            dl1: result.dL1,
-            dl2: result.dL2,
+            dl1: result.dL1 ?? null,
+            dl2: result.dL2 ?? null,
 
-            pricecategory: result.priceCategoryID,
-            placeofsupply: result.placeOfSupply,
-            creditperiod: custDetails.creditPeriod,
+            pricecategory: result.priceCategoryID ?? null,
+            placeofsupply: result.placeOfSupply ?? null,
+            creditperiod: custDetails?.creditPeriod ?? null,
 
-            /* ---------- custDetails object mapping ---------- */
+            /* ---------- custDetails ---------- */
 
             salestype: custDetails?.cashCreditType ?? null,
             quantityplanned: custDetails?.plannedPcs ?? null,
@@ -936,14 +1046,54 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
             commoditysought: (payload?.commoditySought ?? []).map((c: any) => c.id)
           });
 
-          /* ---------------- AREA SELECTION ---------------- */
+          /* ---------------- COMBO CLEAR / SET ---------------- */
 
+          // Salesman
+          if (result.salesManID) {
+            this.customerSupplierForm.get('salesman')?.setValue(result.salesManID);
+          } else {
+            this.clearCombo('salesman', this.salesmanCombo);
+          }
 
+          // Area
+          if (result.areaID) {
+            this.customerSupplierForm.get('area')?.setValue(result.areaID);
+          } else {
+            this.clearCombo('area', this.areaCombo);
+          }
+
+          // 👇 Delivery Details binding
+          if (this.allDeliveryDetails && this.allDeliveryDetails.length > 0) {
+
+            // 🔥 bind to grid
+            this.deliveryRows = this.allDeliveryDetails.map(x => ({
+              locationName: x.locationName || '',
+              projectName: x.projectName || '',
+              contactPerson: x.contactPerson || '',
+              contactNo: x.contactNo || '',
+              address: x.address || ''
+            }));
+
+          }
+          // else {
+          //   // if no records → show one empty row
+          //   this.deliveryRows = [this.createEmptyDeliveryRow()];
+          // }
         },
         error: (err: any) => {
           console.error('Error fetching customer supplier:', err);
         }
       });
+  }
+
+  clearCombo(controlName: string, comboRef: any) {
+    this.customerSupplierForm.get(controlName)?.setValue(null);
+
+    if (comboRef) {
+      comboRef.clear();
+      comboRef.value = null;
+      comboRef.dataBind();
+    }
   }
 
   override onEditClick() {
@@ -962,16 +1112,32 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
 
   //save customer supplier
+
   override SaveFormData(): void {
-    //this.formSubmitted = true;   // 🔥 trigger validation display
+    this.formSubmitted = true;
 
-    // if (this.customerSupplierForm.invalid) {
-    //   this.customerSupplierForm.markAllAsTouched(); // optional
-    //   console.log('❌ Form invalid');
-    //   return; // stop save
-    // }
+    if (this.customerSupplierForm.invalid) {
+      this.customerSupplierForm.markAllAsTouched();
+      //return;
+    }
 
-    let countryName = null;
+    const selectedType = this.selectedCustomerSupplierType;
+
+    if (!selectedType) {
+      this.toast.warning('Please select a valid type.');
+      return;
+    }
+    if (this.customerSupplierForm.value.code === null) {
+      this.toast.warning('Code is Mandatory.');
+      return;
+    }
+    if (this.customerSupplierForm.value.name === null) {
+      this.toast.warning('Name is Mandatory.');
+      return;
+    }
+
+    this.allDeliveryDetails = this.deliveryRows.map(r => ({ ...r }));
+
     const payload = {
       "id": this.isUpdate() ? this.selectedCustomerSupplierId : 0,
       "type": {
@@ -982,7 +1148,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         "id": this.customerSupplierForm.value.category ? this.customerSupplierForm.value.category : null,
         "value": "string"
       },
-      "code": this.customerSupplierForm.value.code.toString(),
+      "code": this.customerSupplierForm.value.code,
       "salutation": this.customerSupplierForm.value.salutation,
       "active": this.customerSupplierForm.value.active,
       "name": this.customerSupplierForm.value.name,
@@ -1097,7 +1263,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
       },
       "deliveryDetails": this.allDeliveryDetails
     }
-    console.log("PAyload:"+JSON.stringify(payload,null,2))
+    console.log("PAyload:" + JSON.stringify(payload, null, 2))
     if (this.isUpdate()) {
       this.updateCallback(payload);
     } else {
@@ -1106,8 +1272,6 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     }
   }
 
-  selectedCustomerSupplierId!: number;
-  firstCustomerSupplier!: number;
 
   updateCallback(payload: any) {
     this.httpService.patch(EndpointConstant.UPDATECUSTOMERSUPPLIER + this.currentPageInfo?.id, payload)
@@ -1171,49 +1335,34 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   }
 
   // Delivery details
-
-  // ➕ Add button
-  addDeliveryRow() {
-    const newRow = {
+  deliveryRows = [
+    {
       locationName: '',
       projectName: '',
       contactPerson: '',
       contactNo: '',
       address: ''
-    };
-
-    this.allDeliveryDetails.push(newRow);
-    this.allDeliveryDetails = this.allDeliveryDetails.filter(row =>
-      Object.values(row).some(
-        v => v !== null && v !== undefined && v.toString().trim() !== ''
-      )
-    );
-  }
-
-  onDeliveryActionComplete(args: any) {
-    if (args.requestType === 'save') {
-      const data = this.deliveryDetailsGrid.dataSource as any[];
-      const lastRow = data[data.length - 1];
-      const isRowFilled = Object.values(lastRow).some(v => v && v.toString().trim() !== '');
-      if (isRowFilled) {
-        data.push({
-          locationName: '',
-          projectName: '',
-          contactPerson: '',
-          contactNo: '',
-          address: ''
-        });
-
-        this.allDeliveryDetails = [...data];
-      }
     }
+  ];
+
+  //allDeliveryDetails: any[] = [];
+
+  addDeliveryRow() {
+    this.deliveryRows.push({
+      locationName: '',
+      projectName: '',
+      contactPerson: '',
+      contactNo: '',
+      address: ''
+    });
   }
 
+  removeDeliveryRow(index: number) {
+    this.deliveryRows.splice(index, 1);
+  }
 
-
-
-
-
-
-
+  // saveDeliveryDetails() {
+  //   this.allDeliveryDetails = this.deliveryRows.map(r => ({ ...r }));
+  //   console.log('Delivery Details Saved:', JSON.stringify(this.allDeliveryDetails,null,2));
+  // }
 }

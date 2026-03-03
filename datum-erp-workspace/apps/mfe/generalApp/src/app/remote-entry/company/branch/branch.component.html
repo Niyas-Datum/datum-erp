@@ -1,6 +1,6 @@
 <div class="row g-0">
   <div class="col-md-9 p-0">
-    <form [formGroup]="branchForm" (ngSubmit)="onSaveClick()">
+    <form [formGroup]="branchForm" >
       <div class="row">
         <div class="col-md-12">
           <div class="row">
@@ -107,10 +107,9 @@
           (
           branchForm.get('mobile')?.errors?.['invalidPhoneNumber']))
           {
-          <small style="color: red">
-            @if
-            (branchForm.get('mobile')?.errors?.['invalidPhoneNumber'])
-            { Invalid format for Mobile }
+
+          <small class="text-danger">
+            @if (branchForm.get('mobile')?.errors?.['invalidPhoneNumber']) { Invalid format }
           </small>
           }
         </div>
@@ -300,26 +299,33 @@
 
   <!-- image selection -->
   <div class="col-md-3" *ngIf="showImageContainer">
-    <div class="image-upload">
-      <div class="image-upload-container" [class.disabled]="isInputDisabled" (click)="fileInput.click()">
+  <div class="text-center">
+    <div class="profile-upload-box">
 
-        <!-- Hidden file input -->
-        <input type="file" #fileInput accept=".jpg,.jpeg,.png,.webp" (change)="onImageSelected($event)" hidden />
+      <!-- Preview Image -->
+      <img *ngIf="imageData"
+           [src]="imageData"
+           class="profile-preview">
 
-        <!-- Placeholder -->
-        <div *ngIf="!imageData" class="image-placeholder">
-          <span>Click to upload image</span>
-        </div>
+      <!-- Upload Button -->
+      <label class="upload-btn">
+        {{ imageData ? 'Change Photo' : 'Upload Photo' }}
+        <input type="file"
+               hidden
+               accept="image/*"
+               (change)="onImageSelect($event)"
+               [disabled]="isInputDisabled">
+      </label>
 
-        <!-- Preview -->
-        <div *ngIf="imageData" class="image-preview">
-          <img [src]="imageData" alt="Uploaded Image" />
-          <button type="button" class="remove-button" (click)="removeImage(); $event.stopPropagation()">
-            ✕
-          </button>
-        </div>
+      <!-- Remove Button -->
+      <button *ngIf="imageData"
+              type="button"
+              class="remove-button"
+              (click)="removeImage()">
+        Remove Photo
+      </button>
 
-      </div>
     </div>
   </div>
+</div>
 </div>

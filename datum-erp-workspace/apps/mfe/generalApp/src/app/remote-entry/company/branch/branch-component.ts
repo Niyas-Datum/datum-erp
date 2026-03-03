@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from "@angular/core";
 import { GeneralAppService } from "../../http/general-app.service";
 import { BaseComponent } from "@org/architecture";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
@@ -59,7 +59,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
   private baseService = inject(BaseService);// Injects BaseService
   branchForm = this.formUtil.thisForm;// Assigns the form instance 
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
     super();
     this.commonInit();
   }
@@ -170,6 +170,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
       );
 
       this.leftGrid.leftGridData = res.data;
+      console.log("Firct branch:" + JSON.stringify(this.leftGrid.leftGridData))
       this.leftGrid.leftGridColumns = [
         {
           headerText: 'Branch List',
@@ -179,6 +180,14 @@ export class BranchComponent extends BaseComponent implements OnInit {
           ],
         },
       ];
+      const data = res.data;
+      const lastItem = data?.length ? data[data.length - 1] : null;
+      if (lastItem) {
+        this.currentBranch = lastItem;
+        this.selectedBranchId = lastItem.id;
+        this.fetchBranchById();
+      }
+
     } catch (err) {
       console.error('Error fetching companies:', err);
     }
@@ -281,8 +290,8 @@ export class BranchComponent extends BaseComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           if (response) {
-            // ✅ API returns PURE base64 → add prefix
-            this.imageData = `data:image/jpeg;base64,${response.data}`;            
+            this.imageData = `data:image/jpeg;base64,${response.data}`;
+            console.log("Image getting:" + this.imageData)
           } else {
             this.imageData = null;
           }
@@ -305,7 +314,6 @@ export class BranchComponent extends BaseComponent implements OnInit {
           // Map country: your dropdown stores country.value (string).
           // Find the country record (if countries are already loaded).
           const countryObj = this.countries().find(c => {
-            // sometimes currentBranch.country may already be name or id
             if (c.value === this.currentBranch.country) return true;
             if (c.id != null && Number(this.currentBranch.country) === c.id) return true;
             return false;
@@ -342,65 +350,28 @@ export class BranchComponent extends BaseComponent implements OnInit {
             reference: this.currentBranch.reference,
             bankcode: this.currentBranch.bankCode
           });
-          this.fetchImage();
+          if (countryObj) {
+            this.selectedCountry.set(countryObj);
+          } else {
+            this.selectedCountry.set(null);
+          }
+          const contactObj = this.contactPersonList().find(c => {
+            if (c.id === this.currentBranch.contactPersonID) return true;
+            if (c.id != null && Number(this.currentBranch.contactPersonID) === c.id) return true;
+            return false;
+          });
 
+          if (contactObj) {
+            this.selectedContactPerson.set(contactObj);
+          } else {
+            this.selectedContactPerson.set(null);
+          }
+          this.fetchImage();
         },
         error: (error) => {
           console.error('An Error Occured', error);
         },
       });
-  }
-
-  fillBranchForm(branchData: Branch): void {
-    this.currentBranch = branchData;
-    this.branchForm.patchValue({
-      companyname: branchData.company || '',
-      arabicname: branchData.arabicName || '',
-      branchtype: branchData.nature || '',
-      isactive: branchData.activeFlag === 1,
-      telephone: branchData.telephoneNo || '',
-      mobile: branchData.mobileNo || '',
-      faxno: branchData.faxNo || '',
-      country: branchData.country || '',
-      addresslineone: branchData.addressLineOne || '',
-      addresslinetwo: branchData.addressLineTwo || '',
-      city: branchData.city || '',
-      emailaddress: branchData.emailAddress || '',
-      pobox: branchData.poBox || '',
-      district: branchData.district || '',
-      buildingno: branchData.bulidingNo || '',
-      countrycode: branchData.countryCode || '',
-      province: branchData.province || '',
-      vatno: branchData.salesTaxNo?.toString() || '',
-      centralsalestaxno: branchData.centralSalesTaxNo || '',
-      contactperson: branchData.contactPersonID || '',
-      remarks: branchData.remarks || '',
-      dl1: branchData.dL1 || '',
-      dl2: branchData.dL2 || '',
-      uniqueid: branchData.uniqueID || '',
-      reference: branchData.reference || '',
-      bankcode: branchData.bankCode || ''
-    });
-
-    this.isActive = branchData.activeFlag === 1;
-    this.updateSelectedObjects(branchData);
-  }
-
-  updateSelectedObjects(branchData: Branch): void {
-    if (branchData.contactPersonID) {
-      const contactPerson = this.contactPersonList().find(cp => cp.id === branchData.contactPersonID);
-      this.selectedContactPerson.set(contactPerson || null);
-    }
-
-    if (branchData.country) {
-      // branchData.country may be id or value; find by either
-      const country = this.countries().find(c => c.value === branchData.country || c.id === Number(branchData.country));
-      this.selectedCountry.set(country || null);
-    }
-
-    if (branchData.nature) {
-      const branchType = this.branchType.find(bt => bt.value === branchData.nature);
-    }
   }
 
   //for deleting the branch
@@ -429,10 +400,13 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.isNewMode.set(true);
     this.isNewBtnDisabled.set(false);
     this.isEditBtnDisabled.set(true);
+    this.isInputDisabled=false;
   }
 
   companyId = Number(localStorage.getItem('companyId'));
+  
   onSaveClick(): void {
+    console.log("saving...")
     const companyId = Number(localStorage.getItem('companyId'));
     //for validation-mandatory fields
     const requiredControls = [
@@ -454,9 +428,9 @@ export class BranchComponent extends BaseComponent implements OnInit {
       }
     });
 
-    if (hasError) {
-      return;
-    }
+    // if (hasError) {
+    //   return;
+    // }
     const selectedContactPerson = this.selectedContactPerson();
     const selectedCountry = this.selectedCountry();
     const selectedBranchType = this.branchType.find(bt => bt.value === this.branchForm.get('branchtype')?.value);
@@ -477,14 +451,14 @@ export class BranchComponent extends BaseComponent implements OnInit {
     const payload = {
       hocompanyName: this.branchForm.value.hocompanyname,
       hocompanyNameArabic: this.branchForm.value.hoarabicname,
-      branchType: { key: selectedBranchType.value, value: selectedBranchType.name },     
+      branchType: { key: selectedBranchType.value, value: selectedBranchType.name },
       active: this.branchForm.value.isactive ? 1 : 0,
       companyName: this.branchForm.value.companyname,
       arabicName: this.branchForm.value.arabicname,
       telephone: this.branchForm.value.telephone,
       mobile: this.branchForm.value.mobile,
       faxNo: this.branchForm.value.faxno,
-       country: { id: selectedCountry.id, value: selectedCountry.value },    
+      country: { id: selectedCountry.id, value: selectedCountry.value },
       addressLineOne: this.branchForm.value.addresslineone,
       addressLineTwo: this.branchForm.value.addresslinetwo,
       city: this.branchForm.value.city,
@@ -496,9 +470,10 @@ export class BranchComponent extends BaseComponent implements OnInit {
       province: this.branchForm.value.province,
       vatNo: this.branchForm.value.vatno,
       centralSalesTaxNo: this.branchForm.value.centralsalestaxno,
-      contactPerson: selectedContactPerson
-        ? { id: selectedContactPerson.id, name: selectedContactPerson.name }
-        : null,
+      contactPerson:
+        selectedContactPerson
+          ? { id: selectedContactPerson.id, name: selectedContactPerson.name }
+          : null,
 
       remarks: this.branchForm.value.remarks,
       dl1: this.branchForm.value.dl1,
@@ -506,8 +481,10 @@ export class BranchComponent extends BaseComponent implements OnInit {
       uniqueId: this.branchForm.value.uniqueid,
       reference: this.branchForm.value.reference,
       bankCode: this.branchForm.value.bankcode,
-      branchImage: this.imageBase64
+      branchImage: this.imageData
     };
+
+    console.log("Payload:" + JSON.stringify(payload, null, 2))
 
     if (this.isEditMode()) {
       this.updateBranch(payload);
@@ -574,30 +551,42 @@ export class BranchComponent extends BaseComponent implements OnInit {
   onActiveChange() { }
 
   //for image selection
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
 
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
+  selectedImageFile: File | null = null;
+
+  onImageSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
 
+    if (!file.type.startsWith('image/')) {
+      this.toast.error('Only image files are allowed');
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.toast.error('File size exceeds 5MB');
+      input.value = '';
+      return;
+    }
+
+    this.selectedImageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      const fullBase64 = reader.result as string;
-      this.imageData = fullBase64;
-      // ✅ For payload (REMOVE data:image/...;base64,)
-      this.imageBase64 = fullBase64.split(',')[1];
-      console.log("base64 data:" + this.imageBase64)
+      this.imageData = reader.result as string;   // ✅ base64 ready  
+      this.cd.detectChanges();                       // optional
     };
+
     reader.readAsDataURL(file);
   }
-
-
   removeImage(): void {
     this.imageData = null;
-    this.imageBase64 = null;
+
   }
+
+
+
 
 }
