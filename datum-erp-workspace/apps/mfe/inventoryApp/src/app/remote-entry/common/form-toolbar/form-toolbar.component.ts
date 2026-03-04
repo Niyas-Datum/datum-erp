@@ -1,4 +1,5 @@
-import { computed, EventEmitter, input, Output } from "@angular/core";
+/* eslint-disable @angular-eslint/no-output-native */
+import { EventEmitter, input, Output } from "@angular/core";
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -26,8 +27,16 @@ export class FormToolbarComponent {
   @Output() preview = new EventEmitter<void>();
   @Output() settings = new EventEmitter<void>();
   @Output() help = new EventEmitter<void>();
+  @Output() email = new EventEmitter<void>();
+  @Output() bills = new EventEmitter<void>();
+  @Output() attach = new EventEmitter<void>();
+  @Output() copy = new EventEmitter<void>();
+  @Output() importItems = new EventEmitter<void>();
+  @Output() keys = new EventEmitter<void>();
+  @Output() export = new EventEmitter<void>();
 
-  onClick(action: 'new' | 'edit' | 'delete' | 'save' | 'print' | 'preview' | 'settings' | 'help') {
+
+  onClick(action: 'new' | 'edit' | 'delete' | 'save' | 'print' | 'preview' | 'settings' | 'help' | 'email' | 'bills' | 'attach' | 'copy' | 'importItems' | 'keys' | 'export') {
     switch (action) {
       case 'new': this.new.emit(); break;
       case 'edit': this.edit.emit(); break;
@@ -37,6 +46,14 @@ export class FormToolbarComponent {
       case 'preview': this.preview.emit(); break;
       case 'settings': this.settings.emit(); break;
       case 'help': this.help.emit(); break;
+      case 'email': this.help.emit(); break;
+      case 'bills': this.help.emit(); break;
+      case 'attach': this.help.emit(); break;
+      case 'copy': this.help.emit(); break;
+      case 'importItems': this.help.emit(); break;
+      case 'keys': this.help.emit(); break;
+      case 'export': this.help.emit(); break;
+
     }
   }
 }

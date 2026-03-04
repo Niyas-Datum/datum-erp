@@ -1,0 +1,43 @@
+// select tag customization
+
+.e-input-group.e-control-wrapper,
+.e-ddl.e-input-group {
+  height: 24px !important;
+  border: 1px solid #dcdcdc !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.e-ddl .e-input {
+  font-size: 1rem !important;
+  color: #333 !important;
+}
+
+.e-input-focus {
+  border-color: $secondary !important;
+}
+
+.e-ddl.e-disabled {
+  background-color: $secondary-light !important;
+  cursor: not-allowed !important;
+}
+
+.e-ddl .e-input {
+  background-color: transparent !important;
+  height: 100% !important;
+  padding: 2px 8px !important;
+}
+
+.e-control-wrapper.e-ddl {
+  min-height: 26px !important;
+}
+
+.e-ddl .e-input {
+  font-size: 12px;
+}
+
+.e-ddl .e-input {
+  font-size: 12px !important;
+  font-weight: 500;
+  color: #333;
+}

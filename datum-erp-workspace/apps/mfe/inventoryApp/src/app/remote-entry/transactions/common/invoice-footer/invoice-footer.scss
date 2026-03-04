@@ -11,6 +11,15 @@
     font-size: 10px;
   }
 
+  .terms-input .e-input-group,
+  .terms-input .e-input-group.e-control-wrapper {
+    border-radius: 0 !important;
+  }
+
+  .terms-input .e-input-group .e-input {
+    border-radius: 0 !important;
+  }
+
   .discount-outer ejs-textbox,
   .discount-outer .e-input-group {
     flex: 1 0 0;
@@ -139,4 +148,10 @@
     height: 25px;
     min-height: 25px;
   }
+
+  // .section-content {
+  //   padding-inline: 12px;
+  // }
+
+
 }

@@ -61,3 +61,26 @@ ejs-grid {
 .e-grid .e-virtualtable {
   will-change: transform;
 }
+
+
+
+/* Make row background white */
+::ng-deep .sidebar-grid .e-rowcell {
+  background-color: #ffffff !important;
+  color: #3c3c3c !important;   /* Blue text */
+  font-weight: 500;
+}
+
+/* Header background white */
+::ng-deep .sidebar-grid .e-headercontent,
+::ng-deep .sidebar-grid .e-headercell {
+  background-color: #c91e1e !important;
+  color: #fda90d !important;
+  font-weight: 600;
+}
+
+/* Header text blue */
+::ng-deep .sidebar-grid .e-headercell .e-headertext {
+  
+}
+

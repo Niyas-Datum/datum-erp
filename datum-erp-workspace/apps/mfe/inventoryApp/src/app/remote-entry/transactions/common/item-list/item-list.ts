@@ -37,7 +37,7 @@ import { CommonService } from '../services/common.services';
 
 @Component({
   selector: 'app-item-list',
-  imports: [CommonModule, GridModule, MultiColumnComboBoxModule, DropDownListModule, FormsModule],
+  imports: [CommonModule, GridModule, MultiColumnComboBoxModule, FormsModule],
   templateUrl: './item-list.html',
   styleUrl: './item-list.scss',
   providers: [FilterService, VirtualScrollService, EditService, ToolbarService],

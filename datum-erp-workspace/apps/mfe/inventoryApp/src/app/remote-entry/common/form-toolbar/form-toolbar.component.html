@@ -1,48 +1,117 @@
-<div class="e-btn-group form-topbar" role="group">
-  <button type="button" class="e-btn e-small e-primary"
-          (click)="onClick('new')"
-          [ngClass]="{'top-button-active': isNewMode()}"
-          [disabled]="isNewBtnDisabled()">
-    <span class="material-icons">add_to_photos</span> New
-  </button>
 
-  <button type="button" class="e-btn e-small e-success"
-          (click)="onClick('save')"
-          [disabled]="isSaveBtnDisabled()">
-    <span class="material-icons">save</span> Save
-  </button>
+<div class="form-topbar d-flex align-items-center w-100 bg-white p-2">
 
-  <button type="button" class="e-btn e-small e-warning"
-          (click)="onClick('edit')"
-          [ngClass]="{'top-button-active': isEditMode()}"
-          [disabled]="isEditBtnDisabled()">
-    <span class="material-icons">edit</span> Edit
-  </button>
+  <!-- LEFT BUTTONS -->
+  <div class="d-flex flex-nowrap overflow-auto gap-1">
 
-  <button type="button" class="e-btn e-small e-danger"
-          (click)="onClick('delete')"
-          [disabled]="isDeleteBtnDisabled()">
-    <span class="material-icons">delete_forever</span> Delete
-  </button>
+    <button type="button"
+            class="e-btn e-small btn-common-feature"
+            (click)="onClick('new')"
+            [ngClass]="{'top-button-active': isNewMode()}"
+            [disabled]="isNewBtnDisabled()">
+      <span class="material-icons me-1">add_to_photos</span> New
+    </button>
 
-  <button type="button" class="e-btn e-small e-info"
-          (click)="onClick('print')"
-          [disabled]="isPrintBtnDisabled()">
-    <span class="material-icons">print</span> Print
-  </button>
+    <button type="button"
+            class="e-btn e-small e-success"
+            (click)="onClick('save')"
+            [disabled]="isSaveBtnDisabled()">
+      <span class="material-icons me-1">save</span> Save
+    </button>
 
-  <button type="button" class="e-btn e-small e-secondary"
-          (click)="onClick('preview')">
-    <span class="material-icons">pageview</span> Preview
-  </button>
+    <button type="button"
+            class="e-btn e-small e-warning"
+            (click)="onClick('edit')"
+            [ngClass]="{'top-button-active': isEditMode()}"
+            [disabled]="isEditBtnDisabled()">
+      <span class="material-icons me-1">edit</span> Edit
+    </button>
 
-  <button type="button" class="e-btn e-small e-dark"
-          (click)="onClick('settings')">
-    <span class="material-icons">settings</span> Settings
-  </button>
+    <button type="button"
+            class="e-btn e-small e-danger"
+            (click)="onClick('delete')"
+            [disabled]="isDeleteBtnDisabled()">
+      <span class="material-icons me-1">delete_forever</span> Delete
+    </button>
 
-  <button type="button" class="e-btn e-small e-light"
-          (click)="onClick('help')">
-    <span class="material-icons">help</span> Help
-  </button>
+    <button type="button"
+            class="e-btn e-small e-info"
+            (click)="onClick('print')"
+            [disabled]="isPrintBtnDisabled()">
+      <span class="material-icons me-1">print</span> Print
+    </button>
+
+    <button type="button"
+            class="e-btn e-small btn-common-feature"
+            (click)="onClick('preview')">
+      <span class="material-icons me-1">visibility</span> Preview
+    </button>
+
+    <button type="button"
+            class="e-btn e-small btn-common-feature"
+            (click)="onClick('settings')">
+      <span class="material-icons me-1">settings</span> Settings
+    </button>
+
+    <button type="button"
+            class="e-btn e-small btn-common-feature"
+            (click)="onClick('help')">
+      <span class="material-icons me-1">help</span> Help
+    </button>
+
+    <button type="button" class="e-btn e-small btn-common-feature">
+      <span class="material-icons me-1">mail</span> Email
+    </button>
+
+    <button type="button" class="e-btn e-small btn-common-feature">
+      <span class="material-icons me-1">receipt</span> Bills
+    </button>
+
+    <button type="button" class="e-btn e-small btn-common-feature">
+      <span class="material-icons me-1">attach_file</span> Attach
+    </button>
+
+    <button type="button" class="e-btn e-small btn-common-feature">
+      <span class="material-icons me-1">content_copy</span> Copy
+    </button>
+
+    <button type="button" class="e-btn e-small btn-common-feature">
+      <span class="material-icons me-1">dashboard</span> Import Items
+    </button>
+
+    <button type="button" class="e-btn e-small btn-common-feature">
+      <span class="material-icons me-1">key</span> Keys
+    </button>
+
+    <button type="button" class="e-btn e-small btn-common-feature">
+      <span class="material-icons me-1">open_in_new</span> Export
+    </button>
+
+  </div>
+
+  <!-- RIGHT SECTION -->
+  <!-- <div class="d-flex align-items-center gap-2 ms-auto mt-2 mt-lg-0">
+
+    <label for="currencyDropdown"
+           class="fw-bold mb-0 text-nowrap"
+           style="color:#187C9A;">
+      Currency
+    </label>
+
+    <ejs-dropdownlist id="currencyDropdown"
+                      [dataSource]="currencyList"
+                      cssClass="e-small"
+                      width="100px">
+    </ejs-dropdownlist>
+
+    <ejs-textbox placeholder="Search"
+                 cssClass="e-small"
+                 width="150px">
+    </ejs-textbox>
+
+    <img src="/assets/svgs/save-icon-blue.svg"
+         style="width:18px;height:18px;cursor:pointer;">
+
+  </div> -->
+
 </div>

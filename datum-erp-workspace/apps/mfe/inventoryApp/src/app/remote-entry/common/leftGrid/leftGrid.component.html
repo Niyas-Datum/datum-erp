@@ -16,7 +16,7 @@
 
 <ejs-grid
   #grid
-  [dataSource]="(filteredData$ | async) ?? []"  
+  [dataSource]="this.leftdata$ | async  "  
   [allowResizing]="true"
   [allowTextWrap]="true"
   [enableHover]="false"

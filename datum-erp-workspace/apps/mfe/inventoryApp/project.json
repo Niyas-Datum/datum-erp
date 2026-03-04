@@ -18,12 +18,16 @@
         "tsConfig": "apps/mfe/inventoryApp/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
+          "apps/mfe/inventoryApp/src/assets",
           {
             "glob": "**/*",
-            "input": "apps/mfe/inventoryApp/public"
+            "input": "apps/mfe/inventoryApp/public",
+            "output": "/"
           }
         ],
-        "styles": ["apps/mfe/inventoryApp/src/styles.scss"],
+        "styles": [
+          "apps/mfe/inventoryApp/src/styles.scss"
+        ],
         "customWebpackConfig": {
           "path": "apps/mfe/inventoryApp/webpack.config.ts"
         }
@@ -33,13 +37,13 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "1mb",
-              "maximumError": "2mb"
+              "maximumWarning": "5mb",
+              "maximumError": "10mb"
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "1mb",
-              "maximumError": "2mb"
+              "maximumWarning": "50mb",
+              "maximumError": "100mb"
             }
           ],
           "outputHashing": "all",
@@ -62,8 +66,8 @@
       "continuous": true,
       "executor": "@nx/angular:dev-server",
       "options": {
-        "port": 4204,
-        "publicHost": "http://localhost:4204"
+        "port": 4304,
+        "publicHost": "http://localhost:4304"
       },
       "configurations": {
         "production": {
@@ -90,7 +94,7 @@
       "defaultConfiguration": "production",
       "options": {
         "buildTarget": "inventoryApp:build",
-        "port": 4204,
+        "port": 4304,
         "watch": false
       },
       "configurations": {

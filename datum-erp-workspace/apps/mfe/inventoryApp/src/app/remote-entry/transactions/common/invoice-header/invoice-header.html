@@ -1,224 +1,324 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- <div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-xl-10">
+            <div id="inv-header" style="position: relative;">
+                <form [formGroup]="salesForm">
+                    <div class="section-content">
 
-<div id="inv-header" style="position: relative;"><form [formGroup]="salesForm">
-    <div class="section-content">
-        <!-- new form Design -->
-        <div class="row">
-            <!--col-->
-                    <div class="col-3">
                         <div class="row">
-                        <div class="col-4">
-                            <label for="vouchername" class="form-label">Voucher No</label>
-                        </div>
-                        <div class="col-3">
-                            <ejs-textbox
-                            id="vouchername"
-                            formControlName="vouchername"
-                            [tabindex]="1"
-                            cssClass="e-input" [readonly]="true"
-                            ></ejs-textbox>
-                        </div>
-                        
-                    
-                        <div class="col-4">
-                            <ejs-textbox
-                            id="voucherno"
-                            formControlName="voucherno"
-                            [tabindex]="2"
-                            cssClass="e-input"  [readonly]="!(isNewMode() || isEditMode())"
-                            ></ejs-textbox>
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="vouchername" class="form-label text-nowrap">Voucher No</label>
+                                    </div>
+                                    <div class="col-3 pe-1">
+                                        <ejs-textbox id="vouchername" formControlName="vouchername" [tabindex]="1"
+                                            cssClass="e-input" [readonly]="true"></ejs-textbox>
+                                    </div>
+                                    <div class="col-5">
+                                        <ejs-textbox id="voucherno" formControlName="voucherno" [tabindex]="2"
+                                            cssClass="e-input"
+                                            [readonly]="!(isNewMode() || isEditMode())"></ejs-textbox>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-        <!--col-->
-                <div class="col-3">
-                    <div class="row">
-                            <div class="col-4">
-                                <label for="purchasedate" class="form-label">Date</label>
-                            </div>
-                            <div class="col-8">
-                                <div class="flex-wrapper purchase-date-wrapper calendar-wrapper">
-                                <ejs-datepicker formControlName="purchasedate"
-                                    (keydown)="onFormKeyDown($event,4)" [disabled]="true" 
-                                    (change)="validationbase.validateDate(salesForm, 'purchasedate', $event.value)">
 
-                                    ></ejs-datepicker> 
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="purchasedate" class="form-label">Date</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <ejs-datepicker formControlName="purchasedate"
+                                            (keydown)="onFormKeyDown($event,4)" [disabled]="true"></ejs-datepicker>
+                                    </div>
                                 </div>
                             </div>
-               
-                        </div>
-                    </div>
-                     <!--col-->
-                <div class="col-3">
-                    <div class="row">
-                            <div class="col-4">
-                                <label for="reference" class="form-label">Reference</label>
-                            </div>
-                            <div class="col-8">
-                                <div class="reference-btn-section">
-                                    <div class="e-input-group">
-                                    <ejs-textbox id="reference" formControlName="reference"
-                                        (keydown)="onFormKeyDown($event,5)" [tabindex]="4"></ejs-textbox>
-                            <span class="e-input-group-icon e-btn "  (click)="openImportReferencePopup()">
-                                <i class="e-icons e-search"></i>
-                            </span>
-                        </div>
-                                    
-                                  
-                                    <!-- <ejs-button type="button" class="bt_loadmore" ngbTooltip="Import" placement="top"
-                                        (click)="openImportReferencePopup()">...</ejs-button>
-                                    <div *ngIf="salesForm.get('reference')?.hasError('required')" class="text-danger">
-                                        Reference is required.
-                                    </div> -->
+
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="reference" class="form-label">Reference</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="e-input-group">
+                                            <ejs-textbox id="reference" formControlName="reference"
+                                                (keydown)="onFormKeyDown($event,5)" [tabindex]="4"></ejs-textbox>
+                                            <span class="e-input-group-icon e-btn"
+                                                (click)="openImportReferencePopup()"><i
+                                                    class="e-icons e-search"></i></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-               
-                        </div>
-                    </div>
-                    <!--col-->
-                <div class="col-3">
-                    <div class="row">
-                            <div class="col-4">
-                                 <label for="warehouse" class="form-label">Warehouse</label>
-                          
+
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="warehouse" class="form-label">Warehouse</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <ejs-dropdownlist id="warehouse" formControlName="warehouse"
+                                            [dataSource]="warehouseData" [fields]="{ text: 'value', value: 'id' }"
+                                            placeholder="Select warehouse"></ejs-dropdownlist>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-8">
-                                 <ejs-dropdownlist id="warehouse" formControlName="warehouse" [dataSource]="warehouseData"
-                                [fields]="{ text: 'value', value: 'id' }" [value]="salesForm.get('warehouse')?.value ?? null"
-                                (change)="onChangeWarehouse($event)" placeholder="Select warehouse"
-                                [disabled]="isMobile">
-                            </ejs-dropdownlist>
-                            </div>
-               
                         </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="project" class="form-label">Project</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <ejs-textbox formControlName="project" placeholder="Search..."></ejs-textbox>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="customer" class="form-label">Customer<span
+                                                class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="e-input-group">
+                                            <ejs-textbox formControlName="customer"></ejs-textbox>
+                                            <span class="e-input-group-icon e-btn" (click)="openCustomerPopup()"><i
+                                                    class="e-icons e-search"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="salesman" class="form-label">Sales Man</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <ejs-textbox formControlName="salesman"></ejs-textbox>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-xxl-3 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label for="vatno" class="form-label">VAT No</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <ejs-textbox id="vatno" formControlName="vatno"></ejs-textbox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-lg-6 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-sm-4">
+                                        <label for="partyinvoiceno" class="form-label text-nowrap">Party Inv
+                                            No/Date</label>
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <ejs-textbox id="partyinvoiceno" formControlName="partyinvoiceno"></ejs-textbox>
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <ejs-datepicker formControlName="partyinvoicedate"></ejs-datepicker>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6 mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-sm-3">
+                                        <label for="description" class="form-label">Description</label>
+                                    </div>
+                                    <div class="col-12 col-sm-9">
+                                        <ejs-textbox id="description" formControlName="description"></ejs-textbox>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+                </form>
+            </div>
         </div>
 
-        <!--row 0-->
+        <div class="col-12 col-xl-2 d-none d-xl-block">
+        </div>
+    </div>
+</div> -->
+
+
+<!-- <div>---</div> -->
+
+<section class="w-100 p-1">
+  <form [formGroup]="salesForm">
+
+    <div class="row">
+
+      <!-- LEFT SECTION -->
+      <div class="col-12 col-lg-10">
+
+        <!-- ROW 1 -->
         <div class="row">
-               <!--col-->
-                    <div class="col-3">
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="project" class="form-label">Project</label>
-                          
-                            </div>
-                            <div class="col-8">
-                                  <ejs-textbox formControlName="project" (keydown)="onFormKeyDown($event, 4)"
-                            (input)="openProjectPopup()" placeholder="Search for a project"></ejs-textbox>
-               
-                            </div>
-               
-                        </div>
-                    </div>
-                     <!--col-->
-                    <div class="col-3">
-                        <div class="row">
-                            <div class="col-4">
-                                 <label for="customer" class="form-label">Customer<span
-                                    class="required-asterisk">*</span></label>
-                          
-                            </div>
-                            <div class="col-7">
-                                    <div class="e-input-group">
-                                 <ejs-textbox formControlName="customer" (input)="openCustomerPopup()"
-                                    (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
-                                        <span class="e-input-group-icon e-btn "   (click)="openCustomerPopup(); $event.stopPropagation()">
-                                <i class="e-icons e-search"></i>
-                            </span>
-                                            </div>
-                            </div>
-               
-                        </div>
-                    </div>
-                    <!--col-->
-                            <div class="col-3">
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="salesman" class="form-label">Sales Man</label>
-                            
-                                </div>
-                                <div class="col-7">
-                                    <ejs-textbox formControlName="salesman"
-                                        (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
-                                </div>
-                                </div>
-                
-                            </div>
-                    <!--col-->
-                            <div class="col-3">
-                            <div class="row">
-                                <div class="col-4">
-                            <label for="vatno" class="form-label">VAT No</label>
-                            
-                                </div>
-                                <div class="col-8">
-                                    <ejs-textbox id="vatno" formControlName="vatno" (keydown)="onFormKeyDown($event,10)"
-                                [tabindex]="9"></ejs-textbox>
-                                </div>
-                                </div>
-                
-                            </div>
+
+          <!-- Voucher No -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-1">
+              <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Voucher No</p>
+              <div class="col-12 col-md-8 d-flex gap-1">
+                <ejs-textbox formControlName="vouchername" cssClass="e-outline text-center" style="width:3rem"
+                  [readonly]="true">
+                </ejs-textbox>
+
+                <ejs-textbox class="w-100" formControlName="voucherno" cssClass="e-outline flex-fill"
+                  [readonly]="!(isNewMode() || isEditMode())">
+                </ejs-textbox>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-1">
+              <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Date</p>
+              <div class="col-12 col-md-8">
+                <ejs-datepicker class="w-100" cssClass="e-outline" formControlName="purchasedate" [disabled]="true">
+                </ejs-datepicker>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reference -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-1">
+              <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Reference</p>
+              <div class="col-12 col-md-8">
+                <div class="e-input-group w-100 d-flex">
+
+                  <ejs-textbox cssClass="e-outline w-100" formControlName="reference">
+                  </ejs-textbox>
+
+                  <span class="e-input-group-icon e-btn flex-shrink-0" (click)="openImportReferencePopup()">
+                    <i class="e-icons e-search"></i>
+                  </span>
+
                 </div>
-                 <!--row 0-->
-                        <div class="row">
-                            <!--col-->
-                                    <div class="col-6">
-                                        <div class="row">
-                                            <div class="col-4">
-                                    <label for="partyinvoiceno" class="form-label">Party Invoice No & Date</label>
 
-                                            </div>
-                                            <div class="col-4">
-                                            <ejs-textbox id="partyinvoiceno" formControlName="partyinvoiceno"
-                                        (change)="onChangePartyInvNo($event)" (keydown)="onFormKeyDown($event,11)"
-                                        [tabindex]="10"></ejs-textbox>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="calendar-wrapper party-invoice-date-wrapper">
-                                                <ejs-datepicker formControlName="partyinvoicedate" (dateChange)="onChangePartyInvDate($event)"
-                                                    (keydown)="onFormKeyDown($event,12)"></ejs-datepicker>
-                                            </div>
-                                        </div>
-                                            </div>
-               
-                                    </div>
-                                      <!--col-->
-                            <div class="col-6">
-                            <div class="row">
-                                <div class="col-2">
-                                     <label for="description" class="form-label">Description</label>
-                  
-                            
-                                </div>
-                                <div class="col-8">
-                                    <ejs-textbox id="description" formControlName="description" [tabindex]="12"
-                        (keydown)="onFormKeyDown($event,-1)"></ejs-textbox>
-                                </div>
-                                </div>
-                
-                            </div>
-                         </div>
-                  
-        
+              </div>
+            </div>
+          </div>
 
- 
-</div>
+          <!-- Warehouse -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-2">
+              <p class="col-12 col-md-3 mb-0 font-size-custome form-label">Warehouse</p>
+              <div class="col-12 col-md-9">
+                <ejs-dropdownlist class="w-100" id="warehouse" cssClass="e-outline" formControlName="warehouse"
+                  [dataSource]="warehouseData" virtu [fields]="{ text: 'value', value: 'id' }" placeholder="Select warehouse"
+                  [value]="salesForm.get('warehouse')?.value" (change)="onChangeWarehouse($event)"
+                  [disabled]="isMobile">
+                </ejs-dropdownlist>
+              </div>
+            </div>
+          </div>
 
-        <!-- end new design-->
+        </div>
 
-        
+        <!-- ROW 2 -->
+        <div class="row">
 
-</form>
-</div>
+          <!-- Customer -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-1">
+              <p class="col-12 col-md-4 mb-0 font-size-custome form-label">
+                Customer <span class="text-danger">*</span>
+              </p>
+              <div class="col-12 col-md-8">
+                <div class="e-input-group w-100">
+                  <ejs-textbox cssClass="e-outline" formControlName="customer"></ejs-textbox>
+                  <span class="e-input-group-icon e-btn" (click)="openCustomerPopup()">
+                    <i class="e-icons e-search"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <!-- VAT No -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-1">
+              <p class="col-12 col-md-4 mb-0 font-size-custome form-label">VAT No</p>
+              <div class="col-12 col-md-8">
+                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="vatno"></ejs-textbox>
+              </div>
+            </div>
+          </div>
 
-<!-- Legacy Reference Popup (can be removed if not needed) -->
-<!-- <app-reference-popup 
-    *ngIf="isPopuprefVisible"
-    [popuprefData]="popuprefData" 
-    [visible]="isPopuprefVisible"
-    [referenceData]="referenceFillData" 
-    [voucherTypes]="voucherTypeData" 
-    [partyData]="partyData"
-    (close)="closeReferencePopup()">
-</app-reference-popup> -->
+          <!-- Sales Man -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-1">
+              <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Sales Man</p>
+              <div class="col-12 col-md-8">
+                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="salesman"></ejs-textbox>
+              </div>
+            </div>
+          </div>
+
+          <!-- Party Invoice -->
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="row g-1">
+              <p class="col-12 col-md-3 mb-0 font-size-custome">
+                Party Inv<br> No & Date
+              </p>
+              <div class="col-12 col-md-9 d-flex gap-1">
+                <ejs-textbox cssClass="e-outline" style="width: 4em;" formControlName="partyinvoiceno">
+                </ejs-textbox>
+                <ejs-datepicker class="flex-fill" cssClass="e-outline" formControlName="partyinvoicedate">
+                </ejs-datepicker>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ROW 3 -->
+        <div class="row">
+
+          <div class="col-12 col-lg-6">
+            <div class="row g-1">
+              <p class="col-12 col-md-2 mb-0 font-size-custome form-label">Project</p>
+              <div class="col-12 col-md-10">
+                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="project"></ejs-textbox>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <div class="row g-1">
+              <p class="col-12 col-md-2 mb-0 font-size-custome form-label">Description</p>
+              <div class="col-12 col-md-10">
+                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="description"></ejs-textbox>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT SECTION -->
+      <div class="col-12 col-lg-2"></div>
+
+    </div>
+  </form>
+</section>

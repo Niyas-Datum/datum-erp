@@ -50,6 +50,8 @@ showPageMenuPopup = false;
     treeData = signal<any[]>([]);
     selectedAccountId = 0;
     isUpdate = false;
+    isCreate=false;
+    isGroup=false;
     treeViewFields: any = {
       dataSource: [],
       id: 'id',
