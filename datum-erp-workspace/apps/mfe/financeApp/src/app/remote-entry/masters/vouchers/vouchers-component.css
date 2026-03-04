@@ -78,6 +78,44 @@
   margin: 0;
 }
 
+/* Voucher toolbar button colors */
+.toolbar-section .action-buttons .e-btn.e-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+.toolbar-section .action-buttons .e-btn.e-primary:hover:not(:disabled) {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+  color: #fff;
+}
+
+.toolbar-section .action-buttons .e-btn.e-success {
+  background-color: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+.toolbar-section .action-buttons .e-btn.e-success:hover:not(:disabled) {
+  background-color: #157347;
+  border-color: #146c43;
+  color: #fff;
+}
+
+.toolbar-section .action-buttons .e-btn.e-info {
+  background-color: #0dcaf0;
+  border-color: #0dcaf0;
+  color: #000;
+}
+.toolbar-section .action-buttons .e-btn.e-info:hover:not(:disabled) {
+  background-color: #31d2f2;
+  border-color: #25cff2;
+  color: #000;
+}
+
+.toolbar-section .action-buttons .e-btn:disabled {
+  opacity: 0.65;
+}
+
 .grid-search-bar {
   display: flex;
   align-items: center;

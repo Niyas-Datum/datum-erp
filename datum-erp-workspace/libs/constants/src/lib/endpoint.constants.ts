@@ -271,8 +271,11 @@ export const EndpointConstant = {
     SAVEDELIVERYIN:'api/DeliveryOut/api/v1/deliveryout/savedeliveryout?PageId=',
     UPDATEDELIVERYIN:'api/DeliveryOut/api/v1/deliveryout/updatedeliveryout?PageId=',
 
+    FILLACCOUNTGROUPPOPUPBYIDTREE:'api/v1/fn/coa/getall?Id=',
     LEFTSIDEFILLLEDGER:'api/v1/fn/coa/getall?Id=02&tree=false',
     FILLACCOUNTGROUPPOPUP:'api/v1/fn/coa/accgrps',
+    FILLACCOUNTGROUPPOPUPBYID:'api/v1/fn/coa/getall?Id=',
+
     FILLSUBGROUPPOPUP:'api/v1/fn/coa/accsubgrps?id=',
     FILLACCOUNTCATEGORY:'api/v1/fn/coa/acccat',
     UPDATELEDGER:'api/v1/fn/coa/upacc?Id=',

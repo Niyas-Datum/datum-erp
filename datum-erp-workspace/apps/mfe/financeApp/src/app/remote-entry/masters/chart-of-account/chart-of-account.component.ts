@@ -475,6 +475,7 @@ showPageMenuPopup = false;
      * @param event - Tree node selection event containing nodeData
      */
     onNodeSelected(event: any): void {
+      console.log('onNodeSelected',event.nodeData);
       if (event.nodeData) {
         this.selectedNodeId = event.nodeData.id;
         this.getDataById(event.nodeData);
@@ -509,6 +510,7 @@ showPageMenuPopup = false;
      * @param data - Account data object containing the account ID
      */
     override getDataById(data: any) {
+      console.log('getDataById',data);
       if (data && data.id) {
         this.selectedAccountId = data.id;
         const selectedNodeId = this.selectedAccountId.toString();
@@ -729,7 +731,7 @@ showPageMenuPopup = false;
   // onNodeSelected(args: any) {
   //   this.selectedNodeId = args.nodeData.id;
   // }
-
+//this is the kindgodom
   /**
    * Handles context menu item selection
    * Routes to appropriate action based on selected menu item

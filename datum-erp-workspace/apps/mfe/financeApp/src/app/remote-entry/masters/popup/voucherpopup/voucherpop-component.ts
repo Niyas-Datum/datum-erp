@@ -83,6 +83,7 @@ export class VoucherPopupComponent extends BaseComponent implements OnInit, OnCh
       this.cdr.detectChanges();
       return;
     }
+    console.log('fetchNumbering',this.numbering);
     this.baseService
       .get<any>(EndpointConstant.FILLVOUCHERNUMBERING + this.numbering)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
