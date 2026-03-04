@@ -170,7 +170,6 @@ export class BranchComponent extends BaseComponent implements OnInit {
       );
 
       this.leftGrid.leftGridData = res.data;
-      console.log("Firct branch:" + JSON.stringify(this.leftGrid.leftGridData))
       this.leftGrid.leftGridColumns = [
         {
           headerText: 'Branch List',
@@ -366,6 +365,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
           } else {
             this.selectedContactPerson.set(null);
           }
+          this.imageData=null;
           this.fetchImage();
         },
         error: (error) => {
@@ -392,6 +392,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
 
   override newbuttonClicked(): void {
     this.branchForm.reset();
+    this.imageData=null;
     this.branchForm.enable();
     this.selectedContactPerson.set(null);
     this.selectedCountry.set(null);
@@ -496,7 +497,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
   //updating the branch
   updateBranch(payload: any): void {
     if (!this.currentBranch?.id) {
-      this.baseService.showCustomDialogue('No branch selected to update');
+      this.toast.error('No branch selected to update');
       return;
     }
 
@@ -507,7 +508,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
         next: async (res) => {
           this.toast.success("Branch updated successfully");
           this.branchForm.disable();
-          this.removeImage();
+          //this.removeImage();
           this.branchForm.reset();
           // Refresh the left grid and update the data sharing service
           await this.LeftGridInit();
@@ -576,6 +577,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       this.imageData = reader.result as string;   // ✅ base64 ready  
+      console.log("selected image:"+this.imageData)
       this.cd.detectChanges();                       // optional
     };
 

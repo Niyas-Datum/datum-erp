@@ -9,7 +9,7 @@
                   class="required-asterisk">*</span></label>
             </div>
             <div class="col-md-10">
-              <ejs-textbox id="hocompanyname" formControlName="hocompanyname" [enabled]="!isInputDisabled"
+              <ejs-textbox id="hocompanyname" formControlName="hocompanyname" [readonly]="isInputDisabled"
                 cssClass="e-outline">
               </ejs-textbox>
 
@@ -30,7 +30,7 @@
             </div>
             <div class="col-md-10">
               <ejs-textbox id="hoarabicname" formControlName="hoarabicname" floatLabelType="Auto"
-                [enabled]="!isInputDisabled" cssClass="e-outline">
+                [readonly]="isInputDisabled" cssClass="e-outline">
               </ejs-textbox>
             </div>
           </div>
@@ -41,7 +41,7 @@
             class="required-asterisk">*</span></label>
         <div class="col-md-4">
           <ejs-dropdownlist id="branchtype" formControlName="branchtype" [dataSource]="branchType"
-            [fields]="{ text: 'name', value: 'value' }" placeholder="Select Branch Type" [enabled]="!isInputDisabled"
+            [fields]="{ text: 'name', value: 'value' }" placeholder="Select Branch Type" [readonly]="isInputDisabled"
             cssClass="e-outline">
           </ejs-dropdownlist>
 
