@@ -21,6 +21,7 @@ import { TabModule } from "@syncfusion/ej2-angular-navigations";
 import { MultiColumnComboBoxComponent } from "@org/ui";
 import { CategoryComponent } from "./category/category.component";
 import { DatePickerModule } from "@syncfusion/ej2-angular-calendars";
+import { DialogModule } from "@syncfusion/ej2-angular-popups";
 
 const masterRoutes: Routes = [
   {
@@ -80,7 +81,8 @@ const masterRoutes: Routes = [
     TabModule,
     GridModule,
     MultiColumnComboBoxComponent,  // ✅ Standalone component from @org/ui
-    DatePickerModule
+    DatePickerModule,
+    DialogModule
 ],
   providers: [],
 })
