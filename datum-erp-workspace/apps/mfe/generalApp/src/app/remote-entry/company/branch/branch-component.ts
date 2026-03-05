@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, inject, OnInit, signal, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from "@angular/core";
 import { GeneralAppService } from "../../http/general-app.service";
 import { BaseComponent } from "@org/architecture";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
@@ -16,7 +16,10 @@ import { Branch, Branches, BranchSaveDto, BranchType, ContactPerson, Country, PB
 })
 export class BranchComponent extends BaseComponent implements OnInit {
 
-  @ViewChild('dialogAlert') dialogTarget!: ElementRef;
+  /** Dialog host lives in parent (RemoteEntry); use ID lookup since this component is inside router-outlet. */
+  private get dialogTargetElement(): HTMLElement | null {
+    return document.getElementById('alertDialog');
+  }
 
   currentBranch = {} as Branch;
   // TOOLBAR STATE PROPERTIES
@@ -270,9 +273,40 @@ export class BranchComponent extends BaseComponent implements OnInit {
   }
 
   override getDataById(data: PBranchByIdModel) {
+    if (this.isNewMode()) {
+      this.viewDialog(
+        'You have unsaved changes in the new branch form. Do you want to discard them and view the selected branch?',
+        'Confirmation',
+        '450px',
+        [
+          {
+            click: () => {
+              this.alertService.hideDialog();
+              this.isNewMode.set(false);
+              this.isNewBtnDisabled.set(false);
+              this.isEditBtnDisabled.set(false);
+              this.isDeleteBtnDisabled.set(false);
+              this.isSaveBtnDisabled.set(true);
+              this.isPrintBtnDisabled.set(false);
+              this.isInputDisabled = true;
+              this.branchForm.disable();
+              this.selectedBranchId = data.id;
+              this.loadBranchById();
+            },
+            buttonModel: { content: 'Yes', isPrimary: true }
+          },
+          {
+            click: () => {
+              this.alertService.hideDialog();
+            },
+            buttonModel: { content: 'No' }
+          }
+        ]
+      );
+      return;
+    }
     this.selectedBranchId = data.id;
     this.fetchBranchById();
-
   }
 
   //fetch image 
@@ -700,12 +734,13 @@ debugger
   }
 
   private viewDialog(content: string, header: string, width: string, buttons: any[]): void {
-    if (!this.dialogTarget) {
+    const dialogHost = this.dialogTargetElement;
+    if (!dialogHost) {
       console.error('Dialog target element not found');
       return;
     }
 
-    this.alertService.showDialog(this.dialogTarget.nativeElement, {
+    this.alertService.showDialog(dialogHost, {
       content: content || 'This is a custom alert dialog!',
       header: header || 'Alert',
       width: width || '400px',
