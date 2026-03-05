@@ -104,12 +104,32 @@
       <div class="row">
         <label for="client" class="form-label col-md-2">Client</label>
         <div class="col-md-4">
-          <ejs-multicolumncombobox id="client" formControlName="client" [dataSource]="clientOptions()"
+ 
+        <ejs-multicolumncombobox
+    #clientCombo
+    id="client"
+    formControlName="client"
+    [dataSource]="clientOptions()"
+    [fields]="{ text: 'name', value: 'id' }"
+    [columns]="columns"
+    [gridSettings]="gridSettings"
+    placeholder="Select Client"
+    
+    [allowFiltering]="true"
+    [filterType]="'Contains'"
+    [enableVirtualization]="true"
+    [popupHeight]="'200px'"
+    (filtering)="onClientFiltering($event)"
+    (change)="onClientSelected($event)">
+</ejs-multicolumncombobox>
+
+         
+        </div>
+         <!-- <ejs-multicolumncombobox id="client" formControlName="client" [dataSource]="clientOptions()"
             [fields]="{ text: 'name', value: 'id' }" [columns]="columns" [gridSettings]="gridSettings"
             [placeholder]="'Select Client'" [allowFiltering]="true" sortType="Ascending" [popupHeight]="'200px'"
             (change)="onClientSelected($event)">
-          </ejs-multicolumncombobox>
-        </div>
+          </ejs-multicolumncombobox> -->
 
 
         <label for="consultancy" class="form-label col-md-2">Consultancy</label>

@@ -561,9 +561,10 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       this.isSettingDefaultValues = true;
       this.salesForm.patchValue(formValues, { emitEvent: false });
       
-      if (transactionData.accountID) {
-        this.selectedPartyId = transactionData.accountID;
-        this.onCustomerSelected(transactionData.accountID, false);
+      const accountId = transactionData.accountID ?? transactionData.party?.id;
+      if (accountId) {
+        this.selectedPartyId = accountId;
+        this.onCustomerSelected(accountId, false);
       }
       
       // Ensure warehouse binding after transaction data is loaded
@@ -588,8 +589,10 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       formValues.purchasedate = this.formatDate(new Date(transaction.date));
     }
 
-    if (transaction.accountName) {
-      formValues.customer = transaction.accountName;
+    // Support both accountName (fillTransactions) and party (normalized API shape)
+    const customerName = transaction.accountName ?? transaction.party?.name;
+    if (customerName) {
+      formValues.customer = customerName;
     }
 
     if (transaction.referenceNo) {

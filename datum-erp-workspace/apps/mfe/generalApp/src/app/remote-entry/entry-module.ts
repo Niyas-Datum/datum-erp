@@ -14,6 +14,7 @@ import { AlertDialogComponent, AlertDialogModule } from '@org/ui';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 import { CheckBoxModule, ButtonModule } from '@syncfusion/ej2-angular-buttons';
+import { MultiColumnComboBoxModule } from '@syncfusion/ej2-angular-multicolumn-combobox';
 
 @NgModule({
   declarations: [RemoteEntry, NxWelcome],
@@ -25,6 +26,7 @@ import { CheckBoxModule, ButtonModule } from '@syncfusion/ej2-angular-buttons';
     FormToolbarComponent,
     SidebarModule,
     AlertDialogModule,
+    MultiColumnComboBoxModule,
 
    
   ],

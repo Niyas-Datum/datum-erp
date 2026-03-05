@@ -182,8 +182,9 @@ export class VoucherService {
    * Fetch unpaid POs/Advances for the selected account
    * @param accountId - Account ID from accountMasterModel.id
    * @param drcr - 'D' for Debit (Payment Voucher), 'C' for Credit (Receipt Voucher)
+   * @param onComplete - Optional callback when fetch finishes (success or error)
    */
-  fetchUnpaidPOs(accountId: number, drcr: 'D' | 'C'): void {
+  fetchUnpaidPOs(accountId: number, drcr: 'D' | 'C', onComplete?: () => void): void {
     const voucherId = 17; // Constant value
     const url = `${EndpointConstant.FILLADVANCE}${accountId}&voucherId=${voucherId}&drcr=${drcr}`;
 
@@ -219,10 +220,12 @@ export class VoucherService {
           this.unpaidPOsData.set(mappedData);
           console.log('📊 Mapped unpaid POs:', mappedData);
           console.log('📊 Total unpaid POs:', mappedData.length);
+          onComplete?.();
         },
         error: (error) => {
           console.error('❌ Error fetching unpaid POs:', error);
           this.unpaidPOsData.set([]);
+          onComplete?.();
         },
       });
   }

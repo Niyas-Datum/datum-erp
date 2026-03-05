@@ -198,6 +198,13 @@ export class InvoiceFooter implements OnInit {
       .subscribe(() => {
         this.recalculateGrossAmtAmount();
       });
+    this.dataSharingService.reloadTransactionForEdit$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.selectedSalesId) {
+          this.fetchPurchaseById();
+        }
+      });
   }
 
   private fetchPurchaseById(): void {
@@ -291,9 +298,9 @@ export class InvoiceFooter implements OnInit {
     }, { emitEvent: false });
 
     // === Bind PayType (from fillAdditionals.modeID) ===
-    const modeId = transactionData?.fillAdditionals?.modeID;
-    if (modeId) {
-      const payType = this.payTypeObj.find(p => p.id === modeId);
+    const modeId = transactionData?.fillAdditionals?.modeID ?? transactionData?.fiTransactionAdditional?.payType?.id;
+    if (modeId != null && modeId !== '') {
+      const payType = this.payTypeObj.find(p => p.id == modeId || String(p.id) === String(modeId));
       if (payType) {
         this.selectedPayTypeObj = payType;
         this.selectedPayType = payType.name;
@@ -1302,29 +1309,24 @@ onClickRoundOff() {
       return [];
     }
 
-    return fillItems.map((item: any, index: number) => ({
-      // Core item info
-      rowId: index + 1, // ← Fix for NaN in first column
+    return fillItems.map((item: any, index: number) => {
+      const unitVal = item.unit;
+      const unitStr = typeof unitVal === 'object' ? (unitVal?.unit ?? '') : (unitVal ?? '');
+      return {
+      // Core item info (plain objects so grid/store is not shared reference with API response)
+      rowId: index + 1,
       index: index,
       transactionId: item.transactionId || 0,
       itemId: item.itemId || 0,
       itemCode: item.itemCode || '',
       itemName: item.itemName || '',
       location: item.location || '',
-      
-      // Batch and unit info
       batchNo: item.batchNo || '',
-      unit: {
-        unit: item.unit || '',
-        basicUnit: item.unit || '',
-        factor: 1
-      },
-      unitsPopup: [], // Will be populated on edit if needed
-      
-      // Quantities
+      unit: { unit: unitStr, basicunit: unitStr, factor: 1 },
+      unitsPopup: [],
       qty: this.toNum(item.qty),
       focQty: this.toNum(item.focQty),
-      basicQty: this.toNum(item.basicQty),
+      basicQty: this.toNum(item.basicQty ?? item.qty),
       additional: this.toNum(item.additional),
       
       // Pricing
@@ -1417,7 +1419,8 @@ onClickRoundOff() {
       // Unique items
       uniqueItems: item.uniqueItems || [{ uniqueNumber: 'string' }],
       batchNoPopup: []
-    }));
+    };
+    });
   }
 
   setCommonDiscountPercent(commondiscountpercent: number) {
@@ -1438,7 +1441,9 @@ onClickRoundOff() {
 
 
   onChangeDiscSellAmount(event: any) {
-    const enteredValue = parseFloat(event.target.value);
+    // Syncfusion emits { value } on change; DOM events use target.value
+    const rawValue = event?.value ?? event?.target?.value ?? '';
+    const enteredValue = parseFloat(String(rawValue));
   
     if (!isNaN(enteredValue)) {
       const previousNetAmount = this.toNum(this.salesForm.get('netamount')?.value);
@@ -1466,7 +1471,9 @@ onClickRoundOff() {
   }
 
   onChangeCommonDiscountAmount(event: any) {
-    const discountAmount = this.toNum(event.target.value);
+    // Syncfusion emits { value } on change; DOM events use target.value
+    const rawValue = event?.value ?? event?.target?.value ?? '';
+    const discountAmount = this.toNum(rawValue);
     this.setCommonDiscountAmount(discountAmount);
   }
 

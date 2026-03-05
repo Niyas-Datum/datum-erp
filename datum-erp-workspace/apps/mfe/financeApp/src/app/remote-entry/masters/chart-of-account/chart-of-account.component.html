@@ -132,12 +132,22 @@
   [isModal]="true"
   [showCloseIcon]="true"
   header="Account Details"
+  
   (open)="onPageMenuDialogOpen()"
   (close)="onPageMenuDialogClose()">
+
+
+
+
+
+
+
 
   <app-pagemenu-popup
     *ngIf="showPageMenuPopup"
     [nodeId]="selectedAccountId.toString()"
+    [isCreate]="isCreate"
+    [isGroup]="isGroup"
     (dataSaved)="onDataSaved()">
   </app-pagemenu-popup>
 

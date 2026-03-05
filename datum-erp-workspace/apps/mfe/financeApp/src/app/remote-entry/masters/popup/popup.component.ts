@@ -29,7 +29,9 @@ export class PopupComponent extends BaseComponent implements OnInit, AfterViewIn
 subGroupData = signal<subgroupdataModel[]>([]);
   @Input() nodeId: string | null = null;
   @Output() dataSaved = new EventEmitter<void>();
-  
+  @Input() isGroup: boolean = false;
+  @Input() isCreate: boolean = false;
+  isCreateSignal = signal<boolean>(false);
   private httpService = inject(FinanceAppService);
   
   accountForm!: FormGroup;
@@ -59,6 +61,11 @@ subGroupData = signal<subgroupdataModel[]>([]);
           }
         }, 150);
       }
+    }
+    
+    // Update isGroup form control when isGroup input changes
+    if (changes['isGroup'] && this.accountForm) {
+      this.accountForm.get('isGroup')?.setValue(this.isGroup ?? false);
     }
   }
 
@@ -93,6 +100,8 @@ subGroupData = signal<subgroupdataModel[]>([]);
     .subscribe({
       next: (response) => {
         this.groupdata.set(response.data);
+        console.log('groupdata',this.groupdata());
+
       },
       error: (error) => {
         // Error fetching group data
@@ -113,13 +122,13 @@ subGroupData = signal<subgroupdataModel[]>([]);
       maintainBillWise: new FormControl(false),
       maintainItemWise: new FormControl(false),
       trackCollection: new FormControl(false),
-      isGroup: new FormControl(false),
+      isGroup: new FormControl(this.isGroup),
       active: new FormControl(true),
       narration: new FormControl(''),
       alternateName: new FormControl('')
     });
   }
-
+//load data for the account
   
   loadAccountData(nodeId: string): void {
     this.httpService
@@ -129,16 +138,25 @@ subGroupData = signal<subgroupdataModel[]>([]);
         next: (response) => {
           // API returns array with one object, extract the first element
           const apiData =  response.data[0] 
+          console.log('nodeId',nodeId);
+          console.log('api is ',EndpointConstant.FILLTAXACCOUNTDATA+nodeId);
+          console.log('apiData from loadAccountData',apiData);
           
           // Find Group object and update selected values
           if (apiData.accountGroup) {
-            const groupObj = this.groupdata().find(item => item.id === apiData.accountGroup);
+            const numericNodeId = Number(nodeId);
+            const groupObj = this.groupdata().find(item => item.id === numericNodeId);
+            console.log('groupObj',groupObj);
             if (groupObj) {
               this.selectedGroupId = groupObj.id;
               this.selectedGroupName = groupObj.name;
+              console.log('selectedGroupId',this.selectedGroupId);
+              console.log('selectedGroupName',this.selectedGroupName);
             } else {
-              this.selectedGroupId = apiData.accountGroup;
+              this.selectedGroupId = numericNodeId;
               this.selectedGroupName = '';
+              console.log('selectedGroupId',this.selectedGroupId);
+              console.log('selectedGroupName',this.selectedGroupName);
             }
           } else {
             this.selectedGroupId = 0;
@@ -159,9 +177,10 @@ subGroupData = signal<subgroupdataModel[]>([]);
             this.selectedAccountCategoryName = '';
           }
           
-          // Map API response fields to form fields
+          // Map API response fields to form fields (group must be number to match dropdown value)
+          const groupValue = this.selectedGroupId || (this.nodeId ? Number(this.nodeId) : null);
           const formData: any = {
-            group: apiData.accountGroup || null, // Set ID value, not object
+            group: groupValue,
             accountCode: apiData.alias || '',
             accountName: apiData.name || '',
             alternateName: apiData.alternateName || '',
@@ -186,6 +205,28 @@ subGroupData = signal<subgroupdataModel[]>([]);
               .subscribe({
                 next: (subGroupResponse) => {
                   const subgroupArray = subGroupResponse.data?.subgroup || [];
+                  if(this.isCreate){
+                    console.log("isCreate",this.isCreate);
+                    this.isCreateSignal.set(true);
+                    
+                    
+                    console.log("subGroupResponse",subGroupResponse);
+                    this.accountForm.get('group')?.enable();
+                    this.accountForm.get('accountcategory')?.enable();
+                    this.accountForm.get('accountCode')?.setValue(subGroupResponse.data?.nextCode);
+                    this.accountForm.get('accountName')?.setValue('');
+                    this.accountForm.get('preventExtraPay')?.setValue(false);
+                    this.accountForm.get('maintainCostCenter')?.setValue(false);
+                    this.accountForm.get('maintainBillWise')?.setValue(false);
+                    this.accountForm.get('maintainItemWise')?.setValue(false);
+                    this.accountForm.get('trackCollection')?.setValue(false);
+                    this.accountForm.get('isGroup')?.setValue(this.isGroup?true:false);
+                    this.accountForm.get('active')?.setValue(true);
+                    this.accountForm.get('narration')?.setValue('');
+                    this.accountForm.get('alternateName')?.setValue('');
+
+
+                  }
                   this.subGroupData.set(subgroupArray);
                   
                   if (subgroupArray.length > 0) {
@@ -208,8 +249,9 @@ subGroupData = signal<subgroupdataModel[]>([]);
                     
                     // Refresh all dropdowns after a delay to ensure they're rendered
                     setTimeout(() => {
-                      // Refresh Group dropdown
-                      this.refreshGroupDropdown(apiData.accountGroup, 0);
+                      // Refresh Group dropdown (when isCreate use selected group/node, else use API accountGroup)
+                      const groupToShow = this.isCreate ? (this.selectedGroupId || (this.nodeId ? Number(this.nodeId) : null)) : apiData.accountGroup;
+                      this.refreshGroupDropdown(groupToShow, 0);
                       
                       // Refresh SubGroup dropdown
                       const subGroupElement = document.getElementById('SubGroup') as any;
@@ -290,7 +332,8 @@ subGroupData = signal<subgroupdataModel[]>([]);
     this.subGroupData.set([]);
     this.isSubGroupEnabled.set(false);
     this.accountForm.patchValue({
-      active: true
+      active: true,
+      isGroup: this.isGroup ?? false // Set isGroup based on input value
     });
   }
 
@@ -352,7 +395,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
         maintainCostCentre: this.accountForm.get('maintainCostCentre')?.value,
         alternateName: this.accountForm.get('alternateName')?.value,
         isGroup: this.accountForm.get('isGroup')?.value
-      }
+      };
         const savepayload = {
           group: {
             id: this.selectedGroupId,
@@ -382,6 +425,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
         
         if(this.isEditMode() && this.nodeId){
           console.log('update ledger');
+          console.log("update payload",payload);
           this.httpService.patch<any[]>(EndpointConstant.UPDATELEDGER+this.nodeId,payload).pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
           .subscribe({
             next: async (response) => {
@@ -415,6 +459,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
             },
           });
         } else {
+          console.log("create payload",savepayload);
           this.httpService.post<any[]>(EndpointConstant.SAVELEDGER,savepayload).pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
           .subscribe({
             next: async (response) => {
@@ -426,12 +471,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
                 // Wait for grid data to refresh before updating
                 await this.LeftGridInit();
                 
-                // Update data sharing service with fresh data after grid is refreshed
-                // this.serviceBase.dataSharingService.setData({
-                //   columns: this.leftGrid.leftGridColumns,
-                //   data: this.leftGrid.leftGridData,
-                //   pageheading: this.pageheading,
-                // });
+              
                 
                 this.accountForm.reset();
                 this.accountForm.disable();
