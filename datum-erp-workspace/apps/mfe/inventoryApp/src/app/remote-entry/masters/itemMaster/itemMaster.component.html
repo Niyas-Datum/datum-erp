@@ -155,7 +155,6 @@
                       [fields]="{ text: 'unit', value: 'unit' }"
                       [columns]="basicUnitFields"
                       popupWidth="450px"
-                      [disabled]="!isInputDisabled"
                       [resetTrigger]="forceComboReset()"
                       (rowSelected)="onBasicUnitSelected($event, 0)">
                       ></app-multiColumnComboBox>
@@ -168,6 +167,7 @@
                       [dataSource]="allCategories"
                       [fields]="{ text: 'code', value: 'id' }"
                       popupWidth="450px"
+                      [disabled]="isDisabled"
                       [resetTrigger]="forceComboReset()"
                       (rowSelected)="onCategorySelected($event)"
                       [columns]="categoryFields">
@@ -268,196 +268,7 @@
                 </div>
                 <div class="row">                                            
                     <div class="item-units-table item-purchase-table">
-<!--                     
-                      <ejs-grid
-                            #unitDetailsGrid
-                            id="unitDetailsGrid"
-                            [dataSource]="filteredUnitDetails"
-                            [editSettings]="unitDetailsEditSettings"
-                            [allowSorting]="false"
-                            [allowResizing]="true"
-                            [allowTextWrap]="true"
-                            gridLines="Both"
-                            height="400px"
-                            [rowHeight]="40"
-                            (actionBegin)="onUnitGridActionBegin($event)"
-                            (actionComplete)="onUnitGridActionComplete($event)"
-                        >
-                            <e-columns>
-                                <e-column
-                                    field="unit"
-                                    headerText="Unit"
-                                    width="120"
-                                    textAlign="Left"
-                                    [allowEditing]="!isInputDisabled"
-                                >
-                                    <ng-template #template let-data let-index="index">
-                                        {{ data.unit?.unit || '' }}
-                                    </ng-template>
-                                    <ng-template #editTemplate let-data>
-                                        <app-multiColumnComboBox
-                                            [dataSource]="allBasicUnits"
-                                            [fields]="{ text: 'unit', value: 'unit' }"
-                                            [columns]="basicUnitFields"
-                                            [(ngModel)]="data.unit.unit"
-                                            (rowSelected)="onBasicUnitSelectedFromGrid($event, data)"
-                                        ></app-multiColumnComboBox>
-                                    </ng-template>
-                                </e-column>
-                                <e-column
-                                    field="basicUnit"
-                                    headerText="Basic Unit"
-                                    width="120"
-                                    textAlign="Left"
-                                    [allowEditing]="false"
-                                >
-                                    <ng-template #template let-data>
-                                        {{ data.basicUnit?.unit ?? data.basicUnit?.basicUnit ?? data.basicUnit ?? '' }}
-                                    </ng-template>
-                                </e-column>
-                                <e-column
-                                    field="factor"
-                                    headerText="Factor"
-                                    width="100"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="purchaseRate"
-                                    headerText="Purchase Rate"
-                                    width="120"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="sellingPrice"
-                                    headerText="Selling Price"
-                                    width="120"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="mrp"
-                                    headerText="MRP"
-                                    width="100"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="wholeSalePrice"
-                                    headerText="Wholesale Price"
-                                    width="130"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="retailPrice"
-                                    headerText="Retail Price"
-                                    width="120"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="wholeSalePrice2"
-                                    headerText="Wholesale Price 2"
-                                    width="140"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="retailPrice2"
-                                    headerText="Retail Price 2"
-                                    width="130"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="lowestRate"
-                                    headerText="Lowest Rate"
-                                    width="120"
-                                    textAlign="Right"
-                                    editType="numericedit"
-                                    format="N2"
-                                    type="number"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    field="barcode"
-                                    headerText="Barcode"
-                                    width="120"
-                                    textAlign="Left"
-                                    editType="stringedit"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                                <e-column
-                                    headerText="Generate"
-                                    width="100"
-                                    textAlign="Center"
-                                    [allowEditing]="false"
-                                >
-                                    <ng-template #template let-data let-index="index">
-                                        <button
-                                            type="button"
-                                            class="btn btn-primary btn-sm"
-                                            [disabled]="isInputDisabled"
-                                            (click)="generateBarCode(index); $event.stopPropagation()"
-                                        >
-                                            Generate
-                                        </button>
-                                    </ng-template>
-                                </e-column>
-                                <e-column
-                                    headerText="Print"
-                                    width="80"
-                                    textAlign="Center"
-                                    [allowEditing]="false"
-                                >
-                                    <ng-template #template let-data>
-                                        <button
-                                            type="button"
-                                            class="btn btn-primary btn-sm"
-                                            [disabled]="isInputDisabled"
-                                        >
-                                            Print
-                                        </button>
-                                    </ng-template>
-                                </e-column>
-                                <e-column
-                                    field="active"
-                                    headerText="Active"
-                                    width="80"
-                                    textAlign="Center"
-                                    editType="booleanedit"
-                                    displayAsCheckBox="true"
-                                    type="boolean"
-                                    [allowEditing]="!isInputDisabled"
-                                ></e-column>
-                            </e-columns>
-                        </ejs-grid> -->
+             
                    <div class="table-responsive mt-3">
 
   <table class="table table-bordered table-striped table-sm align-middle">
@@ -649,6 +460,7 @@
                                 [dataSource]="allParentItems"
                                 [fields]="{ text: 'itemName', value: 'itemName' }"
                                 [columns]="parentItemFields"
+                                [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onParentItemSelected($event?.itemData?.itemName || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -693,6 +505,7 @@
                                 [dataSource]="allItemColors"
                                 [fields]="{ text: 'value', value: 'value' }"
                                 [columns]="itemColorFields"
+                                [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onItemColorSelected($event?.itemData?.value || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -707,10 +520,11 @@
                                 </label>
                             </div>
                             <app-multiColumnComboBox
-                                formControlName="brancdname"
+                                formControlName="brandname"
                                 [dataSource]="allItemBrands"
                                 [fields]="{ text: 'value', value: 'value' }"
                                 [columns]="itemBrandFields"
+                                [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onItemBrandSelected($event?.itemData?.value || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -727,6 +541,7 @@
                                 [dataSource]="allCountryOfOrigin"
                                 [fields]="{ text: 'value', value: 'value' }"
                                 [columns]="countryOfOriginFields"
+                                [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onItemOriginSelected($event?.itemData?.value || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -757,8 +572,8 @@
                                 <label for="roq" translate>ROQ
                                 </label>
                             </div>
-                            <input type="text" class="form-control" id="countryoforigin"
-                                formControlName="countryoforigin">
+                            <input type="text" class="form-control" id="roq"
+                                formControlName="roq">
                         </div>
 
                         <div class="checkbox-one">
@@ -876,7 +691,7 @@
                                 formControlName="invaccount"
                                 [dataSource]="allInvAccounts"
                                 [fields]="{ text: 'name', value: 'name' }"
-                                [columns]="accountFields"
+                                 [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onInvAccountSelected($event?.itemData?.name || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -892,7 +707,7 @@
                                 formControlName="salesaccount"
                                 [dataSource]="allSalesAccounts"
                                 [fields]="{ text: 'name', value: 'name' }"
-                                [columns]="accountFields"
+                                 [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onSalesAccountSelected($event?.itemData?.name || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -908,7 +723,7 @@
                                 formControlName="costaccount"
                                 [dataSource]="allCostAccounts"
                                 [fields]="{ text: 'name', value: 'name' }"
-                                [columns]="accountFields"
+                                 [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onCostAccountSelected($event?.itemData?.name || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -923,7 +738,7 @@
                                 formControlName="purchaseaccount"
                                 [dataSource]="allPurchaseAccounts"
                                 [fields]="{ text: 'name', value: 'name' }"
-                                [columns]="accountFields"
+                                 [resetTrigger]="forceComboReset()"
                                 (rowSelected)="onPurchaseAccountSelected($event?.itemData?.name || $event)"
                             ></app-multiColumnComboBox>
                         </div>
@@ -948,8 +763,6 @@
                 #itemHistoryGrid
                 id="itemHistoryGrid"
                 [dataSource]="allItemHistoryDetails"
-               
-               
                 [allowSorting]="true"
                 [allowResizing]="true"
                 [allowTextWrap]="true"
