@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, inject, OnInit, signal, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from "@angular/core";
 import { GeneralAppService } from "../../http/general-app.service";
 import { BaseComponent } from "@org/architecture";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
@@ -16,7 +16,10 @@ import { Branch, Branches, BranchSaveDto, BranchType, ContactPerson, Country, PB
 })
 export class BranchComponent extends BaseComponent implements OnInit {
 
-  @ViewChild('dialogAlert') dialogTarget!: ElementRef;
+  /** Dialog host lives in parent (RemoteEntry); use ID lookup since this component is inside router-outlet. */
+  private get dialogTargetElement(): HTMLElement | null {
+    return document.getElementById('alertDialog');
+  }
 
   currentBranch = {} as Branch;
   // TOOLBAR STATE PROPERTIES
@@ -73,6 +76,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.fetchContactPerson();
     this.fetchCountries();
     const companyId = Number(localStorage.getItem('companyId'));
+    console.log("Newmode:"+this.isNewMode())
   }
 
   //for getting contact person dropdown
@@ -270,9 +274,40 @@ export class BranchComponent extends BaseComponent implements OnInit {
   }
 
   override getDataById(data: PBranchByIdModel) {
+    if (this.isNewMode() || this.isEditMode()) {
+      this.viewDialog(
+        'You have unsaved changes in the new branch form. Do you want to discard them and view the selected branch?',
+        'Confirmation',
+        '450px',
+        [
+          {
+            click: () => {
+              this.alertService.hideDialog();
+              this.isNewMode.set(false);
+              this.isNewBtnDisabled.set(false);
+              this.isEditBtnDisabled.set(false);
+              this.isDeleteBtnDisabled.set(false);
+              this.isSaveBtnDisabled.set(true);
+              this.isPrintBtnDisabled.set(false);
+              this.isInputDisabled = true;
+              this.branchForm.disable();
+              this.selectedBranchId = data.id;
+              this.loadBranchById();
+            },
+            buttonModel: { content: 'Yes', isPrimary: true }
+          },
+          {
+            click: () => {
+              this.alertService.hideDialog();
+            },
+            buttonModel: { content: 'No' }
+          }
+        ]
+      );
+      return;
+    }
     this.selectedBranchId = data.id;
     this.fetchBranchById();
-
   }
 
   //fetch image 
@@ -306,117 +341,79 @@ export class BranchComponent extends BaseComponent implements OnInit {
   }
 
   //fill by id
-  // fetchBranchById() {
-  //   this.viewDialog(
-  //     'Are you sure you want to delete this transaction? This action cannot be undone.',
-  //     'Delete Confirmation',
-  //     '450px',
-  //     [
-  //       {
-  //         click: this.confirmDelete.bind(this),
-  //         buttonModel: { content: 'Yes', isPrimary: true }
-  //       },
-  //       {
-  //         click: this.hideBtnClick.bind(this),
-  //         buttonModel: { content: 'No' }
-  //       }
-  //     ]
-  //   );
-  //   this.httpService
-  //     .fetch(EndpointConstant.FILLALLBRANCHBYID + this.selectedBranchId)
-  //     .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-  //     .subscribe({
-  //       next: (response) => {
-  //         this.currentBranch = response?.data as any;
+  fetchBranchById() {
+   
+    this.httpService
+      .fetch(EndpointConstant.FILLALLBRANCHBYID + this.selectedBranchId)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.currentBranch = response?.data as any;
 
-  //         // Map country: your dropdown stores country.value (string).
-  //         // Find the country record (if countries are already loaded).
-  //         const countryObj = this.countries().find(c => {
-  //           if (c.value === this.currentBranch.country) return true;
-  //           if (c.id != null && Number(this.currentBranch.country) === c.id) return true;
-  //           return false;
-  //         });
+          // Map country: your dropdown stores country.value (string).
+          // Find the country record (if countries are already loaded).
+          const countryObj = this.countries().find(c => {
+            if (c.value === this.currentBranch.country) return true;
+            if (c.id != null && Number(this.currentBranch.country) === c.id) return true;
+            return false;
+          });
 
-  //         // patch form using the country.value (string) if found, else fallback to whatever backend returned
-  //         this.branchForm.patchValue({
-  //           hocompanyname: this.currentBranch.hoCompanyName,
-  //           hoarabicname: this.currentBranch.hoCompanyNameArabic,
-  //           branchtype: this.currentBranch.nature,
-  //           companyname: this.currentBranch.company,
-  //           isactive: this.currentBranch.activeFlag,
-  //           arabicname: this.currentBranch.arabicName,
-  //           telephone: this.currentBranch.telephoneNo,
-  //           mobile: this.currentBranch.mobileNo,
-  //           faxno: this.currentBranch.faxNo,
-  //           country: countryObj?.value ?? this.currentBranch.country,
-  //           addresslineone: this.currentBranch.addressLineOne,
-  //           addresslinetwo: this.currentBranch.addressLineTwo,
-  //           city: this.currentBranch.city,
-  //           emailaddress: this.currentBranch.emailAddress,
-  //           pobox: this.currentBranch.poBox,
-  //           district: this.currentBranch.district,
-  //           buildingno: this.currentBranch.bulidingNo,
-  //           countrycode: this.currentBranch.countryCode,
-  //           province: this.currentBranch.province,
-  //           vatno: this.currentBranch.salesTaxNo,
-  //           centralsalestaxno: this.currentBranch.centralSalesTaxNo,
-  //           contactperson: this.currentBranch.contactPersonID,
-  //           remarks: this.currentBranch.remarks,
-  //           dl1: this.currentBranch.dL1,
-  //           dl2: this.currentBranch.dL2,
-  //           uniqueid: this.currentBranch.uniqueID,
-  //           reference: this.currentBranch.reference,
-  //           bankcode: this.currentBranch.bankCode
-  //         });
-  //         if (countryObj) {
-  //           this.selectedCountry.set(countryObj);
-  //         } else {
-  //           this.selectedCountry.set(null);
-  //         }
-  //         const contactObj = this.contactPersonList().find(c => {
-  //           if (c.id === this.currentBranch.contactPersonID) return true;
-  //           if (c.id != null && Number(this.currentBranch.contactPersonID) === c.id) return true;
-  //           return false;
-  //         });
+          // patch form using the country.value (string) if found, else fallback to whatever backend returned
+          this.branchForm.patchValue({
+            hocompanyname: this.currentBranch.hoCompanyName,
+            hoarabicname: this.currentBranch.hoCompanyNameArabic,
+            branchtype: this.currentBranch.nature,
+            companyname: this.currentBranch.company,
+            isactive: this.currentBranch.activeFlag,
+            arabicname: this.currentBranch.arabicName,
+            telephone: this.currentBranch.telephoneNo,
+            mobile: this.currentBranch.mobileNo,
+            faxno: this.currentBranch.faxNo,
+            country: countryObj?.value ?? this.currentBranch.country,
+            addresslineone: this.currentBranch.addressLineOne,
+            addresslinetwo: this.currentBranch.addressLineTwo,
+            city: this.currentBranch.city,
+            emailaddress: this.currentBranch.emailAddress,
+            pobox: this.currentBranch.poBox,
+            district: this.currentBranch.district,
+            buildingno: this.currentBranch.bulidingNo,
+            countrycode: this.currentBranch.countryCode,
+            province: this.currentBranch.province,
+            vatno: this.currentBranch.salesTaxNo,
+            centralsalestaxno: this.currentBranch.centralSalesTaxNo,
+            contactperson: this.currentBranch.contactPersonID,
+            remarks: this.currentBranch.remarks,
+            dl1: this.currentBranch.dL1,
+            dl2: this.currentBranch.dL2,
+            uniqueid: this.currentBranch.uniqueID,
+            reference: this.currentBranch.reference,
+            bankcode: this.currentBranch.bankCode
+          });
+          if (countryObj) {
+            this.selectedCountry.set(countryObj);
+          } else {
+            this.selectedCountry.set(null);
+          }
+          const contactObj = this.contactPersonList().find(c => {
+            if (c.id === this.currentBranch.contactPersonID) return true;
+            if (c.id != null && Number(this.currentBranch.contactPersonID) === c.id) return true;
+            return false;
+          });
 
-  //         if (contactObj) {
-  //           this.selectedContactPerson.set(contactObj);
-  //         } else {
-  //           this.selectedContactPerson.set(null);
-  //         }
-  //         this.imageData = null;
-  //         this.fetchImage();
-  //       },
-  //       error: (error) => {
-  //         console.error('An Error Occured', error);
-  //       },
-  //     });
-  // }
-
-fetchBranchById() {
-debugger
-  this.viewDialog(
-    'Do you want to load this branch?',
-    'Confirmation',
-    '450px',
-    [
-      {
-        click: () => {
-          this.alertService.hideDialog();
-          this.loadBranchById();   // 🔥 Call API only here
+          if (contactObj) {
+            this.selectedContactPerson.set(contactObj);
+          } else {
+            this.selectedContactPerson.set(null);
+          }
+          this.imageData = null;
+          this.fetchImage();
         },
-        buttonModel: { content: 'Yes', isPrimary: true }
-      },
-      {
-        click: () => {
-          this.alertService.hideDialog();
-          // ❌ Do nothing
+        error: (error) => {
+          console.error('An Error Occured', error);
         },
-        buttonModel: { content: 'No' }
-      }
-    ]
-  );
-}
+      });
+  }
+
 
   private loadBranchById() {
 
@@ -700,12 +697,13 @@ debugger
   }
 
   private viewDialog(content: string, header: string, width: string, buttons: any[]): void {
-    if (!this.dialogTarget) {
+    const dialogHost = this.dialogTargetElement;
+    if (!dialogHost) {
       console.error('Dialog target element not found');
       return;
     }
 
-    this.alertService.showDialog(this.dialogTarget.nativeElement, {
+    this.alertService.showDialog(dialogHost, {
       content: content || 'This is a custom alert dialog!',
       header: header || 'Alert',
       width: width || '400px',
