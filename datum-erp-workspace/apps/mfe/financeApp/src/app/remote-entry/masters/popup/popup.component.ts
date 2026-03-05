@@ -100,6 +100,8 @@ subGroupData = signal<subgroupdataModel[]>([]);
     .subscribe({
       next: (response) => {
         this.groupdata.set(response.data);
+        console.log('groupdata',this.groupdata());
+
       },
       error: (error) => {
         // Error fetching group data
@@ -136,16 +138,25 @@ subGroupData = signal<subgroupdataModel[]>([]);
         next: (response) => {
           // API returns array with one object, extract the first element
           const apiData =  response.data[0] 
+          console.log('nodeId',nodeId);
+          console.log('api is ',EndpointConstant.FILLTAXACCOUNTDATA+nodeId);
+          console.log('apiData from loadAccountData',apiData);
           
           // Find Group object and update selected values
           if (apiData.accountGroup) {
-            const groupObj = this.groupdata().find(item => item.id === apiData.accountGroup);
+            const numericNodeId = Number(nodeId);
+            const groupObj = this.groupdata().find(item => item.id === numericNodeId);
+            console.log('groupObj',groupObj);
             if (groupObj) {
               this.selectedGroupId = groupObj.id;
               this.selectedGroupName = groupObj.name;
+              console.log('selectedGroupId',this.selectedGroupId);
+              console.log('selectedGroupName',this.selectedGroupName);
             } else {
-              this.selectedGroupId = apiData.accountGroup;
+              this.selectedGroupId = numericNodeId;
               this.selectedGroupName = '';
+              console.log('selectedGroupId',this.selectedGroupId);
+              console.log('selectedGroupName',this.selectedGroupName);
             }
           } else {
             this.selectedGroupId = 0;
@@ -166,9 +177,10 @@ subGroupData = signal<subgroupdataModel[]>([]);
             this.selectedAccountCategoryName = '';
           }
           
-          // Map API response fields to form fields
+          // Map API response fields to form fields (group must be number to match dropdown value)
+          const groupValue = this.selectedGroupId || (this.nodeId ? Number(this.nodeId) : null);
           const formData: any = {
-            group: apiData.accountGroup || null, // Set ID value, not object
+            group: groupValue,
             accountCode: apiData.alias || '',
             accountName: apiData.name || '',
             alternateName: apiData.alternateName || '',
@@ -199,6 +211,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
                     
                     
                     console.log("subGroupResponse",subGroupResponse);
+                    this.accountForm.get('group')?.enable();
                     this.accountForm.get('accountcategory')?.enable();
                     this.accountForm.get('accountCode')?.setValue(subGroupResponse.data?.nextCode);
                     this.accountForm.get('accountName')?.setValue('');
@@ -236,8 +249,9 @@ subGroupData = signal<subgroupdataModel[]>([]);
                     
                     // Refresh all dropdowns after a delay to ensure they're rendered
                     setTimeout(() => {
-                      // Refresh Group dropdown
-                      this.refreshGroupDropdown(apiData.accountGroup, 0);
+                      // Refresh Group dropdown (when isCreate use selected group/node, else use API accountGroup)
+                      const groupToShow = this.isCreate ? (this.selectedGroupId || (this.nodeId ? Number(this.nodeId) : null)) : apiData.accountGroup;
+                      this.refreshGroupDropdown(groupToShow, 0);
                       
                       // Refresh SubGroup dropdown
                       const subGroupElement = document.getElementById('SubGroup') as any;
@@ -381,7 +395,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
         maintainCostCentre: this.accountForm.get('maintainCostCentre')?.value,
         alternateName: this.accountForm.get('alternateName')?.value,
         isGroup: this.accountForm.get('isGroup')?.value
-      }
+      };
         const savepayload = {
           group: {
             id: this.selectedGroupId,
