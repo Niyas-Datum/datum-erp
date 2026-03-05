@@ -30,7 +30,11 @@ export const EndpointConstant = {
     FILLBASICTYPE:'api/v1/fn/financeregister/Fillbtype',
     FILLVOUCHERTYPE:'api/v1/fn/financeregister/Fillvtype',
     FILLFINANCEREGISTER:'api/v1/fn/financeregister/Finreg?',
-    
+    FILLVOUCHERNUMBERING:'api/v1/fn/vchr/fillnumbering?Id=',
+    GENERATEITEMCODE:'api/v1/ItemMaster/NxtItemCode',
+    UPDATEVOUCHERNUMBERING:'api/v1/fn/vchr/updateNumbering?Id=',
+    SAVEVOUCHERNUMBERING:'api/v1/fn/vchr/savenumbering',
+    DELETEVOUCHERNUMBERING:'api/v1/fn/vchr/delnumbering?Id=',
     FILLCATEGORY:'api/v1/cussupp/getcat',
     FILLACCOUNTACCOUNTPOPUP:'api/v1/fn/coa/accpopupgs',
     FILLCHARTOFACCOUNTS:'api/v1/fn/coa/getall?Id=0&tree=true',
@@ -137,7 +141,7 @@ export const EndpointConstant = {
     FILLCUSTOMERCREDITDROPDOWN:'api/v1/cust/CreditDropdown',
     FILLCUSTOMERSUPPLIERSALESMANDROPDOWN:'api/v1/invtrans/fillsalesman',
     FILLCUSTOMERSUPPLIERAREA:'api/v1/AreaMaster/poparea',
-    FILLCUSTOMERACCOUNTGROUP:'api/v1/fn/coa/getaccgrp?param=',
+    FILLCUSTOMERACCOUNTGROUP:'api/v1/fn/coa/getaccgrp',
     FILLCUSTOMERACCOUNT:'api/v1/fn/coa/getall?Id=',
     UPDATECUSTOMERSUPPLIER:'api/v1/cussupp/update?pageId=',
     FILLCUSTOMERPLACEOFSUPPLY:'api/v1/miscellaneous/popup?keys=PlaceOfSupply',
@@ -267,8 +271,11 @@ export const EndpointConstant = {
     SAVEDELIVERYIN:'api/DeliveryOut/api/v1/deliveryout/savedeliveryout?PageId=',
     UPDATEDELIVERYIN:'api/DeliveryOut/api/v1/deliveryout/updatedeliveryout?PageId=',
 
+    FILLACCOUNTGROUPPOPUPBYIDTREE:'api/v1/fn/coa/getall?Id=',
     LEFTSIDEFILLLEDGER:'api/v1/fn/coa/getall?Id=02&tree=false',
     FILLACCOUNTGROUPPOPUP:'api/v1/fn/coa/accgrps',
+    FILLACCOUNTGROUPPOPUPBYID:'api/v1/fn/coa/getall?Id=',
+
     FILLSUBGROUPPOPUP:'api/v1/fn/coa/accsubgrps?id=',
     FILLACCOUNTCATEGORY:'api/v1/fn/coa/acccat',
     UPDATELEDGER:'api/v1/fn/coa/upacc?Id=',

@@ -33,6 +33,7 @@ import { FinancialPopupService } from '../../common/popup/finance.popup.service'
     @ViewChild('accountCombo') accountCombo?: MultiColumnComboBoxComponent;
     
 @ViewChild('pageMenuDialog') pageMenuDialog!: DialogComponent;
+isGroup = false;
 
 @Input() skipDataLoad = false; // Flag to prevent nested components from loading data
 
@@ -50,6 +51,7 @@ showPageMenuPopup = false;
     treeData = signal<any[]>([]);
     selectedAccountId = 0;
     isUpdate = false;
+    isCreate = false;
     treeViewFields: any = {
       dataSource: [],
       id: 'id',
@@ -473,6 +475,7 @@ showPageMenuPopup = false;
      * @param event - Tree node selection event containing nodeData
      */
     onNodeSelected(event: any): void {
+      console.log('onNodeSelected',event.nodeData);
       if (event.nodeData) {
         this.selectedNodeId = event.nodeData.id;
         this.getDataById(event.nodeData);
@@ -507,6 +510,7 @@ showPageMenuPopup = false;
      * @param data - Account data object containing the account ID
      */
     override getDataById(data: any) {
+      console.log('getDataById',data);
       if (data && data.id) {
         this.selectedAccountId = data.id;
         const selectedNodeId = this.selectedAccountId.toString();
@@ -727,7 +731,7 @@ showPageMenuPopup = false;
   // onNodeSelected(args: any) {
   //   this.selectedNodeId = args.nodeData.id;
   // }
-
+//this is the kindgodom
   /**
    * Handles context menu item selection
    * Routes to appropriate action based on selected menu item
@@ -765,6 +769,7 @@ showPageMenuPopup = false;
     if (this.selectedNodeId) {
       this.selectedAccountId = typeof this.selectedNodeId === 'string' ? parseInt(this.selectedNodeId, 10) : this.selectedNodeId;
     }
+    console.log(this.selectedNodeId);
     // Set showPageMenuPopup before showing dialog to ensure component is created
     this.showPageMenuPopup = true;
     this.pageMenuDialog.show();
@@ -784,6 +789,7 @@ showPageMenuPopup = false;
    */
   onPageMenuDialogClose(): void {
     this.showPageMenuPopup = false;
+    this.isCreate = false;
   }
 
   /**
@@ -791,6 +797,13 @@ showPageMenuPopup = false;
    * Opens page menu dialog for group creation
    */
   createGroup() {
+    console.log("createGroup",this.selectedNodeId);
+    // Set selectedAccountId from selectedNodeId if available
+    if (this.selectedNodeId) {
+      this.selectedAccountId = typeof this.selectedNodeId === 'string' ? parseInt(this.selectedNodeId, 10) : this.selectedNodeId;
+    }
+    this.isGroup = true;
+    this.isCreate = true;
     this.showPageMenuPopup = true;
     this.pageMenuDialog.show();
   }
@@ -800,6 +813,13 @@ showPageMenuPopup = false;
    * Opens page menu dialog for account creation
    */
   createAccount() {
+    console.log("createAccount",this.selectedNodeId);
+    // Set selectedAccountId from selectedNodeId if available
+    if (this.selectedNodeId) {
+      this.selectedAccountId = typeof this.selectedNodeId === 'string' ? parseInt(this.selectedNodeId, 10) : this.selectedNodeId;
+    }
+    this.isGroup = false; // Explicitly set to false for new account
+    this.isCreate = true;
     this.showPageMenuPopup = true;
     this.pageMenuDialog.show();
   }
