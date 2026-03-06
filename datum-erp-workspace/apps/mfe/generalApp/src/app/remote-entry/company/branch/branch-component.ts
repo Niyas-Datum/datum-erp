@@ -16,6 +16,11 @@ import { Branch, Branches, BranchSaveDto, BranchType, ContactPerson, Country, PB
 })
 export class BranchComponent extends BaseComponent implements OnInit {
 
+  /** Dialog host lives in parent (RemoteEntry); use ID lookup since this component is inside router-outlet. */
+  private get dialogTargetElement(): HTMLElement | null {
+    return document.getElementById('alertDialog');
+  }
+
   currentBranch = {} as Branch;
   // TOOLBAR STATE PROPERTIES
   isNewMode = signal(false);
@@ -25,6 +30,8 @@ export class BranchComponent extends BaseComponent implements OnInit {
   isDeleteBtnDisabled = signal(false);
   isSaveBtnDisabled = signal(false);
   isPrintBtnDisabled = signal(false);
+
+  viewDialogFlag=false;
 
   // STATE PROPERTIES
   isLoading = false;
@@ -71,6 +78,8 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.fetchContactPerson();
     this.fetchCountries();
     const companyId = Number(localStorage.getItem('companyId'));
+    console.log("Newmode:"+this.isNewMode())
+    console.log("Editmode:"+this.isEditMode())
   }
 
   //for getting contact person dropdown
@@ -157,6 +166,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
 
   override SaveFormData() {
     this.onSaveClick();
+    this.viewDialogFlag=false;
   }
 
   //fills left grid data
@@ -185,12 +195,15 @@ export class BranchComponent extends BaseComponent implements OnInit {
         this.currentBranch = lastItem;
         this.selectedBranchId = lastItem.id;
         this.fetchBranchById();
+        this.isEditMode.set(true);
       }
 
     } catch (err) {
       console.error('Error fetching companies:', err);
     }
   }
+
+
 
   /**
    * CONTACT PERSON selection handling (robust)
@@ -213,6 +226,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
 
 
   override onEditClick() {
+    
     if (this.isEditMode()) {
       const confirmed = confirm('Do you want to cancel the edit mode?');
       if (!confirmed) {
@@ -229,6 +243,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
       this.isDeleteBtnDisabled.set(false);
       this.isSaveBtnDisabled.set(true);
       this.isPrintBtnDisabled.set(false);
+      this.viewDialogFlag=true;
       return;
     }
     const confirmed = confirm('Do you want to edit?');
@@ -265,11 +280,92 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.selectedCountry.set(selectedCountryObj);
   }
 
-  override getDataById(data: PBranchByIdModel) {
-    this.selectedBranchId = data.id;
-    this.fetchBranchById();
+  // override getDataById(data: PBranchByIdModel) {
+  //   console.log("when fill by id: newmode"+this.isNewMode()+"  edit mode: "+this.isEditMode())
+  //  // if (this.isNewMode() || this.isEditMode()) {
+  //  if(this.viewDialogFlag){
+  //     this.viewDialog(
+  //       'You have unsaved changes in the new branch form. Do you want to discard them and view the selected branch?',
+  //       'Confirmation',
+  //       '450px',
+  //       [
+  //         {
+  //           click: () => {
+  //             this.alertService.hideDialog();
+  //             this.isNewMode.set(false);
+  //             this.isNewBtnDisabled.set(false);
+  //             this.isEditBtnDisabled.set(false);
+  //             this.isDeleteBtnDisabled.set(false);
+  //             this.isSaveBtnDisabled.set(true);
+  //             this.isPrintBtnDisabled.set(false);
+  //             this.isInputDisabled = true;
+  //             this.branchForm.disable();
+  //             this.selectedBranchId = data.id;
+  //             this.fetchBranchById();
+  //           },
+  //           buttonModel: { content: 'Yes', isPrimary: true }
+  //         },
+  //         {
+  //           click: () => {
+  //             this.alertService.hideDialog();
+  //           },
+  //           buttonModel: { content: 'No' }
+  //         }
+  //       ]
+  //     );
+  //     return;
+  //   }
+  //   this.selectedBranchId = data.id;
+  //   this.fetchBranchById();
+  // }
 
+  override getDataById(data: PBranchByIdModel) {
+
+  if (this.viewDialogFlag) {
+
+    this.viewDialog(
+      'You have unsaved changes. Discard them and view another branch?',
+      'Confirmation',
+      '450px',
+      [
+        {
+          click: () => {
+            this.alertService.hideDialog();
+
+            this.viewDialogFlag = false;   // ⭐ reset flag
+
+            this.isNewMode.set(false);
+            this.isEditMode.set(false);
+
+            this.isNewBtnDisabled.set(false);
+            this.isEditBtnDisabled.set(false);
+            this.isDeleteBtnDisabled.set(false);
+            this.isSaveBtnDisabled.set(true);
+            this.isPrintBtnDisabled.set(false);
+
+            this.isInputDisabled = true;
+            this.branchForm.disable();
+
+            this.selectedBranchId = data.id;
+            this.fetchBranchById();
+          },
+          buttonModel: { content: 'Yes', isPrimary: true }
+        },
+        {
+          click: () => {
+            this.alertService.hideDialog();
+          },
+          buttonModel: { content: 'No' }
+        }
+      ]
+    );
+
+    return;
   }
+
+  this.selectedBranchId = data.id;
+  this.fetchBranchById();
+}
 
   //fetch image 
 
@@ -303,7 +399,8 @@ export class BranchComponent extends BaseComponent implements OnInit {
 
   //fill by id
   fetchBranchById() {
-    this.httpService
+    console.log("selected branch:"+this.selectedBranchId)
+       this.httpService
       .fetch(EndpointConstant.FILLALLBRANCHBYID + this.selectedBranchId)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
@@ -365,7 +462,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
           } else {
             this.selectedContactPerson.set(null);
           }
-          this.imageData=null;
+          this.imageData = null;
           this.fetchImage();
         },
         error: (error) => {
@@ -373,6 +470,70 @@ export class BranchComponent extends BaseComponent implements OnInit {
         },
       });
   }
+
+
+  private loadBranchById() {
+  this.httpService
+    .fetch(EndpointConstant.FILLALLBRANCHBYID + this.selectedBranchId)
+    .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+    .subscribe({
+      next: (response) => {
+
+        this.currentBranch = response?.data as any;
+
+        const countryObj = this.countries().find(c =>
+          c.value === this.currentBranch.country ||
+          (c.id != null && Number(this.currentBranch.country) === c.id)
+        );
+
+        this.branchForm.patchValue({
+          hocompanyname: this.currentBranch.hoCompanyName,
+          hoarabicname: this.currentBranch.hoCompanyNameArabic,
+          branchtype: this.currentBranch.nature,
+          companyname: this.currentBranch.company,
+          isactive: this.currentBranch.activeFlag,
+          arabicname: this.currentBranch.arabicName,
+          telephone: this.currentBranch.telephoneNo,
+          mobile: this.currentBranch.mobileNo,
+          faxno: this.currentBranch.faxNo,
+          country: countryObj?.value ?? this.currentBranch.country,
+          addresslineone: this.currentBranch.addressLineOne,
+          addresslinetwo: this.currentBranch.addressLineTwo,
+          city: this.currentBranch.city,
+          emailaddress: this.currentBranch.emailAddress,
+          pobox: this.currentBranch.poBox,
+          district: this.currentBranch.district,
+          buildingno: this.currentBranch.bulidingNo,
+          countrycode: this.currentBranch.countryCode,
+          province: this.currentBranch.province,
+          vatno: this.currentBranch.salesTaxNo,
+          centralsalestaxno: this.currentBranch.centralSalesTaxNo,
+          contactperson: this.currentBranch.contactPersonID,
+          remarks: this.currentBranch.remarks,
+          dl1: this.currentBranch.dL1,
+          dl2: this.currentBranch.dL2,
+          uniqueid: this.currentBranch.uniqueID,
+          reference: this.currentBranch.reference,
+          bankcode: this.currentBranch.bankCode
+        });
+
+        this.selectedCountry.set(countryObj ?? null);
+
+        const contactObj = this.contactPersonList().find(c =>
+          c.id === this.currentBranch.contactPersonID ||
+          (c.id != null && Number(this.currentBranch.contactPersonID) === c.id)
+        );
+
+        this.selectedContactPerson.set(contactObj ?? null);
+
+        this.imageData = null;
+        this.fetchImage();
+      },
+      error: (error) => {
+        console.error('An Error Occured', error);
+      },
+    });
+}
 
   //for deleting the branch
   override DeleteData(data: PBranchByIdModel) {
@@ -392,7 +553,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
 
   override newbuttonClicked(): void {
     this.branchForm.reset();
-    this.imageData=null;
+    this.imageData = null;
     this.branchForm.enable();
     this.selectedContactPerson.set(null);
     this.selectedCountry.set(null);
@@ -401,11 +562,12 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.isNewMode.set(true);
     this.isNewBtnDisabled.set(false);
     this.isEditBtnDisabled.set(true);
-    this.isInputDisabled=false;
+    this.isInputDisabled = false;
+    this.viewDialogFlag=true;
   }
 
   companyId = Number(localStorage.getItem('companyId'));
-  
+
   onSaveClick(): void {
     console.log("saving...")
     const companyId = Number(localStorage.getItem('companyId'));
@@ -492,6 +654,8 @@ export class BranchComponent extends BaseComponent implements OnInit {
     } else {
       this.saveNewBranch(payload);
     }
+    this.isNewMode.set(false);
+    this.isEditMode.set(false);
   }
 
   //updating the branch
@@ -577,7 +741,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       this.imageData = reader.result as string;   // ✅ base64 ready  
-      console.log("selected image:"+this.imageData)
+      console.log("selected image:" + this.imageData)
       this.cd.detectChanges();                       // optional
     };
 
@@ -587,8 +751,30 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.imageData = null;
 
   }
+  get alertService() {
+    return this.serviceBase.alertService;
+  }
 
+  private viewDialog(content: string, header: string, width: string, buttons: any[]): void {
+    const dialogHost = this.dialogTargetElement;
+    if (!dialogHost) {
+      console.error('Dialog target element not found');
+      return;
+    }
 
+    this.alertService.showDialog(dialogHost, {
+      content: content || 'This is a custom alert dialog!',
+      header: header || 'Alert',
+      width: width || '400px',
+      isModal: true,
+      closeOnEscape: false,
+      allowDragging: false,
+      showCloseIcon: true,
+      zIndex: 10000,
+      buttons: buttons,
+      overlayClick: () => { },
+    });
+  }
 
 
 }
