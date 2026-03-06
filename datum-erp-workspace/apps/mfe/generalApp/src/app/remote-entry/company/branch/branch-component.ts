@@ -31,6 +31,8 @@ export class BranchComponent extends BaseComponent implements OnInit {
   isSaveBtnDisabled = signal(false);
   isPrintBtnDisabled = signal(false);
 
+  viewDialogFlag=false;
+
   // STATE PROPERTIES
   isLoading = false;
   isInputDisabled = true;
@@ -163,6 +165,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
 
   override SaveFormData() {
     this.onSaveClick();
+    this.viewDialogFlag=false;
   }
 
   //fills left grid data
@@ -191,6 +194,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
         this.currentBranch = lastItem;
         this.selectedBranchId = lastItem.id;
         this.fetchBranchById();
+        //this.isEditMode.set(true);
       }
 
     } catch (err) {
@@ -229,6 +233,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
       if (this.leftgridSelectedData) {
         this.getDataById(this.leftgridSelectedData);
       }
+      
       this.isEditMode.set(false);
       this.isInputDisabled = true;
       this.branchForm.disable();
@@ -237,6 +242,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
       this.isDeleteBtnDisabled.set(false);
       this.isSaveBtnDisabled.set(true);
       this.isPrintBtnDisabled.set(false);
+     
       return;
     }
     const confirmed = confirm('Do you want to edit?');
@@ -252,6 +258,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.isDeleteBtnDisabled.set(true);
     this.isSaveBtnDisabled.set(false);
     this.isPrintBtnDisabled.set(true);
+     this.viewDialogFlag=true;
   }
 
   onCountrySelect(event?: any): void {
@@ -274,41 +281,51 @@ export class BranchComponent extends BaseComponent implements OnInit {
   }
 
   override getDataById(data: PBranchByIdModel) {
-    if (this.isNewMode() || this.isEditMode()) {
-      this.viewDialog(
-        'You have unsaved changes in the new branch form. Do you want to discard them and view the selected branch?',
-        'Confirmation',
-        '450px',
-        [
-          {
-            click: () => {
-              this.alertService.hideDialog();
-              this.isNewMode.set(false);
-              this.isNewBtnDisabled.set(false);
-              this.isEditBtnDisabled.set(false);
-              this.isDeleteBtnDisabled.set(false);
-              this.isSaveBtnDisabled.set(true);
-              this.isPrintBtnDisabled.set(false);
-              this.isInputDisabled = true;
-              this.branchForm.disable();
-              this.selectedBranchId = data.id;
-              this.loadBranchById();
-            },
-            buttonModel: { content: 'Yes', isPrimary: true }
+    if (this.viewDialogFlag) {
+
+    this.viewDialog(
+      'You have unsaved changes. Discard them and view another branch?',
+      'Confirmation',
+      '450px',
+      [
+        {
+          click: () => {
+            this.alertService.hideDialog();
+
+            this.viewDialogFlag = false;   // ⭐ reset flag
+
+            this.isNewMode.set(false);
+            this.isEditMode.set(false);
+
+            this.isNewBtnDisabled.set(false);
+            this.isEditBtnDisabled.set(false);
+            this.isDeleteBtnDisabled.set(false);
+            this.isSaveBtnDisabled.set(true);
+            this.isPrintBtnDisabled.set(false);
+
+            this.isInputDisabled = true;
+            this.branchForm.disable();
+
+            this.selectedBranchId = data.id;
+            this.fetchBranchById();
           },
-          {
-            click: () => {
-              this.alertService.hideDialog();
-            },
-            buttonModel: { content: 'No' }
-          }
-        ]
-      );
-      return;
-    }
-    this.selectedBranchId = data.id;
-    this.fetchBranchById();
+          buttonModel: { content: 'Yes', isPrimary: true }
+        },
+        {
+          click: () => {
+            this.alertService.hideDialog();
+          },
+          buttonModel: { content: 'No' }
+        }
+      ]
+    );
+
+    return;
   }
+
+  this.selectedBranchId = data.id;
+  this.fetchBranchById();
+}
 
   //fetch image 
 
@@ -507,6 +524,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
     this.isNewBtnDisabled.set(false);
     this.isEditBtnDisabled.set(true);
     this.isInputDisabled = false;
+    this.viewDialogFlag=true;
   }
 
   companyId = Number(localStorage.getItem('companyId'));
