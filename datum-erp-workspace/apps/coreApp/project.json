@@ -4,11 +4,15 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/coreApp/src",
-  "tags": ["scope:shop"],
+  "tags": [
+    "scope:shop"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/coreApp",
         "index": "apps/coreApp/src/index.html",
@@ -19,9 +23,16 @@
           {
             "glob": "**/*",
             "input": "apps/coreApp/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/ui/src/assets",
+            "output": "/assets/"
           }
         ],
-        "styles": ["apps/coreApp/src/styles.scss"],
+        "styles": [
+          "apps/coreApp/src/styles.scss"
+        ],
         "customWebpackConfig": {
           "path": "apps/coreApp/webpack.config.ts"
         }
@@ -72,7 +83,9 @@
         }
       },
       "defaultConfiguration": "development",
-      "dependsOn": ["hostApp:serve"]
+      "dependsOn": [
+        "hostApp:serve"
+      ]
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

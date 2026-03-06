@@ -4,13 +4,18 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/mfe/inventoryApp/src",
-  "tags": ["scope:host"],
+  "tags": [
+    "scope:host"
+  ],
   "targets": {
     "build": {
-        "dependsOn": ["^build"],
-
+      "dependsOn": [
+        "^build"
+      ],
       "executor": "@nx/angular:webpack-browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/mfe/inventoryApp",
         "index": "apps/mfe/inventoryApp/src/index.html",
@@ -23,6 +28,11 @@
             "glob": "**/*",
             "input": "apps/mfe/inventoryApp/public",
             "output": "/"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/ui/src/assets",
+            "output": "/assets/"
           }
         ],
         "styles": [

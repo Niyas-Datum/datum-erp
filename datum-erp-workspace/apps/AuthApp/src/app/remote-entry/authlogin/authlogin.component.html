@@ -1,12 +1,12 @@
 
   <div class="login-container">
-    <img src="assets/svgs/app-logo.png" alt="datum Logo" class="comp-logo">
+    <img src="assets/svgs/Logo-b.svg" alt="datum-Logo" class="comp-logo">
 
     <form [formGroup]="loginForm"
     (ngSubmit)="onSubmit()"
     autocomplete="off">
     <div class="mb-3">
-        <label for="login" class="form-label" data-translate="company">Company</label>
+        <label for="login" class="form-label font-bold" data-translate="company">Company</label>
         <select class="form-select" id="company" data-placeholder="company_placeholder"  formControlName = "company" (change) = "onCompanySelect()">
           <option value="" disabled selected>Select your company</option>
           <option

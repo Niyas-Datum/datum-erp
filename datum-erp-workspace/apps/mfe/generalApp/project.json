@@ -4,11 +4,15 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/mfe/generalApp/src",
-  "tags": ["scope:host"],
+  "tags": [
+    "scope:host"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/mfe/generalApp",
         "index": "apps/mfe/generalApp/src/index.html",
@@ -19,9 +23,16 @@
           {
             "glob": "**/*",
             "input": "apps/mfe/generalApp/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/ui/src/assets",
+            "output": "/assets/"
           }
         ],
-        "styles": ["apps/mfe/generalApp/src/styles.scss"],
+        "styles": [
+          "apps/mfe/generalApp/src/styles.scss"
+        ],
         "customWebpackConfig": {
           "path": "apps/mfe/generalApp/webpack.config.ts"
         }

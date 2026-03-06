@@ -8,7 +8,9 @@
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/loginApp",
         "index": "apps/loginApp/src/index.html",
@@ -19,9 +21,16 @@
           {
             "glob": "**/*",
             "input": "apps/loginApp/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/ui/src/assets",
+            "output": "/assets/"
           }
         ],
-        "styles": ["apps/loginApp/src/styles.scss"],
+        "styles": [
+          "apps/loginApp/src/styles.scss"
+        ],
         "customWebpackConfig": {
           "path": "apps/loginApp/webpack.config.ts"
         }
@@ -72,7 +81,9 @@
         }
       },
       "defaultConfiguration": "development",
-      "dependsOn": ["hostApp:serve"]
+      "dependsOn": [
+        "hostApp:serve"
+      ]
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
