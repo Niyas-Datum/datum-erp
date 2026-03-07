@@ -99,6 +99,9 @@ export class DataSharingService {
   private additionalDetailsSubject = new BehaviorSubject<any>(null);
   public additionalDetails$ = this.additionalDetailsSubject.asObservable();
 
+  private selectedPartyIdSubject = new BehaviorSubject<number | string | null>(null);
+  public selectedPartyId$ = this.selectedPartyIdSubject.asObservable();
+
   public triggerRecalculateTotal$ = new Subject<void>();
   public triggerRTaxValueTotal$ = new Subject<void>();
   public triggerNetAmountTotal$ = new Subject<void>();
@@ -153,5 +156,13 @@ export class DataSharingService {
 
   getCurrentAdditionalDetails(): any {
     return this.additionalDetailsSubject.value;
+  }
+
+  setSelectedPartyId(partyId: number | string | null): void {
+    this.selectedPartyIdSubject.next(partyId);
+  }
+
+  getCurrentSelectedPartyId(): number | string | null {
+    return this.selectedPartyIdSubject.value;
   }
 }

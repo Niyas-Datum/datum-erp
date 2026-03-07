@@ -8,6 +8,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   OnInit,
   ViewChild,
@@ -68,6 +69,7 @@ export class PinventoryReferencePopupComponent implements OnInit {
   itemService = inject(ItemService);
   private formBuilder = inject(FormBuilder);
   private renderer = inject(Renderer2);
+  private cdr = inject(ChangeDetectorRef);
   
   referenceSearchForm!: FormGroup;
   filteredData: any = [];
@@ -101,6 +103,7 @@ export class PinventoryReferencePopupComponent implements OnInit {
     setTimeout(() => {
       this.modifiedArray = JSON.parse(JSON.stringify(this.referenceData || []));
       this.setReferenceData();
+      this.cdr.detectChanges();
     }, 0);
   }
 
@@ -113,16 +116,17 @@ export class PinventoryReferencePopupComponent implements OnInit {
 
   setReferenceData() {
     const { vouchertype, voucherno, voucherdate, party } =
-      this.referenceSearchForm.value ?? {};
+      this.referenceSearchForm?.value ?? {};
 
     const vtFilter = (vouchertype ?? '').toString().trim();
     const vnFilter = (voucherno ?? '').toString().trim().toLowerCase();
     const pdFilter = voucherdate ?? null;
     const partyFilter = (party ?? '').toString().trim().toLowerCase();
 
-    const hasFilters = !!(vtFilter || vnFilter || pdFilter || partyFilter);
+    const hasFilters = !!(vnFilter || pdFilter || partyFilter) || (vtFilter && vtFilter.toLowerCase() !== 'all');
     if (!hasFilters) {
-      this.filteredData = [...this.modifiedArray];
+      this.filteredData = [...(this.modifiedArray || [])];
+      this.cdr.detectChanges();
       return;
     }
 
@@ -154,6 +158,7 @@ export class PinventoryReferencePopupComponent implements OnInit {
 
       return matches;
     });
+    this.cdr.detectChanges();
   }
 
   formatDate(date: any): string {

@@ -409,6 +409,45 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       });
   }
 
+  fetchSalesman(accountId: number): void {
+    if (!accountId || accountId === 0) {
+      this.salesmanData = [];
+      return;
+    }
+
+    const customer = this.customerData.find((c) => c.id === accountId);
+
+    this.transactionService
+      .getDetails(`${EndpointConstant.FETCHSALESMAN}${accountId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.salesmanData = response?.data || [];
+          if (this.salesmanData.length > 0) {
+            let salesmanName = '';
+            if (customer?.salesManID) {
+              const match = this.salesmanData.find(
+                (s: any) => s.id === customer.salesManID || s.id === Number(customer.salesManID)
+              );
+              salesmanName = match?.name ?? '';
+            }
+            if (!salesmanName && customer?.salesman) {
+              salesmanName = customer.salesman;
+            }
+            if (!salesmanName) {
+              salesmanName = (this.salesmanData[0] as any)?.name ?? '';
+            }
+            if (salesmanName) {
+              this.salesForm.patchValue({ salesman: salesmanName });
+            }
+          }
+        },
+        error: (error) => {
+          this.salesmanData = [];
+        },
+      });
+  }
+
   // ========== Response Handlers ==========
 
   private handleCustomerResponse(response: CustomerResponse): void {
@@ -460,6 +499,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
         partyId: item.partyID || '',
       partyID: item.partyID || '',
       salesManID: item.salesManID || null,
+      salesman: item.salesman || '',
       accBalance: item.accBalance || 0,
     }));
   }
@@ -556,6 +596,8 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     if (this.salesForm) {
       this.salesForm.reset();
       this.selectedPartyId = 12230;
+      this.dataSharingService.setSelectedPartyId(12230);
+      this.fetchSalesman(12230);
     }
   }
 
@@ -862,12 +904,21 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     const formControlName = fieldMap[type as PopupType];
 
     if (formControlName) {
-      const value =
+      if (type === 'customer') {
+        const customerId = selectedItem.id ?? selectedItem.ID;
+        if (customerId != null) {
+          this.onCustomerSelected(customerId, false);
+        } else {
+          const value = selectedItem.accountName || selectedItem.name;
+          this.salesForm.patchValue({ customer: value });
+        }
+      } else {
+        const value =
           selectedItem.name ||
           selectedItem.accountName ||
-        selectedItem.projectname;
-
-      this.salesForm.patchValue({ [formControlName]: value });
+          selectedItem.projectname;
+        this.salesForm.patchValue({ [formControlName]: value });
+      }
     }
   }
 
@@ -879,7 +930,9 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     }
 
     this.selectedPartyId = option;
+    this.dataSharingService.setSelectedPartyId(option);
     this.fetchPartyBalance();
+    this.fetchSalesman(Number(option));
 
     const customer = this.customerData.find((item) => item.id === option);
 
@@ -887,10 +940,14 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       if (!userInput) {
         this.isSettingDefaultValues = true;
       }
-      this.salesForm.patchValue({
+      const patch: any = {
         customer: customer.accountName,
-        vatno: customer.vatNo,
-      });
+        vatno: customer.vatNo ?? '',
+      };
+      if (customer.salesman) {
+        patch.salesman = customer.salesman;
+      }
+      this.salesForm.patchValue(patch);
       // Reset flag after a short delay
       if (!userInput) {
         setTimeout(() => {

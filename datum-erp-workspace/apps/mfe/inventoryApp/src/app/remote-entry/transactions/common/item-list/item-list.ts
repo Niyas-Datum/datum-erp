@@ -432,10 +432,25 @@ public itemService = inject(ItemService);
   private calculateRowTotals(data: any, taxPerc: number): void {
     const qty = parseFloat(String(data.qty)) || 0;
     const rate = parseFloat(String(data.rate)) || 0;
-    const discount = parseFloat(String(data.discount)) || 0;
+    const discountPerc = parseFloat(String(data.discountPerc)) || 0;
+    const flatDiscount = parseFloat(String(data.discount)) || 0;
+
+    // Gross amount = qty × rate
     data.grossAmt = parseFloat((qty * rate).toFixed(4));
-    data.amount = parseFloat((data.grossAmt - discount).toFixed(4));
+
+    // Discount: use flat amount if set; otherwise derive from discountPerc
+    const discount = flatDiscount > 0
+      ? flatDiscount
+      : parseFloat((data.grossAmt * discountPerc / 100).toFixed(4));
+    data.discount = discount;
+
+    // Amount = gross - discount (taxable base)
+    data.amount = parseFloat(Math.max(0, data.grossAmt - discount).toFixed(4));
+
+    // Tax = amount × taxPerc / 100
     data.taxValue = parseFloat(((data.amount * (taxPerc || 0)) / 100).toFixed(4));
+
+    // Total amount = amount + tax
     data.totalAmount = parseFloat((data.amount + data.taxValue).toFixed(4));
   }
 

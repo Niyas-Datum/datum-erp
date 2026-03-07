@@ -137,8 +137,12 @@
                     </div><div class="col">
                     <select class="form-control" 
                             id="salesman"
-                            formControlName="salesman">
+                            formControlName="salesman"
+                            (change)="onSalesmanSelected($event)">
                       <option value="">Select Salesman</option>
+                      @for (s of salesmanData; track s.id) {
+                        <option [value]="s.name">{{ s.name }}</option>
+                      }
                     </select>
                   </div>
                   <div class="col">
