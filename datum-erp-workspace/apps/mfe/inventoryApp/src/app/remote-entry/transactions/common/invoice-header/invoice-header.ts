@@ -109,6 +109,9 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   isPopuprefVisible = false;
   currentPopupType: PopupType | '' = '';
   popuprefData: any = {};
+  private projectPopupDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private customerPopupDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly popupDebounceMs = 300;
   gridSettings: GridSettings = {
     allowEditing: false,
     allowAdding: false,
@@ -184,6 +187,14 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   ngOnDestroy(): void {
+    if (this.projectPopupDebounceTimer) {
+      clearTimeout(this.projectPopupDebounceTimer);
+      this.projectPopupDebounceTimer = null;
+    }
+    if (this.customerPopupDebounceTimer) {
+      clearTimeout(this.customerPopupDebounceTimer);
+      this.customerPopupDebounceTimer = null;
+    }
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -730,28 +741,68 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
 
   // ========== Popup Management ==========
 
-  openCustomerPopup(): void {
-    this.isUserInteraction = true; // Open on typing (input), not only after prior click
+  /**
+   * Opens the Customer popup.
+   * @param immediate - if true, opens immediately (e.g. when clicking search icon). If false, debounces (e.g. on input).
+   */
+  openCustomerPopup(immediate = false): void {
+    this.isUserInteraction = true;
     if (!this.isComponentInitialized || this.isSettingDefaultValues) {
       return;
     }
     if (!this.customerData || this.customerData.length === 0) {
       return;
     }
-    const initialSearch = (this.salesForm.get('customer')?.value ?? '').toString().trim();
-    this.openPopup('customer', this.customerData, {
-      allowEditing: true,
-      allowAdding: true,
-      allowDeleting: false,
-    }, initialSearch);
+    const doOpen = () => {
+      const initialSearch = (this.salesForm.get('customer')?.value ?? '').toString().trim();
+      this.openPopup('customer', this.customerData, {
+        allowEditing: true,
+        allowAdding: true,
+        allowDeleting: false,
+      }, initialSearch);
+    };
+    if (immediate) {
+      if (this.customerPopupDebounceTimer) {
+        clearTimeout(this.customerPopupDebounceTimer);
+        this.customerPopupDebounceTimer = null;
+      }
+      doOpen();
+    } else {
+      if (this.customerPopupDebounceTimer) clearTimeout(this.customerPopupDebounceTimer);
+      this.customerPopupDebounceTimer = setTimeout(() => {
+        this.customerPopupDebounceTimer = null;
+        doOpen();
+      }, this.popupDebounceMs);
+    }
   }
 
-  openProjectPopup(): void {
-    this.openPopup('project', this.projectData, {
-      allowEditing: false,
-      allowAdding: true,
-      allowDeleting: false,
-    });
+  /**
+   * Opens the Project popup.
+   * @param immediate - if true, opens immediately (e.g. when clicking search icon). If false, debounces (e.g. on input).
+   */
+  openProjectPopup(immediate = false): void {
+    if (!this.projectData || this.projectData.length === 0) return;
+    const doOpen = () => {
+      const initialSearch = (this.salesForm.get('project')?.value ?? '').toString().trim();
+      this.openPopup('project', this.projectData, {
+        allowEditing: false,
+        allowAdding: true,
+        allowDeleting: false,
+      }, initialSearch);
+    };
+    if (immediate) {
+      if (this.projectPopupDebounceTimer) {
+        clearTimeout(this.projectPopupDebounceTimer);
+        this.projectPopupDebounceTimer = null;
+      }
+      doOpen();
+    } else {
+      if (this.projectPopupDebounceTimer) clearTimeout(this.projectPopupDebounceTimer);
+      this.projectPopupDebounceTimer = setTimeout(() => {
+        this.projectPopupDebounceTimer = null;
+        doOpen();
+      }, this.popupDebounceMs);
+    }
   }
 
   openSalesmanPopup(): void {

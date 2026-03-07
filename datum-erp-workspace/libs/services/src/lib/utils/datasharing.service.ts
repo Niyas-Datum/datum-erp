@@ -47,6 +47,9 @@ export class DataSharingService {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
+      // Clear left grid so it doesn't show previous page's data until the new page calls setData()
+      this.dataSource.next({ columns: [], data: [], pageheading: '' });
+
       const menItems =  this.localStorageService.getLocalStorageItem("menuData")
       console.log(menItems);
       const menItemsArr = JSON.parse(menItems);

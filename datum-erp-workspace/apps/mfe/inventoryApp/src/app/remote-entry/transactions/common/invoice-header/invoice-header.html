@@ -103,9 +103,13 @@
                           
                             </div>
                             <div class="col-8">
-                                  <ejs-textbox formControlName="project" (keydown)="onFormKeyDown($event, 4)"
-                            (input)="openProjectPopup()" placeholder="Search for a project"></ejs-textbox>
-               
+                                    <div class="e-input-group">
+                                        <ejs-textbox formControlName="project" (keydown)="onFormKeyDown($event, 4)"
+                                            (input)="openProjectPopup()" placeholder="Search for a project"></ejs-textbox>
+                                        <span class="e-input-group-icon e-btn" (click)="openProjectPopup(true); $event.stopPropagation()">
+                                            <i class="e-icons e-search"></i>
+                                        </span>
+                                    </div>
                             </div>
                
                         </div>
@@ -122,7 +126,7 @@
                                     <div class="e-input-group">
                                  <ejs-textbox formControlName="customer" (input)="openCustomerPopup()"
                                     (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
-                                        <span class="e-input-group-icon e-btn "   (click)="openCustomerPopup(); $event.stopPropagation()">
+                                        <span class="e-input-group-icon e-btn" (click)="openCustomerPopup(true); $event.stopPropagation()">
                                 <i class="e-icons e-search"></i>
                             </span>
                                             </div>

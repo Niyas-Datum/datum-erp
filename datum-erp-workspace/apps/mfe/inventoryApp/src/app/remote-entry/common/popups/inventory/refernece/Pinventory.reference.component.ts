@@ -84,19 +84,24 @@ export class PinventoryReferencePopupComponent implements OnInit {
   voucherTypesWithAll: any[] = [];
 
   ngOnInit(): void {
-    this.modifiedArray = JSON.parse(JSON.stringify(this.referenceData || []));
     this.resetSelectionState();
-    
+
     // Add "All" option to voucher types
     this.voucherTypesWithAll = [{ name: 'all' }, ...(this.voucherTypes || [])];
-    
+
     this.referenceSearchForm = this.formBuilder.group({
       vouchertype: ['all'],
       voucherno: [''],
       voucherdate: [''],
       party: [''],
     });
-    this.setReferenceData();
+
+    // Defer so inputs (referenceData, etc.) are applied by popup container's Object.assign
+    // before we read them - otherwise first search shows no data
+    setTimeout(() => {
+      this.modifiedArray = JSON.parse(JSON.stringify(this.referenceData || []));
+      this.setReferenceData();
+    }, 0);
   }
 
   private resetSelectionState(): void {
