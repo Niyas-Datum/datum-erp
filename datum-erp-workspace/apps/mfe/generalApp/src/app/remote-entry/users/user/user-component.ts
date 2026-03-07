@@ -19,7 +19,9 @@ import { Branches } from "@org/models/lib/general/branch.dto";
 })
 export class UserComponent extends BaseComponent implements OnInit {
 
-  @ViewChild('accountCombo') accountCombo: any;
+  private get dialogTargetElement(): HTMLElement | null {
+    return document.getElementById('alertDialog');
+  }
 
   isLoading = signal(false);
   showChild = false;
@@ -37,7 +39,7 @@ export class UserComponent extends BaseComponent implements OnInit {
   isSaveBtnDisabled: boolean = true;
   isUpdate: boolean = false;
   isDelete = true;
-
+  viewDialogFlag = false;
 
   private httpService = inject(GeneralAppService);
   userForm = this.formUtil.thisForm;
@@ -177,24 +179,69 @@ export class UserComponent extends BaseComponent implements OnInit {
   }
 
   override newbuttonClicked(): void {
+     this.userForm.reset();
+   this.isEditMode.set(false);
+    this.isNewMode.set(true);
     this.isInputDisabled = false;
     this.userForm.enable();
+     this.isNewBtnDisabled=false;
+    this.isEditBtnDisabled=true;
+    this.isInputDisabled = false;
     this.initialize();
     this.userForm.patchValue({
       active: true,
-      letsystemgeneratenewaccountforparty: true,
+      isLocationRestrictedUser:true
     });
-
+ this.viewDialogFlag=true;
   }
+
 
   override onEditClick() {
 
-    this.isUpdate = true;
-    this.userForm.enable();
-    this.isInputDisabled = false;
-    this.isEditMode.set(true);
+  // 🔁 If already in edit mode → cancel edit
+  if (this.isEditMode()) {
 
+    const confirmed = confirm('Do you want to cancel edit mode?');
+    if (!confirmed) return;
+
+    if (this.leftgridSelectedData) {
+      this.getDataById(this.leftgridSelectedData);
+    }
+//this.isUpdate=true;
+    this.isEditMode.set(false);
+    this.isNewMode.set(false);
+
+    this.isInputDisabled = true;
+    this.userForm.disable();
+
+    this.isNewBtnDisabled = false;
+    this.isEditBtnDisabled = false;
+    this.isDeleteBtnDisabled = false;
+    this.isSaveBtnDisabled = true;
+
+    this.viewDialogFlag = false;
+
+    return;
   }
+
+  // 🟢 Enter edit mode
+  const confirmed = confirm('Do you want to edit?');
+  if (!confirmed) return;
+
+  this.isEditMode.set(true);
+  this.isNewMode.set(false);
+
+  this.userForm.enable();
+  this.isInputDisabled = false;
+
+  this.isNewBtnDisabled = true;
+  this.isEditBtnDisabled = false;
+  this.isDeleteBtnDisabled = true;
+  this.isSaveBtnDisabled = false;
+
+  this.viewDialogFlag = true;
+}
+
 
   //fills left grid data
   override async LeftGridInit() {
@@ -240,6 +287,7 @@ export class UserComponent extends BaseComponent implements OnInit {
         this.currentUser = lastItem;
         this.selectedUserId = lastItem.id;
         this.fetchUserById(this.selectedUserId);
+          this.isEditMode.set(false);
       }
     } catch (err) {
       this.toast.error('Error fetching companies:' + err);
@@ -344,20 +392,48 @@ export class UserComponent extends BaseComponent implements OnInit {
 
   //fill by id
   override getDataById(data: PUserModel) {
+    if (this.viewDialogFlag) {
+
+      this.viewDialog(
+        'You have unsaved changes. Discard them and view another User?',
+        'Confirmation',
+        '450px',
+        [
+          {
+            click: () => {
+              this.alertService.hideDialog();
+
+              this.viewDialogFlag = false;   
+              
+            this.isNewMode.set(false);
+            this.isEditMode.set(false);
+
+              this.isNewBtnDisabled = false;
+              this.isEditBtnDisabled = false;
+              this.isDeleteBtnDisabled = false;
+              this.isSaveBtnDisabled = true;
+
+              this.isInputDisabled = true;
+              this.userForm.disable();
+
+              this.selectedUserId = data.id;
+              this.fetchUserById(this.selectedUserId);
+            },
+            buttonModel: { content: 'Yes', isPrimary: true }
+          },
+          {
+            click: () => {
+              this.alertService.hideDialog();
+            },
+            buttonModel: { content: 'No' }
+          }
+        ]
+      );
+
+      return;
+    }
     this.selectedUserId = data.id;
     this.fetchUserById(this.selectedUserId);
-  }
-
-  clearAccountControl() {
-
-    // clear Angular form value
-    this.userForm.get('account')?.setValue(null);
-
-    // clear Syncfusion UI value
-    if (this.accountCombo) {
-      this.accountCombo.value = null;
-      this.accountCombo.text = '';
-    }
   }
 
   fetchUserById(id: number) {
@@ -403,11 +479,7 @@ export class UserComponent extends BaseComponent implements OnInit {
             warehouse: userDetails.warehouseId,
             account: userDetails.accountID
           });
-          //          if (userDetails.accountID == null) {
-          //   this.clearAccountControl();   // 🔥 correct clearing
-          // } else {
-          //   this.userForm.get('account')?.setValue(userDetails.accountID);
-          // }
+
 
           // ================= FILL BRANCH GRID =================
           this.branchDetails = branchDetails.map((bd: any) => ({
@@ -608,13 +680,15 @@ export class UserComponent extends BaseComponent implements OnInit {
       },
       "userBranchDetails": this.userBranchPayload.userBranchDetails
     }
-    if (this.isUpdate) {
+    if (this.selectedUserId!=0 ||this.selectedUserId!=null) {
       this.updateCallback(payload);
     } else {
       this.createCallback(payload);
     }
-    this.LeftGridInit();
-
+   
+    this.viewDialogFlag = false;
+     this.isNewMode.set(false);
+    this.isEditMode.set(false);
   }
 
   createCallback(payload: any) {
@@ -1028,6 +1102,32 @@ export class UserComponent extends BaseComponent implements OnInit {
         });
     }
     return true;
+  }
+
+  //view dialogue box
+  get alertService() {
+    return this.serviceBase.alertService;
+  }
+
+  private viewDialog(content: string, header: string, width: string, buttons: any[]): void {
+    const dialogHost = this.dialogTargetElement;
+    if (!dialogHost) {
+      console.error('Dialog target element not found');
+      return;
+    }
+
+    this.alertService.showDialog(dialogHost, {
+      content: content || 'This is a custom alert dialog!',
+      header: header || 'Alert',
+      width: width || '400px',
+      isModal: true,
+      closeOnEscape: false,
+      allowDragging: false,
+      showCloseIcon: true,
+      zIndex: 10000,
+      buttons: buttons,
+      overlayClick: () => { },
+    });
   }
 
 }

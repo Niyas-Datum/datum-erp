@@ -21,9 +21,9 @@ type Mode = 'view' | 'new' | 'edit';
 })
 export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
-  // @ViewChild('grid', { static: false })
-  // public grid!: GridComponent;
-  //@ViewChild('deliveryDetailsGrid') deliveryDetailsGrid!: GridComponent;
+  private get dialogTargetElement(): HTMLElement | null {
+    return document.getElementById('alertDialog');
+  }
   @ViewChild('salesman') salesmanCombo!: any;
   @ViewChild('areaDropdown') areaCombo!: any;
 
@@ -109,7 +109,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   customerSupplierCategories = [] as Array<CUSTOMERSUPPLIERCATEGORIES>;
   selectedCategory: any = [];
   selectedCategoryId = null;
-  selectedAccountId = 0;
+  selectedAccountId = null;
 
   selectedCommodities: { id: number; value: string }[] = [];
 
@@ -207,6 +207,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   //common variables
   pageId = 0;
   mode = signal<Mode>('view');
+  viewDialogFlag = false;
 
   constructor(private cd: ChangeDetectorRef) {
     super();
@@ -238,6 +239,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
       letsystemgeneratenewaccountforparty: true
     });
     this.imageData = null;
+    this.viewDialogFlag=true;
   }
 
   //form initialisation
@@ -331,7 +333,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     autoCtrl?.valueChanges.subscribe((value: boolean) => {
       if (value === true) {
         accountCtrl?.disable();       // system generates → disable account
-        accountCtrl?.setValue(null);  // optional: clear value
+        //accountCtrl?.setValue(null);  // optional: clear value
       } else {
         accountCtrl?.enable();        // manual mode → enable account
       }
@@ -350,73 +352,6 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   }
 
 
-  //for left grid data
-  // override async LeftGridInit() {
-  //   try {
-  //     const res = await firstValueFrom(
-  //       this.httpService
-  //         .fetch<any[]>(EndpointConstant.FILLALLCUSTOMERSUPPLIER)
-  //     );
-  //     let dataToUse: any[] = [];
-  //     if (Array.isArray(res)) {
-  //       dataToUse = res;
-  //     }
-  //     else if (res && res.data !== undefined) {
-  //       if (Array.isArray(res.data)) {
-  //         if (Array.isArray(res.data[0])) {
-  //           dataToUse = res.data[0];
-  //         } else {
-  //           dataToUse = res.data;
-  //         }
-  //       } else {
-  //         console.warn('res.data exists but is not an array:', res.data);
-  //         dataToUse = [];
-  //       }
-  //     } else {
-  //       console.error('Unexpected response structure:', res);
-  //       dataToUse = [];
-  //     }
-
-  //     this.leftGrid.leftGridData = dataToUse;
-
-  //     this.leftGrid.leftGridColumns = [
-  //       {
-  //         headerText: 'Customer Supplier List',
-  //         columns: [
-  //           {
-  //             field: 'code',
-  //             datacol: 'code',
-  //             headerText: 'Code',
-  //             textAlign: 'Left',
-  //           },
-  //           {
-  //             field: 'name',
-  //             datacol: 'name',
-  //             headerText: 'Name',
-  //             textAlign: 'Left',
-  //           },
-  //           {
-  //             field: 'nature',
-  //             datacol: 'nature',
-  //             headerText: 'Nature',
-  //             textAlign: 'Left',
-  //           }
-  //         ],
-  //       },
-  //     ];
-
-  //     // Update the data sharing service to populate the left grid
-  //     this.serviceBase.dataSharingService.setData({
-  //       columns: this.leftGrid.leftGridColumns,
-  //       data: this.leftGrid.leftGridData,
-  //       pageheading: this.pageheading,
-  //     });
-
-
-  //   } catch (err) {
-  //     this.toast.error('Error fetching companies:' + err);
-  //   }
-  // }
 
   override async LeftGridInit() {
     try {
@@ -454,7 +389,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         const lastRecord = dataToUse[dataToUse.length - 1];
         console.log('Last Record:', lastRecord);
         if (lastRecord) {
-          
+
           this.currentCustomerSupplier.set(lastRecord);
           this.selectedCustomerSupplierId = lastRecord.id;
           this.FillById();
@@ -631,6 +566,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
   //fills account group dropdown
   fetchAccountGroup(type: string): void {
+    console.log("acc group api url:" + EndpointConstant.FILLCUSTOMERACCOUNTGROUP + type)
     this.httpService
       .fetch<any>(EndpointConstant.FILLCUSTOMERACCOUNTGROUP + type)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -655,19 +591,77 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     this.fetchAccount(selectedId);
   }
 
+  // fetchAccount(accountGroupId: any) {
+  //   this.httpService
+  //     .fetch(EndpointConstant.FILLCUSTOMERACCOUNT + accountGroupId + '&tree=true')
+  //     .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+  //     .subscribe({
+  //       next: (response) => {
+  //         //this.accountData = response?.data as any;
+  //         this.accountData.set(response?.data ?? [] as any);
+  //         if (this.selectedAccountId != 0) {
+  //           this.customerSupplierForm.patchValue({
+  //             account: this.selectedAccountId
+  //           });
+  //         }
+  //       },
+  //       error: (error) => {
+  //         console.error('An Error Occured', error);
+  //       },
+  //     });
+  // }
+
+  // fetchAccount(accountGroupId: any) {
+
+  //   if (!accountGroupId) return;
+
+  //   this.httpService
+  //     .fetch(EndpointConstant.FILLCUSTOMERACCOUNT + accountGroupId + '&tree=true')
+  //     .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+  //     .subscribe({
+  //       next: (response) => {
+
+  //         this.accountData.set(response?.data ?? [] as any);
+
+  //         // 🔥 Patch AFTER datasource set
+  //         if (this.selectedAccountId) {
+  //           this.customerSupplierForm.patchValue({
+  //             account: Number(this.selectedAccountId)
+  //           });
+  //         }
+  //       },
+  //       error: (error) => {
+  //         console.error('An Error Occured', error);
+  //       },
+  //     });
+  // }
   fetchAccount(accountGroupId: any) {
+
+    if (!accountGroupId) return;
+
     this.httpService
       .fetch(EndpointConstant.FILLCUSTOMERACCOUNT + accountGroupId + '&tree=true')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
-          //this.accountData = response?.data as any;
-          this.accountData.set(response?.data ?? [] as any);
-          if (this.selectedAccountId != 0) {
-            this.customerSupplierForm.patchValue({
-              account: this.selectedAccountId
-            });
-          }
+
+          const data = response?.data ?? [] as any;
+
+          this.accountData.set(data);
+
+          // 🔥 ensure datasource is applied before patch
+          setTimeout(() => {
+
+            if (this.selectedAccountId) {
+
+              this.customerSupplierForm.get('account')?.setValue(
+                Number(this.selectedAccountId)
+              );
+
+            }
+
+          });
+
         },
         error: (error) => {
           console.error('An Error Occured', error);
@@ -675,10 +669,32 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
       });
   }
 
+  onselectAccount(event: any) {
 
+  const selectedAccountId = event.value;
+
+  if (!selectedAccountId) return;
+
+  const exists = this.leftGrid.leftGridData.some((x: any) =>
+    x.accountID === selectedAccountId &&
+    x.id !== this.selectedCustomerSupplierId
+  );
+
+  if (exists) {
+
+    this.toast.error('This account is already used by another Party');
+
+    // reset dropdown
+    this.customerSupplierForm.patchValue({
+      account: null
+    });
+
+  }
+
+}
 
   //Image uploading
-  imagePreview: string | null = null;
+  //imagePreview: string | null = null;
   selectedImageFile: File | null = null;
 
   onImageSelect(event: Event) {
@@ -702,7 +718,8 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     this.selectedImageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      this.imageData = reader.result as string;   // ✅ base64 ready  
+      this.imageData = reader.result as string; 
+      console.log("image:"+this.imageData)  // ✅ base64 ready  
       this.cd.detectChanges();                       // optional
     };
 
@@ -913,6 +930,48 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   }
   /*******************************Fill by id******************************* */
   override getDataById(data: PCustomerSupplierModel) {
+    if (this.viewDialogFlag) {
+
+      this.viewDialog(
+        'You have unsaved changes. Discard them and view another Party?',
+        'Confirmation',
+        '450px',
+        [
+          {
+            click: () => {
+              this.alertService.hideDialog();
+
+              this.viewDialogFlag = false;   // ⭐ reset flag
+
+              // this.isNewMode.set(false);
+              // this.isEditMode.set(false);
+
+              this.isNewBtnDisabled = false;
+              this.isEditBtnDisabled = false;
+              this.isDeleteBtnDisabled = false;
+              this.isSaveBtnDisabled = true;
+              //this.isPrintBtnDisabled.set(false);
+
+              this.isInputDisabled = true;
+              this.customerSupplierForm.disable();
+
+              this.selectedCustomerSupplierId = data.id;
+              this.FillById();
+            },
+            buttonModel: { content: 'Yes', isPrimary: true }
+          },
+          {
+            click: () => {
+              this.alertService.hideDialog();
+            },
+            buttonModel: { content: 'No' }
+          }
+        ]
+      );
+
+      return;
+    }
+
     this.currentCustomerSupplier.set(data);
     this.mode.set('view');
     this.FillById();
@@ -945,6 +1004,12 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
           this.accountGroupData.set(accGrp);
 
           const accountGroupId = accGrp?.[0]?.id ? Number(accGrp[0].id) : null;
+
+          this.selectedAccountId = result.accountID
+            ? (result.accountID)
+            : null;
+
+
           this.fetchAccount(accountGroupId);
 
           if (imageString) {
@@ -1005,7 +1070,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
             letsystemgeneratenewaccountforparty: false,
 
             accountgroup: accountGroupId,
-            account: result.accountID ? Number(result.accountID) : null,
+            //account: result.accountID ? Number(result.accountID) : null,
             remarks: result.remarks ?? null,
 
             dl1: result.dL1 ?? null,
@@ -1100,6 +1165,12 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     this.isUpdate.set(true);
     this.customerSupplierForm.enable();
     this.isInputDisabled = false;
+    this.customerSupplierForm.patchValue({
+      active: true,
+      letsystemgeneratenewaccountforparty: true
+    });
+    this.customerSupplierForm.get('account')?.enable();
+    this.viewDialogFlag=true;
     // this.onTypeSelect();
   }
 
@@ -1123,19 +1194,24 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
     const selectedType = this.selectedCustomerSupplierType;
 
-    if (!selectedType) {
-      this.toast.warning('Please select a valid type.');
+    if (this.customerSupplierForm.value.type === null) {
+      this.toast.warning('Please select a valid type!!');
       return;
     }
     if (this.customerSupplierForm.value.code === null) {
-      this.toast.warning('Code is Mandatory.');
+      this.toast.warning('Code is Mandatory!!');
       return;
     }
     if (this.customerSupplierForm.value.name === null) {
-      this.toast.warning('Name is Mandatory.');
+      this.toast.warning('Name is Mandatory!!');
       return;
     }
 
+    if(this.customerSupplierForm.value.letsystemgeneratenewaccountforparty===false && this.customerSupplierForm.value.account===null)
+    {
+       this.toast.warning('Please select an account for party!!');
+      return;
+    }
     this.allDeliveryDetails = this.deliveryRows.map(r => ({ ...r }));
 
     const payload = {
@@ -1148,7 +1224,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         "id": this.customerSupplierForm.value.category ? this.customerSupplierForm.value.category : null,
         "value": "string"
       },
-      "code": this.customerSupplierForm.value.code,
+      "code": this.customerSupplierForm.value.code.toString(),
       "salutation": this.customerSupplierForm.value.salutation,
       "active": this.customerSupplierForm.value.active,
       "name": this.customerSupplierForm.value.name,
@@ -1196,7 +1272,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
         "name": "string"
       },
       "remarks": this.customerSupplierForm.value.remarks,
-      "image": this.imageBase64,
+      "image": this.imageData,
       "customerDetails": {
         "commoditySought": this.selectedCommodities,
         "salesType": {
@@ -1268,10 +1344,9 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
       this.updateCallback(payload);
     } else {
       this.createCallback(payload);
-
     }
+this.viewDialogFlag=false;
   }
-
 
   updateCallback(payload: any) {
     this.httpService.patch(EndpointConstant.UPDATECUSTOMERSUPPLIER + this.currentPageInfo?.id, payload)
@@ -1361,8 +1436,28 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     this.deliveryRows.splice(index, 1);
   }
 
-  // saveDeliveryDetails() {
-  //   this.allDeliveryDetails = this.deliveryRows.map(r => ({ ...r }));
-  //   console.log('Delivery Details Saved:', JSON.stringify(this.allDeliveryDetails,null,2));
-  // }
+  get alertService() {
+    return this.serviceBase.alertService;
+  }
+
+  private viewDialog(content: string, header: string, width: string, buttons: any[]): void {
+    const dialogHost = this.dialogTargetElement;
+    if (!dialogHost) {
+      console.error('Dialog target element not found');
+      return;
+    }
+
+    this.alertService.showDialog(dialogHost, {
+      content: content || 'This is a custom alert dialog!',
+      header: header || 'Alert',
+      width: width || '400px',
+      isModal: true,
+      closeOnEscape: false,
+      allowDragging: false,
+      showCloseIcon: true,
+      zIndex: 10000,
+      buttons: buttons,
+      overlayClick: () => { },
+    });
+  }
 }

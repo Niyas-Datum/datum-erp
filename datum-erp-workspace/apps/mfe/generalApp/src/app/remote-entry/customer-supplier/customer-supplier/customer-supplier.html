@@ -28,13 +28,6 @@
                     customerSupplierForm.get('type')?.errors?.['required']) {
                     <small class="text-danger">Type is required.</small>
                     }
-
-                    <!-- <small *ngIf="
-                        customerSupplierForm.get('type')?.touched &&
-                        customerSupplierForm.get('type')?.errors?.['required']
-                      " style="color: red">
-                      Please select the type
-                    </small> -->
                   </div>
 
                   <!-- category dropdown -->
@@ -134,30 +127,19 @@
                   </div>
                 </div>
                 <div class="grid-3">
-                  <!-- mobile number -->
-                  <!-- <div class="form-row form-row-inline">
-                    <label>Mobile No</label>
-                    <ejs-textbox formControlName="mobileno" [readonly]="isInputDisabled"></ejs-textbox>
-                  </div> -->
+                  <!-- mobile no -->
                   <div class="form-row form-row-inline">
                     <label>Mobile No</label>
-
                     <ejs-textbox formControlName="mobileno" [readonly]="isInputDisabled">
                     </ejs-textbox>
-
-                    <!-- Validation Errors -->
                     <div class="error" *ngIf="customerSupplierForm.get('mobileno')?.touched
-           && customerSupplierForm.get('mobileno')?.invalid">
-
-
-
-                      <small *ngIf="customerSupplierForm.get('mobileno')?.errors?.['invalidPhoneNumber']">
-                        Mobile number must be 10 digits
+                        && customerSupplierForm.get('mobileno')?.invalid">
+                      <small small style="color: red"
+                        *ngIf="customerSupplierForm.get('mobileno')?.errors?.['invalidPhoneNumber']">
+                        Invalid mobile number
                       </small>
-
                     </div>
                   </div>
-
 
                   <!-- creditperiod -->
                   <div class="form-row form-row-inline">
@@ -273,6 +255,11 @@
                   <div class="form-row form-row-inline">
                     <label>Email Address</label>
                     <ejs-textbox formControlName="emailaddress" [readonly]="isInputDisabled"></ejs-textbox>
+                    <small style="color: red">
+                      @if
+                      (customerSupplierForm.get('emailaddress')?.errors?.['invalidEmail'])
+                      { Invalid format for email }
+                    </small>
                   </div>
 
                   <div class="form-row form-row-inline">
@@ -319,7 +306,7 @@
                     <label>Account</label>
                     <ejs-dropdownlist formControlName="account" [dataSource]="accountData()"
                       [readonly]="isInputDisabled" [fields]="{ text: 'name', value: 'id' }" placeholder="Select Account"
-                      [readonly]="isInputDisabled">
+                      [readonly]="isInputDisabled" (change)="onselectAccount($event)">
                     </ejs-dropdownlist>
                   </div>
                 </div>
