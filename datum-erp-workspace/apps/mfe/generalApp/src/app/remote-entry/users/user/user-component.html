@@ -55,14 +55,14 @@
         <div class="col-md-4">
           <ejs-textbox id="emailId" type="email" formControlName="emailId" cssClass="e-outline" floatLabelType="Auto"
             appEmailInput [readonly]="isInputDisabled"></ejs-textbox>
-
-          @if (userForm.get('emailId')?.touched &&
-          (userForm.get('emailId')?.errors?.['required'] || userForm.get('emailId')?.errors?.['invalidEmailId'])) {
-          <small class="text-danger">
-            @if (userForm.get('emailId')?.errors?.['required']) { Email ID is required }
-            @if (userForm.get('emailId')?.errors?.['invalidEmailId']) { Invalid format for Email ID }
+          <small style="color: red">
+             <span *ngIf="userForm.get('emailId')?.errors?.['required']">
+              Email ID is required
+            </span>
+            @if
+            (userForm.get('emailId')?.errors?.['invalidEmail'])
+            { Invalid format for email }
           </small>
-          }
         </div>
       </div>
       <div class="row mb-3">
@@ -163,13 +163,14 @@
           <ejs-textbox id="gmailId" type="email" formControlName="gmailId" cssClass="e-outline" floatLabelType="Auto"
             appEmailInput [readonly]="isInputDisabled"></ejs-textbox>
 
-          @if (userForm.get('gmailId')?.touched &&
-          (userForm.get('gmailId')?.errors?.['required'] || userForm.get('gmailId')?.errors?.['invalidEmailId'])) {
-          <small class="text-danger">
-            @if (userForm.get('gmailId')?.errors?.['required']) { Gmail ID is required }
-            @if (userForm.get('gmailId')?.errors?.['invalidEmailId']) { Invalid format for Gmail ID }
+          <small style="color: red">
+             <span *ngIf="userForm.get('gmailId')?.errors?.['required']">
+              Gmail ID is required
+            </span>
+            @if
+            (userForm.get('gmailId')?.errors?.['invalidEmail'])
+            { Invalid format for gmail }
           </small>
-          }
         </div>
       </div>
 

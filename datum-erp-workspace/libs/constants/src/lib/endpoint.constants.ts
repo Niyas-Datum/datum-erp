@@ -141,7 +141,7 @@ export const EndpointConstant = {
     FILLCUSTOMERCREDITDROPDOWN:'api/v1/cust/CreditDropdown',
     FILLCUSTOMERSUPPLIERSALESMANDROPDOWN:'api/v1/invtrans/fillsalesman',
     FILLCUSTOMERSUPPLIERAREA:'api/v1/AreaMaster/poparea',
-    FILLCUSTOMERACCOUNTGROUP:'api/v1/fn/coa/getaccgrp',
+    FILLCUSTOMERACCOUNTGROUP:'api/v1/fn/coa/getaccgrp?param=',
     FILLCUSTOMERACCOUNT:'api/v1/fn/coa/getall?Id=',
     UPDATECUSTOMERSUPPLIER:'api/v1/cussupp/update?pageId=',
     FILLCUSTOMERPLACEOFSUPPLY:'api/v1/miscellaneous/popup?keys=PlaceOfSupply',
