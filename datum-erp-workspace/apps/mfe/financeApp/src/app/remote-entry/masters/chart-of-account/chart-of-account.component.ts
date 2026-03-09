@@ -36,7 +36,7 @@ import { FinancialPopupService } from '../../common/popup/finance.popup.service'
 isGroup = false;
 
 @Input() skipDataLoad = false; // Flag to prevent nested components from loading data
-
+@Input() isOpen = false;
 showPageMenuPopup = false;
     fillaccountpopupData = signal<any[]>([]);
     chartOfAccountForm = this.formUtil.thisForm;
@@ -770,7 +770,10 @@ showPageMenuPopup = false;
       this.selectedAccountId = typeof this.selectedNodeId === 'string' ? parseInt(this.selectedNodeId, 10) : this.selectedNodeId;
     }
     console.log(this.selectedNodeId);
-    // Set showPageMenuPopup before showing dialog to ensure component is created
+    // Open mode: not create, reset create flags so popup loads existing data correctly
+    this.isCreate = false;
+    this.isGroup = false;
+    this.isOpen = true;
     this.showPageMenuPopup = true;
     this.pageMenuDialog.show();
   }
@@ -803,7 +806,8 @@ showPageMenuPopup = false;
       this.selectedAccountId = typeof this.selectedNodeId === 'string' ? parseInt(this.selectedNodeId, 10) : this.selectedNodeId;
     }
     this.isGroup = true;
-    this.isCreate = true;
+    this.isCreate=true;
+  
     this.showPageMenuPopup = true;
     this.pageMenuDialog.show();
   }
