@@ -43,7 +43,7 @@ ejs-grid {
 
 /* Prevent flashing during selection */
 .e-grid .e-row.e-selected {
-  background-color: #e3f2fd !important;
+  background-color: #fdece3 !important;
   transition: background-color 0.1s ease;
 }
 
@@ -60,4 +60,13 @@ ejs-grid {
 /* Optimize virtualization rendering */
 .e-grid .e-virtualtable {
   will-change: transform;
+}
+
+::ng-deep .e-grid .e-stackedheadercelldiv {
+  color: #187C9A !important;
+  font-weight: 600;
+}
+
+::ng-deep .e-grid .e-headercell .e-headertext {
+  color: #187C9A !important;
 }
