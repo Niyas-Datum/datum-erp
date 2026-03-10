@@ -501,12 +501,12 @@
 
                             </div>
                             <app-multiColumnComboBox
-                                formControlName="color"
+                                formControlName="hsncolor"
                                 [dataSource]="allItemColors"
-                                [fields]="{ text: 'value', value: 'value' }"
+                                [fields]="{ text: 'value', value: 'id' }"
                                 [columns]="itemColorFields"
                                 [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onItemColorSelected($event?.itemData?.value || $event)"
+                                (rowSelected)="onItemColorSelected($event?.itemData)"
                             ></app-multiColumnComboBox>
                         </div>
 
