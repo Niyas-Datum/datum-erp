@@ -109,6 +109,9 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   isPopuprefVisible = false;
   currentPopupType: PopupType | '' = '';
   popuprefData: any = {};
+  private projectPopupDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private customerPopupDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly popupDebounceMs = 300;
   gridSettings: GridSettings = {
     allowEditing: false,
     allowAdding: false,
@@ -184,6 +187,14 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   ngOnDestroy(): void {
+    if (this.projectPopupDebounceTimer) {
+      clearTimeout(this.projectPopupDebounceTimer);
+      this.projectPopupDebounceTimer = null;
+    }
+    if (this.customerPopupDebounceTimer) {
+      clearTimeout(this.customerPopupDebounceTimer);
+      this.customerPopupDebounceTimer = null;
+    }
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -398,6 +409,45 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       });
   }
 
+  fetchSalesman(accountId: number): void {
+    if (!accountId || accountId === 0) {
+      this.salesmanData = [];
+      return;
+    }
+
+    const customer = this.customerData.find((c) => c.id === accountId);
+
+    this.transactionService
+      .getDetails(`${EndpointConstant.FETCHSALESMAN}${accountId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.salesmanData = response?.data || [];
+          if (this.salesmanData.length > 0) {
+            let salesmanName = '';
+            if (customer?.salesManID) {
+              const match = this.salesmanData.find(
+                (s: any) => s.id === customer.salesManID || s.id === Number(customer.salesManID)
+              );
+              salesmanName = match?.name ?? '';
+            }
+            if (!salesmanName && customer?.salesman) {
+              salesmanName = customer.salesman;
+            }
+            if (!salesmanName) {
+              salesmanName = (this.salesmanData[0] as any)?.name ?? '';
+            }
+            if (salesmanName) {
+              this.salesForm.patchValue({ salesman: salesmanName });
+            }
+          }
+        },
+        error: (error) => {
+          this.salesmanData = [];
+        },
+      });
+  }
+
   // ========== Response Handlers ==========
 
   private handleCustomerResponse(response: CustomerResponse): void {
@@ -449,6 +499,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
         partyId: item.partyID || '',
       partyID: item.partyID || '',
       salesManID: item.salesManID || null,
+      salesman: item.salesman || '',
       accBalance: item.accBalance || 0,
     }));
   }
@@ -545,6 +596,8 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     if (this.salesForm) {
       this.salesForm.reset();
       this.selectedPartyId = 12230;
+      this.dataSharingService.setSelectedPartyId(12230);
+      this.fetchSalesman(12230);
     }
   }
 
@@ -730,28 +783,68 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
 
   // ========== Popup Management ==========
 
-  openCustomerPopup(): void {
-    this.isUserInteraction = true; // Open on typing (input), not only after prior click
+  /**
+   * Opens the Customer popup.
+   * @param immediate - if true, opens immediately (e.g. when clicking search icon). If false, debounces (e.g. on input).
+   */
+  openCustomerPopup(immediate = false): void {
+    this.isUserInteraction = true;
     if (!this.isComponentInitialized || this.isSettingDefaultValues) {
       return;
     }
     if (!this.customerData || this.customerData.length === 0) {
       return;
     }
-    const initialSearch = (this.salesForm.get('customer')?.value ?? '').toString().trim();
-    this.openPopup('customer', this.customerData, {
-      allowEditing: true,
-      allowAdding: true,
-      allowDeleting: false,
-    }, initialSearch);
+    const doOpen = () => {
+      const initialSearch = (this.salesForm.get('customer')?.value ?? '').toString().trim();
+      this.openPopup('customer', this.customerData, {
+        allowEditing: true,
+        allowAdding: true,
+        allowDeleting: false,
+      }, initialSearch);
+    };
+    if (immediate) {
+      if (this.customerPopupDebounceTimer) {
+        clearTimeout(this.customerPopupDebounceTimer);
+        this.customerPopupDebounceTimer = null;
+      }
+      doOpen();
+    } else {
+      if (this.customerPopupDebounceTimer) clearTimeout(this.customerPopupDebounceTimer);
+      this.customerPopupDebounceTimer = setTimeout(() => {
+        this.customerPopupDebounceTimer = null;
+        doOpen();
+      }, this.popupDebounceMs);
+    }
   }
 
-  openProjectPopup(): void {
-    this.openPopup('project', this.projectData, {
-      allowEditing: false,
-      allowAdding: true,
-      allowDeleting: false,
-    });
+  /**
+   * Opens the Project popup.
+   * @param immediate - if true, opens immediately (e.g. when clicking search icon). If false, debounces (e.g. on input).
+   */
+  openProjectPopup(immediate = false): void {
+    if (!this.projectData || this.projectData.length === 0) return;
+    const doOpen = () => {
+      const initialSearch = (this.salesForm.get('project')?.value ?? '').toString().trim();
+      this.openPopup('project', this.projectData, {
+        allowEditing: false,
+        allowAdding: true,
+        allowDeleting: false,
+      }, initialSearch);
+    };
+    if (immediate) {
+      if (this.projectPopupDebounceTimer) {
+        clearTimeout(this.projectPopupDebounceTimer);
+        this.projectPopupDebounceTimer = null;
+      }
+      doOpen();
+    } else {
+      if (this.projectPopupDebounceTimer) clearTimeout(this.projectPopupDebounceTimer);
+      this.projectPopupDebounceTimer = setTimeout(() => {
+        this.projectPopupDebounceTimer = null;
+        doOpen();
+      }, this.popupDebounceMs);
+    }
   }
 
   openSalesmanPopup(): void {
@@ -811,12 +904,21 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     const formControlName = fieldMap[type as PopupType];
 
     if (formControlName) {
-      const value =
+      if (type === 'customer') {
+        const customerId = selectedItem.id ?? selectedItem.ID;
+        if (customerId != null) {
+          this.onCustomerSelected(customerId, false);
+        } else {
+          const value = selectedItem.accountName || selectedItem.name;
+          this.salesForm.patchValue({ customer: value });
+        }
+      } else {
+        const value =
           selectedItem.name ||
           selectedItem.accountName ||
-        selectedItem.projectname;
-
-      this.salesForm.patchValue({ [formControlName]: value });
+          selectedItem.projectname;
+        this.salesForm.patchValue({ [formControlName]: value });
+      }
     }
   }
 
@@ -828,7 +930,9 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     }
 
     this.selectedPartyId = option;
+    this.dataSharingService.setSelectedPartyId(option);
     this.fetchPartyBalance();
+    this.fetchSalesman(Number(option));
 
     const customer = this.customerData.find((item) => item.id === option);
 
@@ -836,10 +940,14 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       if (!userInput) {
         this.isSettingDefaultValues = true;
       }
-      this.salesForm.patchValue({
+      const patch: any = {
         customer: customer.accountName,
-        vatno: customer.vatNo,
-      });
+        vatno: customer.vatNo ?? '',
+      };
+      if (customer.salesman) {
+        patch.salesman = customer.salesman;
+      }
+      this.salesForm.patchValue(patch);
       // Reset flag after a short delay
       if (!userInput) {
         setTimeout(() => {

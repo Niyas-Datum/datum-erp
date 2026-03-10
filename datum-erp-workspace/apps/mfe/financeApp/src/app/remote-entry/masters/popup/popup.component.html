@@ -36,7 +36,7 @@
                   formControlName="group"
                   [dataSource]="groupdata()"
                   [fields]="{ text: 'name', value: 'id' }"
-                  [enabled]="isEditMode() || isNewMode()"
+                  [enabled]="isEditMode() || isNewMode() || isCreateSignal()"
                   (change)="onGroupChange($event)"
                   floatLabelType="Auto">
               </ejs-dropdownlist>

@@ -207,10 +207,10 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   finishedgoods = true;
   isUpdate = false;
   updatedSellingUnit = '';
-  selectedSellingUnitObj = {};
+  selectedSellingUnitObj = {} as UnitData;
   allSellingUnits = [] as Array<UnitData>;
   updatedPurchaseUnit = '';
-  selectedPurchaseUnitObj = {};
+  selectedPurchaseUnitObj = {} as UnitData;
   allPurchaseUnits = [] as Array<UnitData>;
   firstItemMaster!: number;
 
@@ -227,40 +227,41 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   isDeleteBtnDisabled = false;
   isSaveBtnDisabled = true;
 
-  allInvAccounts = [] as Array<Account>;
   imageData: string | ArrayBuffer | null = null;
 
   selectedInvAccountId = 0;
   selectedInvAccountName = '';
+  invAccountOptions: any = [];
+  allInvAccounts = [] as Array<Account>;
 
   basicUnitFields = [
-    { field: 'unit', header: 'Unit', width: 120 },
-    { field: 'basicunit', header: 'Basic Unit', width: 120 },
-    { field: 'factor', header: 'Factor', width: 70 },
+    { field: 'unit', header: 'Unit', width: 50 },
+    { field: 'basicunit', header: 'Basic Unit', width: 50 },
+    { field: 'factor', header: 'Factor', width: 50 },
   ];
   categoryFields = [
-    { field: 'code', header: 'Code', width: 120 },
-    { field: 'description', header: 'Category', width: 120 },
+    { field: 'code', header: 'Code', width: 50 },
+    { field: 'description', header: 'Category', width: 50 },
   ];
   parentItemFields = [
-    { field: 'itemCode', header: 'Code', width: 120 },
-    { field: 'itemName', header: 'Item Name', width: 200 },
+    { field: 'itemCode', header: 'ItemCode', width: 50 },
+    { field: 'itemName', header: 'ItemName', width: 50 },
+    { field: 'id', header: 'ID', width: 50 },
+
   ];
   itemColorFields = [
-    { field: 'code', header: 'Code', width: 120 },
-    { field: 'value', header: 'Color', width: 120 },
+    { field: 'code', header: 'Code', width: 50 },
+    { field: 'value', header: 'Color', width: 50 },
   ];
   itemBrandFields = [
-    { field: 'code', header: 'Code', width: 120 },
-    { field: 'value', header: 'Brand', width: 120 },
+    { field: 'code', header: 'Code', width: 50 },
+    { field: 'value', header: 'Value', width: 50 },
+    { field: 'id', header: 'ID', width: 60}
   ];
   countryOfOriginFields = [
-    { field: 'code', header: 'Code', width: 120 },
-    { field: 'value', header: 'Country', width: 120 },
-  ];
-  accountFields = [
-    { field: 'code', header: 'Code', width: 120 },
-    { field: 'name', header: 'Account Name', width: 200 },
+    { field: 'code', header: 'Code', width: 50 },
+    { field: 'value', header: 'Value', width: 50 },
+    { field: 'id', header: 'ID', width: 50 }
   ];
 
   itemHistoryFilterSettings: object = {
@@ -269,6 +270,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     immediateModeDelay: 0,
   };
 
+  isDisabled=true;
   unitDetailsEditSettings: object = {
     allowEditing: true,
     allowAdding: true,
@@ -281,18 +283,118 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     super();
     this.commonInit();
   }
+
   ngOnInit(): void {
     this.onInitBase();
     this.getPageID();
+    this.disableFormControls();
     this.SetPageType(1);
     this.fetchAllBranches();
     this.fetchUnitDropdown();
     this.fetchAllTaxTypes();
     this.fetchItemQuality();
     this.fetchCategories();
-   // this.itemMasterForm.disable();
-   this.disableFormControls();
-   this.itemMasterForm.get('basicunit')?.disable();
+
+     this.fetchParentItems();
+     this.fetchItemColors();
+     this.fetchItemBrands();
+     this.fetchCountryOfOrigin();
+     this.fetchAccounts();
+  }
+    fetchAccounts(): void {
+    this.httpService
+      .fetch(EndpointConstant.FILLITEMACCOUNT)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.allInvAccounts = response?.data as any;
+          this.invAccountOptions = this.allInvAccounts.map((item: any) => item.name);
+          this.allSalesAccounts = response?.data as any;
+          this.salesAccountOptions = this.allSalesAccounts.map((item: any) => item.name);
+          this.allPurchaseAccounts = response?.data as any;
+          this.purchaseAccountOptions = this.allPurchaseAccounts.map((item: any) => item.name);
+          this.allCostAccounts = response?.data as any;
+          this.costAccountOptions = this.allCostAccounts.map((item: any) => item.name);
+        },
+        error: (error) => {
+          console.error('An Error Occured', error);
+        },
+      });
+  }
+
+    fetchCountryOfOrigin(): void {
+    this.httpService
+      .fetch(EndpointConstant.FILLITEMORIGIN)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.allCountryOfOrigin = (response as any)?.data[0];
+          this.countryOfOriginOptions = this.allCountryOfOrigin.map((item: any) => ({
+            code: item.code,
+            value: item.value,
+            id: item.id
+          }));
+        },
+        error: (error) => {
+          console.error('An Error Occured', error);
+        },
+      });
+  }
+
+    fetchParentItems(): void {
+    this.httpService
+      .fetch(EndpointConstant.FILLPARENTITEMS)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.allParentItems = response?.data as any;
+          this.parentItemOptions = this.allParentItems.map((item: any) => ({
+            itemCode: item.itemCode,
+            itemName: item.itemName,
+            id: item.id
+          }));
+        },
+        error: (error) => {
+          console.error('An Error Occured', error);
+        },
+      });
+  }
+
+   fetchItemColors(): void {
+    this.httpService
+      .fetch(EndpointConstant.FILLITEMCOLOR)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.allItemColors = (response as any)?.data[0];
+          this.itemColorOptions = this.allItemColors.map((item: any) => ({
+            code: item.code,
+            value: item.value,
+            id: item.id
+          }));
+        },
+        error: (error) => {
+          console.error('An Error Occured', error);
+        },
+      });
+  }
+
+    fetchItemBrands(): void {
+    this.httpService
+      .fetch(EndpointConstant.FILLITEMBRAND)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.allItemBrands = (response as any)?.data[0];
+          this.itemBrandOptions = this.allItemBrands.map((item: any) => ({
+            value: item.value,
+            id: item.id
+          }));
+        },
+        error: (error) => {
+          console.error('An Error Occured', error);
+        },
+      });
   }
 
   updateUnitDetail(index: number, field: string, value: any): void {
@@ -354,43 +456,6 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       console.error('Error fetching item master:', err);
     }
   }
-
-  // override async LeftGridInit() {
-  //       this.pageheading = 'Item Master';
-  //       try {
-  //         const res = await firstValueFrom(
-  //           this.httpService
-  //             .fetch<any[]>(EndpointConstant.FILLALLITEMMASTER)
-  //             .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-  //         );
-    
-  //         this.leftGrid.leftGridData = res.data;
-  //         console.log('Fetched data:', this.leftGrid.leftGridData);
-    
-  //         this.leftGrid.leftGridColumns = [
-  //           {
-  //             headerText: 'Category List',
-  //             columns: [
-  //               {
-  //                 field: 'itemCode',
-  //                 datacol: 'itemCode',
-  //                 headerText: 'Code',
-  //                 textAlign: 'Left',
-  //               },
-  //               {
-  //                 field: 'itemName',
-  //                 datacol: 'itemName',
-  //                 headerText: 'Name',
-  //                 textAlign: 'Left',
-  //               },
-  //             ],
-  //           },
-  //         ];
-           
-  //       } catch (err) {
-  //         console.error('Error fetching item master:', err);
-  //       }
-  //   }
 
   fetchItemMasterById(): void {
     this.selectedBranches = [];
@@ -521,7 +586,6 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
               this.updatedBasicUnit = item.unit;
             }
           });
-
           this.onBasicUnitSelected(itemDetails.unit, null);
           this.updatedSellingUnit = itemDetails.sellingUnit;
           this.onSellingUnitSelected(itemDetails.sellingUnit);
@@ -561,7 +625,6 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
               this.selectedCostAccountName = item.name;
             }
           });
-
           //set purchase account...
           this.allPurchaseAccounts.forEach((item) => {
             if (item.id === itemDetails.purchaseAccountID) {
@@ -569,20 +632,15 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
               this.selectedPurchaseAccountName = item.name;
             }
           });
-
           // this.selectedItemColorName = itemDetails.colorName;
           // this.selectedItemBrandName = itemDetails.brandName;
           // this.selectedCountryOfOriginName = itemDetails.originName;
-
           //set color...
           this.onItemColorSelected(itemDetails.colorName);
-
           //set brand...
           this.onItemBrandSelected(itemDetails.brandName);
-
           //set country of origin..
           this.onItemOriginSelected(itemDetails.originName);
-
           // this.isLoading = false;
         },
         error: (error) => {
@@ -621,17 +679,17 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
     if (Object.keys(this.selectedSellingUnitObj).length === 0) {
       this.selectedSellingUnitObj = {
-        id: 0,
         unit: '',
         basicUnit: '',
+        factor: 0,
       };
     }
 
     if (Object.keys(this.selectedPurchaseUnitObj).length === 0) {
       this.selectedPurchaseUnitObj = {
-        id: 0,
         unit: '',
         basicUnit: '',
+        factor: 0,
       };
     }
 
@@ -744,57 +802,227 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       itemName: String((parentObj as any).itemName ?? ''),
     };
 
-    const payload = {
-      id: this.isUpdate ? this.selectedItemMasterId() : 0,
-      itemCode: fv.itemcode ?? '',
-      itemName: fv.itemname ?? '',
-      arabicName: fv.arabicname ?? '',
-      unit: toUnitPayload(payloadUnit),
-      barCode:
-        this.itemMasterForm.get('barcodeno')?.value != null
-          ? this.itemMasterForm.get('barcodeno')?.value.toString()
-          : '',
-      category: payloadCategory,
-      isUniqueItem: fv.unique ?? false,
-      stockItem: fv.stockitem ?? true,
-      costPrice: fv.costprice ?? 0,
-      sellingPrice: fv.sellingprice ?? 0,
-      mrp: fv.mrp ?? null,
-      margin: fv.margin ?? 0,
-      marginValue: fv.marginvalue ?? null,
-      taxType: this.selectedTaxTypeObj ?? {},
-      isExpiry: fv.expiryitem ?? false,
-      expiryPeriod: fv.expirydays ?? 0,
-      isFinishedGood: fv.finishedgoods ?? true,
-      isRawMaterial: fv.rawmaterials ?? false,
-      location: fv.racklocation ?? '',
-      itemDisc: fv.discount ?? 0,
-      hsn: fv.hsncode ?? '',
-      parent: parentPayload,
-      quality: this.selectedItemQualityObj ?? {},
-      modelNo: fv.modelno ?? '',
-      color: this.selectedItemColorObj ?? {},
-      brand: this.selectedItemBrandObj ?? {},
-      countryOfOrigin: this.selectedCountryOfOriginObj ?? {},
-      rol: fv.rol ?? 0,
-      roq: fv.roq ?? 0,
-      manufacturer: fv.manufacturer ?? null,
-      weight: fv.weight ?? 0,
-      sellingUnit: toUnitPayload(this.selectedSellingUnitObj),
-      oemNo: fv.oemno ?? '',
-      purchaseUnit: toUnitPayload(this.selectedPurchaseUnitObj),
-      isGroup: fv.groupitem ?? true,
-      active: fv.active ?? true,
-      invAccount: { id: this.selectedInvAccountId ?? 0, name: this.selectedInvAccountName ?? '' },
-      salesAccount: { id: this.selectedSalesAccountId ?? 0, name: this.selectedSalesAccountName ?? '' },
-      costAccount: { id: this.selectedCostAccountId ?? 0, name: this.selectedCostAccountName ?? '' },
-      purchaseAccount: { id: this.selectedPurchaseAccountId ?? 0, name: this.selectedPurchaseAccountName ?? '' },
-      remarks: fv.remarks ?? '',
-      itemUnit: Array.isArray(itemUnitArray) ? itemUnitArray : [],
-      branch: Array.isArray(this.selectedBranches) ? this.selectedBranches : [],
-      imageFile: this.imageData ?? null,
-    };
+//     const payload = {
+//       id: this.isUpdate ? this.selectedItemMasterId() : 0,
+//       itemCode: fv.itemcode ?? '',
+//       itemName: fv.itemname ?? '',
+//       arabicName: fv.arabicname ?? '',
+//      // unit: toUnitPayload(payloadUnit),
+//      unit: {
+//   unit: payloadUnit.unit,
+//   basicUnit: payloadUnit.basicUnit,
+//   factor: payloadUnit.factor
+// },
+//       barCode:
+//         this.itemMasterForm.get('barcodeno')?.value != null
+//           ? this.itemMasterForm.get('barcodeno')?.value.toString()
+//           : '',
+//       category: payloadCategory,
+//       isUniqueItem: fv.unique ?? false,
+//       stockItem: fv.stockitem ?? true,
+//       costPrice: fv.costprice ?? 0,
+//       sellingPrice: fv.sellingprice ?? 0,
+//       mrp: fv.mrp ?? null,
+//       margin: fv.margin ?? 0,
+//       marginValue: fv.marginvalue ?? null,
+//       taxType: this.selectedTaxTypeObj ?? {},
+//       isExpiry: fv.expiryitem ?? false,
+//       expiryPeriod: fv.expirydays ?? 0,
+//       isFinishedGood: fv.finishedgoods ?? true,
+//       isRawMaterial: fv.rawmaterials ?? false,
+//       location: fv.racklocation ?? '',
+//       itemDisc: fv.discount ?? 0,
+//       hsn: fv.hsncode ?? '',
+//       parent: parentPayload,
+//       quality: this.selectedItemQualityObj ?? {},
+//       modelNo: fv.modelno ?? '',
+//       color: this.selectedItemColorObj ?? {},
+//       brand: this.selectedItemBrandObj ?? {},
+//       countryOfOrigin: this.selectedCountryOfOriginObj ?? {},
+//       rol: fv.rol ?? 0,
+//       roq: fv.roq ?? 0,
+//       manufacturer: fv.manufacturer ?? null,
+//       weight: fv.weight ?? 0,
+//       sellingUnit: toUnitPayload(this.selectedSellingUnitObj),
+//       oemNo: fv.oemno ?? '',
+//       purchaseUnit: toUnitPayload(this.selectedPurchaseUnitObj),
+//       isGroup: fv.groupitem ?? true,
+//       active: fv.active ?? true,
+
+// //       partNo: fv.stockcode ?? '',
+// // shipMark: fv.shipmark ?? '',
+// // paintMark: '',
+
+//       invAccount: { id: this.selectedInvAccountId ?? 0, name: this.selectedInvAccountName ?? '' },
+//       salesAccount: { id: this.selectedSalesAccountId ?? 0, name: this.selectedSalesAccountName ?? '' },
+//       costAccount: { id: this.selectedCostAccountId ?? 0, name: this.selectedCostAccountName ?? '' },
+//       purchaseAccount: { id: this.selectedPurchaseAccountId ?? 0, name: this.selectedPurchaseAccountName ?? '' },
+//       remarks: fv.remarks ?? '',
+//       itemUnit: Array.isArray(itemUnitArray) ? itemUnitArray : [],
+//       branch: Array.isArray(this.selectedBranches) ? this.selectedBranches : [],
+//       imageFile: this.imageData ?? null,
+//     };
+
+const payload = {
+  id: this.isUpdate ? this.selectedItemMasterId() : 0,
+
+  itemCode: fv.itemcode ?? '',
+  itemName: fv.itemname ?? '',
+  arabicName: fv.arabicname ?? '',
+
+  unit: {
+    unit: payloadUnit?.unit ?? '',
+    basicUnit: payloadUnit?.basicUnit ?? '',
+    factor: payloadUnit?.factor ?? 0
+  },
+
+  barCode: fv.barcodeno?.toString() ?? '',
+
+  category: {
+    id: payloadCategory?.id ?? 0,
+    code: payloadCategory?.code ?? '',
+    category: payloadCategory?.category ?? ''
+  },
+
+  isUniqueItem: fv.unique ?? false,
+  stockItem: fv.stockitem ?? true,
+
+  costPrice: fv.costprice ?? 0,
+  sellingPrice: fv.sellingprice ?? 0,
+  mrp: fv.mrp ?? 0,
+
+  margin: fv.margin ?? 0,
+  marginValue: fv.marginvalue ?? 0,
+
+  taxType: {
+    id: this.selectedTaxTypeObj?.id ?? 0,
+    name: this.selectedTaxTypeObj?.name ?? ''
+  },
+
+  isExpiry: fv.expiryitem ?? false,
+  expiryPeriod: fv.expirydays ?? 0,
+
+  isFinishedGood: fv.finishedgoods ?? true,
+  isRawMaterial: fv.rawmaterials ?? false,
+
+  location: fv.racklocation ?? '',
+  itemDisc: fv.discount ?? 0,
+  hsn: fv.hsncode ?? '',
+
+  parent: {
+    id: parentPayload?.id ?? 0,
+    itemCode: parentPayload?.itemCode ?? '',
+    itemName: parentPayload?.itemName ?? ''
+  },
+
+  quality: {
+    id: this.selectedItemQualityObj?.id ?? 0,
+    value: this.selectedItemQualityObj?.value ?? ''
+  },
+
+  modelNo: fv.modelno ?? '',
+
+  color: {
+    id: this.selectedItemColorObj?.id ?? 0,
+    name: this.selectedItemColorObj?.name ?? '',
+    code: this.selectedItemColorObj?.code ?? '',
+    description: this.selectedItemColorObj?.description ?? ''
+  },
+
+  brand: {
+    id: this.selectedItemBrandObj?.id ?? 0,
+    name: this.selectedItemBrandObj?.name ?? '',
+    code: this.selectedItemBrandObj?.code ?? '',
+    description: this.selectedItemBrandObj?.description ?? ''
+  },
+
+  countryOfOrigin: {
+    id: this.selectedCountryOfOriginObj?.id ?? 0,
+    name: this.selectedCountryOfOriginObj?.name ?? '',
+    code: this.selectedCountryOfOriginObj?.code ?? '',
+    description: this.selectedCountryOfOriginObj?.description ?? ''
+  },
+
+  rol: fv.rol ?? 0,
+  partNo: fv.partno ?? '',
+  roq: fv.roq ?? 0,
+
+  manufacturer: fv.manufacturer ?? '',
+  weight: fv.weight ?? 0,
+
+  shipMark: fv.shipmark ?? '',
+  paintMark: fv.paintmark ?? '',
+
+  sellingUnit: {
+    unit: this.selectedSellingUnitObj?.unit ?? '',
+    basicUnit: this.selectedSellingUnitObj?.basicUnit ?? '',
+    factor: this.selectedSellingUnitObj?.factor ?? 0
+  },
+
+  oemNo: fv.oemno ?? '',
+
+  purchaseUnit: {
+    unit: this.selectedPurchaseUnitObj?.unit ?? '',
+    basicUnit: this.selectedPurchaseUnitObj?.basicUnit ?? '',
+    factor: this.selectedPurchaseUnitObj?.factor ?? 0
+  },
+
+  isGroup: fv.groupitem ?? true,
+  active: fv.active ?? true,
+
+  invAccount: {
+    id: this.selectedInvAccountId ?? 0,
+    name: this.selectedInvAccountName ?? ''
+  },
+
+  salesAccount: {
+    id: this.selectedSalesAccountId ?? 0,
+    name: this.selectedSalesAccountName ?? ''
+  },
+
+  costAccount: {
+    id: this.selectedCostAccountId ?? 0,
+    name: this.selectedCostAccountName ?? ''
+  },
+
+  purchaseAccount: {
+    id: this.selectedPurchaseAccountId ?? 0,
+    name: this.selectedPurchaseAccountName ?? ''
+  },
+
+  remarks: fv.remarks ?? '',
+
+  itemUnit: (itemUnitArray ?? []).map((u:any) => ({
+    unitID: u.unitID ?? 0,
+    unit: {
+      unit: u.unit?.unit ?? '',
+      basicUnit: u.unit?.basicUnit ?? '',
+      factor: u.unit?.factor ?? 0
+    },
+    basicUnit: u.basicUnit ?? '',
+    factor: u.factor ?? 0,
+    purchaseRate: u.purchaseRate ?? 0,
+    sellingPrice: u.sellingPrice ?? 0,
+    mrp: u.mrp ?? 0,
+    wholeSalePrice: u.wholeSalePrice ?? 0,
+    retailPrice: u.retailPrice ?? 0,
+    wholeSalePrice2: u.wholeSalePrice2 ?? 0,
+    retailPrice2: u.retailPrice2 ?? 0,
+    lowestRate: u.lowestRate ?? 0,
+    barCode: u.barCode ?? '',
+    active: u.active ?? true,
+    status: u.status ?? 0
+  })),
+
+  branch: (this.selectedBranches ?? []).map((b:any) => ({
+    id: b.id ?? 0,
+    name: b.name ?? ''
+  })),
+
+  imageFile: this.imageData ?? ''
+};
     console.log("save payload:", payload);
+    console.log("SAVE PAYLOAD:", JSON.stringify(payload, null, 2));
     if (this.isUpdate) {
       this.updateCallback(payload, this.selectedItemMasterId());
     } else {
@@ -925,6 +1153,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
         },
       });
   }
+
   itemmasterFormReset(): void {
     // Prevent reactive triggers (e.g., onBasicUnitSelected firing again)
     this.isManualChange = true;
@@ -997,7 +1226,6 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
   protected override onEditClick(): void {
     this.isUpdate=true;
-    //this.isInputDisabled = !this.isInputDisabled;
     this.isEditBtnDisabled = !this.isInputDisabled;
     this.isDeleteBtnDisabled = !this.isInputDisabled;
     this.isSaveBtnDisabled = this.isInputDisabled;
@@ -1024,13 +1252,11 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
         confirm('Are you sure you want to update the barcode?')) ||
       barCodeValue == ''
     ) {
-      // this.isLoading = true;
       this.httpService
         .fetch(EndpointConstant.GENERATEBARCODE)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (response) => {
-            // this.isLoading = false;
             if (rowIndex == 0) {
               this.itemMasterForm.patchValue({
                 barcodeno: (response?.data as any)?.[0]?.barcode,
@@ -1046,7 +1272,6 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
             }
           },
           error: (error) => {
-            // this.isLoading = false;
             console.error('An Error Occured', error);
           },
         });
@@ -1070,13 +1295,11 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   }
 
   fetchAllTaxTypes(): void {
-    // this.isLoading = true;
     this.httpService
       .fetch(EndpointConstant.FILLTAXDROPDOWN)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          //this.isLoading = false;
 
           this.allTaxTypes = response?.data as any;
           // this.itemMasterForm.patchValue({
@@ -1084,7 +1307,6 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
           // });
         },
         error: (error) => {
-          // this.isLoading = false;
           console.error('An Error Occured', error);
         },
       });
@@ -1111,13 +1333,11 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
 
   fetchUnitDropdown(): void {
-    // this.isLoading = true;
     this.httpService
       .fetch(EndpointConstant.FILLUNITSPOPUP)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          // this.isLoading = false;
           this.allBasicUnits = response?.data as any;
           this.basicUnitOptions = this.allBasicUnits.map(
             (item: any) => item.unit
@@ -1128,14 +1348,12 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
           // this.purchaseUnitOptions = this.allPurchaseUnits.map((item:any) => item.unit);
         },
         error: (error) => {
-          // this.isLoading = false;
           console.error('An Error Occured', error);
         },
       });
   }
 
   async fetchCategories(): Promise<void> {
-    // this.isLoading = true;
     this.httpService
       .fetch(EndpointConstant.FILLALLITEMMASTERCATEGORIES)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -1637,9 +1855,9 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
   onItemBrandSelected(option: string): any {
     const selectedItemBrand: any = {};
-    const value = option || this.itemMasterForm.get('brancdname')?.value || '';
+    const value = option || this.itemMasterForm.get('brandname')?.value || '';
     this.itemMasterForm.patchValue({
-      brancdname: value,
+      brandname: value,
     });
     this.allItemBrands.forEach(function (item) {
       if (item.value === value) {
@@ -1861,7 +2079,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       sellingunit: value,
     });
 
-    let selectedSellingUnit = {};
+    let selectedSellingUnit: UnitData = { unit: '', basicUnit: '', factor: 0 };
     this.allBasicUnits.forEach(function (item) {
       if (item.unit === value) {
         selectedSellingUnit = item;
@@ -1877,7 +2095,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     this.itemMasterForm.patchValue({
       purchaseunit: value,
     });
-    let selectedPurchaseUnit = {};
+    let selectedPurchaseUnit: UnitData = { unit: '', basicUnit: '', factor: 0 };
     this.allBasicUnits.forEach(function (item) {
       if (item.unit === value) {
         selectedPurchaseUnit = item;
@@ -1984,7 +2202,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       quality: new FormControl({ value: '', disabled: this.isInputDisabled }),
       modelno: new FormControl({ value: '', disabled: this.isInputDisabled }),
       color: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      brancdname: new FormControl({value: '',disabled: this.isInputDisabled}),
+      brandname: new FormControl({value: '',disabled: this.isInputDisabled}),
       countryoforigin: new FormControl({value: '',disabled: this.isInputDisabled}),
       manufacturer: new FormControl({ value: '', disabled: this.isInputDisabled}),
       rol: new FormControl({ value: '', disabled: this.isInputDisabled }),
@@ -2036,13 +2254,22 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     this.itemMasterForm.get('quality')?.enable();
     this.itemMasterForm.get('modelno')?.enable();
     this.itemMasterForm.get('color')?.enable();
-    this.itemMasterForm.get('brancdname')?.enable();
+    this.itemMasterForm.get('brandname')?.enable();
     this.itemMasterForm.get('countryoforigin')?.enable();
     this.itemMasterForm.get('manufacturer')?.enable();
     this.itemMasterForm.get('rol')?.enable();
+    this.itemMasterForm.get('roq')?.enable();
+    this.itemMasterForm.get('weight')?.enable();
+    this.itemMasterForm.get('shipmark')?.enable();
+    this.itemMasterForm.get('paintmark')?.enable();
+    this.itemMasterForm.get('stockcode')?.enable();
+    this.itemMasterForm.get('oemno')?.enable();
+    this.itemMasterForm.get('groupitem')?.enable();
     this.itemMasterForm.get('purchaseunit')?.enable();
     this.itemMasterForm.get('sellingunit')?.enable();
-    if (!this.isStockItem) {
+    this.itemMasterForm.get('remarks')?.enable();
+    const isStockItem = this.itemMasterForm.get('stockitem')?.value;
+    if (!isStockItem) {
       this.itemMasterForm.get('invaccount')?.enable();
       this.itemMasterForm.get('salesaccount')?.enable();
       this.itemMasterForm.get('costaccount')?.enable();
@@ -2079,12 +2306,20 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     this.itemMasterForm.get('quality')?.disable();
     this.itemMasterForm.get('modelno')?.disable();
     this.itemMasterForm.get('color')?.disable();
-    this.itemMasterForm.get('brancdname')?.disable();
+    this.itemMasterForm.get('brandname')?.disable();
     this.itemMasterForm.get('countryoforigin')?.disable();
     this.itemMasterForm.get('manufacturer')?.disable();
     this.itemMasterForm.get('rol')?.disable();
+     this.itemMasterForm.get('roq')?.disable();
+    this.itemMasterForm.get('weight')?.disable();
+    this.itemMasterForm.get('shipmark')?.disable();
+    this.itemMasterForm.get('paintmark')?.disable();
+    this.itemMasterForm.get('stockcode')?.disable();
+    this.itemMasterForm.get('oemno')?.disable();
+    this.itemMasterForm.get('groupitem')?.disable();
     this.itemMasterForm.get('purchaseunit')?.disable();
     this.itemMasterForm.get('sellingunit')?.disable();
+    this.itemMasterForm.get('remarks')?.disable();
     this.itemMasterForm.get('invaccount')?.disable();
     this.itemMasterForm.get('salesaccount')?.disable();
     this.itemMasterForm.get('costaccount')?.disable();

@@ -36,12 +36,14 @@ export class InventoryPopupContainerComponent implements AfterViewInit, OnDestro
 
   open(component: Type<any>, inputs?: any) {
     this.inputs=inputs;
-console.log('PopupContainerComponent: open called with inputs', inputs);
     this.isVisible = true;
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       setTimeout(() => {
         try {
           if (!this.host) return reject(new Error('Host not available'));
+          // Clear any existing popup before creating new one - prevents duplicate popups
+          // when typing again in Project/Customer fields
+          this.host.clear();
           const createdRef = this.host.createComponent(component);
           if (inputs) Object.assign(createdRef.instance, inputs);
           // show with animation

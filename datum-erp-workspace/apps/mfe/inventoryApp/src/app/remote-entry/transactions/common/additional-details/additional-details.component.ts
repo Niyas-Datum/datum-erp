@@ -154,10 +154,18 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   }
 
   private setupDataSharing(): void {
-    // Subscribe to party selection changes from common service
-    // Get the selected party ID from the common service or item service
-    // For now, we'll use the input signals isNewMode and isEditMode
-    // The parent component will handle the party selection and pass it down
+    this.dataSharingService.selectedPartyId$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((partyId) => {
+        this.selectedPartyId = partyId != null ? Number(partyId) : null;
+        if (this.selectedPartyId && this.selectedPartyId !== 0) {
+          this.fetchSalesman(this.selectedPartyId);
+          this.fetchDeliveryLocation();
+        } else {
+          this.salesmanData = [];
+          this.deliveryLocationData = [];
+        }
+      });
   }
 
   private updateFormControls(isEnabled: boolean): void {
@@ -249,11 +257,15 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.salesmanData = response?.data || [];
           if (this.salesmanData.length > 0) {
-            this.onSalesmanSelected(this.salesmanData[0].name);
+            const firstSalesman = (this.salesmanData[0] as any)?.name ?? '';
+            this.updatedSalesman = firstSalesman;
+            this.additionalDetailsForm.patchValue({ salesman: firstSalesman });
+            this.emitFormChanges();
           }
         },
         error: (error) => {
           console.error('Error fetching salesman:', error);
+          this.salesmanData = [];
         }
       });
   }
@@ -308,7 +320,7 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   }
 
   onSalesmanSelected(event: any): void {
-    const option = event.target.value;
+    const option = event?.target?.value ?? event ?? '';
     this.updatedSalesman = option;
     this.additionalDetailsForm.patchValue({ salesman: option });
     this.emitFormChanges();

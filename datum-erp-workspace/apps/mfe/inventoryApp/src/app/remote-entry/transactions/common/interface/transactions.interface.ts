@@ -66,6 +66,7 @@ export interface Purchases {
     address: string;
     mobileNo: string | null;
     salesManID: number;
+    salesman?: string;
     vatNo: string | null;
     accBalance: number;  
   }

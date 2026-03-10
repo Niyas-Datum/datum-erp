@@ -1,3 +1,10 @@
+import { registerLicense } from '@syncfusion/ej2-base';
+import { APPLICATION_CONSTANT } from '@org/constants';
+
+// Register Syncfusion license when inventoryApp remote loads (e.g. Sales page)
+// Prevents trial message appearing only on Sales/inventory pages due to MF bundle separation
+registerLicense(APPLICATION_CONSTANT.syncfusion.licenseKey);
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
