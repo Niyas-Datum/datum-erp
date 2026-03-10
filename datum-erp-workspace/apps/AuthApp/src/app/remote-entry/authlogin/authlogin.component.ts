@@ -8,7 +8,7 @@ import { ApiResponseDto, BranchDto, CompanyDto } from '@org/models';
 import { observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { CurrentUserDto } from '../../../model/currentUserDto.model';
-import { UserSettingDto,ShortcutMenuDto } from '@org/models';
+import { UserSettingDto, ShortcutMenuDto } from '@org/models';
 import { BaseService, DataSharingService } from '@org/services';
 
 //import { MatDialog } from '@angular/material/dialog';
@@ -134,14 +134,14 @@ export class AuthloginComponent implements OnInit {
       },
     };
     this.loginService
-      .login<CurrentUserDto> (EndpointConstant.LOGIN, submissionData)
+      .login<CurrentUserDto>(EndpointConstant.LOGIN, submissionData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (res) => {
-         // this.isLoading.set(false);
+          // this.isLoading.set(false);
 
           const token = res.token;
-console.log( res.token);
+          console.log(res.token);
           if (!token) {
             this.loginService.setLocalStorageItem('access_token', '');
             this.loginService.setLocalStorageItem('username', '');
@@ -152,27 +152,27 @@ console.log( res.token);
           this.loginService.setLocalStorageItem('current_user', res?.users.employeeID)
           this.loginService.setLocalStorageItem('username', this.loginForm.value.username!);
           this.loginService.setLocalStorageItem('access_token', token);
-          this.loginService.setLocalStorageItem('current_branch',res?.users.branchId);
+          this.loginService.setLocalStorageItem('current_branch', res?.users.branchId);
           this.loginService.setLocalStorageItem('settings', res?.settings);
           this.loginService.setLocalStorageItem('companyName', res?.users.hoCompanyName);
           this.loginService.setLocalStorageItem('branchName', res?.users.company);
           //console.log('Login successful:', res);
           this.setNumericFormat(JSON.parse(res.settings));
-          
+
 
           const menuItems = res?.userPageListView;
           if (menuItems) {
-           // this.store.dispatch(loadMenuSuccess({ menuItems }));
+            // this.store.dispatch(loadMenuSuccess({ menuItems }));
             this.loginService.setLocalStorageItem('menuData', JSON.stringify(menuItems));
-           }
+          }
           await this.fetchShortcutMenu();
 
           this.dataSharingService.sharedData = JSON.stringify(menuItems);
           this.router.navigate(
             [this.applicationConstants?.appRouting?.MAIN_APP],
-           // { queryParams: { menu: JSON.stringify(menuItems), name: 'Niyas' } }
+            // { queryParams: { menu: JSON.stringify(menuItems), name: 'Niyas' } }
           );
-        
+
         },
         // error: (err) => {
         //   this.baseService.showCustomDialogue(err?.error);
@@ -188,30 +188,30 @@ console.log( res.token);
 
       });
   }
-setNumericFormat(settings: UserSettingDto[]): void {
+  setNumericFormat(settings: UserSettingDto[]): void {
 
-  console.log('User Settings:', settings);
-  const numericFormatSetting = settings.find(s => s.Key === "NumericFormat");
-  if (numericFormatSetting) {
-    console.log('Numeric Format:', numericFormatSetting.Value);
-    this.loginService.setLocalStorageItem('numericFormat', numericFormatSetting.Value);
+    console.log('User Settings:', settings);
+    const numericFormatSetting = settings.find(s => s.Key === "NumericFormat");
+    if (numericFormatSetting) {
+      console.log('Numeric Format:', numericFormatSetting.Value);
+      this.loginService.setLocalStorageItem('numericFormat', numericFormatSetting.Value);
+    }
   }
-}
 
 
-async fetchShortcutMenu(): Promise<void> {
-  await this.loginService
-    .fetch<ShortcutMenuDto[]>(EndpointConstant.FILLSHORTCUTMENU)
-    .pipe(takeUntilDestroyed(this.destroyRef))
-    .subscribe({
-      next: (res) => {
-        
-        console.log('Shortcut Menu:', res.data);
-        //this.shortcutMenu.set(res?.data || []);
-      },
-      error: (err) => console.error('Error fetching shortcut menu', err),
-    });
-}
+  async fetchShortcutMenu(): Promise<void> {
+    await this.loginService
+      .fetch<ShortcutMenuDto[]>(EndpointConstant.FILLSHORTCUTMENU)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+
+          console.log('Shortcut Menu:', res.data);
+          //this.shortcutMenu.set(res?.data || []);
+        },
+        error: (err) => console.error('Error fetching shortcut menu', err),
+      });
+  }
 
   // ========== JWT Token Processing Methods ==========
 
@@ -221,7 +221,7 @@ async fetchShortcutMenu(): Promise<void> {
   private processJwtToken(): void {
     // The JWT token you provided
     const jwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2OCIsImJyYW5jaCI6IkRpYmFqIFdvcmxkIFRyYWRpbmcgRXN0LiIsImJyYW5jaElkIjoiMSIsInVuaXF1ZV9uYW1lIjoiTU9IQU1NRUQgSEFSSVMgIEhBUklTIiwiZmlueWVhclN0YXJ0IjoiMy8xLzIwMjIgMTI6MDA6MDAgQU0iLCJmaW55ZWFyRW5kIjoiMTIvMzEvMjAyMiAxMjowMDowMCBBTSIsInZhdE5vIjoiMzE0MTczMDI4MjAwMDAzIiwibnVtZXJpY0Zvcm1hdCI6Ik40Iiwicm9sZSI6IkJpbGxpbmciLCJkZXBhcnRtZW50IjoiRmluYW5jZSBEZXBhcnRtZW50IiwiaG9Db21wYW55IjoiRGliYWogV29ybGQgVHJhZGluZyBFc3QuIiwibmJmIjoxNzYxMzc3Mzk4LCJleHAiOjE3NjE5ODIxOTgsImlhdCI6MTc2MTM3NzM5OH0.EZ-gtKKKyT9iqPgjEQkJ2E_wRjqrInn62DzvqL46pkk';
-    
+
     this.processToken(jwtToken);
   }
 
@@ -232,15 +232,15 @@ async fetchShortcutMenu(): Promise<void> {
   processToken(token: string): void {
     // Extract and save user information
     const userId = this.extractAndSaveUserId(token);
-    
+
     if (userId) {
       console.log('✅ JWT Token processed successfully');
       console.log('✅ User ID extracted and saved:', userId);
-      
+
       // Get all user information
       const userInfo = this.getUserInfo();
       console.log('✅ Complete user information:', userInfo);
-      
+
       // Check if token is expired
       if (this.isTokenExpired(token)) {
         console.warn('⚠️ JWT Token is expired');
@@ -261,20 +261,20 @@ async fetchShortcutMenu(): Promise<void> {
     try {
       // Split the token into its three parts
       const parts = token.split('.');
-      
+
       if (parts.length !== 3) {
         throw new Error('Invalid JWT token format');
       }
-      
+
       // Decode the payload (second part)
       const payload = parts[1];
-      
+
       // Add padding if needed
       const paddedPayload = payload + '='.repeat((4 - payload.length % 4) % 4);
-      
+
       // Decode base64
       const decodedPayload = atob(paddedPayload);
-      
+
       // Parse JSON
       return JSON.parse(decodedPayload);
     } catch (error) {
@@ -290,14 +290,14 @@ async fetchShortcutMenu(): Promise<void> {
    */
   private extractAndSaveUserId(token: string): string | null {
     const payload = this.decodeToken(token);
-    
+
     if (payload && payload.id) {
       const userId = payload.id.toString();
-      
+
       // Save to localStorage using the existing loginService method
       this.loginService.setLocalStorageItem('userId', userId);
       this.loginService.setLocalStorageItem('userToken', token);
-      
+
       // Also save other useful user information
       if (payload.unique_name) {
         this.loginService.setLocalStorageItem('userName', payload.unique_name);
@@ -323,7 +323,7 @@ async fetchShortcutMenu(): Promise<void> {
       if (payload.hoCompany) {
         this.loginService.setLocalStorageItem('hoCompany', payload.hoCompany);
       }
-      
+
       console.log('✅ User ID saved to localStorage:', userId);
       console.log('✅ Additional user info saved:', {
         userName: payload.unique_name,
@@ -335,10 +335,10 @@ async fetchShortcutMenu(): Promise<void> {
         department: payload.department,
         hoCompany: payload.hoCompany
       });
-      
+
       return userId;
     }
-    
+
     console.error('❌ Failed to extract user ID from token');
     return null;
   }
@@ -402,12 +402,15 @@ async fetchShortcutMenu(): Promise<void> {
    */
   private isTokenExpired(token: string): boolean {
     const payload = this.decodeToken(token);
-    
+
     if (!payload || !payload.exp) {
       return true;
     }
-    
+
     const currentTime = Math.floor(Date.now() / 1000);
     return payload.exp < currentTime;
   }
+
+  
+
 }

@@ -101,3 +101,15 @@
   vertical-align: middle;
   margin-right: 3px;
 }
+
+
+
+/* Action button customizing */
+.btn-common-feature{
+  background-color: #187C9A;
+  color: white;
+}
+
+.btn-common-feature:hover{
+  background-color: #F29718;
+}

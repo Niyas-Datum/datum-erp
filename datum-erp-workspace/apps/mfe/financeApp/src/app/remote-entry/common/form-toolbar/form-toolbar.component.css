@@ -44,6 +44,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   margin-bottom: 14px;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   border: 1px solid #e0e0e0;
 }
@@ -100,4 +101,24 @@
   font-size: 16px;
   vertical-align: middle;
   margin-right: 3px;
+}
+
+
+.topbar-scroll {
+  scrollbar-width: none;
+}
+
+.topbar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.topbar-scroll {
+  scroll-behavior: smooth;
+}
+.bt-custom{
+  background-color: #187C9A;
+  color: white;
+}
+.bt-custom:hover{
+  background-color: #F29718;
 }

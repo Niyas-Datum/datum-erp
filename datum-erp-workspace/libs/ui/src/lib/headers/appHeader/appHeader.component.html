@@ -1,115 +1,114 @@
+<!-- eslint-disable @angular-eslint/template/alt-text -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 
-
-
-
+<!-- Header -->
 <section class="mh-sec mb-0">
   <div class=" border-light-subtle">
-    <div
-      class="d-flex align-items-center justify-content-between bg-body-tertiary ps-4 pe-2 pe-lg-4 py-2"
-    >
+    <div class="d-flex align-items-center justify-content-between ps-4 pe-2 pe-lg-4 py-2"
+      style="background-color: #187C9A;">
       <div class="d-flex align-items-center">
-        <h5 class="fw-bold text-body fs-5 mb-0">Datum Innovation</h5>
+        <img src="/assets/svgs/logo.svg" height="40" alt="Datum Logo">
+
       </div>
       <div class="d-none d-lg-flex px-3">
-        <ejs-menu
-          #menu
-          [items]="menuItems"
-          [fields]="menuFields"
-          cssClass="e-scrollable-menu"
-          [enableScrolling]="true"
-          (beforeOpen)="onBeforeOpen($event)"
-          [animationSettings]="animationSettings"
-          (select)="onMenuSelect($event)"
-        ></ejs-menu>
+        <ejs-menu #menu [items]="menuItems" [fields]="menuFields" cssClass="e-scrollable-menu" [enableScrolling]="true"
+          (beforeOpen)="onBeforeOpen($event)" [animationSettings]="animationSettings"
+          (select)="onMenuSelect($event)"></ejs-menu>
       </div>
       <div class="d-flex align-items-center">
-        <div
-          class="border-end border-secondary-subtle d-none d-sm-block me-3"
-          style="height: 24px"
-        ></div>
-        <button
-          ejs-button
-          cssClass="e-flat fs-6 d-none d-sm-block me-3"
-          iconCss="sf-icon-notification-bell-01"
-          type="button"
-          aria-label="notification"
-          role="button"
-        ></button>
-        <div
-          class="border-end border-secondary-subtle d-none d-sm-block me-3"
-          style="height: 24px"
-        ></div>
-        <button
-          ejs-button
-          cssClass="e-flat d-none d-sm-block me-3 e-medium"
-          iconCss="e-icons e-grid-view"
-          type="button"
-          aria-label="grid view"
-          role="button"
-        ></button>
-        <div
-          class="border-end border-secondary-subtle d-none d-sm-block me-3"
-          style="height: 24px"
-        ></div>
-        <button
-          ejs-dropdownbutton
-          [items]="menuService.userDropdown"
-          content="{{ userName() }}"
-          (select)="onDropdownItemSelect($event)"
-          [iconCss]="''"
-          class="no-icon-dropdown"
-        ></button>
+        <div class="border-end border-secondary-subtle d-none d-sm-block me-3" style="height: 24px"></div>
+
+        <button ejs-button cssClass="e-flat fs-6 d-none d-sm-block me-3" iconCss="sf-icon-notification-bell-01"
+          type="button" aria-label="notification" role="button"></button>
+
+        <div class="border-end border-secondary-subtle d-none d-sm-block me-3" style="height: 24px"></div>
+
+        <button ejs-button cssClass="e-flat d-none d-sm-block me-3 e-medium header-icon-btn"
+          iconCss="e-icons e-grid-view" type="button" aria-label="grid view" role="button">
+        </button>
+
+        <div class="border-end border-secondary-subtle d-none d-sm-block me-3" style="height: 24px"></div>
+        <button ejs-dropdownbutton [items]="menuService.userDropdown" iconCss="e-icons e-user"
+          (select)="onDropdownItemSelect($event)" cssClass="e-flat d-none d-sm-block me-3 e-medium user-icon-dropdown"
+          aria-label="user menu" type="button">
+        </button>
+
       </div>
     </div>
   </div>
 </section>
 <section class="mb-1">
 
-  <div
-    class="d-none d-lg-block  border-top-0 border-light-subtle  py-1 ps-3 pe-4"
-  >
+  <!-- Toolbar Section -->
+  <section class="w-100 d-none d-lg-block">
 
-    <div
-      class="justify-content-between"
-      style="height: 40px; display: flex; align-items: center"
-    >
-      <ejs-toolbar (click)="onClicked($event)" style="width: 100%">
+    <div class="border p-2">
+
+      <div class="row align-items-center g-2">
+
+        <!--Left section -->
+        <div class="col-12 d-flex align-items-center overflow-hidden gap-2">
+
+          <!-- Left Arrow -->
+          <div class="flex-shrink-0  border p-1 rounded">
+            <img src="/assets/svgs/less-than.svg" style="width:18px; height:18px; cursor:pointer;" (click)="moveLeft()">
+          </div>
+
+          <div class="flex-grow-1 overflow-hidden">
+            <div class="d-flex gap-2 transition-scroll" [style.transform]="'translateX(' + translateX + 'px)'">
+
+              @for (item of shortCutMenuItems; track item.m_id) {
+              <button ejs-button [iconCss]="item.iconClass" class="btn btn-custume btn-sm flex-shrink-0 fw-bold"
+                (click)="onShortcutClick(item)">
+                {{ item.text }}
+              </button>
+              }
+
+            </div>
+          </div>
+
+          <!-- Right Arrow -->
+          <div class="flex-shrink-0 border rounded p-1">
+            <img src="assets/svgs/greater-than.svg" style="width:18px; height:18px; cursor:pointer;"
+              (click)="moveRight()">
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section class="mobilesec-view d-lg-none border-top">
+
+    <!-- Mobile Header View -->
+    <div class="px-2 py-2">
+      <app-app-header-mobile-view></app-app-header-mobile-view>
+    </div>
+
+    <!-- Mobile Shortcut Toolbar -->
+    <div class="px-2 pb-2">
+
+      <ejs-toolbar (click)="onClicked($event)" overflowMode="Scrollable" width="100%" cssClass="mobile-toolbar">
+
         <e-items>
-          @for(item of shortCutMenuItems; track item.m_id) {
-          <e-item [text]="item.text" [tooltipText]="item.tooltipText"> </e-item>
+          @for (item of shortCutMenuItems; track item.m_id) {
+          <e-item [text]="item.text" [tooltipText]="item.tooltipText" cssClass="mobile-tool-item">
+          </e-item>
           }
         </e-items>
       </ejs-toolbar>
+
     </div>
-  </div>
-  <section class="mobilesec-view mb-0 d-lg-none">
-  <div class="tab-bar">
-    <div class="tab ">
-          <div class="d-lg-none" >
-      <!--mobile view-->
-            <app-app-header-mobile-view></app-app-header-mobile-view>
-        </div>
-    </div>
-    <div class="tab"> 
-      Short Menu
-      <ejs-toolbar
-        (click)="onClicked($event)"
-        overflowMode="Popup"
-        width="10"
-        style="width: 100%"
-      >
-        <e-items>
-          @for(item of shortCutMenuItems; track item.m_id) {
-          <e-item [text]="item.text" [tooltipText]="item.tooltipText"> </e-item>
-          }
-        </e-items>
-      </ejs-toolbar></div>
-  
-  </div>
 
 
 
- <!-- <div class="d-flex justify-content-between align-items-center">
+    <!-- <div class="d-flex justify-content-between align-items-center">
   
     <div
       class="d-flex justify-content-end d-lg-none"

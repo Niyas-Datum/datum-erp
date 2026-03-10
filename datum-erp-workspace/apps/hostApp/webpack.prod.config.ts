@@ -17,8 +17,8 @@ export default async (cfg: any) => {
       // ],
 
        remotes: [
-        ['AuthApp', 'http://localhost:4206/remoteEntry.mjs'],
-        ['coreApp', 'http://localhost:4202/remoteEntry.mjs'],
+        ['AuthApp', 'http://localhost:4306/remoteEntry.mjs'],
+        ['coreApp', 'http://localhost:4302/remoteEntry.mjs'],
       ],
     },
     { dts: false }

@@ -9,7 +9,8 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  pointer-events: none; /* Allow clicks to pass through when disabled */
+  pointer-events: none;
+  /* Allow clicks to pass through when disabled */
 }
 
 .overlay-disabled {
@@ -17,7 +18,8 @@
 }
 
 .overlay-disabled .overlay {
-  pointer-events: auto; /* Block clicks when overlay is shown */
+  pointer-events: auto;
+  /* Block clicks when overlay is shown */
 }
 
 .datatable-wrapper {
@@ -60,4 +62,36 @@ ejs-grid {
 /* Optimize virtualization rendering */
 .e-grid .e-virtualtable {
   will-change: transform;
+}
+
+/* Make row background white */
+::ng-deep .sidebar-grid .e-rowcell {
+  background-color: #ffffff !important;
+  color: #3c3c3c !important;
+  /* Blue text */
+  font-weight: 500;
+}
+
+/* Header background */
+::ng-deep .sidebar-grid .e-headercontent,
+::ng-deep .sidebar-grid .e-headercell,
+::ng-deep .sidebar-grid .e-stackedheadercell {
+  background-color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* Ccolumn headers */
+::ng-deep .sidebar-grid .e-headercell .e-headertext {
+  color: #187C9A !important;
+}
+
+/* stacked header text color change*/
+::ng-deep .sidebar-grid .e-stackedheadercell .e-stackedheadercelldiv {
+  color: #187C9A !important;
+  font-weight: 600;
+}
+
+/* Filter icons */
+::ng-deep .sidebar-grid .e-headercell .e-icons {
+  color: #187C9A !important;
 }

@@ -1,11 +1,226 @@
-<form [formGroup]="paymentVoucherForm">
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
+<div class="container-fluid">
   <div class="row">
+    <div class="col-12 col-lg-6">
+      <form [formGroup]="paymentVoucherForm">
+
+        <!-- Voucher Row -->
+
+        <div class="row mb-2 align-items-center">
+
+          <div class="col-12 col-md-6 d-flex">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+
+              <label  for="voucherNo" class="label-custom">Voucher No <span class="text-danger">*</span></label>
+              <div class="w-100 w-lg-auto" >
+                <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="e-input w-100">
+                </ejs-textbox>
+
+                @if (paymentVoucherForm.get('voucherName')?.hasError('required')) {
+                <small class="text-danger">This field is required.</small>
+                }
+              </div>
+              <div class="flex-grow-1">
+                <ejs-textbox id="voucherNo" formControlName="voucherNo" cssClass="e-input w-100">
+                </ejs-textbox>
+
+                @if (paymentVoucherForm.get('voucherNo')?.hasError('required')) {
+                <small class="text-danger">This field is required.</small>
+                }
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="row align-items-center">
+
+              <label for="voucherDate" class="form-label col-12 col-md-4 h6">
+                Voucher Date
+                <span class="text-danger">*</span>
+              </label>
+
+              <div class="col-12 col-md-8">
+                <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy"
+                  format="dd/MM/yyyy" cssClass="w-100">
+                </ejs-datepicker>
+
+                @if (paymentVoucherForm.get('voucherDate')?.hasError('required')) {
+                <small class="text-danger">This field is required.</small>
+                }
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Cost Centre / Department -->
+        <div class="row mb-2">
+
+          <label class="form-label col-12 col-md-2 h6">
+            CostCentre
+          </label>
+
+          <div class="col-12 col-md-4">
+            <ejs-dropdownlist id="costCentre" formControlName="costCentre" [dataSource]="costCentreData"
+              [fields]="{ text: 'description', value: 'id' }" placeholder="Select CostCentre" >
+            </ejs-dropdownlist>
+          </div>
+
+          <label class="form-label col-12 col-md-2 h6">
+            Department
+          </label>
+
+          <div class="col-12 col-md-4">
+            <ejs-dropdownlist id="department" formControlName="department" [dataSource]="departmentData"
+              [fields]="{ text: 'name', value: 'id' }" placeholder="Select Department">
+            </ejs-dropdownlist>
+          </div>
+
+        </div>
+
+        <!-- Narration -->
+        <div class="row mb-2">
+
+          <label class="form-label col-12 col-md-2 h6">
+            Narration
+          </label>
+
+          <div class="col-12 col-md-10">
+            <ejs-textbox id="narration" formControlName="narration" cssClass="e-input w-100">
+            </ejs-textbox>
+          </div>
+
+        </div>
+
+        <!-- Reference -->
+        <div class="row mb-2">
+
+          <label class="form-label col-12 col-md-2 h6">
+            Reference No
+          </label>
+
+          <div class="col-12 col-md-10">
+            <ejs-textbox id="referenceNo" formControlName="referenceNo" cssClass="e-input w-100">
+            </ejs-textbox>
+          </div>
+
+        </div>
+
+      </form>
+    </div>
+
+    <div class="col-12 col-lg-6">
+
+      <div class="row">
+        <div class="col-12">
+
+          <div class="e-btn-group w-100 d-flex flex-wrap">
+
+            <button type="button" class="e-btn e-small e-info flex-fill" (click)="onPaymentTypeClick('Cash')">
+
+              <span class="material-icons">account_balance_wallet</span>
+              Cash
+
+            </button>
+
+            <button type="button" class="e-btn e-small e-primary flex-fill" (click)="onPaymentTypeClick('Card')">
+
+              <span class="material-icons">credit_card</span>
+              Card
+
+            </button>
+
+            <button type="button" class="e-btn e-small e-warning flex-fill" (click)="onPaymentTypeClick('Cheque')">
+
+              <span class="material-icons">receipt</span>
+              Cheque
+
+            </button>
+
+            <button type="button" class="e-btn e-small e-success flex-fill" (click)="onPaymentTypeClick('EPAY')">
+
+              <span class="material-icons">payments</span>
+              E-Pay
+
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Account Details-->
+  <div class="row mt-3">
     <div class="col-md-12">
-      <div class="row align-items-start">
-        <div class="col-md-6">
+      <h6 class="section-title">Account Details</h6>
+      <ejs-grid #accountDetailsGrid [dataSource]="voucherCommonService.accountDetailsData()"
+        [editSettings]="accountDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true" gridLines="Both"
+        height="200px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)">
+        <e-columns>
+          <e-column field="accountCode" headerText="AccountCode" width="150">
+            <ng-template #editTemplate let-data>
+              <ejs-multicolumncombobox [dataSource]="voucherService.accountMasterData()"
+                [fields]='{text: "accountCode", value: "accountCode"}' [value]="data.accountCode"
+                [showClearButton]="true" [allowFiltering]="true" filterType="Contains"
+                placeholder="Search by Account Code or Name..." popupWidth="600px"
+                (change)="onAccountSelect($event, data)" (filtering)="onAccountFiltering($event)">
+                <e-columns>
+                  <e-column field="accountCode" headerText="Account Code" width="150"></e-column>
+                  <e-column field="accountName" headerText="Account Name" width="250"></e-column>
+                </e-columns>
+              </ejs-multicolumncombobox>
+            </ng-template>
+          </e-column>
+          <e-column field="accountName" headerText="AccountName" width="200" [allowEditing]="false"></e-column>
+          <e-column field="description" headerText="Description" width="250"></e-column>
+          <e-column field="dueDate" headerText="DueDate" width="120"></e-column>
+          <e-column field="debit" headerText="Debit" width="120" textAlign="Right" type="number" editType="numericedit"
+            [edit]="debitEditParams" format="N2">
+          </e-column>
+        </e-columns>
+      </ejs-grid>
+    </div>
+  </div>
+
+
+  <!-- Payment Details-->
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <h6 class="section-title">Payment Details</h6>
+      <ejs-grid #paymentDetailsGrid [dataSource]="voucherCommonService.paymentDetailsData()"
+        [editSettings]="paymentDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true" gridLines="Both"
+        height="200px" [rowHeight]="30">
+        <e-columns>
+          <e-column field="AccountName" headerText="AccountName" width="250"></e-column>
+          <e-column field="Description" headerText="Description" width="300"></e-column>
+          <e-column field="Amount" headerText="Amount" width="150" textAlign="Right" format="N2"></e-column>
+          <e-column field="TranType" headerText="TranType" width="120"></e-column>
+        </e-columns>
+      </ejs-grid>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<!-- 
+<form [formGroup]="paymentVoucherForm">
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="row align-items-start"> -->
+<!-- <div class="col-md-6">
           <div class="row">
-            <label for="voucherNo" class="form-label col-md-4">Voucher No<span
-                class="required-asterisk">*</span></label>
+            <label for="voucherNo" class="form-label col-12 col-md-4 h6">Voucher No<span
+                class="required-asterisk text-danger">*</span></label>
             <div class="col-md-4">
               <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="e-input"></ejs-textbox>
               @if (paymentVoucherForm.get('voucherName')?.hasError('required')) {
@@ -20,8 +235,8 @@
             </div>
           </div>
           <div class="row">
-            <label for="voucherDate" class="form-label col-md-4">Voucher Date<span
-                class="required-asterisk">*</span></label>
+            <label for="voucherDate" class="form-label col-md-4 h6">Voucher Date<span
+                class="required-asterisk text-danger">*</span></label>
             <div class="col-md-8">
               <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy"
                 format="dd/MM/yyyy">
@@ -31,10 +246,10 @@
               }
             </div>
           </div>
-        </div>
+        </div> -->
 
-        <!-- Payment Type Buttons -->
-        <div class="col-md-6">
+<!-- Payment Type Buttons -->
+<!-- <div class="col-md-6">
           <div class="e-btn-group w-100 d-flex" role="group">
             <button type="button" class="e-btn e-small e-info flex-fill" (click)="onPaymentTypeClick('Cash')">
               <span class="material-icons">account_balance_wallet</span> Cash
@@ -45,45 +260,46 @@
             <button type="button" class="e-btn e-small e-warning flex-fill" (click)="onPaymentTypeClick('Cheque')">
               <span class="material-icons">receipt</span> Cheque
             </button>
-            <button type="button" class="e-btn e-small e-success flex-fill" (click)="onPaymentTypeClick('EPAY')" title="E-Pay">
+            <button type="button" class="e-btn e-small e-success flex-fill" (click)="onPaymentTypeClick('EPAY')"
+              title="E-Pay">
               <span class="material-icons">payments</span> E-Pay
             </button>
           </div>
-        </div>
-      </div>
+        </div> -->
+<!-- </div> -->
 
-      <div class="row">
-        <label for="narration" class="form-label col-md-2">Narration</label>
+<!-- <div class="row">
+        <label for="narration" class="form-label col-md-2 h6">Narration</label>
         <div class="col-md-10">
           <ejs-textbox id="narration" formControlName="narration" cssClass="e-input"></ejs-textbox>
         </div>
-      </div>
+      </div> -->
 
-      <div class="row">
-        <label for="costCentre" class="form-label col-md-2">CostCentre</label>
+<!-- <div class="row">
+        <label for="costCentre" class="form-label col-md-2 h6">CostCentre</label>
         <div class="col-md-4">
           <ejs-dropdownlist id="costCentre" formControlName="costCentre" [dataSource]="costCentreData"
             [fields]="{ text: 'description', value: 'id' }" placeholder="Select CostCentre">
           </ejs-dropdownlist>
         </div>
 
-        <label for="department" class="form-label col-md-2">Department</label>
+        <label for="department" class="form-label col-md-2 h6">Department</label>
         <div class="col-md-4">
           <ejs-dropdownlist id="department" formControlName="department" [dataSource]="departmentData"
             [fields]="{ text: 'name', value: 'id' }" placeholder="Select Department">
           </ejs-dropdownlist>
         </div>
-      </div>
-
+      </div> -->
+<!-- 
       <div class="row">
-        <label for="referenceNo" class="form-label col-md-2">Reference No</label>
+        <label for="referenceNo" class="form-label col-md-2 h6">Reference No</label>
         <div class="col-md-4">
           <ejs-textbox id="referenceNo" formControlName="referenceNo" cssClass="e-input"></ejs-textbox>
         </div>
-      </div>
+      </div> -->
 
-      <!-- Account Details Grid -->
-      <div class="row mt-3">
+<!-- Account Details Grid -->
+<!-- <div class="row mt-3">
         <div class="col-md-12">
           <h6 class="section-title">Account Details</h6>
           @if (accountSelectionLoading) {
@@ -98,17 +314,11 @@
             <e-columns>
               <e-column field="accountCode" headerText="AccountCode" width="150">
                 <ng-template #editTemplate let-data>
-                  <ejs-multicolumncombobox
-                    [dataSource]="voucherService.accountMasterData()"
-                    [fields]='{text: "accountCode", value: "accountCode"}'
-                    [value]="data.accountCode"
-                    [showClearButton]="true"
-                    [allowFiltering]="true"
-                    filterType="Contains"
-                    placeholder="Search by Account Code or Name..."
-                    popupWidth="600px"
-                    (change)="onAccountSelect($event, data)"
-                    (filtering)="onAccountFiltering($event)"                    >
+                  <ejs-multicolumncombobox [dataSource]="voucherService.accountMasterData()"
+                    [fields]='{text: "accountCode", value: "accountCode"}' [value]="data.accountCode"
+                    [showClearButton]="true" [allowFiltering]="true" filterType="Contains"
+                    placeholder="Search by Account Code or Name..." popupWidth="600px"
+                    (change)="onAccountSelect($event, data)" (filtering)="onAccountFiltering($event)">
                     <e-columns>
                       <e-column field="accountCode" headerText="Account Code" width="150"></e-column>
                       <e-column field="accountName" headerText="Account Name" width="250"></e-column>
@@ -118,30 +328,24 @@
               </e-column>
               <e-column field="accountName" headerText="AccountName" width="200" [allowEditing]="false"></e-column>
               <e-column field="description" headerText="Description" width="250"></e-column>
-              <e-column field="dueDate" headerText="DueDate" width="120" editType="datepickeredit" format="dd/MM/yyyy"
-                [edit]="{ params: { format: 'dd/MM/yyyy' } }">
-              </e-column>
-              <e-column
-                field="debit"
-                headerText="Debit"
-                width="120"
-                textAlign="Right"
-                type="number"
-                editType="numericedit"
-                [edit]="debitEditParams"
-                format="N2">
+
+              <e-column field="dueDate" headerText="DueDate" width="120"></e-column>
+              <e-column field="debit" headerText="Debit" width="120" textAlign="Right" type="number"
+                editType="numericedit" [edit]="debitEditParams" format="N2">
+
               </e-column>
             </e-columns>
           </ejs-grid>
         </div>
-      </div>
+      </div> -->
 
-      <!-- Payment Details Grid -->
-      <div class="row mt-3">
+<!-- Payment Details Grid -->
+<!-- <div class="row mt-3">
         <div class="col-md-12">
           <h6 class="section-title">Payment Details</h6>
-          <ejs-grid #paymentDetailsGrid [dataSource]="voucherCommonService.paymentDetailsData()" [editSettings]="paymentDetailsEditSettings"
-            [allowResizing]="true" [allowTextWrap]="true" gridLines="Both" height="200px" [rowHeight]="30">
+          <ejs-grid #paymentDetailsGrid [dataSource]="voucherCommonService.paymentDetailsData()"
+            [editSettings]="paymentDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true" gridLines="Both"
+            height="200px" [rowHeight]="30">
             <e-columns>
               <e-column field="AccountName" headerText="AccountName" width="250"></e-column>
               <e-column field="Description" headerText="Description" width="300"></e-column>
@@ -154,21 +358,14 @@
 
     </div>
   </div>
-</form>
+</form> -->
 
 <!-- Payment Popup Component -->
-<app-paymentpopup *ngIf="showPaymentPopup"
-  [popupData]="popupData"
-  [bankData]="voucherService.bankData()"
-  [popupType]="popupType"
-  [initialAmount]="paymentRemaining"
-  [existingData]="popupExistingData"
-  (itemSelected)="onItemSelected($event)"
-  (closePopup)="closePaymentPopup()">
+<app-paymentpopup *ngIf="showPaymentPopup" [popupData]="popupData" [bankData]="voucherService.bankData()"
+  [popupType]="popupType" [initialAmount]="paymentRemaining" [existingData]="popupExistingData"
+  (itemSelected)="onItemSelected($event)" (closePopup)="closePaymentPopup()">
 </app-paymentpopup>
 
 <!-- PO Allocation Popup Component -->
-<app-poallocationpopup
-  #poAllocationPopup
-  (allocationComplete)="onAllocationComplete($event)">
+<app-poallocationpopup #poAllocationPopup (allocationComplete)="onAllocationComplete($event)">
 </app-poallocationpopup>

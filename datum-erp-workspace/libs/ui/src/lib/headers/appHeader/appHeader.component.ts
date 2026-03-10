@@ -10,13 +10,15 @@ import {
 } from '@syncfusion/ej2-angular-navigations';
 import { ListViewModule } from '@syncfusion/ej2-angular-lists';
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-  import { MenuService } from './../menu.service';
-
+import { MenuService } from './../menu.service';
 import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
 import { DropDownButtonModule } from '@syncfusion/ej2-angular-splitbuttons';
 import { Router } from '@angular/router';
 import { AppHeaderMobileView } from './app-Header-MobileView/app-Header-MobileView';
 import { DataSharingService } from '@org/services';
+import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
+import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+
 // Extend MenuItemModel to include m_id
 interface CustomMenuItemModel extends MenuItemModel {
   m_id?: number;
@@ -34,11 +36,16 @@ interface CustomMenuItemModel extends MenuItemModel {
     ListViewModule,
     AppHeaderMobileView,
     ToolbarModule,
+    DropDownListModule,  
+    TextBoxModule         
   ],
   templateUrl: './appHeader.component.html',
   styleUrls: ['./appHeader.component.scss'],
 })
 export class AppHeaderComponent implements OnInit {
+toggleMobileMenu() {
+throw new Error('Method not implemented.');
+}
   @ViewChild('menu')
   public menuObj!: MenuComponent;
   router = inject(Router);
@@ -47,6 +54,7 @@ export class AppHeaderComponent implements OnInit {
   menuItems: any[] = [];
   shortCutMenuItems: any[] = [];
   userName = signal<string>('');
+currencyList: any;
 
   ngOnInit() {
     this.menuItems = this.menuService.getMenuDataWithMId();
@@ -83,7 +91,7 @@ export class AppHeaderComponent implements OnInit {
 
     if (hasChildren) {
       // stop anchor navigation for parent items — allow submenu expand
-     // args.event?.preventDefault();
+      // args.event?.preventDefault();
       return; // don't navigate
     }
 
@@ -166,8 +174,26 @@ export class AppHeaderComponent implements OnInit {
       this.menuService.onLogout();
     }
   }
-  
+
+  // Left and right arrow
+  translateX = 0
+  scrollAmount = 120
+
+  moveLeft() {
+    this.translateX = Math.min(this.translateX + this.scrollAmount, 0);
+  }
+
+  moveRight() {
+    this.translateX -= this.scrollAmount;
+  }
+
+  onShortcutClick(item:any) {
+    if (item.url) {
+      this.router.navigateByUrl(item.url);
+    }
+  }
 
 
-  
+
+
 }

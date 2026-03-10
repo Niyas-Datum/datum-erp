@@ -239,3 +239,50 @@
 //   position: relative !important;
 // }
 
+::ng-deep .e-grid .e-headercell {
+    background-color: white !important;
+    color: #187C9A !important;
+}
+
+::ng-deep #transactionGrid {
+    border-right: 1px solid #adb5bd;
+    border-bottom: 1px solid #adb5bd;
+    border-left: 1px solid #adb5bd;
+    border-top: none;
+}
+
+
+::ng-deep #transactionGrid .e-headercell {
+    border: 1px solid #adb5bd !important;
+    background-color: #f1f3f5;
+    font-weight: 600;
+}
+
+::ng-deep #transactionGrid .e-rowcell {
+    border: 1px solid #adb5bd !important;
+}
+
+::ng-deep #transactionGrid .e-gridheader table {
+    border-collapse: collapse;
+}
+
+::ng-deep #transactionGrid .e-gridcontent table {
+    border-collapse: collapse;
+}
+
+/* Remove border radius from entire grid */
+::ng-deep #transactionGrid,
+::ng-deep #transactionGrid .e-gridheader,
+::ng-deep #transactionGrid .e-gridcontent,
+::ng-deep #transactionGrid .e-headercontent,
+::ng-deep #transactionGrid .e-content {
+  border-radius: 0 !important;
+}
+
+::ng-deep #transactionGrid .e-gridcontent {
+  overflow-x: auto !important;
+}
+
+::ng-deep #transactionGrid {
+  width: 100% !important;
+}
