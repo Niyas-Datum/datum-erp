@@ -44,6 +44,9 @@ export class MultiColumnComboBoxComponent
   @Input() popupWidth = '';
   @Input() columns: Array<{ field: string; header?: string; width?: number | string }> = [];
 
+  /** When true, the combo is read-only and cannot be opened. Works with [disabled] binding and formControlName disable(). */
+  @Input() disabled = false;
+
   // 👇 NEW input to allow external reset trigger
   @Input() resetTrigger = 0;
 
@@ -68,8 +71,9 @@ export class MultiColumnComboBoxComponent
     this.onTouchedFn = fn;
   }
   setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
     if (this.mcb) {
-      (this.mcb as any).setProperties({ enabled: !isDisabled }, true);
+      (this.mcb as any).setProperties({ disabled: isDisabled }, true);
       this.mcb.dataBind();
     }
   }

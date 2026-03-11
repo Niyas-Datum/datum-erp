@@ -13,15 +13,12 @@
           <ejs-textbox id="firstName" formControlName="firstName" cssClass="e-outline" floatLabelType="Auto" appTextOnly
             [readonly]="isInputDisabled"></ejs-textbox>
           <small *ngIf="isInvalid('firstName')" style="color:red">
-
             <span *ngIf="userForm.get('firstName')?.errors?.['required']">
               First Name is required
             </span>
-
             <span *ngIf="userForm.get('firstName')?.errors?.['validName']">
               Please Enter Valid Name
             </span>
-
           </small>
         </div>
       </div>
@@ -58,14 +55,14 @@
         <div class="col-md-4">
           <ejs-textbox id="emailId" type="email" formControlName="emailId" cssClass="e-outline" floatLabelType="Auto"
             appEmailInput [readonly]="isInputDisabled"></ejs-textbox>
-
-          @if (userForm.get('emailId')?.touched &&
-          (userForm.get('emailId')?.errors?.['required'] || userForm.get('emailId')?.errors?.['invalidEmailId'])) {
-          <small class="text-danger">
-            @if (userForm.get('emailId')?.errors?.['required']) { Email ID is required }
-            @if (userForm.get('emailId')?.errors?.['invalidEmailId']) { Invalid format for Email ID }
+          <small style="color: red">
+             <span *ngIf="userForm.get('emailId')?.errors?.['required']">
+              Email ID is required
+            </span>
+            @if
+            (userForm.get('emailId')?.errors?.['invalidEmail'])
+            { Invalid format for email }
           </small>
-          }
         </div>
       </div>
       <div class="row mb-3">
@@ -74,8 +71,11 @@
           <ejs-textbox id="lastName" formControlName="lastName" cssClass="e-outline" floatLabelType="Auto" appTextOnly
             [readonly]="isInputDisabled"></ejs-textbox>
           <small *ngIf="isInvalid('lastName')" style="color:red">
+            <span *ngIf="userForm.get('lastName')?.errors?.['required']">
+              Last Name is required
+            </span>
             <span *ngIf="userForm.get('lastName')?.errors?.['validName']">
-              Please Enter Valid Last Name
+              Please Enter Valid Name
             </span>
           </small>
         </div>
@@ -105,7 +105,8 @@
         <label class="form-label col-md-2">Employee Type<span class="required-asterisk">*</span></label>
         <div class="col-md-4">
           <ejs-dropdownlist id="employeeType" formControlName="employeeType" [dataSource]="employeeType"
-            [fields]="{ text:'name', value:'value' }" cssClass="e-outline" floatLabelType="Auto"></ejs-dropdownlist>
+            [fields]="{ text:'name', value:'value' }" cssClass="e-outline" floatLabelType="Auto"
+            [readonly]="isInputDisabled"></ejs-dropdownlist>
           @if (userForm.get('employeeType')?.touched && userForm.get('employeeType')?.errors?.['required']) {
           <small class="text-danger">EmployeeType is required.</small>
           }
@@ -122,7 +123,7 @@
         <label class="form-label col-md-2">Designation<span class="required-asterisk">*</span></label>
         <div class="col-md-4">
           <ejs-dropdownlist id="designationId" formControlName="designationId" [dataSource]="allDesignations"
-            [fields]="{ text:'name', value:'id' }"></ejs-dropdownlist>
+            [fields]="{ text:'name', value:'id' }" [readonly]="isInputDisabled"></ejs-dropdownlist>
           @if (userForm.get('designationId')?.touched && userForm.get('designationId')?.errors?.['required']) {
           <small class="text-danger">Designation is required.</small>
           }
@@ -131,7 +132,7 @@
         <label class="form-label col-md-2">Office Number<span class="required-asterisk">*</span></label>
         <div class="col-md-4">
           <ejs-textbox id="officeNumber" formControlName="officeNumber" cssClass="e-outline" floatLabelType="Auto"
-            appTelephoneInput></ejs-textbox>
+            appTelephoneInput [readonly]="isInputDisabled"></ejs-textbox>
 
           @if (userForm.get('officeNumber')?.touched &&
           (userForm.get('officeNumber')?.errors?.['required'] ||
@@ -150,8 +151,8 @@
       <div class="row mb-3">
         <label class="form-label col-md-2">Username<span class="required-asterisk">*</span></label>
         <div class="col-md-4">
-          <ejs-textbox id="username" formControlName="username" cssClass="e-outline"
-            floatLabelType="Auto"></ejs-textbox>
+          <ejs-textbox id="username" formControlName="username" cssClass="e-outline" floatLabelType="Auto"
+            [readonly]="isInputDisabled"></ejs-textbox>
           @if (userForm.get('username')?.touched && userForm.get('username')?.errors?.['required']) {
           <small class="text-danger">Username is required.</small>
           }
@@ -160,15 +161,16 @@
         <label class="form-label col-md-2">Gmail ID<span class="required-asterisk">*</span></label>
         <div class="col-md-4">
           <ejs-textbox id="gmailId" type="email" formControlName="gmailId" cssClass="e-outline" floatLabelType="Auto"
-            appEmailInput></ejs-textbox>
+            appEmailInput [readonly]="isInputDisabled"></ejs-textbox>
 
-          @if (userForm.get('gmailId')?.touched &&
-          (userForm.get('gmailId')?.errors?.['required'] || userForm.get('gmailId')?.errors?.['invalidEmailId'])) {
-          <small class="text-danger">
-            @if (userForm.get('gmailId')?.errors?.['required']) { Gmail ID is required }
-            @if (userForm.get('gmailId')?.errors?.['invalidEmailId']) { Invalid format for Gmail ID }
+          <small style="color: red">
+             <span *ngIf="userForm.get('gmailId')?.errors?.['required']">
+              Gmail ID is required
+            </span>
+            @if
+            (userForm.get('gmailId')?.errors?.['invalidEmail'])
+            { Invalid format for gmail }
           </small>
-          }
         </div>
       </div>
 
@@ -176,7 +178,7 @@
         <label class="form-label col-md-2">Password<span class="required-asterisk">*</span></label>
         <div class="col-md-4">
           <ejs-textbox id="password" type="password" formControlName="password" cssClass="e-outline"
-            floatLabelType="Auto"></ejs-textbox>
+            floatLabelType="Auto" [readonly]="isInputDisabled"></ejs-textbox>
           @if (userForm.get('password')?.touched && userForm.get('password')?.errors?.['required']) {
           <small class="text-danger">Password is required.</small>
           }
@@ -191,13 +193,13 @@
         <label class="form-label col-md-2">Petty Cash</label>
         <div class="col-md-4">
           <ejs-dropdownlist id="pettycash" formControlName="pettycash" [dataSource]="pettycashData"
-            [fields]="{ text:'name', value:'accountID' }"></ejs-dropdownlist>
+            [fields]="{ text:'name', value:'accountID' }" [readonly]="isInputDisabled"></ejs-dropdownlist>
         </div>
 
         <label class="form-label col-md-2">Warehouse</label>
         <div class="col-md-4">
           <ejs-dropdownlist id="warehouse" formControlName="warehouse" [dataSource]="warehouseData"
-            [fields]="{ text:'name', value:'id' }"></ejs-dropdownlist>
+            [fields]="{ text:'name', value:'id' }" [readonly]="isInputDisabled"></ejs-dropdownlist>
         </div>
       </div>
 
@@ -206,7 +208,7 @@
         <div class="col-md-10">
           <ejs-multicolumncombobox id="account" formControlName="account" [dataSource]="allAccounts"
             [fields]="{ text: 'name', value: 'id' }" [columns]="accountColumns" [readonly]="isInputDisabled"
-            [value]="selectedAccountName" popupHeight="300px" (change)="onAccountSelected($event)">
+            popupHeight="300px" (change)="onAccountSelected($event)">
           </ejs-multicolumncombobox>
         </div>
       </div>
@@ -222,20 +224,23 @@
 
     <!-- Right: Image Upload -->
     <div class="col-md-3 text-center">
-
       <div class="profile-upload-box">
 
-        <!-- Preview Image -->
-        <img [src]="imagePreview || 'assets/user-placeholder.png'" class="profile-preview" />
+        <!-- Image Preview -->
+        <img *ngIf="imagePreview" [src]="imagePreview" class="profile-preview">
 
         <!-- Upload Button -->
         <label class="upload-btn">
-          Upload Photo
-          <input type="file" hidden accept="image/*" (change)="onImageSelect($event)">
+          {{ imagePreview ? 'Change Photo' : 'Upload Photo' }}
+          <input type="file" hidden accept="image/*" (change)="onImageSelect($event)" [disabled]="isInputDisabled">
         </label>
 
-      </div>
+        <!-- Remove Button -->
+        <button *ngIf="imagePreview" type="button" class="remove-button" (click)="removeImage()">
+          Remove Photo
+        </button>
 
+      </div>
     </div>
 
   </div>
@@ -244,7 +249,6 @@
 
 <!-- ================= Branch Details Popup Overlay ================= -->
 <div class="popup-overlay" *ngIf="showBranchPopup">
-
   <div class="popup-container">
 
     <!-- Header -->
@@ -255,7 +259,6 @@
 
     <!-- Body -->
     <div class="popup-body">
-
       <!-- Add Button -->
       <div class="mb-2 text-end">
         <button class="btn btn-sm btn-primary" (click)="addBranchRow()">+ Add Row</button>
@@ -321,14 +324,10 @@
                   Roles
                 </button>
               </td>
-
-
             </tr>
           </tbody>
-
         </table>
       </div>
-
     </div>
 
     <!-- Footer -->
