@@ -6,56 +6,39 @@
       <form [formGroup]="paymentVoucherForm">
 
         <!-- Voucher Row -->
+        <div class="row align-items-center">
 
-        <div class="row mb-2 align-items-center">
+          <!-- Voucher No Label -->
+          <label class="col-12 col-md-2 form-label">
+            Voucher No <span class="text-danger">*</span>
+          </label>
 
-          <div class="col-12 col-md-6 d-flex">
-            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
-
-              <label  for="voucherNo" class="label-custom">Voucher No <span class="text-danger">*</span></label>
-              <div class="w-100 w-lg-auto" >
-                <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="e-input w-100">
-                </ejs-textbox>
-
-                @if (paymentVoucherForm.get('voucherName')?.hasError('required')) {
-                <small class="text-danger">This field is required.</small>
-                }
-              </div>
-              <div class="flex-grow-1">
-                <ejs-textbox id="voucherNo" formControlName="voucherNo" cssClass="e-input w-100">
-                </ejs-textbox>
-
-                @if (paymentVoucherForm.get('voucherNo')?.hasError('required')) {
-                <small class="text-danger">This field is required.</small>
-                }
-              </div>
-
-            </div>
-
+          <!-- Voucher Prefix -->
+          <div class="col-6 col-md-2">
+            <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="w-100">
+            </ejs-textbox>
           </div>
 
-          <div class="col-12 col-md-6">
-            <div class="row align-items-center">
+          <!-- Voucher Number -->
+          <div class="col-6 col-md-2">
+            <ejs-textbox id="voucherNo" formControlName="voucherNo" cssClass="w-100">
+            </ejs-textbox>
+          </div>
 
-              <label for="voucherDate" class="form-label col-12 col-md-4 h6">
-                Voucher Date
-                <span class="text-danger">*</span>
-              </label>
+          <!-- Voucher Date Label -->
+          <label class="col-12 col-md-2 form-label">
+            Voucher Date <span class="text-danger">*</span>
+          </label>
 
-              <div class="col-12 col-md-8">
-                <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy"
-                  format="dd/MM/yyyy" cssClass="w-100">
-                </ejs-datepicker>
-
-                @if (paymentVoucherForm.get('voucherDate')?.hasError('required')) {
-                <small class="text-danger">This field is required.</small>
-                }
-              </div>
-
-            </div>
+          <!-- Voucher Date -->
+          <div class="col-12 col-md-4">
+            <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy" format="dd/MM/yyyy"
+              cssClass="w-100">
+            </ejs-datepicker>
           </div>
 
         </div>
+
 
         <!-- Cost Centre / Department -->
         <div class="row mb-2">
@@ -66,7 +49,7 @@
 
           <div class="col-12 col-md-4">
             <ejs-dropdownlist id="costCentre" formControlName="costCentre" [dataSource]="costCentreData"
-              [fields]="{ text: 'description', value: 'id' }" placeholder="Select CostCentre" >
+              [fields]="{ text: 'description', value: 'id' }" placeholder="Select CostCentre" cssClass="w-100">
             </ejs-dropdownlist>
           </div>
 
@@ -76,7 +59,7 @@
 
           <div class="col-12 col-md-4">
             <ejs-dropdownlist id="department" formControlName="department" [dataSource]="departmentData"
-              [fields]="{ text: 'name', value: 'id' }" placeholder="Select Department">
+              [fields]="{ text: 'name', value: 'id' }" placeholder="Select Department" cssClass="w-100">
             </ejs-dropdownlist>
           </div>
 
@@ -113,39 +96,32 @@
       </form>
     </div>
 
-    <div class="col-12 col-lg-6">
 
+    <!-- Right Side Buttons -->
+    <div class="col-12 col-lg-6">
       <div class="row">
         <div class="col-12">
 
           <div class="e-btn-group w-100 d-flex flex-wrap">
 
             <button type="button" class="e-btn e-small e-info flex-fill" (click)="onPaymentTypeClick('Cash')">
-
               <span class="material-icons">account_balance_wallet</span>
               Cash
-
             </button>
 
             <button type="button" class="e-btn e-small e-primary flex-fill" (click)="onPaymentTypeClick('Card')">
-
               <span class="material-icons">credit_card</span>
               Card
-
             </button>
 
             <button type="button" class="e-btn e-small e-warning flex-fill" (click)="onPaymentTypeClick('Cheque')">
-
               <span class="material-icons">receipt</span>
               Cheque
-
             </button>
 
             <button type="button" class="e-btn e-small e-success flex-fill" (click)="onPaymentTypeClick('EPAY')">
-
               <span class="material-icons">payments</span>
               E-Pay
-
             </button>
 
           </div>
@@ -155,6 +131,7 @@
 
     </div>
   </div>
+
 
   <!-- Account Details-->
   <div class="row mt-3">

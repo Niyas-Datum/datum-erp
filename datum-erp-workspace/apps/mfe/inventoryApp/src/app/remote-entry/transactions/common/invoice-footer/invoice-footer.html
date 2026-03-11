@@ -1,10 +1,10 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
 <!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <!-- Common Component -->
-<div class="w-100">
-  <form [formGroup]="salesForm" class="border">
+<div class="w-100 h-100 d-flex flex-column overflow-hidden">
+  <form [formGroup]="salesForm" class="border flex-grow-1 d-flex flex-column">
 
-    <div class="section-content">
+    <div class="section-content flex-grow-1">
 
 
       <div class="terms-discount-section">
@@ -150,8 +150,7 @@
 
 
 
-
-      <div class="section-separator"></div>
+      <div class="section-separator flex-grow-1"></div>
 
       <!-- Tab -->
       <div class="payment-tab-outer">
