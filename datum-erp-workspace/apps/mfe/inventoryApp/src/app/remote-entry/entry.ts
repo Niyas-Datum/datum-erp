@@ -8,33 +8,30 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
   styles: [`
-
-.container-fluidz{
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
+/* Fix the typo from container-fluidz to container-fluid */
+.container-fluid {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.leftgrid-section{
-  flex:1;
-  display:flex;
-  overflow:hidden;
+/* Ensure the sidebar inner container fills height */
+ejs-sidebar .p-2 {
+  height: 100%;
+  padding: 0 !important; /* Optional: remove padding if you want the grid flush */
 }
 
-ejs-sidebar{
-  height:100%;
-  overflow:hidden;
+/* IMPORTANT: Force the app-left-grid and its internal Syncfusion Grid to 100% */
+app-left-grid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-ejs-sidebar .p-2{
-  height:100%;
-  overflow:hidden;
-}
-
-app-left-grid{
-  height:100%;
-  display:block;
+/* This targets the Syncfusion Grid component inside app-left-grid */
+:host ::ng-deep .e-grid {
+  height: 100% !important;
 }
 
 `]

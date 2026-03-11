@@ -70,3 +70,28 @@ ejs-grid {
 ::ng-deep .e-grid .e-headercell .e-headertext {
   color: #187C9A !important;
 }
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+::ng-deep .e-grid {
+  flex: 1;
+  height: 100% !important;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+}
+
+.form-control::placeholder {
+  font-size: 11px;     
+  font-weight: 400;    
+  color: #6c757d;           
+}
+.left-grid-search input {
+  height: 30px;         
+  font-size: 13px;    
+}

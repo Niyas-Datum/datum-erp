@@ -1,16 +1,17 @@
-<div #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()" [class.grid-disabled]="isSelectionDisabled()">
+<!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
+<div class="h-100 d-flex flex-column" #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()"
+  [class.grid-disabled]="isSelectionDisabled()">
   <div #overlay [class.overlay]="!isInputDisabled()" [style.display]="isInputDisabled() ? 'none' : 'block'">
     <p translate>Disabled</p>
   </div>
 
-  <div class="left-grid-search" *ngIf="columns.length">
+  <div class="left-grid-search flex-shrink-0" *ngIf="columns.length">
     <input type="text" class="form-control" placeholder="Search by Invoice No, Customer, VAT..."
       [ngModel]="searchText()" (ngModelChange)="onSearchChange($event)" />
   </div>
 
-  <ejs-grid #grid [dataSource]="this.leftdata$ | async  " [allowResizing]="true" [allowTextWrap]="true"
-    [enableHover]="false" (rowSelected)="onRowSelect($event)" [allowFiltering]="true" [filterSettings]="filterOptions"
-    [allowSorting]="true" gridLines="Both" height="80vh" [rowHeight]="30">
+  <ejs-grid #grid [dataSource]="this.leftdata$ | async" [allowResizing]="true" [allowTextWrap]="true"
+    (rowSelected)="onRowSelect($event)" gridLines="Both" height="100%" [rowHeight]="30" class="flex-grow-1">
     <e-columns>
       <ng-container *ngFor="let col of columns">
         <!-- Stacked Header -->
@@ -25,7 +26,9 @@
 
         <!-- Single Column -->
         <ng-template #singleCol>
-          <e-column [field]="col.field" [headerText]="col.headerText" textAlign="Center" width="120"></e-column>
+          <e-column [field]="col.field" [headerText]="col.headerText" textAlign="Center"
+            [width]="col.field === 'someMainField' ? 'auto' : '120'">
+          </e-column>
         </ng-template>
       </ng-container>
     </e-columns>
