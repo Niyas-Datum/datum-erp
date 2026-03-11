@@ -31,19 +31,6 @@ export function validName(control: AbstractControl) {
 }
 
  
-// export function validPhoneNumber(control: AbstractControl): ValidationErrors | null {
-//   const phoneRegex = /^[0-9]{10,14}$/;
-//   const value = (control.value || '').trim();
-//   const errors: ValidationErrors = {};
-//   // return phoneRegex.test(control.value || '') ? null : { invalidPhone: true };
-//   if (!value) {
-//     errors['required'] = true;
-//   } else if (!phoneRegex.test(value)) {
-//     errors['invalidPhoneNumber'] = true;
-//   }
-//    return Object.keys(errors).length ? errors : null;
- 
-// }
 
 export function validPhoneNumber(control: AbstractControl): ValidationErrors | null {
 
