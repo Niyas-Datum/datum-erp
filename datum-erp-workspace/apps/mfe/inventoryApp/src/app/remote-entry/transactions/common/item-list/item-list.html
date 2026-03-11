@@ -1,5 +1,12 @@
 <div class="item-list-container control-section" [class.read-only]="!(isNewMode() || isEditMode())">
 
+  <!-- Toolbar: New Item button (visible in New/Edit mode) -->
+  <div class="item-grid-toolbar d-flex align-items-center gap-2 mb-2" *ngIf="isNewMode() || isEditMode()">
+    <button type="button" class="btn btn-sm btn-primary" (click)="onAddNewItem()">
+      <span class="btn-label">New Item</span>
+    </button>
+  </div>
+
   <div class="table-responsive">
 
     <ejs-grid #grid id="transactionGrid" width="100%" [dataSource]="commonService.tempItemFillDetails()"
@@ -9,28 +16,28 @@
 
       <e-columns>
 
-        <!-- Row Number -->
-        <e-column headerText="#" width="60" textAlign="Center" [allowEditing]="false">
+        <e-column field="itemId" headerText="ItemId" [visible]="false">
+        </e-column>
 
+        <!-- 1. # (Index) - first column -->
+        <e-column headerText="#" width="50" textAlign="Center" [allowEditing]="false">
           <ng-template #template let-data let-rowIndex="index">
             {{ data.rowId || (rowIndex + 1) }}
           </ng-template>
         </e-column>
 
-        <e-column field="itemId" headerText="ItemId" [visible]="false">
-        </e-column>
-
-        <!-- Item Code -->
-        <e-column field="itemCode" headerText="Item Code" width="140" editType="stringedit"
+        <!-- 2. Item Code -->
+        <e-column field="itemCode" headerText="Item Code" width="160" editType="stringedit"
           [allowEditing]="isNewMode() || isEditMode()">
-
-
+          <ng-template #template let-data>
+            {{ data.itemCode || '' }}
+          </ng-template>
           <ng-template #editTemplate let-data>
-            <ejs-multicolumncombobox [dataSource]="itemService.fillItemDataOptions()"
+            <ejs-multicolumncombobox cssClass="item-search-combobox" [dataSource]="itemService.fillItemDataOptions()"
               [fields]='{text: "itemCode", value: "itemCode"}' [showClearButton]="true" [allowFiltering]="true"
               filterType="Contains" placeholder="Search Item..." popupWidth="100%" (change)="onItemSelect($event, data)"
               (filtering)="onFiltering($event)" (keydown)="onKeyDown($event, data, 'itemCode')"
-              (open)="onItemSearchOpen()">
+              (focus)="onItemCodeFocus()" (open)="onItemSearchOpen($event)" (close)="onItemSearchClose()">
 
               <e-columns>
                 <e-column field="itemCode" headerText="Item Code" width="120"></e-column>
@@ -43,7 +50,7 @@
           </ng-template>
         </e-column>
 
-        <!-- Item Name -->
+        <!-- 3. Item Name -->
         <e-column field="itemName" headerText="Item Name" width="160" [allowEditing]="false">
 
         </e-column>

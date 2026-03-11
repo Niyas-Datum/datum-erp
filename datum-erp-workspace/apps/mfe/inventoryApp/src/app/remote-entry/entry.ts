@@ -50,7 +50,18 @@ export class RemoteEntry {
       
       this.pageType = this.formToolbarService.pagetype;   
       console.log(this.formToolbarService.pagetype);
-    })
+    });
+
+    // Apply toolbar state from child (e.g. Sales Invoice) so Save is enabled when in New Mode
+    this.formToolbarService.getToolbarState$().subscribe((state) => {
+      if (state.isSaveBtnDisabled !== undefined) this.isSaveBtnDisabled = state.isSaveBtnDisabled;
+      if (state.isNewMode !== undefined) this.isNewMode = state.isNewMode;
+      if (state.isEditMode !== undefined) this.isEditMode = state.isEditMode;
+      if (state.isEditBtnDisabled !== undefined) this.isEditBtnDisabled = state.isEditBtnDisabled;
+      if (state.isDeleteBtnDisabled !== undefined) this.isDeleteBtnDisabled = state.isDeleteBtnDisabled;
+      if (state.isNewBtnDisabled !== undefined) this.isNewBtnDisabled = state.isNewBtnDisabled;
+      if (state.isPrintBtnDisabled !== undefined) this.isPrintBtnDisabled = state.isPrintBtnDisabled;
+    });
   }
 
   // eslint-disable-next-line @angular-eslint/use-lifecycle-interface

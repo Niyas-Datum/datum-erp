@@ -76,6 +76,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   // ========== Form State Tracking ==========
   private initialHeaderValues: any = {};
   private initialFooterValues: any = {};;
+  /** When true, we are in the save path (SaveFormData/onSaveClick). Do not show "discard and exit new mode" dialog. */
+  private _saveInProgress = false;
 
   // ========== UI State Properties ==========
   isGrossAmountEditable = false;
@@ -110,6 +112,13 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   }
 
   ngOnInit(): void {
+    // Set save-in-progress as soon as Save is clicked so "unsaved changes" dialog is never shown on Save
+    this.formToolbarService.saveClicked$
+      .pipe(takeUntil(this.destroySubscription))
+      .subscribe(() => {
+        this._saveInProgress = true;
+        setTimeout(() => (this._saveInProgress = false), 200);
+      });
     this.onInitBase();
     this.SetPageType(1);
     this.initializeComponent();
@@ -117,9 +126,11 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.subscribeToPageInfoAndLoadLeftGrid();
     this.initializeServices();
     
-    // Check AutoNew setting and open in new mode if true, else open last invoice
+    // Open in New Mode by default: Save enabled, grid ready for new entry (fallback if pageInfo is slow)
     setTimeout(() => {
-      this.checkAutoNewAndInitialize();
+      if (this.isNewMode() === false && !this.isEditMode()) {
+        this.checkAutoNewAndInitialize();
+      }
     }, 500);
   }
 
@@ -206,8 +217,14 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   }
 
   protected override SaveFormData(): void {
-    this.syncFormsWithBaseComponent();
-    this.onSaveClick();
+    this._saveInProgress = true;
+    try {
+      this.syncFormsWithBaseComponent();
+      this.onSaveClick();
+    } finally {
+      // Defer clear so that if newClicked$ fires in the same tick (e.g. Enter triggering wrong button), we still skip the unsaved dialog
+      setTimeout(() => (this._saveInProgress = false), 0);
+    }
   }
 
   protected override formValidationError(): void {
@@ -252,6 +269,13 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
         this.defaultCashAccount = this.invoiceFooter.defaultCashAccount || [];
       }
     }, 200);
+  }
+
+  /** Returns true if a default cash account is configured (required for Cash payment type). */
+  private isDefaultCashConfigured(): boolean {
+    const fromFooter = this.invoiceFooter?.defaultCashAccount;
+    const list = Array.isArray(fromFooter) ? fromFooter : (this.defaultCashAccount || []);
+    return list.length > 0;
   }
 
   private subscribeToTransactionSelection(): void {
@@ -684,7 +708,16 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     }
 
     if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
-      // Always show default payment confirmation popup when no cash entries are allocated
+      // Require Default Cash to be configured before allowing save with Cash payment
+      if (!this.isDefaultCashConfigured()) {
+        this.baseService.showCustomDialoguePopup(
+          'Default Cash account is not configured. Please configure Default Cash account before saving.',
+          'Default Cash Required',
+          'WARN'
+        );
+        return;
+      }
+      // Show default payment confirmation popup when no cash entries are allocated
       setTimeout(() => {
         this.viewDialog(
           'Do you want to allocate the payment amount to default cash account?',
@@ -758,6 +791,14 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     const isCashPayment = payType && (payType.name === 'Cash' || payType.value === 'Cash');
 
     if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
+      if (!this.isDefaultCashConfigured()) {
+        this.baseService.showCustomDialoguePopup(
+          'Default Cash account is not configured. Please configure Default Cash account before saving.',
+          'Default Cash Required',
+          'WARN'
+        );
+        return;
+      }
       setTimeout(() => {
         this.viewDialog(
           'Do you want to allocate the payment amount to default cash account?',
@@ -865,22 +906,30 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
         setTimeout(() => this.enterNewMode(), 500);
       }
     } else {
-      // Show server error message when httpCode is 500 or other non-success
-      const errMsg = (response as any)?.exception ?? response?.data ?? 'Save failed. Please try again.';
-      this.baseService.showCustomDialoguePopup(
-        typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg),
-        'WARN'
-      );
+      // Response returned 200 but body has httpCode 500 or other non-success (e.g. backend error in response body)
+      const errMsg = (response as any)?.exception ?? (response as any)?.data ?? 'Save failed. Please try again.';
+      const msgStr = typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg);
+      const displayMessage = this.getSaveErrorMessage(msgStr);
+      this.baseService.showCustomDialoguePopup(displayMessage, 'Save Failed', 'WARN');
     }
   }
 
   private handleSaveError(err: any): void {
     console.error('Save failed', err);
-    this.baseService.showCustomDialoguePopup(
-      err?.error?.data || err?.message || 'Save failed. Please check console for details.',
-      'Save Failed',
-      'WARN'
-    );
+    const serverMessage = err?.error?.data ?? err?.error?.message ?? err?.message ?? '';
+    const msgStr = typeof serverMessage === 'string' ? serverMessage : JSON.stringify(serverMessage ?? '');
+    const displayMessage = this.getSaveErrorMessage(msgStr);
+    this.baseService.showCustomDialoguePopup(displayMessage, 'Save Failed', 'WARN');
+  }
+
+  /** User-friendly message for save failures; detects backend SqlException/cast errors. */
+  private getSaveErrorMessage(serverMessage: string): string {
+    const isBackendCastError =
+      typeof serverMessage === 'string' &&
+      (serverMessage.includes('SqlException') || serverMessage.includes('cast') || serverMessage.includes('System.Int32'));
+    return isBackendCastError
+      ? 'The save operation failed due to a server error (database or backend). Please try again or contact support with the transaction details.'
+      : (serverMessage || 'Save failed. Please try again.');
   }
 
   // ========== Delete Methods ==========
@@ -966,6 +1015,8 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
 
   // ========== Dialog Methods ==========
   private showUnsavedChangesDialog(): void {
+    // Do not show when user intended to save (e.g. Save and New fired in same tick, or Enter triggered New)
+    if (this._saveInProgress) return;
     this.viewDialog(
       'You have unsaved changes. Do you want to discard them and exit new mode?',
       'Unsaved Changes',

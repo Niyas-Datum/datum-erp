@@ -24,7 +24,8 @@ export interface Purchases {
     id: number;
     name: string;
     isDefault: boolean;
-    value?:string;
+    userid?: number;
+    value?: string;
   }
 
   export interface Salesman{
