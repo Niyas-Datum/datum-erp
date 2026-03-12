@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
-<div class="container-fluid vh-100 d-flex flex-column overflow-hidden p-0">
-  <div class="row align-items-center g-0 flex-shrink-0 border-bottom bg-light">
+<div class="container-fluid h-100 d-flex flex-column overflow-hidden p-0">
+  <div class="row align-items-center g-0 flex-shrink-0 border-bottom bg-light m-0">
     <div class="col-12 col-md-2 ps-3">
       <div class="d-flex align-items-center gap-2">
         <div [ngSwitch]="pageType">
@@ -32,13 +32,13 @@
 
         <ejs-sidebar id="sideTree" [(isOpen)]="isSidebarVisible" [width]="width" [target]="target"
           [mediaQuery]="mediaQuery" [type]="sidebarType" position="Left">
-          <div class="p-2 h-100">
+          <div class="p-2 h-100 overflow-auto">
             <app-left-grid (rowSelected)="onCostCategorySelected($event)" [columns]="leftgridchildData.columns">
             </app-left-grid>
           </div>
         </ejs-sidebar>
-        <div class="main-content-wrapper flex-grow-1 bg-light">
-          <div class="odoo-form-bg shadow-sm"
+        <div class="main-content-wrapper flex-grow-1 bg-light ">
+          <div class="odoo-form-bg shadow-sm overflow-auto"
             style="background: #fff; border-radius: 4px; min-height: 100%; width: auto;">
             <router-outlet></router-outlet>
           </div>
