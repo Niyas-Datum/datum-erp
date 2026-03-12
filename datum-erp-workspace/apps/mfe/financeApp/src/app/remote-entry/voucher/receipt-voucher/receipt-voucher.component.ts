@@ -1,14 +1,5 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { FormControl,FormGroup,Validators } from '@angular/forms';
 import { FinanceAppService } from '../../http/finance-app.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EDITABLE_PERIOD, EndpointConstant } from '@org/constants';
@@ -30,7 +21,6 @@ interface PaymentBreakdownResult {
   creditTotal: number;
 }
 
-
 @Component({
   selector: 'app-receipt-voucher',
   standalone: false,
@@ -45,6 +35,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   private datePipe = inject(DatePipe);
   private dataSharingService = inject(DataSharingService);
   private baseService = inject(BaseService);
+  private cdr = inject(ChangeDetectorRef);
   public voucherCommonService = inject(VoucherCommonService);
   public voucherService = inject(VoucherService);
   receiptVoucherForm = this.formUtil.thisForm;
@@ -80,9 +71,14 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   popupData: any[] = [];
   // bankData moved to voucherService.bankData
   cashPopupObj: any[] = [];
+  /** Resolves when cash popup prefetch completes; used so first Cash click can wait instead of double-fetching */
+  private cashPrefetchPromise: Promise<void> | null = null;
   cardPopupObj: any[] = [];
+  private cardPrefetchPromise: Promise<void> | null = null;
   chequePopupObj: any[] = [];
+  private chequePrefetchPromise: Promise<void> | null = null;
   epayPopupObj: any[] = [];
+  private epayPrefetchPromise: Promise<void> | null = null;
   bankPopupObj: any[] = [];
   // For initializing popup amount = total debit - total payments
   paymentRemaining: number = 0;
@@ -145,16 +141,14 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.onInitBase();
-
-    // Set pageId for receipt voucher
+    this.SetPageType(1);
+     this.receiptVoucherForm.disable();
+     // Set pageId for receipt voucher
     this.dataSharingService.setPageId(this.pageId);
-
     this.fetchDepartmentData();
-
     // Fetch dropdown data from services
     this.voucherService.fetchAccountMaster();
     this.voucherService.fetchBankDetails();
-
     // Subscribe to pageId from DataSharingService
     this.dataSharingService.pageId$
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -163,35 +157,46 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
           this.pageId = id;
           console.log('PageId updated to:', this.pageId);
           // Re-fetch data when pageId changes
-
           this.LeftGridInit();
         }
       });
+    this.fetchCommonFillData();
+    this.voucherCommonService.initializeAccountDetails();
+    this.updateGridEditSettings();
+    this.LeftGridInit().then(() => this.loadLastSavedEntry());
+  }
 
-    // Default to New mode on load with editable grids
-    this.enterNewMode();
+    private loadLastSavedEntry(): void {
+    const list = this.leftGrid?.leftGridData;
+    if (!Array.isArray(list) || list.length === 0) {
+      this.SetPageType(1);
+      this.updateGridEditSettings();
+      this.receiptVoucherForm.enable();
+      this.receiptVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+      return;
+    }
+    const first = list[0];
+    const id = first?.ID ?? first?.id;
+    if (!id) {
+      this.SetPageType(1);
+      this.updateGridEditSettings();
+      this.receiptVoucherForm.enable();
+      this.receiptVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+      return;
+    }
+    this.getDataById({ ...first, ID: id } as PVoucherModel);
   }
 
   override FormInitialize() {
     this.receiptVoucherForm = new FormGroup({
-      voucherName: new FormControl(
-        { value: '', disabled: true },
-        Validators.required
-      ),
-      voucherNo: new FormControl(
-        { value: '', disabled: false },
-        Validators.required
-      ),
-      voucherDate: new FormControl(
-        { value: '', disabled: false },
-        Validators.required
-      ),
+      voucherName: new FormControl({ value: '', disabled: true },Validators.required),
+      voucherNo: new FormControl({ value: '', disabled: false },Validators.required),
+      voucherDate: new FormControl({ value: '', disabled: false },Validators.required),
       narration: new FormControl({ value: '', disabled: false }),
       costCentre: new FormControl({ value: '', disabled: false }),
       department: new FormControl({ value: '', disabled: false }),
       referenceNo: new FormControl({ value: '', disabled: false }),
     });
-    // Ensure base Save flow validates this form
     this.formUtil.thisForm = this.receiptVoucherForm;
   }
 
@@ -480,21 +485,16 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   override async LeftGridInit() {
     this.pageheading = 'Receipt Voucher';
     try {
-
       const apiUrl = `${EndpointConstant.FILLALLPURCHASE}PageId=${this.pageId}`;
-
       const res = await firstValueFrom(
         this.httpService
           .fetch<any[]>(apiUrl)
           .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       );
-
       res.data.forEach(item => {
         item.Date = this.datePipe.transform(new Date(item.Date), 'dd/MM/yyyy');
       });
-
       this.leftGrid.leftGridData = res.data;
-
       this.leftGrid.leftGridColumns = [
         {
           headerText: 'Receipt Voucher List',
@@ -529,14 +529,11 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   override getDataById(data: PVoucherModel) {
     console.log('data', data);
     this.selectedReceiptVoucherId = data.ID;
-
     // Set page type to view mode
     this.SetPageType(3);
     this.updateGridEditSettings();
-
     // Disable form for viewing (will be enabled when edit is clicked)
     this.receiptVoucherForm.disable();
-
     this.fetchReceiptVoucherById();
   }
 
@@ -547,32 +544,25 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
       this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
       return;
     }
-
     if (this.isVoucherBeyondEditablePeriod()) {
       this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
-      this.receiptVoucherForm.disable({ emitEvent: false });
-      this.SetPageType(3);
-      this.updateGridEditSettings();
-      return;
-    }
-
-    this.selectedReceiptVoucherId = Number(selectedId);
-
-    // Set page type to edit mode
-    this.SetPageType(2);
+       this.serviceBase.formToolbarService.pagetype = 3; // View mode
     this.updateGridEditSettings();
-
+    return;
+    }
+    this.selectedReceiptVoucherId = Number(selectedId);
+  // ✅ THIS IS THE ACTUAL REQUIRED FIX
+  this.serviceBase.formToolbarService.pagetype = 2; // Edit mode
+    // Set page type to edit mode
+    this.updateGridEditSettings();
     // Enable the form for editing
     this.receiptVoucherForm.enable();
-
     // Keep voucher name and voucher no disabled (read-only in edit mode)
     this.receiptVoucherForm.get('voucherName')?.disable({ emitEvent: false });
     this.receiptVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
-
     // Ensure dropdown data is loaded for editors/popups
     this.voucherService.fetchAccountMaster();
     this.voucherService.fetchBankDetails();
-
     // Only fetch details if not already loaded
     if (!this.currentReceiptVoucher || this.currentReceiptVoucher.id !== this.selectedReceiptVoucherId) {
       this.fetchReceiptVoucherById();
@@ -727,50 +717,37 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   override newbuttonClicked() {
     const currentPageType = this.serviceBase.formToolbarService.pagetype;
     const isNewMode = currentPageType === 1;
-
     if (isNewMode) {
-      // From New mode, switch to topmost voucher in View mode
-      this.viewTopVoucherFromLeftGrid();
+      this.receiptVoucherForm.enable();
+      // Refresh voucher no auto generation for new entry
+      this.fetchCommonFillData();
       return;
     }
-
     // From other modes, return to New mode
     this.enterNewMode();
   }
 
-
-
-
-
-
   override DeleteData(data: PVoucherModel) {
     console.log('Delete requested for receipt voucher:', data);
-
     // Validate data
     if (!data || !data.ID) {
       this.baseService.showCustomDialogue('Please select a valid receipt voucher to delete.');
       return;
     }
-
     const voucherId = data.ID;
     const voucherNo = data.TransactionNo || 'Unknown';
-
     // Show confirmation dialog
     const confirmDelete = confirm(
       `Are you sure you want to delete Receipt Voucher "${voucherNo}"?\n\n` +
       `This action cannot be undone.`
     );
-
     if (!confirmDelete) {
       console.log('Delete cancelled by user');
       return;
     }
-
     // Call delete API
     this.deleteReceiptVoucher(voucherId, voucherNo);
   }
-
- 
 
   onPaymentTypeClick(paymentType: string): void {
     this.selectedPaymentType = paymentType;
@@ -814,13 +791,10 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   // Handle common fill data response
   private handleCommonFillResponse(response: any): void {
     this.commonFillData = response?.data || {};
-
     // Map cost centre data
     this.costCentreData = this.commonFillData.costCentre || [];
-
     console.log('Common fill data loaded:', this.commonFillData);
     console.log('Cost Centre data mapped:', this.costCentreData);
-
     // Set voucher data (voucher name and number)
     this.setVoucherData();
   }
@@ -828,15 +802,13 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   // Set voucher name and number in form
   private setVoucherData(): void {
     const formattedDate = this.formatDate(this.today);
-    this.voucherName = this.commonFillData?.vNo?.code || 'PV';
+    this.voucherName = this.commonFillData?.vNo?.code || 'RV';
     const voucherNo = this.commonFillData?.vNo?.result || '';
-
     this.receiptVoucherForm.patchValue({
       voucherName: this.voucherName,
       voucherNo: voucherNo,
       voucherDate: formattedDate,
     });
-
     console.log('Voucher data set:', { voucherName: this.voucherName, voucherNo });
   }
 
@@ -884,9 +856,6 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
       });
   }
 
-  // Fetch account details from ACCOUNTCODEPOPUP endpoint
-  // fetchAccountDetails removed - now using voucherService.fetchAccountMaster()
-
   // Fetch Cash popup data
   fetchCashPopup(): void {
     this.popupType = 'cash';
@@ -929,21 +898,29 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
     if (this.cashPopupObj.length > 0) {
       this.popupData = this.cashPopupObj;
       this.showPaymentPopup = true;
+      this.cdr.detectChanges();
+    } else if (this.cashPrefetchPromise) {
+      // First click: prefetch in progress — wait for it then open on first click
+      this.cashPrefetchPromise.then(() => {
+        this.popupData = this.cashPopupObj;
+        this.showPaymentPopup = true;
+        this.cdr.detectChanges();
+      }).catch(() => {});
     } else {
       this.httpService
         .fetch<any>(EndpointConstant.FILLCASHPOPUP)
         .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
         .subscribe({
           next: (response) => {
-            const responseData = response?.data;
+            const responseData = response?.data ?? [];
             this.cashPopupObj = responseData.map((item: any) => ({
               accountcode: item.alias,
               accountname: item.name,
               id: item.id,
             }));
             this.popupData = this.cashPopupObj;
-            console.log('Cash Popup Data:', this.popupData);
             this.showPaymentPopup = true;
+            this.cdr.detectChanges();
           },
           error: (error) => {
             console.error('Error fetching cash popup:', error);
@@ -991,25 +968,37 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
       paymentRemaining: this.paymentRemaining
     });
 
-    this.httpService
-      .fetch<any>(EndpointConstant.FILLCARDPOPUP)
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const responseData = response?.data;
-          this.cardPopupObj = responseData.map((item: any) => ({
-            accountcode: item.alias,
-            accountname: item.name,
-            id: item.id,
-          }));
-          this.popupData = this.cardPopupObj;
-          console.log('Card Popup Data:', this.popupData);
-          this.showPaymentPopup = true;
-        },
-        error: (error) => {
-          console.error('Error fetching card popup:', error);
-        },
-      });
+    if (this.cardPopupObj.length > 0) {
+      this.popupData = this.cardPopupObj;
+      this.showPaymentPopup = true;
+      this.cdr.detectChanges();
+    } else if (this.cardPrefetchPromise) {
+      this.cardPrefetchPromise.then(() => {
+        this.popupData = this.cardPopupObj;
+        this.showPaymentPopup = true;
+        this.cdr.detectChanges();
+      }).catch(() => {});
+    } else {
+      this.httpService
+        .fetch<any>(EndpointConstant.FILLCARDPOPUP)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+          next: (response) => {
+            const responseData = response?.data ?? [];
+            this.cardPopupObj = responseData.map((item: any) => ({
+              accountcode: item.alias,
+              accountname: item.name,
+              id: item.id,
+            }));
+            this.popupData = this.cardPopupObj;
+            this.showPaymentPopup = true;
+            this.cdr.detectChanges();
+          },
+          error: (error) => {
+            console.error('Error fetching card popup:', error);
+          },
+        });
+    }
   }
 
   // Fetch Cheque popup data
@@ -1051,25 +1040,37 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
       paymentRemaining: this.paymentRemaining
     });
 
-    this.httpService
-      .fetch<any>(EndpointConstant.FILLCHEQUEPOPUP)
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const responseData = response?.data;
-          this.chequePopupObj = responseData.map((item: any) => ({
-            accountcode: item.alias,
-            accountname: item.name,
-            id: item.id,
-          }));
-          this.popupData = this.chequePopupObj;
-          console.log('Cheque Popup Data:', this.popupData);
-          this.showPaymentPopup = true;
-        },
-        error: (error) => {
-          console.error('Error fetching cheque popup:', error);
-        },
-      });
+    if (this.chequePopupObj.length > 0) {
+      this.popupData = this.chequePopupObj;
+      this.showPaymentPopup = true;
+      this.cdr.detectChanges();
+    } else if (this.chequePrefetchPromise) {
+      this.chequePrefetchPromise.then(() => {
+        this.popupData = this.chequePopupObj;
+        this.showPaymentPopup = true;
+        this.cdr.detectChanges();
+      }).catch(() => {});
+    } else {
+      this.httpService
+        .fetch<any>(EndpointConstant.FILLCHEQUEPOPUP)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+          next: (response) => {
+            const responseData = response?.data ?? [];
+            this.chequePopupObj = responseData.map((item: any) => ({
+              accountcode: item.alias,
+              accountname: item.name,
+              id: item.id,
+            }));
+            this.popupData = this.chequePopupObj;
+            this.showPaymentPopup = true;
+            this.cdr.detectChanges();
+          },
+          error: (error) => {
+            console.error('Error fetching cheque popup:', error);
+          },
+        });
+    }
   }
 
   // Fetch E-Pay popup data
@@ -1111,25 +1112,37 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
       paymentRemaining: this.paymentRemaining
     });
 
-    this.httpService
-      .fetch<any>(EndpointConstant.FILLEPAYPOPUP)
-      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-      .subscribe({
-        next: (response) => {
-          const responseData = response?.data;
-          this.epayPopupObj = responseData.map((item: any) => ({
-            accountcode: item.alias,
-            accountname: item.name,
-            id: item.id,
-          }));
-          this.popupData = this.epayPopupObj;
-          console.log('E-Pay Popup Data:', this.popupData);
-          this.showPaymentPopup = true;
-        },
-        error: (error) => {
-          console.error('Error fetching e-pay popup:', error);
-        },
-      });
+    if (this.epayPopupObj.length > 0) {
+      this.popupData = this.epayPopupObj;
+      this.showPaymentPopup = true;
+      this.cdr.detectChanges();
+    } else if (this.epayPrefetchPromise) {
+      this.epayPrefetchPromise.then(() => {
+        this.popupData = this.epayPopupObj;
+        this.showPaymentPopup = true;
+        this.cdr.detectChanges();
+      }).catch(() => {});
+    } else {
+      this.httpService
+        .fetch<any>(EndpointConstant.FILLEPAYPOPUP)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+          next: (response) => {
+            const responseData = response?.data ?? [];
+            this.epayPopupObj = responseData.map((item: any) => ({
+              accountcode: item.alias,
+              accountname: item.name,
+              id: item.id,
+            }));
+            this.popupData = this.epayPopupObj;
+            this.showPaymentPopup = true;
+            this.cdr.detectChanges();
+          },
+          error: (error) => {
+            console.error('Error fetching e-pay popup:', error);
+          },
+        });
+    }
   }
 
   // Compute remaining amount = sum(credit in Account Details) - sum(Amount in Payment Details excluding current type)
@@ -1183,6 +1196,10 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
     // Refresh voucher header info (voucher no/name/date) for a fresh entry
     this.fetchCommonFillData();
 
+    // Load account list so account popup works on first click in new mode
+    this.voucherService.fetchAccountMaster();
+    // Prefetch all payment popups so first click opens immediately
+
     // Clear any left-grid selection in local state
     this.leftgridSelectedData = null;
 
@@ -1202,9 +1219,6 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
 
     this.getDataById(firstVoucher);
   }
-
-  // Fetch Bank details for cheque popup
-  // fetchBankDetails removed - now using voucherService.fetchBankDetails()
 
   // Close payment popup
   closePaymentPopup(): void {
@@ -1303,17 +1317,32 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
     console.log(`✅ Account ${accountChanged ? 'changed' : 'selected'}: ${selectedAccount.accountCode} - ${selectedAccount.accountName}${accountChanged ? `, credit preserved: ${data.credit}` : ''}`);
   }
 
-  // Handle filtering in AccountCode dropdown
+  // Handle filtering in AccountCode dropdown — must always call updateData so account popup shows list
   onAccountFiltering(args: any): void {
-    if (!args?.text) return;
-
-    const query = args.text.toLowerCase();
     const accountMasterData = this.voucherService.accountMasterData();
+    const query = (args?.text ?? '').toString().trim().toLowerCase();
+
+    if (!query) {
+      if (accountMasterData.length > 0) {
+        args.updateData(accountMasterData);
+        return;
+      }
+      const promise = this.voucherService.accountMasterFetchPromise;
+      if (promise) {
+        promise.then(() => {
+          args.updateData(this.voucherService.accountMasterData());
+          this.cdr.detectChanges();
+        }).catch(() => {});
+        return;
+      }
+      args.updateData(accountMasterData);
+      return;
+    }
+
     const filtered = accountMasterData.filter((account: any) =>
       account?.accountCode?.toLowerCase().includes(query) ||
       account?.accountName?.toLowerCase().includes(query)
     );
-
     args.updateData(filtered.length ? filtered : accountMasterData);
   }
 
@@ -1333,14 +1362,16 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
     }
 
     if (columnName === 'dueDate') {
-      rowData.dueDate = value;
+      // Store as date-only string (dd/MM/yyyy) so grid and picker show no time
+      const dateOnly = value != null ? (typeof value === 'string' && value.includes('/') ? value : this.datePipe.transform(new Date(value), 'dd/MM/yyyy') ?? '') : '';
+      rowData.dueDate = dateOnly;
       this.voucherCommonService.updateAccountRow(rowData);
       return;
     }
 
     // Check if credit column was edited (Receipt Voucher uses Credit)
     if (columnName === 'credit') {
-      const creditValue = value || 0; // Use the edited value, not rowData.credit
+      const creditValue = Number(value) || 0; // Use the edited value, not rowData.credit
 
       // Validate that account is selected first
       if (!rowData.accountId || !rowData.accountCode) {
@@ -1348,16 +1379,21 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         return;
       }
 
+      // Persist credit to row and grid so popup and grid stay in sync
+      rowData.credit = creditValue;
+      this.voucherCommonService.updateAccountRow(rowData);
+
       // In edit mode, load unpaid POs (if not already) and append saved allocations before opening popup
       if (this.serviceBase.formToolbarService.pagetype === 2) {
         await this.prepareUnpaidPOsForEdit(rowData);
       }
 
-      // Check if account has unpaid POs
+      // Check if account has unpaid POs - open PO allocation popup when user presses Enter
       if (this.voucherService.unpaidPOsData().length > 0) {
-        // Open PO allocation popup after a short delay to ensure cell save completes
+        // Short delay so grid cell save completes, then open popup and trigger change detection so it loads
         setTimeout(() => {
           this.openPOAllocationPopup(creditValue, rowData);
+          this.cdr.detectChanges();
         }, 100);
       } else {
         // No unpaid POs available - allow manual entry
