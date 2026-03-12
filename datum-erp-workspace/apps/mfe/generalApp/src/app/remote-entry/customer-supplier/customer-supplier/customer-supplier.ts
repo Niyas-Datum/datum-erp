@@ -240,6 +240,11 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     });
     this.imageData = null;
     this.viewDialogFlag=true;
+     // clear API array
+  this.allDeliveryDetails = [];
+
+  // clear UI rows
+this.deliveryRows = [];
   }
 
   //form initialisation
@@ -956,6 +961,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
               this.customerSupplierForm.disable();
 
               this.selectedCustomerSupplierId = data.id;
+
               this.FillById();
             },
             buttonModel: { content: 'Yes', isPrimary: true }
@@ -979,6 +985,9 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   }
 
   private FillById(): void {
+    this.allDeliveryDetails=[];
+    this.deliveryRows = [];
+
     this.customerSupplierForm.reset();
     const cur = this.currentCustomerSupplier();
     this.selectedCustomerSupplierId = cur?.id ?? null;
@@ -1381,7 +1390,11 @@ this.viewDialogFlag=false;
             if (queryParams && queryParams['partyId'] && queryParams['partyId'] == 0) {
               localStorage.setItem('customerSaved', JSON.stringify({ timestamp: new Date() }));
             }
-          } else {
+          } 
+          else if(response.httpCode==500){
+            this.toast.error("Code is already exists for account of another Party!! Please change the code!!")
+          }
+          else {
             this.toast.error('Some error occured');
           }
 
@@ -1399,6 +1412,7 @@ this.viewDialogFlag=false;
     if (!confirmed) {
       return;
     }
+    console.log("delete url:"+EndpointConstant.DELETECUSTOMERSUPPLIER + this.selectedCustomerSupplierId+'&pageId=105')
     this.httpService.delete(EndpointConstant.DELETECUSTOMERSUPPLIER + this.selectedCustomerSupplierId + '&pageId=105')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
