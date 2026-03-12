@@ -4,10 +4,21 @@
     <p translate>Disabled</p>
   </div>
 
+  <div class="left-grid-search mb-2">
+    <ejs-textbox
+      #searchBox
+      placeholder="Search..."
+      [value]="searchFilterText()"
+      (input)="onSearchInput($event)"
+      (change)="onSearchInput($event)"
+      cssClass="e-input"
+      floatLabelType="Never">
+    </ejs-textbox>
+  </div>
 
 <ejs-grid
   #grid
-  [dataSource]="this.leftdata$ | async  "  
+  [dataSource]="filteredData$ | async"  
   [allowResizing]="true"
   [allowTextWrap]="true"
   [enableHover]="false"
