@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, 
 import { CommonModule } from '@angular/common';
 import { BaseService, DataSharingService } from '@org/services';
 import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService } from '@syncfusion/ej2-angular-grids';
-import { registerLicense } from '@syncfusion/ej2-base'; import { EndpointConstant } from '@org/constants';
+import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
 ;
@@ -11,7 +11,7 @@ import { LeftGridDto } from '@org/models';
 
 @Component({
   selector: 'app-left-grid',
-  imports: [CommonModule, GridModule],
+  imports: [CommonModule, GridModule, TextBoxModule],
   templateUrl: './leftGrid.component.html',
   styleUrl: './leftGrid.component.scss',
   providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService],
@@ -21,9 +21,13 @@ export class LeftGridComponent implements OnInit, AfterViewInit {
 
   sharedService = inject(DataSharingService);
 
-  public columns$ = new BehaviorSubject<any[]>([]);
-  public leftdata$ = new BehaviorSubject<any[]>([]);
-  public data: any[] = [];
+    public columns$ = new BehaviorSubject<any[]>([]);
+    public leftdata$ = new BehaviorSubject<any[]>([]);
+    /** Filtered data for the grid (based on search). */
+    public filteredData$ = new BehaviorSubject<any[]>([]);
+    public data: any[] = [];
+    /** Search text for filtering the left grid. */
+    searchFilterText = signal('');
   // Input properties
 
   public pageheading = '';
@@ -88,28 +92,69 @@ export class LeftGridComponent implements OnInit, AfterViewInit {
 
 
 
-  loadColumns() {
-
-    this.sharedService.leftdata$.subscribe(data => {
-      this.pageheading = data.pageheading ?? '';
-      this.leftdata$.next(data.data);
-      this.data = this.leftdata$.value; // Assign to local data property
-
-    });
-
-
-
-    const dynamicColumns = this.columns.map(col => {
+  /** Get list of field names to search from current column config. */
+  private getSearchableFields(): string[] {
+    const cols = this.columns ?? [];
+    const fields: string[] = [];
+    for (const col of cols) {
       if (col.columns) {
-        return { headerText: col.headerText, columns: col.columns };
-      } else {
-        return col;
+        for (const child of col.columns) {
+          if (child.field) fields.push(child.field);
+        }
+      } else if (col.field) {
+        fields.push(col.field);
       }
+    }
+    return fields;
+  }
+
+  /** Filter rows by search text across all column values. */
+  private applyFilter(): void {
+    const term = (this.searchFilterText() ?? '').trim().toLowerCase();
+    const raw = this.leftdata$.value ?? [];
+    if (!term) {
+      this.filteredData$.next(raw);
+      return;
+    }
+    const fields = this.getSearchableFields();
+    const filtered = raw.filter((row: any) => {
+      for (const field of fields) {
+        const val = row[field];
+        if (val != null && String(val).toLowerCase().includes(term)) return true;
+      }
+      return false;
     });
-    this.columns$.next(dynamicColumns);
+    this.filteredData$.next(filtered);
+  }
 
+  onSearchInput(event: any): void {
+    const value = event?.target?.value ?? event?.value ?? '';
+    this.searchFilterText.set(String(value));
+    this.applyFilter();
+  }
 
-
+  loadColumns() {
+       
+        this.sharedService.leftdata$.subscribe(data => {
+          this.pageheading = data.pageheading ?? '';
+            this.leftdata$.next(data.data ?? []);
+            this.data = this.leftdata$.value;
+            this.applyFilter();
+          });
+         
+         
+          
+        const dynamicColumns = this.columns.map(col => {
+              if (col.columns) {
+                return { headerText: col.headerText, columns: col.columns };
+              } else {
+                return col;
+              }
+            });
+              this.columns$.next(dynamicColumns);
+        
+          
+               
   }
 }
 
