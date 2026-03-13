@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @nx/enforce-module-boundaries */
-import { Component, EventEmitter, inject, Input, OnInit, Output, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, Renderer2, ChangeDetectorRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
@@ -853,6 +853,9 @@ export class InvoiceFooter implements OnInit {
     return isNaN(n) ? 0 : n;
   }
 
+  /**
+   * Total Paid = Cash + Card + Cheque + Advance
+   */
   private updateTotalPaid(): void {
     const raw = this.salesForm.getRawValue?.() ?? this.salesForm.value;
     const cash = this.toNum(raw?.cash);
@@ -860,19 +863,18 @@ export class InvoiceFooter implements OnInit {
     const cheque = this.toNum(raw?.cheque);
     const advance = this.toNum(raw?.advance);
     const total = cash + card + cheque + advance;
-    this.salesForm.patchValue({ totalpaid: total.toFixed(4) });
+    this.salesForm.patchValue({ totalpaid: total.toFixed(4) }, { emitEvent: false });
   }
+
+  /**
+   * Balance = Grand Total - Total Paid (always non-negative for display)
+   */
   private updateBalance(): void {
     const raw = this.salesForm.getRawValue?.() ?? this.salesForm.value;
-    const totalPaid = this.toNum(raw?.totalpaid);
     const grandTotal = this.toNum(raw?.grandtotal);
-    const balance =  Math.abs(grandTotal - totalPaid);
-    
-    this.salesForm.patchValue(
-      { balance: balance.toFixed(4) },
-      { emitEvent: false }
-    );
-    
+    const totalPaid = this.toNum(raw?.totalpaid);
+    const balance = Math.max(0, grandTotal - totalPaid);
+    this.salesForm.patchValue({ balance: balance.toFixed(4) }, { emitEvent: false });
   }
 
   onItemSelected(selectedItem: any): void {
@@ -1127,28 +1129,28 @@ export class InvoiceFooter implements OnInit {
     this.footerPopUpData.emit(null);
   }
 
+  /**
+   * Recalculates Grand Total: Net Amount + Tax + Additional Charges + Round Off
+   */
   public recalculateGrandTotal(): void {
     const items = this.commonService.tempItemFillDetails() || [];
-    
+
+    // Items total = sum(item.totalAmount) = Net Amount + Tax per items
     const itemsTotal = items.reduce(
-      (sum: number, item: any) => {
-        const itemTotal = this.toNum(item.totalAmount);
-        return sum + itemTotal;
-      },
+      (sum: number, item: any) => sum + this.toNum(item.totalAmount),
       0
     );
 
     const addCharges = this.toNum(this.salesForm.get('addcharges')?.value);
-    const grandTotal = itemsTotal + addCharges;
+    const roundoff = this.toNum(this.salesForm.get('roundoff')?.value);
+
+    // Grand Total = Net + Tax + Additional Charges + Round Off
+    const grandTotal = itemsTotal + addCharges + roundoff;
 
     this.grandtotal = grandTotal;
     this.salesForm.patchValue({ grandtotal: grandTotal.toFixed(4) }, { emitEvent: false });
 
-    // Balance depends on grandtotal
     this.updateBalance();
-    
-    // Don't auto-allocate cash - user must explicitly open cash popup and click OK
-    // Sales person needs to decide cash or credit
   }
 
   public recalculateTaxValue(): void {
@@ -1423,19 +1425,52 @@ onClickRoundOff() {
     });
   }
 
-  setCommonDiscountPercent(commondiscountpercent: number) {
-    // 1. Patch the discount percent to form
-    this.salesForm.patchValue({
-      totaldiscpercent: commondiscountpercent
+  setCommonDiscountPercent(commondiscountpercent: number): void {
+    this.salesForm.patchValue({ totaldiscpercent: commondiscountpercent }, { emitEvent: false });
+
+    // Propagate discount % to all items so row totals recalculate
+    const items = this.commonService.tempItemFillDetails() || [];
+    const options = this.itemService.fillItemDataOptions();
+    items.forEach((item: any) => {
+      if (item && (item.itemId || item.itemCode)) {
+        item.discountPerc = commondiscountpercent;
+        item.discount = 0; // Clear flat discount so discountPerc is used
+        const itemCode = (item.itemCode ?? item.itemName ?? '').toString().trim();
+        const selectedItem = options.find((o: any) =>
+          (o.itemCode || o.itemName) === itemCode
+        );
+        const taxPerc = selectedItem?.taxPerc ?? item.taxPerc ?? 0;
+        this.recalculateItemRow(item, taxPerc);
+      }
     });
+    this.commonService.tempItemFillDetails.set([...items]);
 
-    // 2. Update discount percent for each item in the itemService list
+    // Sync discount amount display (sum of item discounts)
+    const totalDiscount = items.reduce((s: number, i: any) => s + this.toNum(i.discount), 0);
+    this.salesForm.patchValue({ discountamount: totalDiscount.toFixed(4) }, { emitEvent: false });
 
-    // items.forEach((item: any) => {
-    //   if (item && item.itemId) {
-    //     item.discountPerc = commondiscountpercent;
-    //   }
-    // });
+    this.dataSharingService.triggerRecalculateTotal$.next();
+    this.dataSharingService.triggerRTaxValueTotal$.next();
+    this.dataSharingService.triggerNetAmountTotal$.next();
+    this.dataSharingService.triggerGrossAmountTotal$.next();
+  }
+
+  /** Recalculate a single item row (grossAmt, discount, amount, taxValue, totalAmount). */
+  private recalculateItemRow(item: any, taxPerc: number): void {
+    const qty = this.toNum(item.qty);
+    const rate = this.toNum(item.rate);
+    const discountPerc = this.toNum(item.discountPerc);
+    const flatDiscount = this.toNum(item.discount);
+    const grossAmt = parseFloat((qty * rate).toFixed(4));
+    const discount = flatDiscount > 0 ? flatDiscount : parseFloat((grossAmt * discountPerc / 100).toFixed(4));
+    const amount = parseFloat(Math.max(0, grossAmt - discount).toFixed(4));
+    const taxValue = parseFloat(((amount * taxPerc) / 100).toFixed(4));
+    const totalAmount = parseFloat((amount + taxValue).toFixed(4));
+    item.grossAmt = grossAmt;
+    item.discount = discount;
+    item.amount = amount;
+    item.taxValue = taxValue;
+    item.totalAmount = totalAmount;
   }
 
 

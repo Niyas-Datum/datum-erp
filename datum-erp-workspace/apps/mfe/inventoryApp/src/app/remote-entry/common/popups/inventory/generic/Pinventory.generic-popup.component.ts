@@ -1,25 +1,28 @@
+/* eslint-disable @angular-eslint/component-selector */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
 
 @Component({
   selector: 'generic-popup',
   standalone: true,
-  imports: [CommonModule, GridModule, FormsModule],
+  imports: [CommonModule, GridModule],
   template: `
-    <div class="popup-search" style="margin-bottom: 8px;">
-      <input type="text" class="form-control" placeholder="Search..."
-        [ngModel]="searchText"
-        (ngModelChange)="onSearchChange($event)" />
-    </div>
     <!-- Syncfusion Grid Implementation -->
-    <ejs-grid
+     <div class="p-4" >
+
+     <div class="d-flex justify-content-end mb-2">
+      <button (click)="onClose()">
+        <span class="e-icons e-close"></span>
+      </button>
+    </div>
+
+      <ejs-grid
       #grid
-      [dataSource]="filteredGridData"
+      [dataSource]="popupGridData"
       [allowPaging]="false"
       [enableVirtualization]="true"
       [editSettings]="editSettings"
@@ -41,9 +44,12 @@ import { GridModule } from '@syncfusion/ej2-angular-grids';
     </ejs-grid>
 
     <div style="text-align: right; margin-top: 10px">
-      <button class="btn btn-primary" (click)="onOK()">OK</button>
+      <button class="btn" (click)="onOK()" style="background-color: #187c9a; color:white;" >OK</button>
       <button class="btn btn-secondary" style="margin-left: 10px" (click)="onClose()">Close</button>
     </div>
+
+     </div>
+    
   `
 })
 export class PinventoryGenericPopupComponent implements OnInit {
@@ -85,19 +91,8 @@ export class PinventoryGenericPopupComponent implements OnInit {
     return [];
   }
 
-  onSearchChange(value: string): void {
-    this.searchText = (value || '').trim();
-  }
-
-  /** Filter by search: cumulative (each keystroke filters current list). */
-  get filteredGridData(): any[] {
-    const q = this.searchText.toLowerCase();
-    if (!q) return this.cachedPopupGridData;
-    return this.cachedPopupGridData.filter((row: any) => {
-      return Object.values(row).some((v) =>
-        String(v ?? '').toLowerCase().includes(q)
-      );
-    });
+  get popupGridData() {
+    return this.cachedPopupGridData;
   }
 
   get editSettings() {
@@ -124,7 +119,7 @@ export class PinventoryGenericPopupComponent implements OnInit {
       code: row.accountCode ?? row.projectcode ?? row.code ?? row.accountcode ?? null,
       name: row.accountName ?? row.projectname ?? row.name ?? row.accountname ?? null,
     };
-    
+
     if (typeof this.popupClose === 'function') {
       this.popupClose({ action: 'select', item: selectedItem, popupType: this.popupType });
     }

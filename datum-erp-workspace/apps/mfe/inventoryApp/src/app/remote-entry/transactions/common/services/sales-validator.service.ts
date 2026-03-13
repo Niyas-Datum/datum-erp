@@ -191,25 +191,25 @@ export class SalesValidatorService {
     }
 
     // Handle object values (e.g., Syncfusion dropdown returns {text: 'value', value: 'id'})
-    if (typeof v === 'object') {
+    if (typeof v === 'object' && v !== null) {
+      const has = (obj: object, key: string) =>
+        Object.prototype.hasOwnProperty.call(obj, key);
       // If it's an empty object
       if (Object.keys(v).length === 0) {
         errors.push({ scope, field, message });
         return;
       }
-      
       // If it has a 'value' or 'id' property, check if it's empty
-      if (v.hasOwnProperty('value') || v.hasOwnProperty('id')) {
-        const val = v.value || v.id;
+      if (has(v, 'value') || has(v, 'id')) {
+        const val = (v as any).value ?? (v as any).id;
         if (val === null || val === undefined || val === '') {
           errors.push({ scope, field, message });
           return;
         }
       }
-      
       // If it has a 'text' or 'name' property, check if it's empty
-      if (v.hasOwnProperty('text') || v.hasOwnProperty('name')) {
-        const text = v.text || v.name;
+      else if (has(v, 'text') || has(v, 'name')) {
+        const text = (v as any).text ?? (v as any).name;
         if (text === null || text === undefined || text === '') {
           errors.push({ scope, field, message });
           return;

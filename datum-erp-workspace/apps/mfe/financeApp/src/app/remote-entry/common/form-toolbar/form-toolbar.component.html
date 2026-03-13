@@ -1,48 +1,107 @@
-<div class="e-btn-group form-topbar" role="group">
-  <button type="button" class="e-btn e-small e-primary"
-          (click)="onClick('new')"
-          [ngClass]="{'top-button-active': isNewMode()}"
-          [disabled]="isNewBtnDisabled()">
+<!-- <div class="e-btn-group form-topbar w-100" role="group">
+  <button type="button" class="e-btn e-small e-primary" (click)="onClick('new')"
+    [ngClass]="{'top-button-active': isNewMode()}" [disabled]="isNewBtnDisabled()">
     <span class="material-icons">add_to_photos</span> New
   </button>
 
-  <button type="button" class="e-btn e-small e-success"
-          (click)="onClick('save')"
-          [disabled]="isSaveBtnDisabled()">
+  <button type="button" class="e-btn e-small e-success" (click)="onClick('save')" [disabled]="isSaveBtnDisabled()">
     <span class="material-icons">save</span> Save
   </button>
 
-  <button type="button" class="e-btn e-small e-warning"
-          (click)="onClick('edit')"
-          [ngClass]="{'top-button-active': isEditMode()}"
-          [disabled]="isEditBtnDisabled()">
+  <button type="button" class="e-btn e-small e-warning" (click)="onClick('edit')"
+    [ngClass]="{'top-button-active': isEditMode()}" [disabled]="isEditBtnDisabled()">
     <span class="material-icons">edit</span> Edit
   </button>
 
-  <button type="button" class="e-btn e-small e-danger"
-          (click)="onClick('delete')"
-          [disabled]="isDeleteBtnDisabled()">
+  <button type="button" class="e-btn e-small e-danger" (click)="onClick('delete')" [disabled]="isDeleteBtnDisabled()">
     <span class="material-icons">delete_forever</span> Delete
   </button>
 
-  <button type="button" class="e-btn e-small e-info"
-          (click)="onClick('print')"
-          [disabled]="isPrintBtnDisabled()">
+  <button type="button" class="e-btn e-small e-info" (click)="onClick('print')" [disabled]="isPrintBtnDisabled()">
     <span class="material-icons">print</span> Print
   </button>
 
-  <button type="button" class="e-btn e-small e-secondary"
-          (click)="onClick('preview')">
+  <button type="button" class="e-btn e-small e-secondary" (click)="onClick('preview')">
     <span class="material-icons">pageview</span> Preview
   </button>
 
-  <button type="button" class="e-btn e-small e-dark"
-          (click)="onClick('settings')">
+  <button type="button" class="e-btn e-small e-dark" (click)="onClick('settings')">
     <span class="material-icons">settings</span> Settings
   </button>
 
-  <button type="button" class="e-btn e-small e-light"
-          (click)="onClick('help')">
-    <span class="material-icons">help</span> Help
+  <button type="button" class="e-btn e-small e-light" (click)="onClick('help')">
+    <span class="material-icons">help</span>Help
   </button>
+
+
+</div> -->
+
+
+<div class="d-flex flex-nowrap overflow-auto gap-1 topbar-scroll bg-white p-1 mb-1">
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom" (click)="onClick('new')"
+    [ngClass]="{'top-button-active': isNewMode()}" [disabled]="isNewBtnDisabled()">
+    <span class="material-icons me-1">add_to_photos</span> New
+  </button>
+
+  <button type="button" class="e-btn e-small e-success flex-shrink-0 " (click)="onClick('save')"
+    [disabled]="isSaveBtnDisabled()">
+    <span class="material-icons me-1">save</span> Save
+  </button>
+
+  <button type="button" class="e-btn e-small e-warning flex-shrink-0" (click)="onClick('edit')"
+    [ngClass]="{'top-button-active': isEditMode()}" [disabled]="isEditBtnDisabled()">
+    <span class="material-icons me-1">edit</span> Edit
+  </button>
+
+  <button type="button" class="e-btn e-small e-danger flex-shrink-0" (click)="onClick('delete')"
+    [disabled]="isDeleteBtnDisabled()">
+    <span class="material-icons me-1">delete_forever</span> Delete
+  </button>
+
+  <button type="button" class="e-btn e-small e-info flex-shrink-0" (click)="onClick('print')"
+    [disabled]="isPrintBtnDisabled()">
+    <span class="material-icons me-1">print</span> Print
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom" (click)="onClick('preview')">
+    <span class="material-icons me-1">visibility</span> Preview
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom" (click)="onClick('settings')">
+    <span class="material-icons me-1">settings</span> Settings
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom" (click)="onClick('help')">
+    <span class="material-icons me-1">help</span> Help
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom">
+    <span class="material-icons me-1">mail</span> Email
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom">
+    <span class="material-icons me-1">receipt</span> Bills
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom">
+    <span class="material-icons me-1">attach_file</span> Attach
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom">
+    <span class="material-icons me-1">content_copy</span> Copy
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom">
+    <span class="material-icons me-1">dashboard</span> Import Items
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom">
+    <span class="material-icons me-1">key</span> Keys
+  </button>
+
+  <button type="button" class="e-btn e-small btn-common-feature flex-shrink-0 bt-custom">
+    <span class="material-icons me-1">open_in_new</span> Export
+  </button>
+
 </div>

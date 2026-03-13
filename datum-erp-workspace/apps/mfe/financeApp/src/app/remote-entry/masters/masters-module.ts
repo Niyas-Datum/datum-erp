@@ -22,6 +22,7 @@ import { ChartOfAccountComponent } from "./chart-of-account/chart-of-account.com
 import { LedgerComponent } from "./ledger/ledger-component"
 import { DialogModule } from "@syncfusion/ej2-angular-popups";
 import { PopupComponent } from "./popup/popup.component";
+import { VoucherPopupComponent } from "./popup/voucherpopup/voucherpop-component";
 
 const costcenterRoutes: Routes = [
   {
@@ -57,7 +58,7 @@ const costcenterRoutes: Routes = [
      FinancialYearComponent, CardComponent, AccountSortorderComponent,
       BranchAccounts,
      AccountConfigurationComponent, AccountsListComponent, VouchersComponent, 
-     ChartOfAccountComponent, LedgerComponent,PopupComponent],
+     ChartOfAccountComponent, LedgerComponent,PopupComponent,VoucherPopupComponent],
 
   imports: [CommonModule,     
   ReactiveFormsModule,DialogModule, ContextMenuModule

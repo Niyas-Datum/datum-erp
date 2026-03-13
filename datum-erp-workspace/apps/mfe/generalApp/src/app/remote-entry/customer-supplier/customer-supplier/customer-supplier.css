@@ -72,7 +72,7 @@
 
 /* for image  */
 
-.image-upload-container {
+/* .image-upload-container {
   width: 350%;
   height: 200px;            
   border: 1px dashed #ccc;
@@ -90,23 +90,222 @@
   max-height: 150%;
   object-fit: contain;       
   margin-left: 12px; 
+} */
+/* //image */
+
+.profile-upload-box{
+  border: 1px dashed #ccc;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  background: #fafafa;
+  position: relative;
 }
 
-/* delivery details */
-.plus-btn {
-  width: 28px;
-  height: 28px;
+/* Image preview */
+.profile-preview{
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
   border-radius: 50%;
-  border: none;
-  background: #0d6efd;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
+  border: 2px solid #ddd;
+  margin-bottom: 12px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Upload button */
+.upload-btn{
+  display: inline-block;
+  background: #1976d2;
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 6px;
   cursor: pointer;
-  line-height: 28px;
+  font-size: 13px;
+  transition: 0.2s ease;
 }
 
-.plus-btn:hover {
-  background: #0b5ed7;
+.upload-btn:hover{
+  background: #125ea8;
 }
 
+/* Remove (X) button */
+.remove-button{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 20px;
+  text-align: center;
+  padding: 0;
+}
+
+.remove-button:hover{
+  background: #d9363e;
+}
+/* ------------------ */
+.profile-upload-box{
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: center;
+  position: relative;
+}
+
+/* Profile Image */
+.profile-preview{
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
+/* Upload Button */
+.upload-btn{
+  display: inline-block;
+  background: #1976d2;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  border: none;
+}
+
+.upload-btn:hover{
+  background: #125ea8;
+}
+
+/* Remove Button (X icon) */
+.remove-button{
+  position: absolute;
+  top: -6px;
+  right: calc(50% - 70px);
+  background: #ff3b3b;
+  color: #fff;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Hover effect */
+.profile-upload-box:hover{
+  border-color: #3b82f6;
+}
+/* delivery details */
+/* ===== DELIVERY DETAILS GRID ===== */
+
+.delivery-container{
+  padding:10px;
+}
+
+.delivery-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.delivery-header h5{
+  margin:0;
+  font-size:14px;
+  font-weight:600;
+}
+
+.delivery-grid-wrapper{
+  border:1px solid #ccc;
+  overflow:auto;
+  background:#fff;
+}
+
+.delivery-grid{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+.delivery-grid thead{
+  background:#008cb3;
+  color:white;
+}
+
+.delivery-grid th{
+  padding:8px;
+  text-align:left;
+  border-right:1px solid #ffffff;
+  font-weight:600;
+}
+
+.delivery-grid td{
+  border:1px solid #ddd;
+  padding:4px;
+}
+
+.delivery-grid input{
+  width:100%;
+  border:none;
+  outline:none;
+  padding:6px;
+  font-size:12px;
+  background:transparent;
+}
+
+.delivery-grid input:focus{
+  background:#f2fbff;
+}
+
+.delivery-footer{
+  margin-top:10px;
+  text-align:right;
+}
+
+/* image rect */
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.preview-img {
+  width: 180px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;     /* Rectangle with slight curve */
+  border: 1px solid #ccc;
+}
+
+.upload-btn {
+  background-color: #2d6cdf;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.remove-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}

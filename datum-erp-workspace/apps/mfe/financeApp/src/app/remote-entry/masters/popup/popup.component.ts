@@ -31,6 +31,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
   @Output() dataSaved = new EventEmitter<void>();
   @Input() isGroup: boolean = false;
   @Input() isCreate: boolean = false;
+  @Input() isOpen:boolean=false;
   isCreateSignal = signal<boolean>(false);
   private httpService = inject(FinanceAppService);
   
@@ -100,6 +101,8 @@ subGroupData = signal<subgroupdataModel[]>([]);
     .subscribe({
       next: (response) => {
         this.groupdata.set(response.data);
+        console.log('groupdata',this.groupdata());
+
       },
       error: (error) => {
         // Error fetching group data
@@ -129,6 +132,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
 //load data for the account
   
   loadAccountData(nodeId: string): void {
+    console.log('we have entered into loadAccountData');
     this.httpService
           .fetch<any[]>(EndpointConstant.FILLTAXACCOUNTDATA+nodeId)
           .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -136,16 +140,25 @@ subGroupData = signal<subgroupdataModel[]>([]);
         next: (response) => {
           // API returns array with one object, extract the first element
           const apiData =  response.data[0] 
+          console.log('nodeId',nodeId);
+          console.log('api is ',EndpointConstant.FILLTAXACCOUNTDATA+nodeId);
+          console.log('apiData from loadAccountData',apiData);
           
           // Find Group object and update selected values
           if (apiData.accountGroup) {
-            const groupObj = this.groupdata().find(item => item.id === apiData.accountGroup);
+            const numericNodeId = Number(nodeId);
+            const groupObj = this.groupdata().find(item => item.id === numericNodeId);
+            console.log('groupObj',groupObj);
             if (groupObj) {
               this.selectedGroupId = groupObj.id;
               this.selectedGroupName = groupObj.name;
+              console.log('selectedGroupId',this.selectedGroupId);
+              console.log('selectedGroupName',this.selectedGroupName);
             } else {
-              this.selectedGroupId = apiData.accountGroup;
+              this.selectedGroupId = numericNodeId;
               this.selectedGroupName = '';
+              console.log('selectedGroupId',this.selectedGroupId);
+              console.log('selectedGroupName',this.selectedGroupName);
             }
           } else {
             this.selectedGroupId = 0;
@@ -166,9 +179,10 @@ subGroupData = signal<subgroupdataModel[]>([]);
             this.selectedAccountCategoryName = '';
           }
           
-          // Map API response fields to form fields
+          // Map API response fields to form fields (group must be number to match dropdown value)
+          const groupValue = this.selectedGroupId || (this.nodeId ? Number(this.nodeId) : null);
           const formData: any = {
-            group: apiData.accountGroup || null, // Set ID value, not object
+            group: groupValue,
             accountCode: apiData.alias || '',
             accountName: apiData.name || '',
             alternateName: apiData.alternateName || '',
@@ -186,19 +200,23 @@ subGroupData = signal<subgroupdataModel[]>([]);
           // First patch the form without SubGroup
           this.accountForm.patchValue(formData);
           
-          // Load subgroup data if Group exists, then set SubGroup
-          if (apiData.accountGroup) {
-            this.httpService.fetch<any>(EndpointConstant.FILLSUBGROUPPOPUP + apiData.accountGroup)
+          // Load subgroup data: when isOpen use the opened node's group (selectedGroupId/nodeId), else use API accountGroup
+          const groupIdForSubgroup = this.isOpen
+            ? (this.selectedGroupId || Number(nodeId))
+            : apiData.accountGroup;
+          if (groupIdForSubgroup) {
+            this.httpService.fetch<any>(EndpointConstant.FILLSUBGROUPPOPUP + groupIdForSubgroup)
               .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
               .subscribe({
                 next: (subGroupResponse) => {
                   const subgroupArray = subGroupResponse.data?.subgroup || [];
-                  if(this.isCreate){
+                  if(this.isCreate||this.isGroup){
                     console.log("isCreate",this.isCreate);
                     this.isCreateSignal.set(true);
                     
                     
                     console.log("subGroupResponse",subGroupResponse);
+                    this.accountForm.get('group')?.enable();
                     this.accountForm.get('accountcategory')?.enable();
                     this.accountForm.get('accountCode')?.setValue(subGroupResponse.data?.nextCode);
                     this.accountForm.get('accountName')?.setValue('');
@@ -236,8 +254,11 @@ subGroupData = signal<subgroupdataModel[]>([]);
                     
                     // Refresh all dropdowns after a delay to ensure they're rendered
                     setTimeout(() => {
-                      // Refresh Group dropdown
-                      this.refreshGroupDropdown(apiData.accountGroup, 0);
+                      // Refresh Group dropdown: isCreate/node => selectedGroupId/nodeId; isOpen => selectedGroupId; else API accountGroup
+                      const groupToShow = this.isCreate || this.isOpen
+                        ? (this.selectedGroupId || (this.nodeId ? Number(this.nodeId) : null))
+                        : apiData.accountGroup;
+                      this.refreshGroupDropdown(groupToShow, 0);
                       
                       // Refresh SubGroup dropdown
                       const subGroupElement = document.getElementById('SubGroup') as any;
@@ -381,7 +402,7 @@ subGroupData = signal<subgroupdataModel[]>([]);
         maintainCostCentre: this.accountForm.get('maintainCostCentre')?.value,
         alternateName: this.accountForm.get('alternateName')?.value,
         isGroup: this.accountForm.get('isGroup')?.value
-      }
+      };
         const savepayload = {
           group: {
             id: this.selectedGroupId,
@@ -520,38 +541,39 @@ subGroupData = signal<subgroupdataModel[]>([]);
   // Reset SubGroup when Group changes
   this.accountForm.get('SubGroup')?.setValue(null);
   this.subGroupData.set([]);
-  //this.isSubGroupEnabled.set(false);
-  
-  this.httpService.fetch<any>(EndpointConstant.FILLSUBGROUPPOPUP+this.selectedGroupId).pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-  .subscribe({
-    next: (response) => {
-      // API returns { data: { subgroup: [...], nextCode: "..." } }
-      const subgroupArray = response.data?.subgroup || [];
-      this.accountForm.get('accountCode')?.setValue(response.data?.nextCode);
-      this.subGroupData.set(subgroupArray);
-      
-      // Enable SubGroup dropdown if data is available
-      if (subgroupArray.length > 0) {
-        this.isSubGroupEnabled.set(true);
-        this.accountForm.get('SubGroup')?.enable();
+  // When isOpen, subgroups were already loaded in loadAccountData; only fetch on user-driven group change in create flows
+  if (!this.isOpen && (this.isCreate || this.isGroup)) {
+    this.httpService.fetch<any>(EndpointConstant.FILLSUBGROUPPOPUP+this.selectedGroupId).pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+    .subscribe({
+      next: (response) => {
+        // API returns { data: { subgroup: [...], nextCode: "..." } }
+        const subgroupArray = response.data?.subgroup || [];
+        this.accountForm.get('accountCode')?.setValue(response.data?.nextCode);
+        this.subGroupData.set(subgroupArray);
         
-        // Force change detection and refresh dropdown
-        setTimeout(() => {
-          const subGroupElement = document.getElementById('SubGroup') as any;
-          if (subGroupElement && subGroupElement.ej2_instances) {
-            subGroupElement.ej2_instances[0].dataBind();
-          }
-        }, 100);
-      } else {
+        // Enable SubGroup dropdown if data is available
+        if (subgroupArray.length > 0) {
+          this.isSubGroupEnabled.set(true);
+          this.accountForm.get('SubGroup')?.enable();
+          
+          // Force change detection and refresh dropdown
+          setTimeout(() => {
+            const subGroupElement = document.getElementById('SubGroup') as any;
+            if (subGroupElement && subGroupElement.ej2_instances) {
+              subGroupElement.ej2_instances[0].dataBind();
+            }
+          }, 100);
+        } else {
+          this.isSubGroupEnabled.set(false);
+          this.accountForm.get('SubGroup')?.disable();
+        }
+      },
+      error: (error) => {
         this.isSubGroupEnabled.set(false);
         this.accountForm.get('SubGroup')?.disable();
-      }
-    },
-    error: (error) => {
-      this.isSubGroupEnabled.set(false);
-      this.accountForm.get('SubGroup')?.disable();
-    },
-  });
+      },
+    });
+  }
 }
 
 onSubGroupChange(event: any) {

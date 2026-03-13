@@ -4,11 +4,15 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/mfe/financeApp/src",
-  "tags": ["scope:host"],
+  "tags": [
+    "scope:host"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/mfe/financeApp",
         "index": "apps/mfe/financeApp/src/index.html",
@@ -19,9 +23,16 @@
           {
             "glob": "**/*",
             "input": "apps/mfe/financeApp/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/ui/src/assets",
+            "output": "/assets/"
           }
         ],
-        "styles": ["apps/mfe/financeApp/src/styles.scss"],
+        "styles": [
+          "apps/mfe/financeApp/src/styles.scss"
+        ],
         "customWebpackConfig": {
           "path": "apps/mfe/financeApp/webpack.config.ts"
         }
@@ -60,8 +71,8 @@
       "continuous": true,
       "executor": "@nx/angular:dev-server",
       "options": {
-        "port": 4205,
-        "publicHost": "http://localhost:4205"
+        "port": 4305,
+        "publicHost": "http://localhost:4305"
       },
       "configurations": {
         "production": {
@@ -88,7 +99,7 @@
       "defaultConfiguration": "production",
       "options": {
         "buildTarget": "financeApp:build",
-        "port": 4205,
+        "port": 4305,
         "watch": false
       },
       "configurations": {

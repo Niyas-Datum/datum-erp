@@ -24,7 +24,8 @@ export interface Purchases {
     id: number;
     name: string;
     isDefault: boolean;
-    value?:string;
+    userid?: number;
+    value?: string;
   }
 
   export interface Salesman{
@@ -66,6 +67,7 @@ export interface Purchases {
     address: string;
     mobileNo: string | null;
     salesManID: number;
+    salesman?: string;
     vatNo: string | null;
     accBalance: number;  
   }

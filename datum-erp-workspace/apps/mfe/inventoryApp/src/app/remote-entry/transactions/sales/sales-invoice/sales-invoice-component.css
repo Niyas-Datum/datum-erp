@@ -11,3 +11,77 @@
   gap: 8px;
   align-items: center;
 }
+
+::ng-deep .invoice-tabs.e-tab .e-tab-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #dee2e6;
+}
+
+::ng-deep .invoice-tabs .e-tab-header .e-toolbar-item {
+  background-color: rgb(24, 124, 154);
+  margin-right: 6px;
+  border-radius: 0 !important;
+  transition: 0.3s ease;
+}
+
+::ng-deep .invoice-tabs .e-tab-header .e-tab-text {
+  color: #ffffff !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+}
+
+::ng-deep .invoice-tabs .e-tab-header .e-toolbar-item:hover {
+  background-color: #187C9A;
+}
+
+::ng-deep .invoice-tabs .e-tab-header .e-toolbar-item.e-active {
+  background-color: #F29718 !important;
+  border-radius: 0 !important;
+}
+
+::ng-deep .invoice-tabs .e-content {
+  border: 1px solid #7e7e7e6d;
+}
+
+
+::ng-deep .invoice-tabs .text-custom {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.invoice-header-wrapper {
+  position: relative;
+}
+
+::ng-deep .invoice-tabs .e-tab-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+::ng-deep .invoice-tabs .e-tab-header {
+  margin-bottom: 0 !important;
+}
+
+
+.btn-br-custom {
+  background-color: #ffffff;
+  color: #187C9A;
+  border: 1px soild #187C9A;
+
+}
+
+btn-br-custom:hover {
+
+  background-color:  #187C9A;
+  color:#ffffff  ;
+
+
+}
+.reference-wrapper {
+  gap: 6px;
+}
+
+.reference-wrapper .btn {
+  height: 38px; /* match ejs-textbox height */
+}

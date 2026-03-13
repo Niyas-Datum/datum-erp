@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, input, output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -9,15 +9,31 @@ import { EndpointConstant } from '@org/constants';
 import { TransactionService } from '../services/transaction.services';
 import { CommonService } from '../services/common.services';
 import { TabCommunicationService } from '../services/tab-communication.service';
-
+import { NumericTextBoxModule, TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { CalendarModule, DatePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { NgModule } from '@angular/core'
+import { BrowserModule } from '@angular/platform-browser'
+import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
+import { log } from 'console';
 @Component({
   selector: 'app-additional-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TextBoxModule,
+    CalendarModule,
+    DatePickerModule,
+    NumericTextBoxModule,
+    DropDownListModule
+
+  ],
   templateUrl: './additional-details.component.html',
   styleUrl: './additional-details.component.scss'
 })
 export class AdditionalDetailsComponent implements OnInit, OnDestroy {
+  [x: string]: any;
   private fb = inject(FormBuilder);
   private baseService = inject(BaseService);
   private dataSharingService = inject(DataSharingService);
@@ -26,6 +42,7 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   private tabCommunicationService = inject(TabCommunicationService);
   
   private destroy$ = new Subject<void>();
+  // Calender
 
   // Input signals
   isNewMode = input(false);
@@ -60,6 +77,7 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   updatedSalesman = '';
   updatedVehicleNo = '';
   updatedDeliveryLocation = '';
+  dateValue: any;
 
   constructor() {
     this.createForm();
@@ -88,9 +106,18 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
 
   private createForm(): void {
     this.additionalDetailsForm = this.fb.group({
-      // General section (party invoice - ensure string/date to avoid [object Object])
+      // General section
+      // invoiceno: [''],
+      // invoicedate: [''],
+      // orderno: ['', Validators.required],
+      // orderdate: [''],
+      // partyname: [''],
+      // partyaddress: ['', Validators.required],
+      // expirydate: [''],
+      // transportationtype: [''],
+      // creditperiod: ['', Validators.required],
       partyInvoiceNo: [''],
-      partyInvoiceDate: [''],
+      partyInvoiceDate: [null],
       invoiceno: [''],
       invoicedate: [''],
       orderno: ['', Validators.required],
@@ -127,10 +154,18 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   }
 
   private setupDataSharing(): void {
-    // Subscribe to party selection changes from common service
-    // Get the selected party ID from the common service or item service
-    // For now, we'll use the input signals isNewMode and isEditMode
-    // The parent component will handle the party selection and pass it down
+    this.dataSharingService.selectedPartyId$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((partyId) => {
+        this.selectedPartyId = partyId != null ? Number(partyId) : null;
+        if (this.selectedPartyId && this.selectedPartyId !== 0) {
+          this.fetchSalesman(this.selectedPartyId);
+          this.fetchDeliveryLocation();
+        } else {
+          this.salesmanData = [];
+          this.deliveryLocationData = [];
+        }
+      });
   }
 
   private updateFormControls(isEnabled: boolean): void {
@@ -222,11 +257,15 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.salesmanData = response?.data || [];
           if (this.salesmanData.length > 0) {
-            this.onSalesmanSelected(this.salesmanData[0].name);
+            const firstSalesman = (this.salesmanData[0] as any)?.name ?? '';
+            this.updatedSalesman = firstSalesman;
+            this.additionalDetailsForm.patchValue({ salesman: firstSalesman });
+            this.emitFormChanges();
           }
         },
         error: (error) => {
           console.error('Error fetching salesman:', error);
+          this.salesmanData = [];
         }
       });
   }
@@ -281,7 +320,7 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
   }
 
   onSalesmanSelected(event: any): void {
-    const option = event.target.value;
+    const option = event?.target?.value ?? event ?? '';
     this.updatedSalesman = option;
     this.additionalDetailsForm.patchValue({ salesman: option });
     this.emitFormChanges();
@@ -414,11 +453,12 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
      activeSection = 'general'; // default active tab
 
   setActive(section: string) {
-    this.activeSection = section;
+   console.log("Sales button clikced")
+    this.activeSection = section
   }
 
   isActive(section: string): boolean {
-    return this.activeSection === section;
+    return this.activeSection === section
   }
 
   ///END NEW PAGE DESIGN METHODS*****************************************************************************

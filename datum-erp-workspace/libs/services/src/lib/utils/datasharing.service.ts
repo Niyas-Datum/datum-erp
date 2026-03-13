@@ -47,6 +47,9 @@ export class DataSharingService {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
+      // Clear left grid so it doesn't show previous page's data until the new page calls setData()
+      this.dataSource.next({ columns: [], data: [], pageheading: '' });
+
       const menItems =  this.localStorageService.getLocalStorageItem("menuData")
       console.log(menItems);
       const menItemsArr = JSON.parse(menItems);
@@ -95,6 +98,9 @@ export class DataSharingService {
 
   private additionalDetailsSubject = new BehaviorSubject<any>(null);
   public additionalDetails$ = this.additionalDetailsSubject.asObservable();
+
+  private selectedPartyIdSubject = new BehaviorSubject<number | string | null>(null);
+  public selectedPartyId$ = this.selectedPartyIdSubject.asObservable();
 
   public triggerRecalculateTotal$ = new Subject<void>();
   public triggerRTaxValueTotal$ = new Subject<void>();
@@ -150,5 +156,13 @@ export class DataSharingService {
 
   getCurrentAdditionalDetails(): any {
     return this.additionalDetailsSubject.value;
+  }
+
+  setSelectedPartyId(partyId: number | string | null): void {
+    this.selectedPartyIdSubject.next(partyId);
+  }
+
+  getCurrentSelectedPartyId(): number | string | null {
+    return this.selectedPartyIdSubject.value;
   }
 }

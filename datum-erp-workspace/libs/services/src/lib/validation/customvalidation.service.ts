@@ -18,19 +18,45 @@ export function validCompanyName(control: AbstractControl): ValidationErrors | n
  
   return Object.keys(errors).length ? errors : null;
 }
+
+export function validName(control: AbstractControl) {
+  if (!control.value) return null;
+
+  const regex = /^[a-zA-Z\s]+$/;   // only letters + space
+  if (!regex.test(control.value)) {
+    return { validName: true };   // 👈 must match template
+  }
+
+  return null;
+}
+
  
+
 export function validPhoneNumber(control: AbstractControl): ValidationErrors | null {
-  const phoneRegex = /^[0-9]{10}$/;
+
   const value = (control.value || '').trim();
   const errors: ValidationErrors = {};
-  // return phoneRegex.test(control.value || '') ? null : { invalidPhone: true };
+
+  const localRegex = /^[0-9]{10}$/;
+
+  // + countrycode (2-3 digits) + optional space/hyphen + number (6-14 digits)
+  const intlRegex = /^\+[0-9]{2,3}([\s-]?[0-9]{6,14})$/;
+
   if (!value) {
     errors['required'] = true;
-  } else if (!phoneRegex.test(value)) {
-    errors['invalidPhoneNumber'] = true;
   }
-   return Object.keys(errors).length ? errors : null;
- 
+  else if (value.startsWith('+')) {
+    if (!intlRegex.test(value)) {
+      errors['invalidPhoneNumber'] = true;
+    }
+  }
+  else {
+    if (!localRegex.test(value)) {
+      errors['invalidPhoneNumber'] = true;
+    }
+  }
+
+  return Object.keys(errors).length ? errors : null;
 }
  
 export function validEmail(control: AbstractControl): ValidationErrors | null {

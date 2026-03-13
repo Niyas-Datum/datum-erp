@@ -1,0 +1,95 @@
+# Query: 420
+# ContextLines: 1
+
+25 results - 12 files
+
+apps\AuthApp\project.json:
+  62        "options": {
+  63:         "port": 4306,
+  64:         "publicHost": "http://localhost:4306"
+  65        },
+
+  91          "buildTarget": "AuthApp:build",
+  92:         "port": 4306,
+  93          "watch": false
+
+apps\coreApp\project.json:
+  62        "options": {
+  63:         "port": 4302,
+  64:         "publicHost": "http://localhost:4302"
+  65        },
+
+  91          "buildTarget": "coreApp:build",
+  92:         "port": 4302,
+  93          "watch": false
+
+apps\hostApp\project.json:
+  89          "buildTarget": "hostApp:build",
+  90:         "port": 4300,
+  91          "spa": true
+
+apps\hostApp\webpack.prod.config.ts:
+  19         remotes: [
+  20:         ['AuthApp', 'http://localhost:4306/remoteEntry.mjs'],
+  21:         ['coreApp', 'http://localhost:4302/remoteEntry.mjs'],
+  22        ],
+
+apps\loginApp\project.json:
+  62        "options": {
+  63:         "port": 4307,
+  64:         "publicHost": "http://localhost:4307"
+  65        },
+
+  91          "buildTarget": "loginApp:build",
+  92:         "port": 4307,
+  93          "watch": false
+
+apps\mfe\financeApp\project.json:
+  62        "options": {
+  63:         "port": 4305,
+  64:         "publicHost": "http://localhost:4305"
+  65        },
+
+  90          "buildTarget": "financeApp:build",
+  91:         "port": 4305,
+  92          "watch": false
+
+apps\mfe\generalApp\project.json:
+  62        "options": {
+  63:         "port": 4303,
+  64:         "publicHost": "http://localhost:4303"
+  65        },
+
+  90          "buildTarget": "generalApp:build",
+  91:         "port": 4303,
+  92          "watch": false
+
+apps\mfe\inventoryApp\project.json:
+  64        "options": {
+  65:         "port": 4304,
+  66:         "publicHost": "http://localhost:4304"
+  67        },
+
+  92          "buildTarget": "inventoryApp:build",
+  93:         "port": 4304,
+  94          "watch": false
+
+apps\mfe\inventoryApp\src\app\remote-entry\reports\generalregister\generalregister.component.ts:
+  348          { headerText: 'VNo', field: 'VNo', width: 200 },
+  349:         { headerText: 'Particulars', field: 'Particulars', width: 420 },
+  350  
+
+apps\mfe\inventoryApp\src\app\remote-entry\reports\purchasereports\purchaseregister\purchaseregister.component.ts:
+  149          { headerText: 'VNo', field: 'VNo', width: 200 },
+  150:         { headerText: 'Particulars', field: 'Particulars', width: 420 },
+  151  
+
+apps\mfe\inventoryApp\src\app\remote-entry\reports\salesreports\salesregister\salesregister.component.ts:
+  352          { headerText: 'VNo', field: 'VNo', width: 200 },
+  353:         { headerText: 'Particulars', field: 'Particulars', width: 420 },
+  354  
+
+libs\constants\src\lib\app.constants.ts:
+  11        production: true,
+  12:       apiUrl: 'http://localhost:4300/api',
+  13      },

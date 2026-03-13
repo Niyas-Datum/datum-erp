@@ -8,6 +8,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   OnInit,
   ViewChild,
@@ -68,6 +69,7 @@ export class PinventoryReferencePopupComponent implements OnInit {
   itemService = inject(ItemService);
   private formBuilder = inject(FormBuilder);
   private renderer = inject(Renderer2);
+  private cdr = inject(ChangeDetectorRef);
   
   referenceSearchForm!: FormGroup;
   filteredData: any = [];
@@ -84,19 +86,25 @@ export class PinventoryReferencePopupComponent implements OnInit {
   voucherTypesWithAll: any[] = [];
 
   ngOnInit(): void {
-    this.modifiedArray = JSON.parse(JSON.stringify(this.referenceData || []));
     this.resetSelectionState();
-    
+
     // Add "All" option to voucher types
     this.voucherTypesWithAll = [{ name: 'all' }, ...(this.voucherTypes || [])];
-    
+
     this.referenceSearchForm = this.formBuilder.group({
       vouchertype: ['all'],
       voucherno: [''],
       voucherdate: [''],
       party: [''],
     });
-    this.setReferenceData();
+
+    // Defer so inputs (referenceData, etc.) are applied by popup container's Object.assign
+    // before we read them - otherwise first search shows no data
+    setTimeout(() => {
+      this.modifiedArray = JSON.parse(JSON.stringify(this.referenceData || []));
+      this.setReferenceData();
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   private resetSelectionState(): void {
@@ -108,16 +116,17 @@ export class PinventoryReferencePopupComponent implements OnInit {
 
   setReferenceData() {
     const { vouchertype, voucherno, voucherdate, party } =
-      this.referenceSearchForm.value ?? {};
+      this.referenceSearchForm?.value ?? {};
 
     const vtFilter = (vouchertype ?? '').toString().trim();
     const vnFilter = (voucherno ?? '').toString().trim().toLowerCase();
     const pdFilter = voucherdate ?? null;
     const partyFilter = (party ?? '').toString().trim().toLowerCase();
 
-    const hasFilters = !!(vtFilter || vnFilter || pdFilter || partyFilter);
+    const hasFilters = !!(vnFilter || pdFilter || partyFilter) || (vtFilter && vtFilter.toLowerCase() !== 'all');
     if (!hasFilters) {
-      this.filteredData = [...this.modifiedArray];
+      this.filteredData = [...(this.modifiedArray || [])];
+      this.cdr.detectChanges();
       return;
     }
 
@@ -149,6 +158,7 @@ export class PinventoryReferencePopupComponent implements OnInit {
 
       return matches;
     });
+    this.cdr.detectChanges();
   }
 
   formatDate(date: any): string {

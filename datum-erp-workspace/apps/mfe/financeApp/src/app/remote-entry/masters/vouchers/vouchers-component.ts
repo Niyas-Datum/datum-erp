@@ -12,6 +12,8 @@ import {
   import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   import { EndpointConstant } from '@org/constants';
   import { EditSettingsModel, GridComponent, EditService } from '@syncfusion/ej2-angular-grids';
+  import { DialogComponent } from '@syncfusion/ej2-angular-popups';
+
   
   @Component({
     //eslint-disable-next-line @angular-eslint/component-selector
@@ -21,11 +23,19 @@ import {
     templateUrl: './vouchers-component.html',
     styleUrls: ['./vouchers-component.css'],
     providers: [EditService],
+    
   })
   export class VouchersComponent extends BaseComponent implements OnInit{
     @ViewChild('voucherGrid') voucherGrid?: GridComponent;
+    @ViewChild('numberingDialog') numberingDialog!: DialogComponent;
+    public showNumberingPopup = false;
+    public selectedVoucherForNumbering: any = null;
     private httpService = inject(FinanceAppService);
     private cdr = inject(ChangeDetectorRef);
+    isEditGrid = false;
+
+    
+  
     isEdit = true;
     isInputDisabled = true;
     payload={
@@ -54,7 +64,9 @@ import {
     }
   
     vouchersData: any[] = [];
+    allVouchersData: any[] = []; // Full list for search filtering
     originalData: any[] = []; // Store original data for comparison
+    searchName = '';
     
     editSettings: EditSettingsModel = {
       allowEditing: false,
@@ -68,7 +80,9 @@ import {
       this.SetPageType(2);
       this.fetchVouchers();
     }
- 
+    onClickSettings(): void {
+      console.log('Settings clicked');
+    }
 
     fetchVouchers(): void {
       this.httpService
@@ -76,42 +90,11 @@ import {
         .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
         .subscribe({
           next: (response) => {
-           
-            this.vouchersData = response.data;
+            this.allVouchersData = response.data ?? [];
+            this.applyNameFilter();
             this.cdr.detectChanges();
             
-        //     // Handle different response formats
-        //     let data: any[] = [];
-        //     if (Array.isArray(response)) {
-        //       // Response is directly an array
-        //       data = response;
-        //     } else if (response?.data && Array.isArray(response.data)) {
-        //       // Response has data property with array
-        //       data = response.data;
-        //     } 
-           
-            
-        //     // Filter out any empty or null rows
-        //     this.vouchersData = data.filter(item => item && item.id != null);
-        //     console.log('Vouchers loaded:', this.vouchersData.length, 'items');
-        //     this.isLoading = false;
-            
-        //     // Force change detection and refresh grid
-        //     this.cdr.detectChanges();
-            
-        //     // Refresh grid after data is loaded and change detection completes
-        //     setTimeout(() => {
-        //       if (this.voucherGrid) {
-        //         this.voucherGrid.dataSource = this.vouchersData;
-        //         this.voucherGrid.refresh();
-        //       }
-        //     }, 100);
-        //   },
-        //   error: (error) => {
-        //     console.error('Error fetching vouchers:', error);
-        //     this.vouchersData = [];
-        //     this.isLoading = false;
-        //     this.cdr.detectChanges();
+    
           },
         });
     }
@@ -120,6 +103,7 @@ import {
         alert('Permission Denied!');
         return false;
       }
+      this.isEditGrid = true;
       // Enable edit mode
       this.isInputDisabled = false;
       this.editSettings.allowEditing = true;
@@ -164,6 +148,7 @@ import {
             this.isInputDisabled = true;
             this.editSettings.allowEditing = false;
             this.fetchVouchers(); // Refresh data
+            this.isEditGrid = false;
           },
           error: (error) => {
             console.error('Error updating vouchers:', error);
@@ -244,6 +229,22 @@ import {
       return payload;
     }
 
+    onSearchByName(): void {
+      this.applyNameFilter();
+      this.cdr.detectChanges();
+    }
+
+    applyNameFilter(): void {
+      const term = (this.searchName || '').trim().toLowerCase();
+      if (!term) {
+        this.vouchersData = [...this.allVouchersData];
+        return;
+      }
+      this.vouchersData = this.allVouchersData.filter(
+        (row) => (row.name && String(row.name).toLowerCase().includes(term))
+      );
+    }
+
     onGridActionComplete(args: any): void {
       if (args.requestType === 'save') {
         // Handle save action if needed
@@ -255,7 +256,35 @@ import {
       console.log('Grid data bound. Row count:', this.voucherGrid?.getRows().length);
     }
 
+    onNumberingCellClick(data: any): void {
+        // 🚫 Prevent opening if not in edit mode
+  if (this.isInputDisabled) {
+    return;
+  }
+      this.selectedVoucherForNumbering = data.numbering;
+      console.log('selectedVoucherForNumbering is', this.selectedVoucherForNumbering);
+      this.showNumberingPopup = true;
+      this.numberingDialog.show();
+    }
+
+    onNumberingDialogOpen(): void {
+      this.cdr.detectChanges();
+    }
+
+    onNumberingDialogClose(): void {
+      if (!this.showNumberingPopup) return;
+      this.showNumberingPopup = false;
+      this.selectedVoucherForNumbering = null;
+      this.isInputDisabled = true;
+      if (this.numberingDialog) {
+        this.numberingDialog.hide();
+      }
+      this.fetchVouchers();
+      this.cdr.detectChanges();
+    }
+
     onNumberingChange(event: any, data: any): void {
+      console.log('data is',data);
       if (event && event.value !== undefined && event.value !== null) {
         // Convert to number if it's a string
         const value = typeof event.value === 'string' ? parseInt(event.value, 10) || 0 : event.value;

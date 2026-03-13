@@ -4,11 +4,15 @@
   "projectType": "application",
   "prefix": "app",
   "sourceRoot": "apps/hostApp/src",
-  "tags": ["scope:host"],
+  "tags": [
+    "scope:host"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/angular:webpack-browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/hostApp",
         "index": "apps/hostApp/src/index.html",
@@ -19,9 +23,16 @@
           {
             "glob": "**/*",
             "input": "apps/hostApp/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/ui/src/assets",
+            "output": "/assets/"
           }
         ],
-        "styles": ["apps/hostApp/src/styles.scss"],
+        "styles": [
+          "apps/hostApp/src/styles.scss"
+        ],
         "customWebpackConfig": {
           "path": "apps/hostApp/webpack.config.ts"
         }
@@ -60,8 +71,8 @@
       "continuous": true,
       "executor": "@nx/angular:module-federation-dev-server",
       "options": {
-        "port": 4200,
-        "publicHost": "http://localhost:4200"
+        "port": 4300,
+        "publicHost": "http://localhost:4300"
       },
       "configurations": {
         "production": {
@@ -87,7 +98,7 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "hostApp:build",
-        "port": 4200,
+        "port": 4300,
         "spa": true
       }
     }

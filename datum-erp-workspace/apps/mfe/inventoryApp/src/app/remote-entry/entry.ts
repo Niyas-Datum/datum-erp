@@ -1,25 +1,25 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { AfterViewInit, Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { LeftGridDto } from '@org/models';
 import { DataSharingService, FormToolbarService } from '@org/services';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-inventoryApp-entry',
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
-  styles: [`
- 
-  `],
+  styles: [``],
   templateUrl: './entry.html',
 })
-export class RemoteEntry  {
- public pageType:number ;
+export class RemoteEntry {
+  public pageType: number;
   public pageheading: string;
 
 
-  // Left side sectio hide and show
-  // Sidebar config
+  // Left side section - hide and show
+  // Sidebar configuration
   isSidebarVisible = true;
   sidebarType = 'Push'; // or 'Slide'
-  width = '300px';
+  width = '258px';
   target = '.main-content-wrapper';
   mediaQuery = '(min-width: 768px)';
 
@@ -38,6 +38,7 @@ export class RemoteEntry  {
     columns: [],
     data: [],
   }).value;
+  // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
   ngOnInit() {
   
     this.sharedService.leftdata$.subscribe((data) => {
@@ -51,18 +52,19 @@ export class RemoteEntry  {
       console.log(this.formToolbarService.pagetype);
     });
 
-    // Sync toolbar state from child (e.g. when page opens in New mode, show Save button)
+    // Apply toolbar state from child (e.g. Sales Invoice) so Save is enabled when in New Mode
     this.formToolbarService.getToolbarState$().subscribe((state) => {
+      if (state.isSaveBtnDisabled !== undefined) this.isSaveBtnDisabled = state.isSaveBtnDisabled;
       if (state.isNewMode !== undefined) this.isNewMode = state.isNewMode;
       if (state.isEditMode !== undefined) this.isEditMode = state.isEditMode;
-      if (state.isSaveBtnDisabled !== undefined) this.isSaveBtnDisabled = state.isSaveBtnDisabled;
-      if (state.isNewBtnDisabled !== undefined) this.isNewBtnDisabled = state.isNewBtnDisabled;
       if (state.isEditBtnDisabled !== undefined) this.isEditBtnDisabled = state.isEditBtnDisabled;
       if (state.isDeleteBtnDisabled !== undefined) this.isDeleteBtnDisabled = state.isDeleteBtnDisabled;
+      if (state.isNewBtnDisabled !== undefined) this.isNewBtnDisabled = state.isNewBtnDisabled;
       if (state.isPrintBtnDisabled !== undefined) this.isPrintBtnDisabled = state.isPrintBtnDisabled;
     });
   }
 
+  // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
   ngAfterViewInit() {
     this.sharedService.leftdata$.subscribe((data) => {
       this.leftgridchildData = data;
