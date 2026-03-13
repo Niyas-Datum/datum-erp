@@ -91,6 +91,10 @@
                                 floatLabelType="Auto"
                                 cssClass="e-input">
                             </ejs-textbox>
+                            <div *ngIf="ledgerForm.get('AccountCode')?.hasError('required') && ledgerForm.get('AccountCode')?.touched">
+                                <small class="text-danger">Account code is required.                                     
+                                </small>
+                            </div>
                         </div>
                     </div>
                     
@@ -107,7 +111,11 @@
                                 cssClass="e-input">
                             </ejs-textbox>
                             <div *ngIf="ledgerForm.get('AccountName')?.hasError('required') && ledgerForm.get('AccountName')?.touched">
-                                <small class="text-danger">This field is required.</small>
+                                <small class="text-danger">Account name is required.
+                                     <span *ngIf="ledgerForm.get('AccountName')?.errors?.['validName']">
+                                        Please Enter Valid Name
+                                    </span>
+                                </small>
                             </div>
                         </div>
                     </div>

@@ -4,8 +4,8 @@ import { InventoryAppService } from "../../http/inventory-app.service";
 import { firstValueFrom } from "rxjs";
 import { EndpointConstant } from "@org/constants";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ValidationService } from "@org/services";
-import { FormControl, FormGroup } from "@angular/forms";
+import { decimalOnly, integerOnly, ValidationService } from "@org/services";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BasicUnitDto, UnitMasterByIdDto, UnitMAstersDto } from "@org/models";
 
 @Component({
@@ -14,30 +14,30 @@ import { BasicUnitDto, UnitMasterByIdDto, UnitMAstersDto } from "@org/models";
   templateUrl: './unitmaster-component.html',
   styles: [],
 })
-export class UnitmasterComponent extends BaseComponent implements OnInit{
- private httpService = inject(InventoryAppService);
+export class UnitmasterComponent extends BaseComponent implements OnInit {
+  private httpService = inject(InventoryAppService);
   unitMasterForm = this.formUtil.thisForm;
-   isUpdate = signal(false);
-      // STATE PROPERTIES
-    isLoading = signal(false);
-    isInputDisabled = true;
-    isActive: unknown;
-    currentid = signal(0);
-      // TOOLBAR STATE PROPERTIES
-    isNewMode = signal(false);
-    isEditMode = signal(false);
-    isNewBtnDisabled = signal(false);
-    isEditBtnDisabled = signal(false);
-    isDeleteBtnDisabled = signal(false);
-    isSaveBtnDisabled = signal(false);
-    isPrintBtnDisabled = signal(false);
+  isUpdate = signal(false);
+  // STATE PROPERTIES
+  isLoading = signal(false);
+  isInputDisabled = true;
+  isActive: unknown;
+  currentid = signal(0);
+  // TOOLBAR STATE PROPERTIES
+  isNewMode = signal(false);
+  isEditMode = signal(false);
+  isNewBtnDisabled = signal(false);
+  isEditBtnDisabled = signal(false);
+  isDeleteBtnDisabled = signal(false);
+  isSaveBtnDisabled = signal(false);
+  isPrintBtnDisabled = signal(false);
   //userform = this.formUtil.thisForm;
-   allUnitMaster = signal<UnitMAstersDto[]>([]);
+  allUnitMaster = signal<UnitMAstersDto[]>([]);
   BasicUnitList = signal<BasicUnitDto[]>([]);
   currentUnitMaster = signal<UnitMasterByIdDto[]>([])
   selectedBasicUnit = signal<BasicUnitDto | null>(null);
   selectedUnitMasterUnit!: string;
-   submitted = false;
+  submitted = false;
   constructor() {
     super();
     this.commonInit();
@@ -46,48 +46,53 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
     this.onInitBase();
     this.SetPageType(1);
     this.fetchBasicUnit();
-    console.log(this.currentPageInfo?.menuText);
   }
   override FormInitialize(): void {
     this.unitMasterForm = new FormGroup({
-      // unit: [""],
-      // active: [true],
-      // basicunit: [''],
-      // factor: [null],
-      // precision: [null],
-      // iscomplex: [false],
-      // description: [''],
-      // arabicname: [''],
-       unit: new FormControl('', [ValidationService.required(), ValidationService.stringValidator()]),
+      unit: new FormControl({ value: '', disabled: false }, Validators.required),//new FormControl('', [ValidationService.required(), ValidationService.stringValidator()]),
       active: new FormControl(true),
       basicunit: new FormControl('', [ValidationService.required()]),
-      factor: new FormControl(null, [ValidationService.required()]),
-      precision: new FormControl(null, [ValidationService.required(), ValidationService.integerValidator()]),
+      factor: new FormControl({ value: null, disabled: false },[Validators.required, decimalOnly] ),
+      //new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]),
+      precision: new FormControl({ value: null, disabled: false },[Validators.required, integerOnly] ),
+      // precision:new FormControl({ value: '', disabled: this.isInputDisabled }, [integerOnly]),
       iscomplex: new FormControl(false),
-      description: new FormControl('', [ValidationService.required(), ValidationService.stringValidator()]),
+      description: new FormControl('', [ValidationService.required()]),
       arabicname: new FormControl(''),
     });
   }
-   override SaveFormData() {
-      console.log('data scving');
-      this.submitted = true;
-        const formValues = this.unitMasterForm.value;
-    if(!formValues.unit||formValues.unit.trim()==='' || !formValues.factor||formValues.factor.trim()==='')
-    {
-        alert("unit and factor is required");
-        return;
-    }
-//  if (this.unitMasterForm.invalid) {
-//               const invalidField = Object.keys(this.unitMasterForm.controls).find(
-//                 (key) => this.unitMasterForm.get(key)?.invalid
-//               );
-//               if (invalidField) {
-//                 alert(`Invalid field: ${invalidField}`);
-//               }
-//               return;
-//             }
+  isInvalid(controlName: string): boolean {
+    const control = this.unitMasterForm.get(controlName);
+    return !!(
+      control &&
+      control.invalid &&
+      (control.touched || control.dirty)
+    );
+  }
 
-    
+  override SaveFormData() {
+    this.submitted = true;
+     if (this.unitMasterForm.invalid) {
+      this.unitMasterForm.markAllAsTouched();      
+    }
+    const formValues = this.unitMasterForm.value;
+    if (!formValues.unit || formValues.unit.trim() === '') {
+      this.toast.error("Please enter the Unit");
+      return;
+    }
+    if (!formValues.factor || formValues.factor === '') {
+      this.toast.error("Please enter Factor");
+      return;
+    }
+    if (!formValues.precision) {
+      this.toast.error("Please enter Precision");
+      return;
+    }
+    if (!formValues.description) {
+      this.toast.error("Please enter Description");
+      return;
+    }
+
     const payload = {
       unit: formValues.unit,
       active: !!formValues.active,
@@ -101,7 +106,6 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
       description: formValues.description,
       arabicName: formValues.arabicname
     };
-    console.log("Save payload:" + JSON.stringify(payload, null, 2))
 
     if (this.isEditMode()) {
       this.updateUnit(payload);
@@ -110,68 +114,67 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
       this.saveUnit(payload);
     }
     this.isUpdate.set(false);
-                this.isNewMode.set(false);
-                this.isEditMode.set(false);
-                this.toggleForm(false);
-        
-                this.LeftGridInit();
+    this.isNewMode.set(false);
+    this.isEditMode.set(false);
+    this.toggleForm(false);
 
+    this.LeftGridInit();
+
+  }
+  toggleForm(editing: boolean) {
+    if (editing) {
+      this.unitMasterForm.enable();
+    } else {
+      this.unitMasterForm.disable();
     }
-    toggleForm(editing: boolean) {
-            if (editing) {
-              this.unitMasterForm.enable();
-            } else {
-              this.unitMasterForm.disable();
-            }
-            this.isInputDisabled = !editing;
-          }
-  
-    override async LeftGridInit() {
-      this.pageheading = 'UnitMaster';
-      try {
-  
-        // Developer permision allowed
-        const res = await firstValueFrom(
-          this.httpService
-            .fetch<any[]>(EndpointConstant.FILLALLUNITMASTER)
-            .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-        );
-  // not alolowed 
-        // handle data here after await completes
-        this.leftGrid.leftGridData = res.data;
-        console.log('Fetched data:', this.leftGrid.leftGridData);
-  
-        this.leftGrid.leftGridColumns = [
-          {
-            headerText: 'UnitMaster List',
-            columns: [
-              {
-                field: 'Unit',
-                datacol: 'Unit',
-                headerText: 'Unit',
-                textAlign: 'Left',
-              },
-              {
-                field: 'Description',
-                datacol: 'Description',
-                headerText: 'Description',
-                textAlign: 'Left',
-              },
-            ],
-          },
-        ];
-      } catch (err) {
-        console.error('Error fetching companies:', err);
-      }
+    this.isInputDisabled = !editing;
+  }
+
+  override async LeftGridInit() {
+    this.pageheading = 'UnitMaster';
+    try {
+
+      // Developer permision allowed
+      const res = await firstValueFrom(
+        this.httpService
+          .fetch<any[]>(EndpointConstant.FILLALLUNITMASTER)
+          .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      );
+      // not alolowed 
+      // handle data here after await completes
+      this.leftGrid.leftGridData = res.data;
+
+      this.leftGrid.leftGridColumns = [
+        {
+          headerText: 'UnitMaster List',
+          columns: [
+            {
+              field: 'Unit',
+              datacol: 'Unit',
+              headerText: 'Unit',
+              textAlign: 'Left',
+            },
+            {
+              field: 'Description',
+              datacol: 'Description',
+              headerText: 'Description',
+              textAlign: 'Left',
+            },
+          ],
+        },
+      ];
+    } catch (err) {
+      this.toast.error('Error fetching companies:'+ err);
     }
-    fetchBasicUnit(): void {
+  }
+  fetchBasicUnit(): void {
     this.httpService
       .fetch<any[]>(EndpointConstant.FILLUNITMASTERUNITDROPDOWN)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (res) => {
           if (!res || !res.data) {
-            console.error('Invalid response received:', res);
+            this.toast.error('Invalid response received:'+ res);
             return;
           }
 
@@ -186,10 +189,9 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
           }
 
           this.BasicUnitList.set(unitList);
-          console.log('BasicUnit loaded:', JSON.stringify(this.BasicUnitList, null, 2));
         },
         error: (err) => {
-          console.error('Error fetching basic units:', err);
+          this.toast.error('Error fetching basic units:', err);
         },
       });
   }
@@ -199,7 +201,6 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: async (response) => {
-          console.log('Save successful:', response);
           const resp = response as any; // cast to any and guard access
           const message = resp?.data?.msg ?? 'Unit saved successfully!';
           if (resp?.isValid) {
@@ -207,16 +208,16 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
           } else {
             alert('Save failed: ' + (message || ''));
           }
-           await this.LeftGridInit();
-            this.serviceBase.dataSharingService.setData({
-              columns: this.leftGrid.leftGridColumns,
-              data: this.leftGrid.leftGridData,
-              pageheading: this.pageheading,
-            });
+          await this.LeftGridInit();
+          this.serviceBase.dataSharingService.setData({
+            columns: this.leftGrid.leftGridColumns,
+            data: this.leftGrid.leftGridData,
+            pageheading: this.pageheading,
+          });
         },
         error: (err) => {
-          console.error('Error while saving unit:', err);
-          alert('An error occurred while saving.');
+          this.toast.error('Error while saving unit:', err);
+          
         }
       });
   }
@@ -227,87 +228,92 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: async (response) => {
-          console.log('Update successful:', response);
           const resp = response as any; // cast to any and guard access
           const message = resp?.data?.msg ?? 'Unit Update successfully!';
           if (resp?.isValid) {
-            alert(message);
+            this.toast.success(message);
           } else {
-            alert('Update failed: ' + (message || ''));
+            this.toast.error('Update failed: ' + (message || ''));
           }
-           await this.LeftGridInit();
-            this.serviceBase.dataSharingService.setData({
-              columns: this.leftGrid.leftGridColumns,
-              data: this.leftGrid.leftGridData,
-              pageheading: this.pageheading,
-            });
+          await this.LeftGridInit();
+          this.serviceBase.dataSharingService.setData({
+            columns: this.leftGrid.leftGridColumns,
+            data: this.leftGrid.leftGridData,
+            pageheading: this.pageheading,
+          });
         },
         error: (err) => {
-          console.error('Error while saving unit:', err);
-          alert('An error occurred while saving.');
+          this.toast.error('Error while saving unit:'+err);
+          
         }
       });
   }
-   override newbuttonClicked(): void {
-      console.log('new operation started');
-      this.isInputDisabled = !this.isInputDisabled;
-    this.isEditBtnDisabled =signal(!this.isInputDisabled);
+  override newbuttonClicked(): void {
+    this.isInputDisabled = !this.isInputDisabled;
+    this.isEditBtnDisabled = signal(!this.isInputDisabled);
     this.isDeleteBtnDisabled = signal(!this.isInputDisabled);
     this.isSaveBtnDisabled = signal(this.isInputDisabled);
     this.unitMasterForm.reset();
-    if(this.isInputDisabled == true){
+    if (this.isInputDisabled == true) {
       this.disbaleFormControls();
       //this.selectedUnitMasterUnit = this.fi;
       this.fetchUnitMasterById(this.selectedUnitMasterUnit);
-    } else{
+    } else {
       this.selectedUnitMasterUnit = "";
-      this.enableFormControls(); 
+      this.enableFormControls();
       this.unitMasterForm.patchValue({
-        active:true,       
-      });     
+        active: true,
+      });
     }
-    
-    }
-    protected override onEditClick(): void {
-      this.isInputDisabled = !this.isInputDisabled;
-        this.isDeleteBtnDisabled =signal(!this.isInputDisabled);
-        this.isNewBtnDisabled = signal(!this.isInputDisabled);
-        this.isSaveBtnDisabled = signal(this.isInputDisabled);
-        this.isUpdate = signal(!this.isInputDisabled);
-        if (!this.isInputDisabled) {
-        this.enableFormControls();
-        } else {
-        this.disbaleFormControls();
-        }
+
+  }
+  protected override onEditClick(): void {
+    this.isEditMode.set(true)
+    this.isInputDisabled = !this.isInputDisabled;
+    this.isDeleteBtnDisabled = signal(!this.isInputDisabled);
+    this.isNewBtnDisabled = signal(!this.isInputDisabled);
+    this.isSaveBtnDisabled = signal(this.isInputDisabled);
+    this.isUpdate = signal(!this.isInputDisabled);
+    if (!this.isInputDisabled) {
+      this.enableFormControls();
       
+    } else {
+      this.disbaleFormControls();
     }
 
-    
-    protected override DeleteData(data: any): void {
-      if (this.isUpdate() || !this.currentUnitMaster()) return;
-    if (!confirm('Delete this location type?')) return;
+  }
 
-      this.httpService.delete(EndpointConstant.DELETEUNITMASTER + this.selectedUnitMasterUnit)
-        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-        .subscribe({
-          next: (response) => {
-           // this.isLoading = false;
-            alert("Delete successfully");
-          },
-          error: (error) => {
-            console.error(
-              'An Error Occurred while deleting unit master ',
-              error
-            );
-          },
-        });
-    }
-    fetchUnitMasterById(unitName: string): void {
-      //id1:Number;
+
+  protected override DeleteData(data: any): void {
+    if (this.isUpdate() || !this.currentUnitMaster()) return;
+    if (!confirm('Delete this Unit?')) return;
+
+    this.httpService.delete(EndpointConstant.DELETEUNITMASTER + this.selectedUnitMasterUnit)
+      .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+      .subscribe({
+        next: (response) => {
+         if(response.httpCode===200){
+          this.toast.success("Delete successfully");
+         }
+         if(response.httpCode===500){
+          this.toast.error("This unit is used in another pages. So cannot be deleted!!")
+         }
+          
+        },
+        error: (error) => {
+         this.toast.error(
+            'An Error Occurred while deleting unit master ',
+            error
+          );
+        },
+      });
+  }
+  fetchUnitMasterById(unitName: string): void {
+this.selectedUnitMasterUnit=unitName;
     this.httpService
       .fetch<UnitMasterByIdDto[]>(
-        EndpointConstant.FILLUNITMASTERBYNAME+unitName
-        
+        EndpointConstant.FILLUNITMASTERBYNAME + unitName
+
       )
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
@@ -330,16 +336,16 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
           }
         },
         error: (error) => {
-          console.error(
+          this.toast.error(
             'An Error Occurred while fetching unit master by ID:',
             error
           );
         },
       });
-      this.LeftGridInit();
-      this.disbaleFormControls();
+    this.LeftGridInit();
+    this.disbaleFormControls();
   }
-  enableFormControls(){
+  enableFormControls() {
     this.unitMasterForm.get('unit')?.enable();
     this.unitMasterForm.get('basicunit')?.enable();
     this.unitMasterForm.get('precision')?.enable();
@@ -350,7 +356,7 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
     this.unitMasterForm.get('iscomplex')?.enable();
   }
 
-  disbaleFormControls(){
+  disbaleFormControls() {
     this.unitMasterForm.get('unit')?.disable();
     this.unitMasterForm.get('basicunit')?.disable();
     this.unitMasterForm.get('precision')?.disable();
@@ -361,7 +367,7 @@ export class UnitmasterComponent extends BaseComponent implements OnInit{
     this.unitMasterForm.get('iscomplex')?.disable();
   }
 
-protected override getDataById(data: UnitMasterByIdDto): void {
-  this.fetchUnitMasterById(data.unit)
-}
+  protected override getDataById(data: UnitMasterByIdDto): void {
+    this.fetchUnitMasterById(data.unit)
+  }
 }
