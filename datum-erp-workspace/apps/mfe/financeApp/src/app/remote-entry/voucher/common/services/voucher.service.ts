@@ -14,6 +14,8 @@ export class VoucherService {
 
   // Dropdown data signals (like ItemService.fillItemDataOptions)
   accountMasterData = signal<AccountMasterModel[]>([]);
+  /** Resolves when account master fetch completes; used so account popup can wait on first open */
+  accountMasterFetchPromise: Promise<void> | null = null;
   contraAccountsData = signal<any[]>([]);
   cashPopupData = signal<any[]>([]);
   cardPopupData = signal<any[]>([]);
@@ -26,25 +28,28 @@ export class VoucherService {
    * Like ItemService.fetchItemsWithParams()
    */
   fetchAccountMaster(): void {
-    // Don't fetch if already loaded
     if (this.accountMasterData().length > 0) {
-      console.log('✅ Account master already loaded');
       return;
     }
-
-    console.log('🔄 Fetching account master data...');
-
-    this.httpService
-      .fetch<AccountMasterModel[]>(EndpointConstant.COAACCOUNTPOPUP)
-      .subscribe({
-        next: (response) => {
-          this.accountMasterData.set(response?.data ?? []);
-          console.log('✅ Account master loaded:', this.accountMasterData().length, 'accounts');
-        },
-        error: (error) => {
-          console.error('❌ Error fetching account master:', error);
-        },
-      });
+    if (this.accountMasterFetchPromise) {
+      return;
+    }
+    this.accountMasterFetchPromise = new Promise((resolve, reject) => {
+      this.httpService
+        .fetch<AccountMasterModel[]>(EndpointConstant.COAACCOUNTPOPUP)
+        .subscribe({
+          next: (response) => {
+            this.accountMasterData.set(response?.data ?? []);
+            this.accountMasterFetchPromise = null;
+            resolve();
+          },
+          error: (error) => {
+            console.error('❌ Error fetching account master:', error);
+            this.accountMasterFetchPromise = null;
+            reject(error);
+          },
+        });
+    });
   }
 
   /**

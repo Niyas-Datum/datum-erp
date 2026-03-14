@@ -1,1 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Ensure item grid item search (Syncfusion multicolumn combobox) dropdown appears above header/tabs */
+.e-popup.e-dropdownbase,
+.e-popup.e-list-parent {
+  z-index: 9999 !important;
+}

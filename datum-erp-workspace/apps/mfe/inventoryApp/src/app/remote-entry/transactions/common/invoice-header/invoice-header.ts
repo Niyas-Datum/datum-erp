@@ -789,7 +789,8 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
    */
   openCustomerPopup(immediate = false): void {
     this.isUserInteraction = true;
-    if (!this.isComponentInitialized || this.isSettingDefaultValues) {
+    // When user explicitly clicks the search icon (immediate), open even if not yet "initialized" so first click works
+    if (!immediate && (!this.isComponentInitialized || this.isSettingDefaultValues)) {
       return;
     }
     if (!this.customerData || this.customerData.length === 0) {

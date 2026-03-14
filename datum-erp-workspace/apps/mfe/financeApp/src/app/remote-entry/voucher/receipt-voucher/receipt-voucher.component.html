@@ -112,7 +112,8 @@
               </e-column>
               <e-column field="accountName" headerText="AccountName" width="200" [allowEditing]="false"></e-column>
               <e-column field="description" headerText="Description" width="250"></e-column>
-              <e-column field="dueDate" headerText="DueDate" width="120"></e-column>
+              <e-column field="dueDate" headerText="DueDate" width="120" editType="datepickeredit" format="dd/MM/yyyy"
+                [edit]="{ params: { format: 'dd/MM/yyyy' } }"></e-column>
               <e-column
                 field="credit"
                 headerText="Credit"

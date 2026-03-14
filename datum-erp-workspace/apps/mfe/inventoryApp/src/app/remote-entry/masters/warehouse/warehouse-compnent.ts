@@ -97,25 +97,25 @@ export class WarehouseComponent extends BaseComponent implements OnInit {
     this.warehouseForm = new FormGroup({
       id: new FormControl({ value: 0, disabled: true }),
       code: new FormControl(
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.required, ValidationService.stringValidator()]
       ),
       name: new FormControl(
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.required, ValidationService.stringValidator()]
       ),
       locationTypeID: new FormControl(
-        { value: '', disabled: false },
+        { value: '', disabled: true },
         [Validators.required, ValidationService.stringValidator()]
       ),
-      address: new FormControl('', [Validators.required]),
-      remarks: new FormControl('', [Validators.required]),
-      active: new FormControl(0, [Validators.required]),
-      isDefault: new FormControl(0, [Validators.required]),
-      clearingPerCFT: new FormControl(0.0, [Validators.required]),
-      groundRentPerCFT: new FormControl(0.0, [Validators.required]),
-      lottingPerPiece: new FormControl(0.0, [Validators.required]),
-      lorryHirePerCFT: new FormControl(0.0, [Validators.required]),
+      address: new FormControl({ value: '', disabled: true }, [Validators.required]),
+      remarks: new FormControl({ value: '', disabled: true }, [Validators.required]),
+      active: new FormControl({ value: 0, disabled: true }, [Validators.required]),
+      isDefault: new FormControl({ value: 0, disabled: true }, [Validators.required]),
+      clearingPerCFT: new FormControl({ value: 0.0, disabled: true }, [Validators.required]),
+      groundRentPerCFT: new FormControl({ value: 0.0, disabled: true }, [Validators.required]),
+      lottingPerPiece: new FormControl({ value: 0.0, disabled: true }, [Validators.required]),
+      lorryHirePerCFT: new FormControl({ value: 0.0, disabled: true }, [Validators.required]),
     });
 
     console.log('form init completed');
@@ -173,7 +173,7 @@ export class WarehouseComponent extends BaseComponent implements OnInit {
     console.log('data', data);
     this.selectedWarehouseId = data?.id ?? 0;
     this.fetchWarehouseById();
-    this.EditModeSet();
+    // Keep form read-only; user must click Edit to enable editing
   }
 
   //fillbyid
@@ -263,10 +263,23 @@ export class WarehouseComponent extends BaseComponent implements OnInit {
 
     const v = this.warehouseForm.value;
 
-    if (!v.code || v.code.trim() === '' || !v.name || v.name.trim() === '') {
-      alert('Code and Name are required!');
+    if (!v.code || v.code.trim() === '' ) {
+      alert('Code is  required!');
       return;
     }
+    if (!v.name || v.name.trim() === '') {
+      alert('Name is required!');
+      return;
+    }
+    if (!v.address || v.address.trim() === '') {
+      alert('Address is required!');
+      return;
+    }
+    if (!v.remarks || v.remarks.trim() === '') {
+      alert('Remarks is required!');
+      return;
+    }
+
 
     const payload = this.buildPayload();
     console.info('Payloadsave:', payload);
