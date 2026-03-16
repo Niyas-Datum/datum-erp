@@ -47,6 +47,12 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
   selectedFormName = signal<string>('');
   currentEditingRow: any = null;
 
+  // Password dialog state
+  showPasswordDialog = signal(false);
+  passwordValue = signal('');
+  passwordError = signal<string | null>(null);
+  isSaving = signal(false);
+
   // Multicolumn combobox configuration
   text = 'Select Form Name';
   fields = { text: 'formName', value: 'formName' };
@@ -77,6 +83,8 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
     showConfirmDialog: false,
     showDeleteConfirmDialog: false
   };
+
+  
 
 
   ngOnInit(): void {
@@ -114,22 +122,11 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
        }
      }
      
-     // Handle save operation
+     // Handle save operation — args.data already has the user-edited values from the grid editor.
+     // Do NOT overwrite with editForm (which holds stale row-selected values).
      if (args.requestType === 'save') {
-       console.log('Save action begin - form data:', this.editForm.value);
-       console.log('Save action begin - args data:', args.data);
-       
-       // Merge form data with the save data, but preserve existing data
-       const formData = this.editForm.value;
-       // Only update fields that have values in the form, keep existing data for undefined fields
-       const mergedData = { ...args.data };
-       Object.keys(formData).forEach(key => {
-         if (formData[key] !== undefined && formData[key] !== null && formData[key] !== '') {
-           mergedData[key] = formData[key];
-         }
-       });
-       args.data = mergedData;
-       console.log('Merged data for save:', args.data);
+       console.log('Save action begin - args.data (edited row):', args.data);
+       args.data.pageId = args.data.pageId ?? args.data.pageID ?? 0;
      }
    }
 
@@ -189,6 +186,7 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
   // Handle form name selection from combobox
  
     onFormNameChange(event: any, data: any): void {
+      console.log('OnFormNameChange called');
       console.log('Form name changed:', event);
       console.log('Data:', data);
       console.log('Data ID:', data.id);
@@ -199,13 +197,26 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
         
         // Also update the data object directly for immediate display
         data.formName = event.value;
+      
         
         console.log('Updated formName to:', event.value);
         console.log('Form value after update:', this.editForm.value);
         console.log('Updated data:', data);
       }
     }
+
+    onLabelNameChange(event: any, data: any): void {
+      console.log('OnLabelNameChange called');
+      console.log('OnLabelNameChange called');
+      console.log('Event:', event);
+      console.log('Data:', data);
+      console.log('Data ID:', data.id);
     
+      if (event && event.value) {
+        // Update only the labelName field in the form, preserve other fields
+        this.editForm.patchValue({ labelName: event.value });
+      }
+    }
 
 
  
@@ -270,9 +281,22 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
     if (args.data) {
       this.selectedLabel.set(args.data);
       console.log('Selected label:', args.data);
-      
-      // Update form with selected row data
-      this.editForm.patchValue(args.data);
+
+      // Normalise row data to match form control names (pageID -> pageId, etc.)
+      const row = args.data as Record<string, unknown>;
+      const formValue = {
+        id: row['id'] ?? null,
+        formName: row['formName'] ?? '',
+        labelName: row['labelName'] ?? '',
+        originalCaption: row['originalCaption'] ?? '',
+        newCaption: row['newCaption'] ?? '',
+        pageId: row['pageId'] ?? row['pageID'] ?? 0,
+        visible: row['visible'] ?? true,
+        enable: row['enable'] ?? true,
+        arabicCaption: row['arabicCaption'] ?? ''
+      };
+
+      this.editForm.patchValue(formValue);
       console.log('Form updated with selected row data:', this.editForm.value);
     }
   }
@@ -327,67 +351,72 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
 
   /** -------------------- Data Operations -------------------- **/
   saveGridLabels(): void {
-    // Prompt for password
-    const password = prompt('Please enter password to save grid labels:');
-    
-    if (password === null) {
-      // User cancelled the prompt
-      console.log('Save operation cancelled by user');
+    this.passwordValue.set('');
+    this.passwordError.set(null);
+    this.showPasswordDialog.set(true);
+  }
+
+  onCancelPassword(): void {
+    console.log('Save operation cancelled by user');
+    this.showPasswordDialog.set(false);
+    this.passwordValue.set('');
+    this.passwordError.set(null);
+  }
+
+  onConfirmPassword(): void {
+    const password = (this.passwordValue() || '').trim();
+
+    if (!password) {
+      this.passwordError.set('Password is required to save grid labels');
       return;
     }
-    
-    if (!password || password.trim() === '') {
-      alert('Password is required to save grid labels');
-      return;
-    }
-    
-    const currentData = this.gridLabels();
+
+    this.showPasswordDialog.set(false);
+    this.passwordError.set(null);
+    this.isSaving.set(true);
+
+    const currentData =
+      (this.grid && (this.grid.dataSource as GridLabelDto[])) || this.gridLabels();
     console.log('Saving grid labels:', currentData);
-    
-    // Transform data to match API DTO structure
+
     const saveData: GridLabelSaveDto[] = currentData.map(item => ({
       id: item.id || 0,
       formName: {
-        name: (item.formName || '').trim()  // Trim whitespace from formName
+        name: (item.formName || '').trim()
       },
       labelName: (item.labelName || '').trim(),
       originalCaption: (item.originalCaption || '').trim(),
       newCaption: (item.newCaption || '').trim(),
-      pageId: item.pageId || 0,
+      pageId: item.pageId ?? (item as any).pageID ?? 0,
       arabicCaption: (item.arabicCaption || '').trim(),
-      visible: item.visible === true,  // Ensure boolean
-      enable: item.enable === true     // Ensure boolean
+      visible: item.visible === true,
+      enable: item.enable === true
     }));
-    
+
     console.log('Transformed save data:', saveData);
-    
-    // Call the save API with user-provided password
-    const endpointWithPassword = `${EndpointConstant.SAVELABELSETTINGS}${password.trim()}`;
+
+    const endpointWithPassword = `${EndpointConstant.SAVELABELSETTINGS}${password}`;
     this.httpService.post(endpointWithPassword, saveData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           console.log('Save response:', response);
-          
-          // Check for invalid password
+
           if (response?.data === 'Invalid password') {
             console.error('Invalid password');
             alert('❌ Invalid password. Please try again.');
             return;
           }
-          
-          // Check for server errors (500)
+
           if (response?.httpCode === 500) {
             console.error('Server error:', response?.data);
             alert(`❌ Server Error:\n${response?.data || 'Unknown server error'}\n\nPlease check the data and try again.`);
             return;
           }
-          
-          // Check for successful save
+
           if (response?.isValid && response?.httpCode === 200) {
             console.log('Grid labels saved successfully');
             alert('✅ Grid labels saved successfully!');
-            // Refresh data after successful save
             this.loadGridLabels();
           } else {
             console.error('Error saving grid labels:', response);
@@ -397,6 +426,10 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
         error: (error) => {
           console.error('Error saving grid labels:', error);
           alert('Error saving grid labels');
+        },
+        complete: () => {
+          this.isSaving.set(false);
+          this.passwordValue.set('');
         }
       });
   }
@@ -454,8 +487,26 @@ export class FormlabelsettingsComponent extends BaseComponent implements OnInit 
       this.onFormNamePopupClose();
     }
   }
+  onlabelNameChanged(event: any, data: any): void {
+    console.log('OnlabelNameChanged called');
+    console.log('Event:', event);
+    console.log('Data:', data);
+    if (event && event.value) {
+      // Update only the formName field in the form, preserve other fields
+      this.editForm.patchValue({ labelName: event.value });
+      
+      // Also update the data object directly for immediate display
+      data.labelName = event.value;
+      
+      console.log('Updated labelName to:', event.value);
+      console.log('Form value after update:', this.editForm.value);
+      console.log('Updated data:', data);
+    
+
+  }
   
 
+}
 }
 
 
