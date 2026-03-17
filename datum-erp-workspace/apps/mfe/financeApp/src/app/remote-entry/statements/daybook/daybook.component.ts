@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, inject, OnInit, signal, computed } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BaseComponent } from "@org/architecture";
 import { FinanceAppService } from "../../http/finance-app.service";
@@ -219,6 +219,9 @@ export class DaybookComponent extends BaseComponent implements OnInit {
 
     reportData: any[] = [];
 
+    totalDebit = 0;
+    totalCredit = 0;
+
 
     onClickGo(): void {
         this.getPageID();
@@ -231,7 +234,9 @@ export class DaybookComponent extends BaseComponent implements OnInit {
             .subscribe({
                 next: (res) => {
                     this.reportData = Array.isArray(res?.data) ? res.data : [];
-                    console.log("Report:" + JSON.stringify(this.reportData, null, 2))
+                    this.totalDebit = this.reportData.reduce((sum, row) => sum + (Number(row.Debit) || 0), 0);
+                    this.totalCredit = this.reportData.reduce((sum, row) => sum + (Number(row.Credit) || 0), 0);
+                    console.log("Report:" + JSON.stringify(this.reportData, null, 2));
                 },
                 error: (err) => {
                     console.error('DayBook load failed', err);
