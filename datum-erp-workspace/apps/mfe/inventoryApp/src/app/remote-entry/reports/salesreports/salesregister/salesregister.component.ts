@@ -354,6 +354,10 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
         // Clear grids
         this.reportData = [];
         this.leftSummaryData = [];
+
+        this.salesRegisterForm.patchValue({                   
+                    basicType: 'Sales Invoice' // since readonly textbox
+                });
     }
 
 
