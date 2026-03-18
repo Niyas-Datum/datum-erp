@@ -78,24 +78,32 @@
             </div>
 
             <!-- grid data -->
-            <div class="col-md-9 p-0">
+            <div class="col-md-9 p-0 d-flex flex-column">
 
-                <ejs-grid height="100%" gridLines="Both" allowResizing="true" [dataSource]="reportData">
-                    <e-columns>
-                        <e-column field="VDate" headerText="VDate" width="110"></e-column>
-                        <e-column field="VNo" headerText="VNo" width="140"></e-column>
-                        <e-column field="Particulars" headerText="Particulars" width="180"></e-column>
-                        <e-column field="CommonNarration" headerText="Common Narration" width="200"></e-column>
-                        <e-column field="Narration" headerText="Narration" width="250"></e-column>
-                        <e-column field="BillDetails" headerText="Bill Ref" width="180"></e-column>
-                        <e-column field="Debit" headerText="Debit" width="120" textAlign="Right"></e-column>
-                        <e-column field="Credit" headerText="Credit" width="120" textAlign="Right"></e-column>
-                        <e-column field="Posted" headerText="Posted" width="130" textAlign="Right"></e-column>
-                        <e-column field="ApprovalStatus" headerText="Approv" width="130" textAlign="Right"></e-column>
-                        <e-column field="UserName" headerText="UserName" width="130" textAlign="Right"></e-column>
-                    </e-columns>
+                <div class="flex-fill" style="overflow: auto;">
+                    <ejs-grid height="100%" gridLines="Both" allowResizing="true" [dataSource]="reportData">
+                        <e-columns>
+                            <e-column field="VDate" headerText="VDate" width="110"></e-column>
+                            <e-column field="VNo" headerText="VNo" width="140"></e-column>
+                            <e-column field="Particulars" headerText="Particulars" width="180"></e-column>
+                            <e-column field="CommonNarration" headerText="Common Narration" width="200"></e-column>
+                            <e-column field="Narration" headerText="Narration" width="250"></e-column>
+                            <e-column field="BillDetails" headerText="Bill Ref" width="180"></e-column>
+                            <e-column field="Debit" headerText="Debit" width="120" textAlign="Right"></e-column>
+                            <e-column field="Credit" headerText="Credit" width="120" textAlign="Right"></e-column>
+                            <e-column field="Posted" headerText="Posted" width="130" textAlign="Right"></e-column>
+                            <e-column field="ApprovalStatus" headerText="Approv" width="130" textAlign="Right"></e-column>
+                            <e-column field="UserName" headerText="UserName" width="130" textAlign="Right"></e-column>
+                        </e-columns>
+                    </ejs-grid>
+                </div>
 
-                </ejs-grid>
+                <!-- Fixed totals bar at the bottom -->
+                <div class="border-top bg-light px-3 py-2 d-flex justify-content-end gap-4"
+                     style="position: sticky; bottom: 0; z-index: 10; font-weight: 600; font-size: 0.95rem;">
+                    <span>Total Debit: <span class="text-success">{{ totalDebit | number:'1.2-2' }}</span></span>
+                    <span>Total Credit: <span class="text-danger">{{ totalCredit | number:'1.2-2' }}</span></span>
+                </div>
 
             </div>
 
