@@ -371,6 +371,10 @@ export class PurchaseRegisterComponent extends BaseComponent implements OnInit {
         // Clear grids
         this.reportData = [];
         this.leftSummaryData = [];
+
+        this.purchaseRegisterForm.patchValue({                   
+                    basicType: 'Sales Invoice' // since readonly textbox
+                });
     }
 
     safeObj(obj: any, controlValue: any) {
