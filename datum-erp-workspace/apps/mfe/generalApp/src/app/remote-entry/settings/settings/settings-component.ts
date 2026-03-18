@@ -307,8 +307,13 @@ export class SettingsComponentMain extends BaseComponent implements OnInit  {
             ],
           },
         ];
+        // ✅ Load first saved setting automatically
+    if (res?.data?.length > 0) {
+      const firstSetting = res.data[0];
+      this.getDataById(firstSetting);
+    }
       } catch (err) {
-        console.error('Error fetching companies:', err);
+        console.error('Error fetching settings:', err);
       }
     }
   
