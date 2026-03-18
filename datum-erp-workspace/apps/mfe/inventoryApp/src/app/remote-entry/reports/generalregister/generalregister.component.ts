@@ -39,6 +39,26 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
     cashId: any = 0;
     creditId: any = 0;
 
+    
+    totalDebit = 0;
+    totalCredit = 0;
+
+    allVoucherTypesarr: VOUCHERTYPE[] = [];
+     currentBranch = signal<number>(1);
+    currentUser = signal<number>(1);
+    private localstorageService = inject(LocalStorageService);
+
+    //basic type
+      basicTypesarr: BASICTYPE[] = [];
+    selectedBasicType: any = null;
+    baseTypeObj: any = null;
+
+    public basicTypeColumns = [
+        { field: 'id', header: 'ID', width: 70 },
+        { field: 'name', header: 'Basic Type', width: 200 },
+
+    ];    
+
     ngOnInit(): void {
         this.generalRegisterForm = new FormGroup({
             from: new FormControl(null, Validators.required),
@@ -79,24 +99,21 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         console.log("payment types:" + JSON.stringify(this.paymentTypes, null, 2))
         this.cashId = this.paymentTypes.find(payment => payment.name === "Cash")?.id;
         this.creditId = this.paymentTypes.find(payment => payment.name === "Credit")?.id;
-
     }
-
-    currentBranch = signal<number>(1);
-    currentUser = signal<number>(1);
-    private localstorageService = inject(LocalStorageService);
+   
 
     fetchAllFilterMasterData(): void {
-
+ 
         this.httpService
             .fetch(EndpointConstant.FILLGENERALREGISTERMASTERFILTER)
             .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
             .subscribe({
                 next: (response) => {
-
+ 
                     let filterMasterData: any = response?.data;
                     this.basicTypesarr = filterMasterData.basicTypes;
-                    this.voucherTypesarr = filterMasterData.voucherTypes;
+                    this.allVoucherTypesarr = filterMasterData.voucherTypes || [];
+                    this.voucherTypesarr = []; // initially empty
                     this.itemsArr = filterMasterData.items;
                     this.staffArr = filterMasterData.staffs;
                     this.customerSupplierArr = filterMasterData.customerSupplier;
@@ -105,51 +122,63 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
                     this.counters = filterMasterData.counters;
                     this.users = filterMasterData.users;
                     this.branches = filterMasterData.branches;
-
+ 
                     //setting current branch by default
                     const savedBranchId = Number(this.localstorageService.getLocalStorageItem('current_branch'));
                     this.currentBranch.set(savedBranchId);
-
+ 
                     //setting current user by default
                     const userId = Number(
                         this.localstorageService.getLocalStorageItem('current_user')
                     );
                     this.currentUser.set(userId);
-
+ 
                     this.generalRegisterForm.patchValue({
                         branch: savedBranchId,
                         user: userId
                     });
-
+ 
                     this.branchObj = this.branches.find(b => b.id === savedBranchId) ?? null;
                     this.userObj = this.users.find(b => b.id === userId) ?? null;
-
+ 
                     this.setCashCreditID();
                     this.currentBranch.set(
                         Number(this.localstorageService.getLocalStorageItem('current_branch'))
                     );
-
+ 
                 },
                 error: (error) => {
-
+ 
                     console.error('An Error Occured', error);
                 },
             });
-    }
+    }    
 
-    //basic type
-    basicTypesarr: BASICTYPE[] = [];
-    selectedBasicType: any = null;
-    baseTypeObj: any = null;
+    //basic type 
 
-    public basicTypeColumns = [
-        { field: 'id', header: 'ID', width: 70 },
-        { field: 'name', header: 'Basic Type', width: 200 },
-
-    ];
     onBasicTypeSelect(event: any) {
-        this.baseTypeObj = event.itemData;
+    const data = event?.itemData;
+ 
+    if (!data) {
+        this.baseTypeObj = null;
+        this.voucherTypesarr = [];
+        return;
     }
+ 
+    this.baseTypeObj = data;
+    const basicTypeId = data.id;
+ 
+    this.voucherTypesarr = this.allVoucherTypesarr.filter(
+        v => Number(v.primaryVoucherId) === Number(basicTypeId)
+    );
+ 
+    this.generalRegisterForm.get('voucherType')?.setValue(null);
+    this.voucherTypeObj = null;
+}
+      onVoucherTypeSelect(event: any) {
+    const data = event?.itemData;
+    this.voucherTypeObj = data ? data : null;
+}
 
     //vouchertype popup
     voucherTypesarr = [] as Array<VOUCHERTYPE>;
@@ -161,14 +190,12 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         { field: 'code', header: 'Code', width: 90 },
         { field: 'name', header: 'Name', width: 200 }
     ];
-    onVoucherTypeSelect(event: any) {
-        this.voucherTypeObj = event.itemData;
-    }
-
+   
     //customer/supplier popup
     customerSupplierArr = [] as Array<CUSTOMERSUPPLIER>;
     public selectedCustSupplType: any = null;
     customerSupplierObj: any = null;
+
     public customerSupplierTypeColumns = [
         { field: 'id', header: 'ID', width: 70 },
         { field: 'accountCode', header: 'Account Code', width: 90 },
@@ -194,7 +221,7 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
     onItemSelect(event: any) {
         this.itemObj = event.itemData;
     }
-
+    
     //staff popup
     staffArr = [] as Array<STAFF>;
     public selectedStaff: any = null;
@@ -346,6 +373,7 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
     inventoryColumns = [
         { headerText: 'VType', field: 'VType', width: 140 },
         { headerText: 'VNo', field: 'VNo', width: 200 },
+        { headerText: 'VDate', field: 'VDate', width: 200 },
         { headerText: 'Particulars', field: 'Particulars', width: 420 },
 
         { headerText: 'Debit', field: 'Debit', width: 160, textAlign: 'Right' },
@@ -365,23 +393,29 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         { headerText: 'Party Inv No', field: 'PartyInvNo', width: 200 }
     ];
 
+    safeObj(obj: any, controlValue: any) {
+        return (controlValue && obj) ? this.cleanObj(obj) : this.cleanObj(null);
+    }
+
     onClickGo() {
         const formValue = this.generalRegisterForm.value;
 
         const payload = {
-            viewBy: formValue.selectedView === 'inventory' ? true : false,
+            viewBy: formValue.selectedView === 'inventory',
+
             from: formValue.from,
             to: formValue.to,
-            baseType: this.cleanObj(this.baseTypeObj),
-            voucherType: this.cleanObj(this.voucherTypeObj),
-            customerSupplier: this.cleanObj(this.customerSupplierObj),
-            item: this.cleanObj(this.itemObj),
-            staff: this.cleanObj(this.staffObj),
-            area: this.cleanObj(this.areaObj),
-            paymentType: this.cleanObj(this.paymentTypeObj),
-            counter: this.cleanObj(this.counterObj),
-            user: this.cleanObj(this.userObj),
-            branch: this.cleanObj(this.branchObj),
+
+            baseType: this.safeObj(this.baseTypeObj, formValue.basicType),
+            voucherType: this.safeObj(this.voucherTypeObj, formValue.voucherType),
+            customerSupplier: this.safeObj(this.customerSupplierObj, formValue.customerSupplier),
+            item: this.safeObj(this.itemObj, formValue.item),
+            staff: this.safeObj(this.staffObj, formValue.staff),
+            area: this.safeObj(this.areaObj, formValue.area),
+            paymentType: this.safeObj(this.paymentTypeObj, formValue.paymentType),
+            counter: this.safeObj(this.counterObj, formValue.counter),
+            user: this.safeObj(this.userObj, formValue.user),
+            branch: this.safeObj(this.branchObj, formValue.branch),
 
             invoiceNo: formValue.invoiceNo,
             batchNo: formValue.batchNo,
@@ -400,7 +434,19 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
             .subscribe({
                 next: (response: any) => {
 
-                    this.reportData = Array.isArray(response.data) ? response.data : [];
+                    //this.reportData = Array.isArray(response.data) ? response.data : [];
+                    this.reportData = (Array.isArray(response.data) ? response.data : []).map((x: any) => {
+
+                        const spaces = (x.particulars?.match(/^\s*/) || [''])[0].length;
+
+                        return {
+                            ...x,
+                            debit: Number(x.debit || 0),
+                            credit: Number(x.credit || 0),
+                            level: Math.floor(spaces / 3)   // hierarchy level
+                        };
+
+                    });
                     console.log("data:" + JSON.stringify(this.reportData, null, 2))
                     this.gridColumns =
                         formValue.selectedView === 'inventory'
@@ -408,6 +454,20 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
                             : this.financeColumns;
 
                     this.setLeftSideData(this.reportData);
+
+                    if (formValue.selectedView === 'inventory') {
+
+                        const totalRow = {
+                            VType: '',
+                            VNo: '',
+                            VDate: '',
+                            Particulars: '',
+                            Debit: this.totalDebit,
+                            Credit: this.totalCredit
+                        };
+
+                        this.reportData = [...this.reportData, totalRow];
+                    }
                 },
                 error: () => {
                     this.reportData = [];
@@ -469,6 +529,9 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
                 }
             });
 
+            this.totalDebit = totalDebit;
+            this.totalCredit = totalCredit;
+
             this.leftSummaryData = [
                 { particulars: 'Cash', debit: cashDebit, credit: cashCredit },
                 { particulars: 'Credit', debit: creditDebit, credit: creditCredit },
@@ -495,7 +558,7 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         console.log("left summary" + JSON.stringify(this.leftSummaryData, null, 2))
     }
 
-//-----------pdf generation----------------
+    //-----------pdf generation----------------
 
     onPreviewPdf(): void {
 
@@ -523,11 +586,12 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         return [
             { header: 'VType', field: 'VType' },
             { header: 'VNo', field: 'VNo' },
+            { header: 'VDate', field: 'VDate' },
             { header: 'VATNo', field: 'VATNO' },
             { header: 'Name', field: 'Particulars' },
             { header: 'Debit', field: 'Debit', align: 'right' },
             { header: 'Credit', field: 'Credit', align: 'right' }
-            
+
         ];
     }
 
@@ -539,6 +603,32 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
             { header: 'Credit', field: 'credit', align: 'right' }
         ];
     }
+    onRowBound(args: any) {
 
+        if (args.data?.Particulars === '') {
+            args.row.style.fontWeight = 'bold';
+            args.row.style.background = '#f3f3f3';
+        }
+        if (args.data?.isGroup === true) {
 
+            args.row.style.fontWeight = "bold";
+            args.row.style.background = "#f5f5f5";
+
+        }
+
+    }
+
+    onQueryCellInfo(args: any) {
+
+        const isFinance = this.generalRegisterForm.value.selectedView === 'finance';
+
+        if (isFinance && args.column.field === 'particulars') {
+
+            const level = args.data.level || 0;
+
+            args.cell.style.paddingLeft = (level * 25) + 'px';
+
+        }
+
+    }
 }
