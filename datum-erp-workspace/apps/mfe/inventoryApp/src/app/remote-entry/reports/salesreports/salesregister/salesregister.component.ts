@@ -381,7 +381,7 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
         { headerText: 'Debit', field: 'Debit', width: 160, textAlign: 'Right' },
         { headerText: 'Credit', field: 'Credit', width: 160, textAlign: 'Right' },
 
-        { headerText: 'Added Date', field: 'VDate', width: 150 },
+        { headerText: 'Added Date', field: 'AddedDate', width: 150 },
         { headerText: 'Reference No', field: 'ReferenceNo', width: 170 },
         { headerText: 'Tax Form', field: 'TaxFormID', width: 150 },
         { headerText: 'Mode', field: 'ModeID', width: 130 },
@@ -441,8 +441,15 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
 
                         const spaces = (x.particulars?.match(/^\s*/) || [''])[0].length;
 
+                        const formatDate = (val: any) => {
+                            if (!val) return null;
+                            return new Date(val).toLocaleDateString('en-GB'); // dd/mm/yyyy
+                        };
+
                         return {
                             ...x,
+                             VDate: formatDate(x.VDate),
+                            AddedDate: formatDate(x.AddedDate),
                             debit: Number(x.debit || 0),
                             credit: Number(x.credit || 0),
                             level: Math.floor(spaces / 3)   // hierarchy level
