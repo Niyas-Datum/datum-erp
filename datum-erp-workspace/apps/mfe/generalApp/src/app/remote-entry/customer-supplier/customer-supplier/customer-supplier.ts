@@ -118,7 +118,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   imageBase64: string | null = null; // for payload
   showImageContainer = true;
   selectedFile: File | null = null;
-  allowedFormats = ['image/jpeg', 'image/png', 'image/webp'];
+
 
   //sales type
   saleTypes = signal<Array<{ id: string; value: string }>>([
@@ -239,12 +239,12 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
       letsystemgeneratenewaccountforparty: true
     });
     this.imageData = null;
-    this.viewDialogFlag=true;
-     // clear API array
-  this.allDeliveryDetails = [];
+    this.viewDialogFlag = true;
+    // clear API array
+    this.allDeliveryDetails = [];
 
-  // clear UI rows
-this.deliveryRows = [];
+    // clear UI rows
+    this.deliveryRows = [];
   }
 
   //form initialisation
@@ -596,50 +596,7 @@ this.deliveryRows = [];
     this.fetchAccount(selectedId);
   }
 
-  // fetchAccount(accountGroupId: any) {
-  //   this.httpService
-  //     .fetch(EndpointConstant.FILLCUSTOMERACCOUNT + accountGroupId + '&tree=true')
-  //     .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-  //     .subscribe({
-  //       next: (response) => {
-  //         //this.accountData = response?.data as any;
-  //         this.accountData.set(response?.data ?? [] as any);
-  //         if (this.selectedAccountId != 0) {
-  //           this.customerSupplierForm.patchValue({
-  //             account: this.selectedAccountId
-  //           });
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.error('An Error Occured', error);
-  //       },
-  //     });
-  // }
 
-  // fetchAccount(accountGroupId: any) {
-
-  //   if (!accountGroupId) return;
-
-  //   this.httpService
-  //     .fetch(EndpointConstant.FILLCUSTOMERACCOUNT + accountGroupId + '&tree=true')
-  //     .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-  //     .subscribe({
-  //       next: (response) => {
-
-  //         this.accountData.set(response?.data ?? [] as any);
-
-  //         // 🔥 Patch AFTER datasource set
-  //         if (this.selectedAccountId) {
-  //           this.customerSupplierForm.patchValue({
-  //             account: Number(this.selectedAccountId)
-  //           });
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.error('An Error Occured', error);
-  //       },
-  //     });
-  // }
   fetchAccount(accountGroupId: any) {
 
     if (!accountGroupId) return;
@@ -676,27 +633,27 @@ this.deliveryRows = [];
 
   onselectAccount(event: any) {
 
-  const selectedAccountId = event.value;
+    const selectedAccountId = event.value;
 
-  if (!selectedAccountId) return;
+    if (!selectedAccountId) return;
 
-  const exists = this.leftGrid.leftGridData.some((x: any) =>
-    x.accountID === selectedAccountId &&
-    x.id !== this.selectedCustomerSupplierId
-  );
+    const exists = this.leftGrid.leftGridData.some((x: any) =>
+      x.accountID === selectedAccountId &&
+      x.id !== this.selectedCustomerSupplierId
+    );
 
-  if (exists) {
+    if (exists) {
 
-    this.toast.error('This account is already used by another Party');
+      this.toast.error('This account is already used by another Party');
 
-    // reset dropdown
-    this.customerSupplierForm.patchValue({
-      account: null
-    });
+      // reset dropdown
+      this.customerSupplierForm.patchValue({
+        account: null
+      });
+
+    }
 
   }
-
-}
 
   //Image uploading
   //imagePreview: string | null = null;
@@ -704,15 +661,14 @@ this.deliveryRows = [];
 
   onImageSelect(event: Event) {
     const input = event.target as HTMLInputElement;
+
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
 
-    if (!file.type.startsWith('image/')) {
-      this.toast.error('Only image files are allowed');
-      input.value = '';
-      return;
-    }
+    // 👇 Reset immediately (optional trick)
+    input.value = '';
+
 
     if (file.size > 5 * 1024 * 1024) {
       this.toast.error('File size exceeds 5MB');
@@ -723,8 +679,8 @@ this.deliveryRows = [];
     this.selectedImageFile = file;
     const reader = new FileReader();
     reader.onload = () => {
-      this.imageData = reader.result as string; 
-      console.log("image:"+this.imageData)  // ✅ base64 ready  
+      this.imageData = reader.result as string;
+      console.log("image:" + this.imageData)  // ✅ base64 ready  
       this.cd.detectChanges();                       // optional
     };
 
@@ -985,7 +941,7 @@ this.deliveryRows = [];
   }
 
   private FillById(): void {
-    this.allDeliveryDetails=[];
+    this.allDeliveryDetails = [];
     this.deliveryRows = [];
 
     this.customerSupplierForm.reset();
@@ -1003,6 +959,7 @@ this.deliveryRows = [];
 
           const payload = response?.data ?? response;
           const result = payload?.result;
+         
           const custDetails = payload?.custDetails ?? null;
 
           this.allDeliveryDetails = payload?.delDetails ?? [];
@@ -1179,8 +1136,20 @@ this.deliveryRows = [];
       letsystemgeneratenewaccountforparty: true
     });
     this.customerSupplierForm.get('account')?.enable();
-    this.viewDialogFlag=true;
-    // this.onTypeSelect();
+    this.viewDialogFlag = true;
+    
+     // 🔥 ADD THIS BLOCK
+  const cur = this.currentCustomerSupplier();
+
+  if (cur) {
+    const typeText = cur.nature === 'C' ? 'Customer' : 'Supplier';
+
+    // load account group
+    this.fetchAccountGroup(typeText);
+
+    // optional: store account id for later patch
+    this.selectedAccountId = cur.accountID ?? null;
+  }
   }
 
   markTouched(controlName: string) {
@@ -1216,9 +1185,8 @@ this.deliveryRows = [];
       return;
     }
 
-    if(this.customerSupplierForm.value.letsystemgeneratenewaccountforparty===false && this.customerSupplierForm.value.account===null)
-    {
-       this.toast.warning('Please select an account for party!!');
+    if (this.customerSupplierForm.value.letsystemgeneratenewaccountforparty === false && this.customerSupplierForm.value.account === null) {
+      this.toast.warning('Please select an account for party!!');
       return;
     }
     this.allDeliveryDetails = this.deliveryRows.map(r => ({ ...r }));
@@ -1354,7 +1322,7 @@ this.deliveryRows = [];
     } else {
       this.createCallback(payload);
     }
-this.viewDialogFlag=false;
+    this.viewDialogFlag = false;
   }
 
   updateCallback(payload: any) {
@@ -1390,8 +1358,8 @@ this.viewDialogFlag=false;
             if (queryParams && queryParams['partyId'] && queryParams['partyId'] == 0) {
               localStorage.setItem('customerSaved', JSON.stringify({ timestamp: new Date() }));
             }
-          } 
-          else if(response.httpCode==500){
+          }
+          else if (response.httpCode == 500) {
             this.toast.error("Code is already exists for account of another Party!! Please change the code!!")
           }
           else {
@@ -1407,22 +1375,31 @@ this.viewDialogFlag=false;
 
   //delete customer -supplier
 
+
   override DeleteData() {
+
     const confirmed = confirm('Are you sure you want to delete this details?');
-    if (!confirmed) {
-      return;
-    }
-    console.log("delete url:"+EndpointConstant.DELETECUSTOMERSUPPLIER + this.selectedCustomerSupplierId+'&pageId=105')
-    this.httpService.delete(EndpointConstant.DELETECUSTOMERSUPPLIER + this.selectedCustomerSupplierId + '&pageId=105')
+    if (!confirmed) return;
+
+    this.httpService
+      .delete(EndpointConstant.DELETECUSTOMERSUPPLIER + this.selectedCustomerSupplierId + '&pageId=105')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
-        next: (res) => {
-          this.toast.success('Deleted successfully');
-          this.LeftGridInit();
+        next: (res: any) => {
+          //this.toast.success(res.data);
+
+          if (res.httpCode === 201) {
+            this.toast.success(res.data);
+            this.LeftGridInit();
+          } else {
+            this.toast.error(res.data);
+          }
         },
+        error: (err) => {
+          this.toast.error("Error in deleting Customer Supplier")
+        }
       });
   }
-
   // Delivery details
   deliveryRows = [
     {
