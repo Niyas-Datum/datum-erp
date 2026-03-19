@@ -39,17 +39,17 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
     cashId: any = 0;
     creditId: any = 0;
 
-    
+
     totalDebit = 0;
     totalCredit = 0;
 
     allVoucherTypesarr: VOUCHERTYPE[] = [];
-     currentBranch = signal<number>(1);
+    currentBranch = signal<number>(1);
     currentUser = signal<number>(1);
     private localstorageService = inject(LocalStorageService);
 
     //basic type
-      basicTypesarr: BASICTYPE[] = [];
+    basicTypesarr: BASICTYPE[] = [];
     selectedBasicType: any = null;
     baseTypeObj: any = null;
 
@@ -57,9 +57,10 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         { field: 'id', header: 'ID', width: 70 },
         { field: 'name', header: 'Basic Type', width: 200 },
 
-    ];    
+    ];
 
     ngOnInit(): void {
+
         this.generalRegisterForm = new FormGroup({
             from: new FormControl(null, Validators.required),
             to: new FormControl(null, Validators.required),
@@ -100,16 +101,16 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         this.cashId = this.paymentTypes.find(payment => payment.name === "Cash")?.id;
         this.creditId = this.paymentTypes.find(payment => payment.name === "Credit")?.id;
     }
-   
+
 
     fetchAllFilterMasterData(): void {
- 
+
         this.httpService
             .fetch(EndpointConstant.FILLGENERALREGISTERMASTERFILTER)
             .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
             .subscribe({
                 next: (response) => {
- 
+
                     let filterMasterData: any = response?.data;
                     this.basicTypesarr = filterMasterData.basicTypes;
                     this.allVoucherTypesarr = filterMasterData.voucherTypes || [];
@@ -122,63 +123,63 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
                     this.counters = filterMasterData.counters;
                     this.users = filterMasterData.users;
                     this.branches = filterMasterData.branches;
- 
+
                     //setting current branch by default
                     const savedBranchId = Number(this.localstorageService.getLocalStorageItem('current_branch'));
                     this.currentBranch.set(savedBranchId);
- 
+
                     //setting current user by default
                     const userId = Number(
                         this.localstorageService.getLocalStorageItem('current_user')
                     );
                     this.currentUser.set(userId);
- 
+
                     this.generalRegisterForm.patchValue({
                         branch: savedBranchId,
                         user: userId
                     });
- 
+
                     this.branchObj = this.branches.find(b => b.id === savedBranchId) ?? null;
                     this.userObj = this.users.find(b => b.id === userId) ?? null;
- 
+
                     this.setCashCreditID();
                     this.currentBranch.set(
                         Number(this.localstorageService.getLocalStorageItem('current_branch'))
                     );
- 
+
                 },
                 error: (error) => {
- 
+
                     console.error('An Error Occured', error);
                 },
             });
-    }    
+    }
 
     //basic type 
 
     onBasicTypeSelect(event: any) {
-    const data = event?.itemData;
- 
-    if (!data) {
-        this.baseTypeObj = null;
-        this.voucherTypesarr = [];
-        return;
+        const data = event?.itemData;
+
+        if (!data) {
+            this.baseTypeObj = null;
+            this.voucherTypesarr = [];
+            return;
+        }
+
+        this.baseTypeObj = data;
+        const basicTypeId = data.id;
+
+        this.voucherTypesarr = this.allVoucherTypesarr.filter(
+            v => Number(v.primaryVoucherId) === Number(basicTypeId)
+        );
+
+        this.generalRegisterForm.get('voucherType')?.setValue(null);
+        this.voucherTypeObj = null;
     }
- 
-    this.baseTypeObj = data;
-    const basicTypeId = data.id;
- 
-    this.voucherTypesarr = this.allVoucherTypesarr.filter(
-        v => Number(v.primaryVoucherId) === Number(basicTypeId)
-    );
- 
-    this.generalRegisterForm.get('voucherType')?.setValue(null);
-    this.voucherTypeObj = null;
-}
-      onVoucherTypeSelect(event: any) {
-    const data = event?.itemData;
-    this.voucherTypeObj = data ? data : null;
-}
+    onVoucherTypeSelect(event: any) {
+        const data = event?.itemData;
+        this.voucherTypeObj = data ? data : null;
+    }
 
     //vouchertype popup
     voucherTypesarr = [] as Array<VOUCHERTYPE>;
@@ -190,7 +191,7 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         { field: 'code', header: 'Code', width: 90 },
         { field: 'name', header: 'Name', width: 200 }
     ];
-   
+
     //customer/supplier popup
     customerSupplierArr = [] as Array<CUSTOMERSUPPLIER>;
     public selectedCustSupplType: any = null;
@@ -221,7 +222,7 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
     onItemSelect(event: any) {
         this.itemObj = event.itemData;
     }
-    
+
     //staff popup
     staffArr = [] as Array<STAFF>;
     public selectedStaff: any = null;
@@ -379,7 +380,7 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         { headerText: 'Debit', field: 'Debit', width: 160, textAlign: 'Right' },
         { headerText: 'Credit', field: 'Credit', width: 160, textAlign: 'Right' },
 
-        { headerText: 'Added Date', field: 'VDate', width: 150 },
+        { headerText: 'Added Date', field: 'AddedDate', width: 150 },
         { headerText: 'Reference No', field: 'ReferenceNo', width: 170 },
         { headerText: 'Tax Form', field: 'TaxFormID', width: 150 },
         { headerText: 'Mode', field: 'ModeID', width: 130 },
@@ -439,8 +440,15 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
 
                         const spaces = (x.particulars?.match(/^\s*/) || [''])[0].length;
 
+                        const formatDate = (val: any) => {
+                            if (!val) return null;
+                            return new Date(val).toLocaleDateString('en-GB'); // dd/mm/yyyy
+                        };
+
                         return {
                             ...x,
+                            VDate: formatDate(x.VDate),
+                            AddedDate: formatDate(x.AddedDate),
                             debit: Number(x.debit || 0),
                             credit: Number(x.credit || 0),
                             level: Math.floor(spaces / 3)   // hierarchy level
