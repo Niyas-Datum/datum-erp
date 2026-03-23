@@ -224,16 +224,14 @@
             <!-- main grid -->
             <div class="col-md-9 p-3">
                 <ejs-grid [dataSource]="reportData" [allowPaging]="true" [allowSorting]="true" [allowResizing]="true"
-                    [pageSettings]="{ pageSize: 20 }" gridLines="Both" height="500" [enableHover]="true"
-                    (rowDataBound)="onRowBound($event)">
+                    [toolbar]="['Search']" [pageSettings]="{ pageSize: 20 }" gridLines="Both" height="500"
+                    [enableHover]="true">
 
                     <e-columns>
                         <e-column *ngFor="let col of gridColumns" [field]="col.field" [headerText]="col.headerText"
                             [width]="col.width" [textAlign]="col.textAlign">
                         </e-column>
                     </e-columns>
-
-
 
                 </ejs-grid>
             </div>
