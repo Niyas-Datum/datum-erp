@@ -47,7 +47,7 @@
                                             <ejs-textbox id="reference" formControlName="reference"
                                                 (keydown)="onFormKeyDown($event,5)" [tabindex]="4"></ejs-textbox>
                                             <span class="e-input-group-icon e-btn"
-                                                (click)="openImportReferencePopup()"><i
+                                                (click)="$event.stopPropagation(); openImportReferencePopup()"><i
                                                     class="e-icons e-search"></i></span>
                                         </div>
                                     </div>
@@ -89,7 +89,7 @@
                                     <div class="col-8">
                                         <div class="e-input-group">
                                             <ejs-textbox formControlName="customer"></ejs-textbox>
-                                            <span class="e-input-group-icon e-btn" (click)="openCustomerPopup()"><i
+                                            <span class="e-input-group-icon e-btn" (click)="$event.stopPropagation(); openCustomerPopup(true)"><i
                                                     class="e-icons e-search"></i></span>
                                         </div>
                                     </div>
@@ -208,7 +208,7 @@
                   <ejs-textbox cssClass="e-outline w-100" formControlName="reference">
                   </ejs-textbox>
 
-                  <span class="e-input-group-icon e-btn flex-shrink-0" (click)="openImportReferencePopup()">
+                  <span class="e-input-group-icon e-btn flex-shrink-0" (click)="$event.stopPropagation(); openImportReferencePopup()">
                     <i class="e-icons e-search"></i>
                   </span>
 
@@ -224,7 +224,7 @@
               <p class="col-12 col-md-3 mb-0 font-size-custome form-label">Warehouse</p>
               <div class="col-12 col-md-9">
                 <ejs-dropdownlist class="w-100" id="warehouse" cssClass="e-outline" formControlName="warehouse"
-                  [dataSource]="warehouseData" virtu [fields]="{ text: 'value', value: 'id' }" placeholder="Select warehouse"
+                  [dataSource]="warehouseData" [fields]="{ text: 'value', value: 'id' }" placeholder="Select warehouse"
                   [value]="salesForm.get('warehouse')?.value" (change)="onChangeWarehouse($event)"
                   [disabled]="isMobile">
                 </ejs-dropdownlist>
@@ -246,7 +246,7 @@
               <div class="col-12 col-md-8">
                 <div class="e-input-group w-100">
                   <ejs-textbox cssClass="e-outline" formControlName="customer"></ejs-textbox>
-                  <span class="e-input-group-icon e-btn" (click)="openCustomerPopup()">
+                  <span class="e-input-group-icon e-btn" (click)="$event.stopPropagation(); openCustomerPopup(true)">
                     <i class="e-icons e-search"></i>
                   </span>
                 </div>
@@ -298,7 +298,12 @@
             <div class="row g-1">
               <p class="col-12 col-md-2 mb-0 font-size-custome form-label">Project</p>
               <div class="col-12 col-md-10">
-                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="project"></ejs-textbox>
+                <div class="e-input-group w-100">
+                  <ejs-textbox class="w-100" cssClass="e-outline" formControlName="project" placeholder="Search..."></ejs-textbox>
+                  <span class="e-input-group-icon e-btn flex-shrink-0" (click)="$event.stopPropagation(); openProjectPopup(true)">
+                    <i class="e-icons e-search"></i>
+                  </span>
+                </div>
               </div>
             </div>
           </div>

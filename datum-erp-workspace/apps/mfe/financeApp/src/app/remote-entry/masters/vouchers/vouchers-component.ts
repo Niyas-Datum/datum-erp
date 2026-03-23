@@ -94,38 +94,7 @@ import {
             this.applyNameFilter();
             this.cdr.detectChanges();
             
-        //     // Handle different response formats
-        //     let data: any[] = [];
-        //     if (Array.isArray(response)) {
-        //       // Response is directly an array
-        //       data = response;
-        //     } else if (response?.data && Array.isArray(response.data)) {
-        //       // Response has data property with array
-        //       data = response.data;
-        //     } 
-           
-            
-        //     // Filter out any empty or null rows
-        //     this.vouchersData = data.filter(item => item && item.id != null);
-        //     console.log('Vouchers loaded:', this.vouchersData.length, 'items');
-        //     this.isLoading = false;
-            
-        //     // Force change detection and refresh grid
-        //     this.cdr.detectChanges();
-            
-        //     // Refresh grid after data is loaded and change detection completes
-        //     setTimeout(() => {
-        //       if (this.voucherGrid) {
-        //         this.voucherGrid.dataSource = this.vouchersData;
-        //         this.voucherGrid.refresh();
-        //       }
-        //     }, 100);
-        //   },
-        //   error: (error) => {
-        //     console.error('Error fetching vouchers:', error);
-        //     this.vouchersData = [];
-        //     this.isLoading = false;
-        //     this.cdr.detectChanges();
+    
           },
         });
     }

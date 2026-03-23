@@ -526,40 +526,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   }
 
   // Enter edit mode for the selected voucher
-  // override onEditClick() {
-  //   const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
-  //   if (!selectedId || Number(selectedId) <= 0) {
-  //     this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
-  //     return;
-  //   }
 
-  //   // Check if voucher is beyond editable period
-  //   if (this.isVoucherBeyondEditablePeriod()) {
-  //     this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
-  //     this.updateGridEditSettings();
-  //     return;
-  //   }
-
-  //   this.selectedPaymentVoucherId = Number(selectedId);
-  //   // Set page type to edit mode
-  //   this.updateGridEditSettings();
-
-  //   // Enable the form for editing
-  //   this.paymentVoucherForm.enable();
-
-  //   // Keep voucher name and voucher no disabled (read-only in edit mode)
-  //   this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
-  //   this.paymentVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
-
-  //   // Ensure dropdown data is loaded for editors/popups
-  //   this.voucherService.fetchAccountMaster();
-  //   this.voucherService.fetchBankDetails();
-
-  //   // Only fetch details if not already loaded
-  //   if (!this.currentPaymentVoucher || this.currentPaymentVoucher.id !== this.selectedPaymentVoucherId) {
-  //     this.fetchPaymentVoucherById();
-  //   }
-  // }
   override onEditClick() {
   const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
 
@@ -873,9 +840,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
         },
       });
   }
-
-  // Fetch account details from ACCOUNTCODEPOPUP endpoint
-  // fetchAccountDetails removed - now using voucherService.fetchAccountMaster()
 
   // Fetch Cash popup data
   fetchCashPopup(): void {

@@ -9,6 +9,8 @@ import {
   input,
   computed,
   ViewChild,
+  ViewChildren,
+  QueryList,
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -27,7 +29,10 @@ import {
   ToolbarService,
   GridComponent,
 } from '@syncfusion/ej2-angular-grids';
-import { MultiColumnComboBoxModule } from '@syncfusion/ej2-angular-multicolumn-combobox';
+import {
+  MultiColumnComboBoxModule,
+  MultiColumnComboBoxComponent,
+} from '@syncfusion/ej2-angular-multicolumn-combobox';
 import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 
 import { TransactionService } from '../services/transaction.services';
@@ -44,6 +49,7 @@ import { CommonService } from '../services/common.services';
 })
 export class ItemList implements OnInit, OnDestroy {
   @ViewChild('grid') public grid!: GridComponent;
+  @ViewChildren(MultiColumnComboBoxComponent) private itemCodeCombos!: QueryList<MultiColumnComboBoxComponent>;
 
   // Injected services
   private transactionService = inject(TransactionService);
@@ -65,6 +71,19 @@ public itemService = inject(ItemService);
   // Dynamic page info properties
   private currentPageId: number | null = null;
   private currentVoucherId: number | null = null;
+
+  /** Set true after we auto-focus Item Code on New Mode load so we don't refocus repeatedly. */
+  private hasAutoFocusedItemCodeInNewMode = false;
+
+  /** True while the Item Search (multicolumn combobox) dropdown list is open. Enter must select item, not create row. */
+  private isItemSearchPopupOpen = false;
+
+  /** Capture-phase handler: prevent form submit on Enter when popup is open; do not stopPropagation so combobox still receives Enter to select item. */
+  private documentEnterHandler = (event: KeyboardEvent): void => {
+    if (this.isItemSearchPopupOpen && event.key === 'Enter') {
+      event.preventDefault();
+    }
+  };
 
   // Input signals
   isNewMode = input(false);
@@ -108,6 +127,30 @@ public itemService = inject(ItemService);
       }
     });
 
+    // When Sales page loads in New Mode with one row, auto-focus Item Code so user can type immediately (Item Search ready)
+    effect(() => {
+      if (!this.isNewMode()) {
+        this.hasAutoFocusedItemCodeInNewMode = false;
+        return;
+      }
+      const rows = this.commonService.tempItemFillDetails();
+      if (rows.length !== 1 || this.hasAutoFocusedItemCodeInNewMode) return;
+      this.hasAutoFocusedItemCodeInNewMode = true;
+      const delay = 600;
+      const t = setTimeout(() => {
+        if (this.grid && this.commonService.tempItemFillDetails().length === 1) {
+          const gridAny = this.grid as any;
+          if (typeof gridAny.editCell === 'function') {
+            gridAny.editCell(0, 'itemCode');
+          } else {
+            this.grid.selectRow(0);
+            this.grid.startEdit();
+          }
+        }
+      }, delay);
+      return () => clearTimeout(t);
+    });
+
     // Listen for imported items from reference popup (only when items exist)
     effect(() => {
       const importedItems = this.itemService.importedResponse();
@@ -141,6 +184,9 @@ public itemService = inject(ItemService);
   }
 
   ngOnInit(): void {
+    // Prevent Enter from submitting form / refreshing page when Item Search popup is open (capture = before form).
+    document.addEventListener('keydown', this.documentEnterHandler, true);
+
     // Subscribe to currentPageInfo to get dynamic pageId and voucherId
     this.subscribeToCurrentPageInfo();
 
@@ -163,6 +209,7 @@ public itemService = inject(ItemService);
   }
 
   ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.documentEnterHandler, true);
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -189,10 +236,31 @@ public itemService = inject(ItemService);
   /** -------------------- Data Fetching -------------------- **/
   
   /**
-   * Lazy loads items when user opens the item search dropdown
-   * This improves initial page load performance by only loading items when needed
+   * Opens the item search popup when the Item Code field receives focus (click or Tab).
+   * This restores the behavior where typing in Item Code shows the search list.
    */
-  onItemSearchOpen(): void {
+  onItemCodeFocus(): void {
+    setTimeout(() => {
+      const list = this.itemCodeCombos?.toArray();
+      const combo = list?.find((c) => c.element?.contains(document.activeElement)) ?? list?.[0];
+      if (combo && typeof (combo as any).showPopup === 'function') {
+        (combo as any).showPopup();
+      }
+    }, 0);
+  }
+
+  /**
+   * Lazy loads items when user opens the item search dropdown and ensures popup is visible above header/tabs.
+   * This improves initial page load performance by only loading items when needed.
+   */
+  onItemSearchOpen(args?: any): void {
+    this.isItemSearchPopupOpen = true;
+
+    // Ensure item search dropdown appears above header, tabs, and other content
+    if (args?.popup) {
+      args.popup.zIndex = 9999;
+    }
+
     // Check if items are already loaded
     if (this.itemService.fillItemDataOptions().length > 0) {
       return;
@@ -205,6 +273,13 @@ public itemService = inject(ItemService);
 
     // Lazy load items when user opens the search dropdown
     this.itemService.fetchItemsWithParams(this.currentPageId, 1, this.currentVoucherId, 12230);
+  }
+
+  /**
+   * Called when the Item Search dropdown closes. Ensures Enter is not interpreted as "next row" while list is open.
+   */
+  public onItemSearchClose(): void {
+    this.isItemSearchPopupOpen = false;
   }
 
   private fetchPurchaseById(): void {
@@ -303,10 +378,9 @@ public itemService = inject(ItemService);
         this.calculateRowTotals(data, selectedItem.taxPerc ?? 0);
         this.updateRowInGrid(data);
 
+        // Move focus to Qty so user can Tab through Qty, Rate, etc.
         setTimeout(() => {
-          this.grid.endEdit();
-          this.itemService.addNewRow();
-          this.refreshGridAfterRowChange();
+          this.moveToNextColumn(data.rowId, 'qty');
         }, 100);
       }
     } else {
@@ -473,12 +547,32 @@ public itemService = inject(ItemService);
 
   /** -------------------- Keyboard Navigation -------------------- **/
   onKeyDown(event: KeyboardEvent, data: any, currentField: string): void {
-    if (event.key !== 'Enter') return;
-
-    event.preventDefault();
     const fields = ['itemCode', 'unit', 'qty', 'rate'];
     const currentIndex = fields.indexOf(currentField);
 
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
+      if (nextIndex >= 0 && nextIndex < fields.length) {
+        this.moveToNextColumn(data.rowId, fields[nextIndex]);
+      } else if (!event.shiftKey && nextIndex >= fields.length) {
+        this.handleRowNavigation(data);
+      }
+      return;
+    }
+
+    if (event.key !== 'Enter') return;
+
+    // When Item Search popup is open: prevent form submit (page refresh) but let Syncfusion select the highlighted item.
+    // We must preventDefault + stopPropagation so Enter does not submit the form; Syncfusion still handles selection.
+    // (change) will then fire, onItemSelect will run and move focus to Qty.
+    if (currentField === 'itemCode' && this.isItemSearchPopupOpen) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    event.preventDefault();
     if (currentIndex < fields.length - 1) {
       this.moveToNextColumn(data.rowId, fields[currentIndex + 1]);
     } else {
@@ -495,8 +589,9 @@ public itemService = inject(ItemService);
     } else {
       this.itemService.addNewRow();
       setTimeout(() => {
-        const newRow = rows[rows.length - 1];
-        this.moveToNextColumn(newRow.rowId, 'itemCode');
+        const updated = this.commonService.tempItemFillDetails();
+        const newRow = updated[updated.length - 1];
+        if (newRow) this.moveToNextColumn(newRow.rowId, 'itemCode');
       }, 100);
     }
   }
@@ -504,14 +599,42 @@ public itemService = inject(ItemService);
   private moveToNextColumn(rowId: number, field: string): void {
     this.grid.endEdit();
     setTimeout(() => {
-      const rowIndex = this.commonService.tempItemFillDetails()
-        .findIndex((row: any) => row.rowId === rowId);
+      const rowIndex = this.commonService.tempItemFillDetails().findIndex(
+        (row: any) => row.rowId === rowId
+      );
 
-      if (rowIndex !== -1) {
+      if (rowIndex === -1) return;
+
+      const gridAny = this.grid as any;
+      if (typeof gridAny.editCell === 'function') {
+        gridAny.editCell(rowIndex, field);
+      } else {
         this.grid.selectRow(rowIndex);
         this.grid.startEdit();
       }
     }, 50);
+  }
+
+  /**
+   * Adds a new row to the grid and starts editing the Item Code cell so the user can type and open Item Search.
+   * Called when the user clicks the "New Item" button.
+   */
+  onAddNewItem(): void {
+    this.itemService.addNewRow();
+    this.refreshGridAfterRowChange();
+    setTimeout(() => {
+      const rows = this.commonService.tempItemFillDetails();
+      const rowIndex = rows.length - 1;
+      if (rowIndex >= 0 && this.grid) {
+        const gridAny = this.grid as any;
+        if (typeof gridAny.editCell === 'function') {
+          gridAny.editCell(rowIndex, 'itemCode');
+        } else {
+          this.grid.selectRow(rowIndex);
+          this.grid.startEdit();
+        }
+      }
+    }, 150);
   }
 
   /** -------------------- Filtering -------------------- **/

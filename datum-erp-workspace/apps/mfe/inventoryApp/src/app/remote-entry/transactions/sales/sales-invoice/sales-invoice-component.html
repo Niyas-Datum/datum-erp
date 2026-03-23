@@ -43,7 +43,11 @@
                 <div>Item Details</div>
               </ng-template>
               <ng-template #content>
-                <app-item-list [isNewMode]="isNewMode()" [isEditMode]="isEditMode()"></app-item-list> </ng-template>
+                <app-item-list
+                  [isNewMode]="isNewMode()"
+                  [isEditMode]="isEditMode()"
+                ></app-item-list>
+              </ng-template>
             </e-tabitem>
 
             <e-tabitem>
@@ -91,3 +95,5 @@
 
     <!-- Alert / confirmation dialog host (for viewDialog: unsaved changes, delete confirm, etc.) -->
     <!-- <div id="alertDialog" #dialogAlert></div> -->
+<!-- Alert / confirmation dialog host (for viewDialog: unsaved changes, delete confirm, etc.) -->
+<div id="alertDialog" #dialogAlert></div>

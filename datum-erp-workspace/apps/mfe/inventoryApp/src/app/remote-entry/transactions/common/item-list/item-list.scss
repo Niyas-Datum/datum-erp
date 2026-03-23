@@ -286,3 +286,17 @@
 ::ng-deep #transactionGrid {
   width: 100% !important;
 }
+
+/* Toolbar above grid: New Item button */
+.item-grid-toolbar {
+  min-height: 2rem;
+  .btn-label {
+    margin-left: 0.25rem;
+  }
+}
+
+/* Ensure item search (multicolumn combobox) dropdown appears above header/tabs/footer */
+::ng-deep .item-search-combobox.e-popup,
+::ng-deep .e-popup.e-dropdownbase {
+  z-index: 9999 !important;
+}
