@@ -1204,7 +1204,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       party: this.extractCustomerInfo(headerForm.customer),
       currency: { id: 1, value: 'SAR' },
       exchangeRate: 1,
-      project: this.extractProjectInfo(headerForm.project),
+      project: this.normalizeLookup(this.extractProjectInfo(headerForm.project)),
       description: headerForm.description || null,
       grossAmountEdit: this.invoiceHeader?.isgrossAmountEditable || false,
       fiTransactionAdditional: this.buildAdditionalInfo(headerForm, footerForm),
@@ -1218,20 +1218,20 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     return {
       transactionId: transactionId,
       terms: footerForm.terms || null,
-      warehouse: this.extractWarehouseInfo(headerForm.warehouse),
+      warehouse: this.normalizeLookup(this.extractWarehouseInfo(headerForm.warehouse)),
       partyInvoiceNo: this.coerceToString(additionalForm.partyInvoiceNo ?? additionalForm.invoiceno ?? headerForm.partyinvoiceno),
       partyDate: this.convertToISODate(additionalForm.partyInvoiceDate || additionalForm.invoicedate || headerForm.partyinvoicedate),
       orderDate: this.convertToISODate(additionalForm.orderdate),
       orderNo: additionalForm.orderno || null,
       partyNameandAddress: additionalForm.partyaddress || this.invoiceHeader?.address || null,
       expiryDate: this.convertToISODate(additionalForm.expirydate),
-      transPortationType: this.extractIdValue(additionalForm.transportationtype),
+      transPortationType: this.normalizeLookup(this.extractIdValue(additionalForm.transportationtype)),
       creditPeriod: additionalForm.creditperiod || null,
-      salesMan: this.extractSalesmanInfo(additionalForm.salesman),
-      salesArea: this.extractIdValue(additionalForm.salesarea),
+      salesMan: this.normalizeLookup(this.extractSalesmanInfo(additionalForm.salesman)),
+      salesArea: this.normalizeLookup(this.extractIdValue(additionalForm.salesarea)),
       staffIncentives: additionalForm.staffincentive || null,
       mobileNo: additionalForm.mobilenumber || null,
-      vehicleNo: this.extractVehicleInfo(additionalForm.vehicleno),
+      vehicleNo: this.normalizeLookup(this.extractVehicleInfo(additionalForm.vehicleno)),
       attention: additionalForm.attention || null,
       despatchNo: additionalForm.dispatchno || null,
       despatchDate: this.convertToISODate(additionalForm.dispatchdate),
@@ -1240,14 +1240,14 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       partyName: additionalForm.deliverypartyname || null,
       addressLine1: additionalForm.addressline1 || null,
       addressLine2: additionalForm.addressline2 || null,
-      delivaryLocation: this.extractDeliveryLocationInfo(additionalForm.deliverylocation),
+      delivaryLocation: this.normalizeLookup(this.extractDeliveryLocationInfo(additionalForm.deliverylocation)),
       termsOfDelivery: additionalForm.terms || null,
       payType: this.extractPayType(footerForm.paytype),
       approve: headerForm.approve || null,
       days: 0,
       closeVoucher: footerForm.closeVoucher ?? false,
-      code: additionalForm.code || 'string',
-      isHigherApproval: true,
+      code: this.coerceToString(additionalForm.code),
+      isHigherApproval: typeof additionalForm.isHigherApproval === 'boolean' ? additionalForm.isHigherApproval : null,
       vatNo: headerForm.vatno || null,
     };
   }
@@ -1606,6 +1606,16 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     }
 
     return null;
+  }
+
+  /** Normalize unresolved lookup objects to null so API doesn't receive empty {} payloads. */
+  private normalizeLookup(value: any): any {
+    if (value == null) return null;
+    if (typeof value !== 'object') return value;
+    const keys = Object.keys(value);
+    if (keys.length === 0) return null;
+    if ('id' in value && (value.id == null || value.id === '')) return null;
+    return value;
   }
 
   /** Normalize unit to { unit, basicunit, factor } - backend C# model expects lowercase "basicunit", not "basicUnit". */
