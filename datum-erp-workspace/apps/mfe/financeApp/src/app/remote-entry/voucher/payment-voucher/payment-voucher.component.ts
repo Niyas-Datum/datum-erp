@@ -245,8 +245,10 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       }
 
       const accountDetails = accRows.map((r: any) => {
+        // Support both camelCase and API/grid field names for debit value.
+        const rawDebit = r.debit ?? r.Debit ?? r.amount ?? r.Amount ?? 0;
         // Round to 2 decimal places to avoid floating-point precision errors
-        const debitAmount = parseFloat((Number(r.debit) || 0).toFixed(2));
+        const debitAmount = parseFloat((Number(rawDebit) || 0).toFixed(2));
 
         const obj: any = {
           accountCode: {
@@ -309,7 +311,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       for (const row of accRows) {
         if (Array.isArray(row.poAllocations) && row.poAllocations.length) {
           const sumAlloc = row.poAllocations.reduce((s: number, a: any) => s + (Number(a.amount) || 0), 0);
-          const rowDebit = Number(row.debit) || 0;
+          const rowDebit = Number(row.debit ?? row.Debit ?? row.amount ?? row.Amount) || 0;
           if (Math.abs(sumAlloc - rowDebit) > 0.0001) {
             this.showError(`Allocation total (${sumAlloc.toFixed(2)}) does not match row debit (${rowDebit.toFixed(2)}) for account ${row.accountName || ''}`);
             return;
@@ -1241,8 +1243,14 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       return;
     }
 
-    // Handle dueDate edits - store as date-only (dd/MM/yyyy) so grid shows no time
+    // Handle dueDate edits - keep empty values empty (avoid 01/01/1970)
     if (columnName === 'dueDate') {
+      if (value === null || value === undefined || value === '') {
+        rowData.dueDate = '';
+        this.voucherCommonService.updateAccountRow(rowData);
+        return;
+      }
+
       const dateOnly = value instanceof Date
         ? this.datePipe.transform(value, 'dd/MM/yyyy')
         : (typeof value === 'string' && /^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/.test(value)
@@ -1255,7 +1263,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
     // Check if debit column was edited (Payment Voucher uses Debit)
     if (columnName === 'debit') {
-      const debitValue = value || 0;
+      const debitValue = Number(value) || 0;
 
       // Validate that account is selected
       if (!rowData.accountId || !rowData.accountCode) {
@@ -1273,6 +1281,9 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       if (this.voucherService.unpaidPOsData().length > 0) {
         this.openPOAllocationPopup(debitValue, rowData);
       } else {
+        // No PO allocation flow: persist manual debit to shared row state used by SaveFormData.
+        rowData.debit = parseFloat(debitValue.toFixed(2));
+        this.voucherCommonService.updateAccountRow(rowData);
         console.log(`ℹ️ No unpaid POs for account ${rowData.accountCode}. Manual debit entry: ${debitValue}`);
       }
     }
