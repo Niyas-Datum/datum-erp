@@ -162,9 +162,7 @@
       <h6 class="section-title">Account Details</h6>
       <ejs-grid #accountDetailsGrid [dataSource]="voucherCommonService.accountDetailsData()"
         [editSettings]="accountDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true" gridLines="Both"
-        height="200px" [rowHeight]="30" 
-        [enableVirtualization]="true"
-  [enableColumnVirtualization]="true"(cellSave)="onAccountDetailsCellSave($event)">
+        height="200px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)">
         <e-columns>
           <e-column field="accountCode" headerText="AccountCode" width="150">
             <ng-template #editTemplate let-data>
@@ -186,6 +184,7 @@
                 [edit]="{ params: { format: 'dd/MM/yyyy' } }">
               </e-column>
           <e-column field="debit" headerText="Debit" width="120" textAlign="Right" type="number" editType="numericedit"
+            [allowEditing]="true"
             [edit]="debitEditParams" format="N2">
           </e-column>
         </e-columns>
