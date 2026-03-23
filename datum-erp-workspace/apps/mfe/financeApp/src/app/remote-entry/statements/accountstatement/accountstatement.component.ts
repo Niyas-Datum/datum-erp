@@ -10,6 +10,16 @@ import { filter, firstValueFrom, take } from "rxjs";
 import { ACCOUNTPOPUP } from "../../model/paccountlistcomponent.model";
 import { BranchDto } from "@org/models";
 import { ACCOUNTSPOPUP, AccountStatementRow, REPORTDATA, USERSPOP } from "../model/accountstatement.model";
+import { ButtonSettings } from "@syncfusion/ej2-angular-inputs";
+// bugscash in hand
+// 1.debit and credit ,RBalance  is missing in the web 
+// 2.in account multicolumn all columns are not listed
+// 3.some of the data also missing in the account compobox
+// 4.in summary value is not correct 
+// 5.in details  credit field calculation is not correct 
+// 6.there is no requirement of tool bar here
+// 7.when press the clear button account should be clear 
+
 
 
 @Component({
@@ -22,6 +32,9 @@ import { ACCOUNTSPOPUP, AccountStatementRow, REPORTDATA, USERSPOP } from "../mod
 export class AccountStatementComponent extends BaseComponent implements OnInit {
 
     private httpService = inject(FinanceAppService);
+    totalDebit = 0;
+    totalCredit = 0;
+    totalRBalance = 0;
 
     //allBranches = signal<BranchDto[]>([]);
     private localstorageService = inject(LocalStorageService);
@@ -86,8 +99,11 @@ accountOptions:any = [];
 
 accountColumns = [
   { field: 'accountCode', header: 'Code', width: 120 },
-  { field: 'accountName', header: 'Name', width: 180 },
-  { field: 'details', header: 'Details', width: 250 }
+  { field: 'accountName', header: 'Name', width: 200 },
+  { field: 'details', header: 'Details', width: 180 },
+  { field: 'id', header: 'ID', width: 80 },
+  { field: 'isBillWise', header: 'Bill Wise', width: 100 },
+  { field: 'isCostCentre', header: 'Cost Centre', width: 110 }
 ];
 
 accountFields = {
@@ -298,7 +314,11 @@ fetchAccountStatement(payload: any): void {
       next: (response) => {
         if (Array.isArray(response.data)) {
           this.reportData = response.data;
+          this.totalDebit = this.reportData.reduce((sum, row) => sum + (Number(row.debit) || 0), 0);
+          this.totalCredit = this.reportData.reduce((sum, row) => sum + (Number(row.credit) || 0), 0);
+          this.totalRBalance = this.totalDebit - this.totalCredit;
           console.log("report:"+JSON.stringify(this.reportData,null,2))
+
         } else {
           this.reportData = [];
           console.warn('No data received');
@@ -420,5 +440,6 @@ onClear() {
         this.accountStatementForm.patchValue({
             to: new Date()
         });
+        this.accountStatementForm.patchValue({user:null});
  }
 }
