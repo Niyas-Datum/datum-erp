@@ -1,12 +1,5 @@
 <div class="item-list-container control-section" [class.read-only]="!(isNewMode() || isEditMode())">
 
-  <!-- Toolbar: New Item button (visible in New/Edit mode) -->
-  <div class="item-grid-toolbar d-flex align-items-center gap-2 mb-2" *ngIf="isNewMode() || isEditMode()">
-    <button type="button" class="btn btn-sm btn-primary" (click)="onAddNewItem()">
-      <span class="btn-label">New Item</span>
-    </button>
-  </div>
-
   <div class="table-responsive">
 
     <ejs-grid #grid id="transactionGrid" width="100%" [dataSource]="commonService.tempItemFillDetails()"

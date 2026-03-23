@@ -615,28 +615,6 @@ public itemService = inject(ItemService);
     }, 50);
   }
 
-  /**
-   * Adds a new row to the grid and starts editing the Item Code cell so the user can type and open Item Search.
-   * Called when the user clicks the "New Item" button.
-   */
-  onAddNewItem(): void {
-    this.itemService.addNewRow();
-    this.refreshGridAfterRowChange();
-    setTimeout(() => {
-      const rows = this.commonService.tempItemFillDetails();
-      const rowIndex = rows.length - 1;
-      if (rowIndex >= 0 && this.grid) {
-        const gridAny = this.grid as any;
-        if (typeof gridAny.editCell === 'function') {
-          gridAny.editCell(rowIndex, 'itemCode');
-        } else {
-          this.grid.selectRow(rowIndex);
-          this.grid.startEdit();
-        }
-      }
-    }, 150);
-  }
-
   /** -------------------- Filtering -------------------- **/
   onFiltering(args: any): void {
     if (!args?.text) return;
