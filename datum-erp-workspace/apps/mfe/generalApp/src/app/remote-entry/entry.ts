@@ -6,34 +6,59 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'app-generalApp-entry',
   standalone: false,
+   styles: [`
+/* Fix the typo from container-fluidz to container-fluid */
+.container-fluid {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Ensure the sidebar inner container fills height */
+ejs-sidebar .p-2 {
+  height: 100%;
+  padding: 0 !important; /* Optional: remove padding if you want the grid flush */
+}
+
+/* IMPORTANT: Force the app-left-grid and its internal Syncfusion Grid to 100% */
+app-left-grid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* This targets the Syncfusion Grid component inside app-left-grid */
+:host ::ng-deep .e-grid {
+  height: 100% !important;
+}
+
+`]
+  ,
   template: `
     <div class="container-fluid mt-3">
-<div class="row">
+<div class="row align-items-center">
         <!-- Left Grid -->
-        <div class="col-md-2">
-          <div class="row">
-                  <div [ngSwitch]="pageType" class="col-md-2 col-sm-2" >
+        <div class="col-12 col-md-2">
+          <div class="d-flex align-items-center gap-2">
+                  <div [ngSwitch]="pageType"  >
                          
-                                        <div  *ngSwitchCase="1">
-                                          <button (click)="toggleSidebar()" class="e-btn-sm">
-                                            <span
-                                              class="e-btn-icon e-icons  e-elaborate"
-                                              style="color: $secondary; font-size: 1.8rem;"
-                                            ></span>
-                                          </button>
-                                        </div>
+                    <div  *ngSwitchCase="1">
+                    <button (click)="toggleSidebar()" class="e-btn-sm">
+                      <span class="e-icons e-menu"></span>
+                    </button>
+                    </div>
                              
                     </div>
-            <div class="col-md-
-            9 col-sm-10">
-              <div style="font-size: 1.3rem; font-weight: 500; color: #666666;">
+            <div class="fs-6 fw-medium text-secondary">
+    
                 {{ pageheading }}
-              </div>
+           
             </div>
           </div>
         </div>
         <!-- col -2-d end -->
-        <div class="col-md-9">
+        <div class="col-12 col-md-10">
           <app-form-toolbar
             [isNewMode]="isNewMode"
             [isEditMode]="isEditMode"
@@ -61,7 +86,7 @@ import { BehaviorSubject } from 'rxjs';
 
       <!-- SIDEBAR OUTSIDE OF THE ROW -->
       <!-- SIDEBAR -->
-      <section class="leftgrid-section" >
+      <section class="leftgrid-section overflow-hidden" >
         <ejs-sidebar
           id="sideTree"
           [(isOpen)]="isSidebarVisible"
@@ -71,7 +96,7 @@ import { BehaviorSubject } from 'rxjs';
           [type]="sidebarType"
           position="Left"
         >
-          <div class="p-1">
+          <div class="p-2">
             <!-- Replace with real component -->
             <app-left-grid
               (rowSelected)="onCostCategorySelected($event)"
@@ -83,15 +108,14 @@ import { BehaviorSubject } from 'rxjs';
 
         <!-- MAIN CONTENT WRAPPER -->
         <!-- pagetype 1 [leftgrid and page] -->
-        <div class="main-content-wrapper container-fluid">
-          <div class="row mt-2" style="min-height: 70vh;">
+        <div class="main-content-wrapper px-2 w-100">
+          <div class="row">
             <div
-              [ngClass]="isSidebarVisible ? 'col-8' : 'col-12'"
-              class="transition-col"
+              class="col-12 transition-col"
             >
               <div
                 class="odoo-form-bg row"
-                style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 18px 18px 18px; margin-bottom: 18px;"
+                style="background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"
               >
                 <router-outlet></router-outlet>
               </div>
@@ -116,22 +140,24 @@ import { BehaviorSubject } from 'rxjs';
   `,
 })
 export class RemoteEntry implements OnInit {
-  public pageType:number ;
-  public pageheading: string;
+  // public pageType: number;
+  // public pageheading: string;
 
+   public pageType=0 ;
+  public pageheading = '';
 
-  // Left side sectio hide and show
+  // Left side section hide and show
   // Sidebar config
   isSidebarVisible = true;
   sidebarType = 'Push'; // or 'Slide'
-  width = '300px';
+  width = '299px';
   target = '.main-content-wrapper';
   mediaQuery = '(min-width: 768px)';
 
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;
   }
- 
+
 
   /// Service registration
   private formToolbarService = inject(FormToolbarService);
@@ -144,15 +170,15 @@ export class RemoteEntry implements OnInit {
     data: [],
   }).value;
   ngOnInit() {
-  
+
     this.sharedService.leftdata$.subscribe((data) => {
       this.leftgridchildData = data;
       this.pageheading = data.pageheading || '';
       console.log('58005', this.leftgridchildData.data);
     });
-     this.formToolbarService.leftGridView$.subscribe((data)=>{
-      
-      this.pageType = this.formToolbarService.pagetype;   
+    this.formToolbarService.leftGridView$.subscribe((data) => {
+
+      this.pageType = this.formToolbarService.pagetype;
       console.log(this.formToolbarService.pagetype);
     })
   }
@@ -164,11 +190,11 @@ export class RemoteEntry implements OnInit {
       console.log('58005', this.leftgridchildData.data);
     });
 
-   
+
   }
   constructor() {
     this.pageheading = 'General ';
-      this.pageType = 1;
+    this.pageType = 1;
     console.log('Constructor - Remote Entry Component');
   }
 
@@ -225,7 +251,7 @@ export class RemoteEntry implements OnInit {
     this.isSaveBtnDisabled = false;
     //this line is added by abdulrazzaq
     this.formToolbarService.emitEditClicked();
-    
+
   }
 
   onNewClick() {
@@ -237,7 +263,7 @@ export class RemoteEntry implements OnInit {
 
   onSaveClick() {
     this.formToolbarService.emitSaveClicked();
-    
+
     // The actual form data will be sent from the child via the service (see below)
   }
 

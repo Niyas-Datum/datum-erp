@@ -10,10 +10,34 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-coreApp-entry',
   standalone: false,
-  
+  styles: [`
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-header {
+  flex-shrink: 0;
+}
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+}
+`]
+  ,
   template: `
   <div class="app-shell">
-  <app-header class="app-header"></app-header>
+    <app-header class="app-header">
+    </app-header>
   <main class="app-content" >
 
      <router-outlet></router-outlet> 
