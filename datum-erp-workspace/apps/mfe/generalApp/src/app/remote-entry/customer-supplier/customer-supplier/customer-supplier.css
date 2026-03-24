@@ -309,3 +309,7 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+.mobile-input {
+  width: 200px !important;
+}

@@ -130,7 +130,7 @@
                   <!-- mobile no -->
                   <div class="form-row form-row-inline">
                     <label>Mobile No</label>
-                    <ejs-textbox formControlName="mobileno" [readonly]="isInputDisabled">
+                    <ejs-textbox class="mobile-input" formControlName="mobileno" [readonly]="isInputDisabled">
                     </ejs-textbox>
                     <div class="error" *ngIf="customerSupplierForm.get('mobileno')?.touched
                         && customerSupplierForm.get('mobileno')?.invalid">
@@ -608,66 +608,68 @@
           </ng-template>
         </e-tabitem>
 
-        <!-- ===== DELIVERY DETAILS ===== -->
+
         <!-- ===== DELIVERY DETAILS ===== -->
 
         <e-tabitem [header]="headerText[2]">
           <ng-template #content>
-            <div class="delivery-container">
-              <!-- Header -->
-              <div class="delivery-header">
-                <h5>Delivery Details</h5>
-                <button type="button" class="btn btn-primary" (click)="addDeliveryRow()">
-                  ➕ Add Row
-                </button>
+            <fieldset [disabled]="isInputDisabled">
+              <div class="delivery-container">
+                <!-- Header -->
+                <div class="delivery-header">
+                  <h5>Delivery Details</h5>
+                  <button type="button" class="btn btn-primary" (click)="addDeliveryRow()">
+                    ➕ Add Row
+                  </button>
+                </div>
+
+                <!-- Grid -->
+                <div class="delivery-grid-wrapper">
+                  <table class="delivery-grid">
+                    <thead>
+                      <tr>
+                        <th>LocationName</th>
+                        <th>ProjectName</th>
+                        <th>ContactPerson</th>
+                        <th>ContactNo</th>
+                        <th>Address</th>
+                        <th style="width:60px;">Action</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr *ngFor="let row of deliveryRows; let i = index">
+                        <td>
+                          <input type="text" [(ngModel)]="row.locationName" [ngModelOptions]="{ standalone: true }">
+                        </td>
+
+                        <td>
+                          <input type="text" [(ngModel)]="row.projectName" [ngModelOptions]="{ standalone: true }">
+                        </td>
+
+                        <td>
+                          <input type="text" [(ngModel)]="row.contactPerson" [ngModelOptions]="{ standalone: true }">
+                        </td>
+
+                        <td>
+                          <input type="text" [(ngModel)]="row.contactNo" [ngModelOptions]="{ standalone: true }">
+                        </td>
+
+                        <td>
+                          <input type="text" [(ngModel)]="row.address" [ngModelOptions]="{ standalone: true }">
+                        </td>
+
+                        <td class="text-center">
+                          <button type="button" class="btn btn-danger btn-sm" (click)="removeDeliveryRow(i)">
+                            ✕
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-
-              <!-- Grid -->
-              <div class="delivery-grid-wrapper">
-                <table class="delivery-grid">
-                  <thead>
-                    <tr>
-                      <th>LocationName</th>
-                      <th>ProjectName</th>
-                      <th>ContactPerson</th>
-                      <th>ContactNo</th>
-                      <th>Address</th>
-                      <th style="width:60px;">Action</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr *ngFor="let row of deliveryRows; let i = index">
-                      <td>
-                        <input type="text" [(ngModel)]="row.locationName" [ngModelOptions]="{ standalone: true }">
-                      </td>
-
-                      <td>
-                        <input type="text" [(ngModel)]="row.projectName" [ngModelOptions]="{ standalone: true }">
-                      </td>
-
-                      <td>
-                        <input type="text" [(ngModel)]="row.contactPerson" [ngModelOptions]="{ standalone: true }">
-                      </td>
-
-                      <td>
-                        <input type="text" [(ngModel)]="row.contactNo" [ngModelOptions]="{ standalone: true }">
-                      </td>
-
-                      <td>
-                        <input type="text" [(ngModel)]="row.address" [ngModelOptions]="{ standalone: true }">
-                      </td>
-
-                      <td class="text-center">
-                        <button type="button" class="btn btn-danger btn-sm" (click)="removeDeliveryRow(i)">
-                          ✕
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            </fieldset>
           </ng-template>
         </e-tabitem>
 

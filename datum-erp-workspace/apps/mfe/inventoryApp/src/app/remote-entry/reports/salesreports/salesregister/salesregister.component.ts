@@ -38,6 +38,9 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
     cashId: any = 0;
     creditId: any = 0;
 
+    allVoucherTypes: VOUCHERTYPE[] = [];
+    allVoucherTypesarr: VOUCHERTYPE[] = [];
+  
 
     ngOnInit(): void {
         this.salesRegisterForm = new FormGroup({
@@ -90,54 +93,72 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
 
     /*Getting data for filters*/
     fetchAllFilterMasterData(): void {
-
-        this.httpService
-            .fetch(EndpointConstant.FILLGENERALREGISTERMASTERFILTER)
-            .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-            .subscribe({
-                next: (response) => {
-
-                    let filterMasterData: any = response?.data;
-                    this.basicTypesarr = filterMasterData.basicTypes;
-                    this.voucherTypesarr = filterMasterData.voucherTypes;
-                    this.itemsArr = filterMasterData.items;
-                    this.staffArr = filterMasterData.staffs;
-                    this.customerSupplierArr = filterMasterData.customerSupplier;
-                    this.areaArr = filterMasterData.areas;
-                    this.paymentTypes = filterMasterData.paymentTypes;
-                    this.counters = filterMasterData.counters;
-                    this.users = filterMasterData.users;
-                    this.branches = filterMasterData.branches;
-
-                    //setting current branch by default
-                    const savedBranchId = Number(this.localstorageService.getLocalStorageItem('current_branch'));
-                    this.currentBranch.set(savedBranchId);
-                    
-                    //setting current user by default
-                    const userId = Number(
-                        this.localstorageService.getLocalStorageItem('current_user')
+    this.httpService
+        .fetch(EndpointConstant.FILLGENERALREGISTERMASTERFILTER)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+            next: (response) => {
+ 
+                let filterMasterData: any = response?.data;
+ 
+                // Assign all master data
+                this.basicTypesarr = filterMasterData.basicTypes || [];
+                this.allVoucherTypesarr = filterMasterData.voucherTypes || []; 
+                this.itemsArr = filterMasterData.items || [];
+                this.staffArr = filterMasterData.staffs || [];
+                this.customerSupplierArr = filterMasterData.customerSupplier || [];
+                this.areaArr = filterMasterData.areas || [];
+                this.paymentTypes = filterMasterData.paymentTypes || [];
+                this.counters = filterMasterData.counters || [];
+                this.users = filterMasterData.users || [];
+                this.branches = filterMasterData.branches || [];
+ 
+                //  Filter ONLY "Purchase" voucher types
+                const purchaseBasicType = this.basicTypesarr.find(
+                    b => b.name === 'Sales Invoice'
+                );
+ 
+                if (purchaseBasicType) {
+                    const basicTypeId = purchaseBasicType.id;
+ 
+                    this.baseTypeObj = purchaseBasicType;
+ 
+                    this.voucherTypesarr = this.allVoucherTypesarr.filter(
+                        v => Number(v.primaryVoucherId) === Number(basicTypeId) // change if needed
                     );
-                    this.currentUser.set(userId);
-                   
-                    this.salesRegisterForm.patchValue({
-                        branch: savedBranchId,
-                        user: userId
-                    });
-                     this.branchObj = this.branches.find(b => b.id === savedBranchId) ?? null;
-                     this.userObj = this.users.find(b => b.id === userId) ?? null;
-
-                    this.setCashCreditID();
-                    this.currentBranch.set(
-                        Number(this.localstorageService.getLocalStorageItem('current_branch'))
-                    );
-
-                },
-                error: (error) => {
-
-                    console.error('An Error Occured', error);
-                },
-            });
-    }
+                } else {
+                    this.voucherTypesarr = [];
+                }
+ 
+                // Set form values
+                const savedBranchId = Number(this.localstorageService.getLocalStorageItem('current_branch'));
+                const userId = Number(this.localstorageService.getLocalStorageItem('current_user'));
+ 
+                this.currentBranch.set(savedBranchId);
+                this.currentUser.set(userId);
+ 
+                this.salesRegisterForm.patchValue({
+                    branch: savedBranchId,
+                    user: userId,
+                    basicType: 'Sales Invoice' // since readonly textbox
+                });
+ 
+                //  Set selected objects
+                this.branchObj = this.branches.find(b => b.id === savedBranchId) ?? null;
+                this.userObj = this.users.find(u => u.id === userId) ?? null;
+ 
+                //  Other setup
+                this.setCashCreditID();
+ 
+                // Debug (remove later)
+                console.log('All Voucher Types:', this.allVoucherTypesarr);
+                console.log('Filtered Purchase Voucher Types:', this.voucherTypesarr);
+            },
+            error: (error) => {
+                console.error('An Error Occured', error);
+            },
+        });
+}
 
     //basic type
     basicTypesarr: BASICTYPE[] = [];
@@ -333,6 +354,10 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
         // Clear grids
         this.reportData = [];
         this.leftSummaryData = [];
+
+        this.salesRegisterForm.patchValue({                   
+                    basicType: 'Sales Invoice' // since readonly textbox
+                });
     }
 
 
@@ -350,12 +375,13 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
     inventoryColumns = [
         { headerText: 'VType', field: 'VType', width: 140 },
         { headerText: 'VNo', field: 'VNo', width: 200 },
+        { headerText: 'VDate', field: 'VDate', width: 200 },
         { headerText: 'Particulars', field: 'Particulars', width: 420 },
 
         { headerText: 'Debit', field: 'Debit', width: 160, textAlign: 'Right' },
         { headerText: 'Credit', field: 'Credit', width: 160, textAlign: 'Right' },
 
-        { headerText: 'Added Date', field: 'VDate', width: 150 },
+        { headerText: 'Added Date', field: 'AddedDate', width: 150 },
         { headerText: 'Reference No', field: 'ReferenceNo', width: 170 },
         { headerText: 'Tax Form', field: 'TaxFormID', width: 150 },
         { headerText: 'Mode', field: 'ModeID', width: 130 },
@@ -369,25 +395,29 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
         { headerText: 'Party Inv No', field: 'PartyInvNo', width: 200 }
     ];
 
-    // formValue = this.salesRegisterForm.value;
+    safeObj(obj: any, controlValue: any) {
+        return (controlValue && obj) ? this.cleanObj(obj) : this.cleanObj(null);
+    }
 
     onClickGo() {
         const formValue = this.salesRegisterForm.value;
 
         const payload = {
-            viewBy: formValue.selectedView === 'inventory' ? true : false,
+            viewBy: formValue.selectedView === 'inventory',
+
             from: formValue.from,
             to: formValue.to,
-            baseType: { id: 23 },//this.cleanObj(this.baseTypeObj),
-            voucherType: this.cleanObj(this.voucherTypeObj),
-            customerSupplier: this.cleanObj(this.customerSupplierObj),
-            item: this.cleanObj(this.itemObj),
-            staff: this.cleanObj(this.staffObj),
-            area: this.cleanObj(this.areaObj),
-            paymentType: this.cleanObj(this.paymentTypeObj),
-            counter: this.cleanObj(this.counterObj),
-            user: this.cleanObj(this.userObj),
-            branch: this.cleanObj(this.branchObj),
+
+            baseType: { id: 23 },
+            voucherType: this.safeObj(this.voucherTypeObj, formValue.voucherType),
+            customerSupplier: this.safeObj(this.customerSupplierObj, formValue.customerSupplier),
+            item: this.safeObj(this.itemObj, formValue.item),
+            staff: this.safeObj(this.staffObj, formValue.staff),
+            area: this.safeObj(this.areaObj, formValue.area),
+            paymentType: this.safeObj(this.paymentTypeObj, formValue.paymentType),
+            counter: this.safeObj(this.counterObj, formValue.counter),
+            user: this.safeObj(this.userObj, formValue.user),
+            branch: this.safeObj(this.branchObj, formValue.branch),
 
             invoiceNo: formValue.invoiceNo,
             batchNo: formValue.batchNo,
@@ -406,7 +436,27 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
             .subscribe({
                 next: (response: any) => {
 
-                    this.reportData = Array.isArray(response.data) ? response.data : [];
+                    //this.reportData = Array.isArray(response.data) ? response.data : [];
+                    this.reportData = (Array.isArray(response.data) ? response.data : []).map((x: any) => {
+
+                        const spaces = (x.particulars?.match(/^\s*/) || [''])[0].length;
+
+                        const formatDate = (val: any) => {
+                            if (!val) return null;
+                            return new Date(val).toLocaleDateString('en-GB'); // dd/mm/yyyy
+                        };
+
+                        return {
+                            ...x,
+                             VDate: formatDate(x.VDate),
+                            AddedDate: formatDate(x.AddedDate),
+                            debit: Number(x.debit || 0),
+                            credit: Number(x.credit || 0),
+                            level: Math.floor(spaces / 3)   // hierarchy level
+                        };
+
+                    });
+
                     console.log("data:" + JSON.stringify(this.reportData, null, 2))
                     this.gridColumns =
                         formValue.selectedView === 'inventory'
@@ -414,6 +464,19 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
                             : this.financeColumns;
 
                     this.setLeftSideData(this.reportData);
+                    if (formValue.selectedView === 'inventory') {
+
+                        const totalRow = {
+                            VType: '',
+                            VNo: '',
+                            VDate: '',
+                            Particulars: '',
+                            Debit: this.totalDebit,
+                            Credit: this.totalCredit
+                        };
+
+                        this.reportData = [...this.reportData, totalRow];
+                    }
                 },
                 error: () => {
                     this.reportData = [];
@@ -477,6 +540,9 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
                 }
             });
 
+            this.totalDebit = totalDebit;
+            this.totalCredit = totalCredit;
+
             this.leftSummaryData = [
                 { particulars: 'Cash', debit: cashDebit, credit: cashCredit },
                 { particulars: 'Credit', debit: creditDebit, credit: creditCredit },
@@ -505,47 +571,64 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
 
     //--------------pdf generation-------------------
 
-     onPreviewPdf(): void {
-    
-            if (!this.reportData.length) return;
-    
-            const isInventory = this.salesRegisterForm.value.selectedView === 'inventory';
-    
-            const pdfData: PdfReportData = {
-                pageName: 'Sales Register',
-                companyName: this.branchObj?.company || '',
-                address: this.branchObj?.address || '',
-                fromDate: this.salesRegisterForm.value.from.toLocaleDateString('en-GB'),
-                toDate: this.salesRegisterForm.value.to.toLocaleDateString('en-GB'),
-    
-                columns: isInventory ? this.inventoryPdfColumns() : this.financePdfColumns(),
-                rows: this.reportData,
-    
-                showTotals: true
-            };
-    
-            this.pdfService.preview(pdfData);
+    onPreviewPdf(): void {
+
+        if (!this.reportData.length) return;
+
+        const isInventory = this.salesRegisterForm.value.selectedView === 'inventory';
+
+        const pdfData: PdfReportData = {
+            pageName: 'Sales Register',
+            companyName: this.branchObj?.company || '',
+            address: this.branchObj?.address || '',
+            fromDate: this.salesRegisterForm.value.from.toLocaleDateString('en-GB'),
+            toDate: this.salesRegisterForm.value.to.toLocaleDateString('en-GB'),
+
+            columns: isInventory ? this.inventoryPdfColumns() : this.financePdfColumns(),
+            rows: this.reportData,
+
+            showTotals: true
+        };
+
+        this.pdfService.preview(pdfData);
+    }
+
+    private inventoryPdfColumns(): PdfColumn[] {
+        return [
+            { header: 'VType', field: 'VType' },
+            { header: 'VNo', field: 'VNo' },
+            { header: 'VATNo', field: 'VATNO' },
+            { header: 'Name', field: 'Particulars' },
+            { header: 'Debit', field: 'Debit', align: 'right' },
+            { header: 'Credit', field: 'Credit', align: 'right' }
+
+        ];
+    }
+
+
+    private financePdfColumns(): PdfColumn[] {
+        return [
+            { header: 'Particulars', field: 'particulars' },
+            { header: 'Debit', field: 'debit', align: 'right' },
+            { header: 'Credit', field: 'credit', align: 'right' }
+        ];
+    }
+
+    totalDebit = 0;
+    totalCredit = 0;
+    onRowBound(args: any) {
+
+        if (args.data?.Particulars === '') {
+            args.row.style.fontWeight = 'bold';
+            args.row.style.background = '#f3f3f3';
         }
-    
-        private inventoryPdfColumns(): PdfColumn[] {
-            return [
-                { header: 'VType', field: 'VType' },
-                { header: 'VNo', field: 'VNo' },
-                { header: 'VATNo', field: 'VATNO' },
-                { header: 'Name', field: 'Particulars' },
-                { header: 'Debit', field: 'Debit', align: 'right' },
-                { header: 'Credit', field: 'Credit', align: 'right' }
-                
-            ];
+        if (args.data?.isGroup === true) {
+
+            args.row.style.fontWeight = "bold";
+            args.row.style.background = "#f5f5f5";
+
         }
-    
-    
-        private financePdfColumns(): PdfColumn[] {
-            return [
-                { header: 'Particulars', field: 'particulars' },
-                { header: 'Debit', field: 'debit', align: 'right' },
-                { header: 'Credit', field: 'credit', align: 'right' }
-            ];
-        }
+
+    }
 
 }

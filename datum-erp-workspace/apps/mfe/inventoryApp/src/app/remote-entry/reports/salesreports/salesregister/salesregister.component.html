@@ -1,9 +1,10 @@
 <form [formGroup]="salesRegisterForm">
 
     <div class="container-fluid">
-
-
-
+        <div class="page-header mb-3">
+            <h4 class="m-0 fw-bold">Sales Register</h4>
+            <hr class="mt-2">
+        </div>
         <div class="row" style="height:100vh">
             <div class="col-md-3 border p-3" style="background:#f7f7f7; overflow-y:auto;">
                 <div class="d-flex gap-2">
@@ -70,7 +71,7 @@
                     <div class="col-8">
                         <ejs-multicolumncombobox [dataSource]="customerSupplierArr"
                             [fields]="{ text: 'accountName', value: 'id' }" [columns]="customerSupplierTypeColumns"
-                            formControlName="customerSupplier" (select)="onCustomerSelect($event)">
+                            formControlName="customerSupplier" (select)="onCustomerSelect($event)" [enableVirtualization]="true">
                         </ejs-multicolumncombobox>
                     </div>
                 </div>
@@ -80,7 +81,7 @@
                     <div class="col-4">Item</div>
                     <div class="col-8">
                         <ejs-multicolumncombobox [dataSource]="itemsArr" [fields]="{ text: 'itemName', value: 'id' }"
-                            [columns]="itemcolumns" formControlName="item" (select)="onItemSelect($event)">
+                            [columns]="itemcolumns" formControlName="item" (select)="onItemSelect($event)" [enableVirtualization]="true">
                         </ejs-multicolumncombobox>
                     </div>
                 </div>
@@ -222,7 +223,7 @@
             
             <div class="col-md-9 p-3">
                 <ejs-grid [dataSource]="reportData" [allowPaging]="true" [allowSorting]="true" [allowResizing]="true"
-                    [pageSettings]="{ pageSize: 20 }" gridLines="Both" height="500" [enableHover]="true">
+                    [pageSettings]="{ pageSize: 20 }" gridLines="Both" height="500" [enableHover]="true" (rowDataBound)="onRowBound($event)">
 
                     <e-columns>
                         <e-column *ngFor="let col of gridColumns" [field]="col.field" [headerText]="col.headerText"

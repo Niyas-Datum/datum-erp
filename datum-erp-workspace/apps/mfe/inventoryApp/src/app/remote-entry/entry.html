@@ -1,5 +1,7 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
 <div class="container-fluid h-100 d-flex flex-column overflow-hidden p-0">
+
+  <!-- HEADER -->
   <div class="row align-items-center g-0 flex-shrink-0 border-bottom bg-light m-0">
     <div class="col-12 col-md-2 ps-3">
       <div class="d-flex align-items-center gap-2">
@@ -32,14 +34,18 @@
 
         <ejs-sidebar id="sideTree" [(isOpen)]="isSidebarVisible" [width]="width" [target]="target"
           [mediaQuery]="mediaQuery" [type]="sidebarType" position="Left">
-          <div class="p-2 h-100 overflow-auto">
+
+          <div class="h-100 overflow-y-auto">
             <app-left-grid (rowSelected)="onCostCategorySelected($event)" [columns]="leftgridchildData.columns">
             </app-left-grid>
           </div>
         </ejs-sidebar>
-        <div class="main-content-wrapper flex-grow-1 bg-light ">
-          <div class="odoo-form-bg shadow-sm "
-            style="background: #fff; border-radius: 4px;  width: auto;">
+
+        <!-- RIGHT CONTENT -->
+        <div class="main-content-wrapper flex-grow-1 d-flex flex-column">
+          <div class="odoo-form-bg flex-grow-1 p-2 overflow-y-auto overflow-x-hidden e-content-animation"
+            style="background:#fff; border-radius:4px;">
+
             <router-outlet></router-outlet>
           </div>
         </div>
@@ -47,9 +53,9 @@
       </section>
     </div>
 
-    <div *ngSwitchCase="2" class="p-0">
-      <div style="background: #fff;
-                border-radius: 4px;">
+    <!-- PAGE TYPE 2 -->
+    <div *ngSwitchCase="2" class="h-100 p-0">
+      <div style="background:#fff;border-radius:4px;">
         <router-outlet></router-outlet>
       </div>
     </div>

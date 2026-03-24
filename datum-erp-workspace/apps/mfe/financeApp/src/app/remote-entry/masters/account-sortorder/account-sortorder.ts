@@ -198,4 +198,7 @@ export class AccountSortorderComponent extends BaseComponent implements OnInit {
   override formValidationError() {
     console.log('form error found');
   }
+  onCloseClick(): void {
+  window.history.back();
+}
 }
