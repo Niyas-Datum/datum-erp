@@ -37,7 +37,7 @@ input.e-input, .e-input-group input,
 .e-input-group textarea[readonly]{
   background-color: $card-bg !important;
   border-color: #e1e1e1 !important;
-  color: #999 !important;
+  color: #1d1d1d !important;
   font-weight: bold !important;
   cursor: not-allowed;
 }
@@ -52,4 +52,6 @@ input.e-input, .e-input-group input,
   color: #666 !important;
   min-height: 20px !important;
 }
+
+
 

@@ -73,12 +73,12 @@ import { BehaviorSubject } from 'rxjs';
 
         <!-- MAIN CONTENT WRAPPER -->
         <div class="main-content-wrapper flex-grow-1 d-flex flex-column">
-              <div
+            <div
                 class="odoo-form-bg flex-grow-1 overflow-y-auto overflow-x-hidden e-content-animation" style="background:#fff; border-radius:4px;"
               >
                 <router-outlet></router-outlet>
-              </div>
             </div>
+        </div>
   
       </section>
        </div>
@@ -96,10 +96,10 @@ import { BehaviorSubject } from 'rxjs';
     </div>
   `,
 })
-export class RemoteEntry implements OnInit,AfterViewInit{
-  public pageType=0 ;
+export class RemoteEntry implements OnInit, AfterViewInit {
+  public pageType = 0;
   public pageheading = '';
-    // Left side section hide and show
+  // Left side section hide and show
   // Sidebar config
   isSidebarVisible = true;
   sidebarType = 'Push'; // or 'Slide'
@@ -110,7 +110,7 @@ export class RemoteEntry implements OnInit,AfterViewInit{
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;
   }
-  
+
   /// Service registration
   private formToolbarService = inject(FormToolbarService);
 
@@ -122,22 +122,22 @@ export class RemoteEntry implements OnInit,AfterViewInit{
     data: [],
   }).value;
 
-    ngOnInit() {
-  
+  ngOnInit() {
+
     this.sharedService.leftdata$.subscribe((data) => {
       this.leftgridchildData = data;
       this.pageheading = data.pageheading || '';
       console.log('58005', this.leftgridchildData.data);
     });
-     this.formToolbarService.leftGridView$.subscribe((data)=>{
-      
-      this.pageType = this.formToolbarService.pagetype;   
+    this.formToolbarService.leftGridView$.subscribe((data) => {
+
+      this.pageType = this.formToolbarService.pagetype;
       console.log(this.formToolbarService.pagetype);
     })
   }
-    constructor() {
+  constructor() {
     this.pageheading = 'General ';
-      this.pageType = 1;
+    this.pageType = 1;
     console.log('Constructor - Remote Entry Component');
   }
   ngAfterViewInit() {
@@ -147,7 +147,7 @@ export class RemoteEntry implements OnInit,AfterViewInit{
       console.log('58005', this.leftgridchildData.data);
     });
   }
-    onCostCategorySelected(event: any) {
+  onCostCategorySelected(event: any) {
     this.isSaveBtnDisabled = true;
     this.isEditBtnDisabled = false;
     this.isDeleteBtnDisabled = false;
@@ -169,42 +169,42 @@ export class RemoteEntry implements OnInit,AfterViewInit{
     // TODO: Implement event handler logic
   }
 
-    // Add the missing properties and methods
-    isNewMode = false;
-    isEditMode = false;
-    isNewBtnDisabled = false;
-    isEditBtnDisabled = true;
-    isDeleteBtnDisabled = true;
-    isSaveBtnDisabled = true;
-    isPrintBtnDisabled = true;
+  // Add the missing properties and methods
+  isNewMode = false;
+  isEditMode = false;
+  isNewBtnDisabled = false;
+  isEditBtnDisabled = true;
+  isDeleteBtnDisabled = true;
+  isSaveBtnDisabled = true;
+  isPrintBtnDisabled = true;
 
-    onDeleteClick() {
-      this.formToolbarService.emitDeleteClicked();
-      this.isSaveBtnDisabled = true;
-      this.isNewBtnDisabled = true;
-    }
-    onPrintClick() {
-      /* TODO: Implement print click logic */
-    }
-    onEditClick() {
-      this.isSaveBtnDisabled = false;
-      this.formToolbarService.emitEditClicked();
-    }
-  
-    onNewClick() {
-      this.formToolbarService.emitNewClicked();
-      this.isSaveBtnDisabled = false;
-      this.isEditBtnDisabled = true;
-      this.isDeleteBtnDisabled = true;
-    }
-  
-    onSaveClick() {
-      this.formToolbarService.emitSaveClicked();
-      // The actual form data will be sent from the child via the service (see below)
-    }
-  
-    leftGridView() {
-      // this.isSidebarVisible = !this.isSidebarVisible;
-      // console.log('Left Grid View clicked');
-    }
+  onDeleteClick() {
+    this.formToolbarService.emitDeleteClicked();
+    this.isSaveBtnDisabled = true;
+    this.isNewBtnDisabled = true;
+  }
+  onPrintClick() {
+    /* TODO: Implement print click logic */
+  }
+  onEditClick() {
+    this.isSaveBtnDisabled = false;
+    this.formToolbarService.emitEditClicked();
+  }
+
+  onNewClick() {
+    this.formToolbarService.emitNewClicked();
+    this.isSaveBtnDisabled = false;
+    this.isEditBtnDisabled = true;
+    this.isDeleteBtnDisabled = true;
+  }
+
+  onSaveClick() {
+    this.formToolbarService.emitSaveClicked();
+    // The actual form data will be sent from the child via the service (see below)
+  }
+
+  leftGridView() {
+    // this.isSidebarVisible = !this.isSidebarVisible;
+    // console.log('Left Grid View clicked');
+  }
 }   

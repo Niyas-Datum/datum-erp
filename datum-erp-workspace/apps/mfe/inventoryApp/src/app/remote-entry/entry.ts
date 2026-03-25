@@ -15,26 +15,19 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
   flex-direction:column;
   overflow:hidden;
 }
-
-.leftgrid-section{
-  flex:1;
-  display:flex;
-  overflow:hidden;
+ejs-sidebar .p-2 {
+  height: 100%;
+  padding: 0 !important; 
 }
 
-ejs-sidebar{
-  height:100%;
-  overflow:hidden;
+app-left-grid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-ejs-sidebar .p-2{
-  height:100%;
-  overflow:hidden;
-}
-
-app-left-grid{
-  height:100%;
-  display:block;
+:host ::ng-deep .e-grid {
+  height: 100% !important;
 }
 
 `]

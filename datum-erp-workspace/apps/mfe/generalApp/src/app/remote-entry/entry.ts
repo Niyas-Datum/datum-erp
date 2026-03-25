@@ -13,22 +13,19 @@ import { BehaviorSubject } from 'rxjs';
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding:0;
 }
 
-/* Ensure the sidebar inner container fills height */
 ejs-sidebar .p-2 {
   height: 100%;
-  padding: 0 !important; /* Optional: remove padding if you want the grid flush */
+  padding: 0 !important; 
 }
 
-/* IMPORTANT: Force the app-left-grid and its internal Syncfusion Grid to 100% */
 app-left-grid {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-
-/* This targets the Syncfusion Grid component inside app-left-grid */
 :host ::ng-deep .e-grid {
   height: 100% !important;
 }
@@ -36,21 +33,21 @@ app-left-grid {
 `]
   ,
   template: `
-    <div class="container-fluid mt-3">
-<div class="row align-items-center">
+    <div class="container-fluid h-100 ">
+<div class="row align-items-center g-0 flex-shrink-0 border-bottom bg-light m-0">
         <!-- Left Grid -->
-        <div class="col-12 col-md-2">
+        <div class="col-12 col-md-2 ps-3">
           <div class="d-flex align-items-center gap-2">
                   <div [ngSwitch]="pageType"  >
                          
                     <div  *ngSwitchCase="1">
-                    <button (click)="toggleSidebar()" class="e-btn-sm">
+                    <button (click)="toggleSidebar()" class="e-btn-sm e-flat">
                       <span class="e-icons e-menu"></span>
                     </button>
                     </div>
                              
                     </div>
-            <div class="fs-6 fw-medium text-secondary">
+            <div class="fs-6 fw-medium text-secondary text-nowrap">
     
                 {{ pageheading }}
            
@@ -75,18 +72,12 @@ app-left-grid {
           >
           </app-form-toolbar>
         </div>
-        <!-- col-9 end -->
       </div>
-      
-      <!-- row end -->
 
 
-      <div [ngSwitch]="pageType">
-         <div *ngSwitchDefault>
-
-      <!-- SIDEBAR OUTSIDE OF THE ROW -->
-      <!-- SIDEBAR -->
-      <section class="leftgrid-section overflow-hidden" >
+      <div [ngSwitch]="pageType" class="flex-grow-1 overflow-hidden" >
+         <div *ngSwitchDefault class="h-100" >
+      <section class="d-flex flex-row h-100 overflow-hidden" >
         <ejs-sidebar
           id="sideTree"
           [(isOpen)]="isSidebarVisible"
@@ -96,8 +87,7 @@ app-left-grid {
           [type]="sidebarType"
           position="Left"
         >
-          <div class="p-2">
-            <!-- Replace with real component -->
+          <div class="h-100 overflow-hidden">
             <app-left-grid
               (rowSelected)="onCostCategorySelected($event)"
               [columns]="leftgridchildData.columns"
@@ -108,27 +98,24 @@ app-left-grid {
 
         <!-- MAIN CONTENT WRAPPER -->
         <!-- pagetype 1 [leftgrid and page] -->
-        <div class="main-content-wrapper px-2 w-100">
-          <div class="row">
-            <div
-              class="col-12 transition-col"
-            >
+        <div class="main-content-wrapper flex-grow-1 d-flex flex-column">
               <div
-                class="odoo-form-bg row"
-                style="background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"
+                class="odoo-form-bg flex-grow-1 overflow-y-auto overflow-x-hidden"
+            style="background:#fff;"
               >
                 <router-outlet></router-outlet>
               </div>
-            </div>
-          </div>
         </div>
        
 
       </section>
        </div>
-      <div *ngSwitchCase="2"                 style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 18px 18px 18px; margin-bottom: 18px;"
+      <div *ngSwitchCase="2" class="h-100 p-0"
 >
-          <router-outlet></router-outlet>
+             <div style="background-color:rgb(231, 229, 229);border-radius:4px">
+              <router-outlet></router-outlet>
+             </div>
+          
 
      </div>
      </div>
@@ -137,6 +124,8 @@ app-left-grid {
     <div id="dialogContainer">
       <div id="alertDialog" #dialogAlert></div>
     </div>
+<!-- 
+    <app-popup-container></app-popup-container> -->
   `,
 })
 export class RemoteEntry implements OnInit {

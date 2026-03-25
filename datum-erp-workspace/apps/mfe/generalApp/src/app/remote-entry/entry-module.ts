@@ -10,7 +10,7 @@ import { FormToolbarComponent } from './common/form-toolbar/form-toolbar.compone
 import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { GeneralAppService } from './http/general-app.service';
 import { SidebarModule } from '@syncfusion/ej2-angular-navigations';
-import { AlertDialogComponent, AlertDialogModule } from '@org/ui';
+import { AlertDialogComponent, AlertDialogModule, PopupContainerComponent } from '@org/ui';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 import { CheckBoxModule, ButtonModule } from '@syncfusion/ej2-angular-buttons';
@@ -27,9 +27,8 @@ import { MultiColumnComboBoxModule } from '@syncfusion/ej2-angular-multicolumn-c
     SidebarModule,
     AlertDialogModule,
     MultiColumnComboBoxModule,
-
-   
-  ],
+    PopupContainerComponent
+],
   providers: [GeneralAppService],
 })
 export class RemoteEntryModule {}

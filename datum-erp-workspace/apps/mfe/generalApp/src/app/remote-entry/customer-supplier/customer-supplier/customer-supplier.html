@@ -1,18 +1,21 @@
-<div class="container-fluid p-3">
-  <h2>Customer Supplier</h2>
+<!-- eslint-disable @angular-eslint/template/alt-text -->
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
+<!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
+<div class="container-fluid" style="background-color: rgba(218, 218, 218, 0.418);">
+  <p class="fw-bold fs-4">Customer Supplier</p>
 
   <form [formGroup]="customerSupplierForm">
 
     <ejs-tab id="element">
       <e-tabitems>
 
+        <!-- General Tab -->
         <e-tabitem [header]="headerText[0]">
           <ng-template #content>
 
             <div class="customer-form general-layout">
               <div class="general-left">
 
-                <!-- ===== GENERAL ===== -->
                 <div class="section-title">General</div>
 
                 <div class="grid-2">
@@ -41,7 +44,7 @@
                 </div>
                 <div class="grid-2">
                   <!-- code -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Code</label>
                     <ejs-textbox id="code" formControlName="code" [value]="customerSupplierCode"
                       [readonly]="isInputDisabled"></ejs-textbox>
@@ -65,7 +68,7 @@
 
 
                   <!-- salutation -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline input-custom-fix">
                     <label>Salutation</label>
                     <ejs-dropdownlist formControlName="salutation" [dataSource]="salutationOptions"
                       [fields]="{ text: 'text', value: 'value' }" placeholder="Select Salutation"
@@ -76,7 +79,7 @@
 
                 <!-- name -->
                 <div class="grid-2">
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Name</label>
 
                     <ejs-textbox formControlName="name" [readonly]="isInputDisabled">
@@ -101,7 +104,7 @@
 
                 <!-- contact person -->
                 <div class="grid-2">
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Contact Person</label>
                     <ejs-textbox formControlName="contactpersonname" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
@@ -115,20 +118,20 @@
 
                 <div class="grid-2">
                   <!-- addresslineone -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Address Line 1</label>
                     <ejs-textbox formControlName="addresslineone" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
 
                   <!-- addressarabic -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Address Line 2</label>
                     <ejs-textbox formControlName="addressarabic" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
                 </div>
                 <div class="grid-3">
                   <!-- mobile no -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Mobile No</label>
                     <ejs-textbox class="mobile-input" formControlName="mobileno" [readonly]="isInputDisabled">
                     </ejs-textbox>
@@ -142,7 +145,7 @@
                   </div>
 
                   <!-- creditperiod -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Credit Period</label>
                     <ejs-textbox formControlName="creditperiod" [readonly]="isInputDisabled"></ejs-textbox>
                     <small
@@ -153,7 +156,7 @@
                   </div>
 
                   <!-- creditlimit -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Credit Limit</label>
                     <ejs-textbox formControlName="creditlimit" [readonly]="isInputDisabled"></ejs-textbox>
                     <small
@@ -165,26 +168,26 @@
                 </div>
                 <div class="grid-3">
                   <!-- vatno -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>VAT No</label>
                     <ejs-textbox formControlName="vatno" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
 
                   <!-- city -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>City</label>
                     <ejs-textbox formControlName="city" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
 
                   <!-- pobox -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>P.O Box</label>
                     <ejs-textbox formControlName="pobox" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
                 </div>
                 <div class="grid-3">
                   <!-- country -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Country</label>
                     <ejs-dropdownlist id="country" formControlName="country" [dataSource]="countries()"
                       [fields]="{ text: 'value', value: 'id' }" placeholder="-- Select Country --"
@@ -193,13 +196,13 @@
                   </div>
 
                   <!-- countrycode -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Country Code</label>
                     <ejs-textbox formControlName="countrycode" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
 
                   <!-- buildingno -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Building No</label>
                     <ejs-textbox formControlName="buildingno" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
@@ -207,7 +210,7 @@
 
                 <div class="grid-3">
                   <!-- province -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Province</label>
                     <ejs-textbox formControlName="province" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
@@ -217,7 +220,7 @@
                     <ejs-textbox formControlName="district" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
                   <!-- area -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Area</label>
                     <ejs-multicolumncombobox id="areaDropdown" formControlName="area" [dataSource]="areaOptions()"
                       [fields]="{ text: 'value', value: 'id' }" [columns]="areaKeys" popupWidth="400px"
@@ -228,7 +231,7 @@
                   </div>
                 </div>
                 <!-- salesman -->
-                <div class="form-row form-row-inline">
+                <div class="form-row form-row-inline form-field">
                   <label>SalesMan</label>
                   <ejs-multicolumncombobox #salesmanCombo id="salesman" formControlName="salesman"
                     [dataSource]="salesmanData()" [fields]="{ text: 'name', value: 'id' }" [columns]="salesmanKeys"
@@ -237,22 +240,22 @@
                   </ejs-multicolumncombobox>
                 </div>
 
-                <!-- ===== OTHER DETAILS ===== -->
+                <!-- Other Details-->
                 <div class="section-title">Other Details</div>
                 <div class="grid-2">
                   <!-- faxno -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Fax No</label>
                     <ejs-textbox formControlName="faxno" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
                   <!-- contactperson2 -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Contact Person (2)</label>
                     <ejs-textbox formControlName="contactperson2" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
                 </div>
                 <div class="grid-2">
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Email Address</label>
                     <ejs-textbox formControlName="emailaddress" [readonly]="isInputDisabled"></ejs-textbox>
                     <small style="color: red">
@@ -262,13 +265,13 @@
                     </small>
                   </div>
 
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Telephone No (2)</label>
                     <ejs-textbox formControlName="telephoneno2" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
                 </div>
                 <div class="grid-2">
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Central Sales Tax No.</label>
                     <ejs-textbox formControlName="centralsalestaxno" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
@@ -279,7 +282,7 @@
                 </div>
 
                 <div class="grid-2">
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>PAN No.</label>
                     <ejs-textbox formControlName="panno" [readonly]="isInputDisabled"></ejs-textbox>
                   </div>
@@ -292,7 +295,7 @@
 
                 <div class="grid-2">
                   <!-- account group -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Account Group</label>
                     <ejs-dropdownlist id="accountgroup" formControlName="accountgroup" [dataSource]="accountGroupData()"
                       [fields]="{ text: 'name', value: 'id' }" placeholder="Select Account Group"
@@ -302,7 +305,7 @@
                   </div>
 
                   <!-- account -->
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Account</label>
                     <ejs-dropdownlist formControlName="account" [dataSource]="accountData()"
                       [readonly]="isInputDisabled" [fields]="{ text: 'name', value: 'id' }" placeholder="Select Account"
@@ -312,7 +315,7 @@
                 </div>
                 <!-- remarks -->
                 <div class="grid-1">
-                  <div class="form-row form-row-inline">
+                  <div class="form-row form-row-inline form-field">
                     <label>Remarks</label>
                     <ejs-textbox formControlName="remarks" [readonly]="isInputDisabled" multiline="true">
                     </ejs-textbox>
@@ -343,273 +346,279 @@
 
 
             </div>
+
+
           </ng-template>
         </e-tabitem>
 
-        <!-- ===== CUSTOMER DETAILS ===== -->
+        <!-- Customer Details-->
         <e-tabitem [header]="headerText[1]">
           <ng-template #content>
-            <div class="section-title">
-              Particulars of commodity sought / planned for the year
-            </div>
-            <div class="section-grid">
-              <!-- commodity sought -->
-              <div class="form-row form-row-inline stretch">
-                <label for="commoditysought">Commodity Sought</label>
-                <ejs-multiselect [dataSource]="commodityOptions()" [fields]="{ text: 'description', value: 'id' }"
-                  placeholder="Select Commodity" [enabled]="!isInputDisabled" (change)="onCommoditySelect($event)"
-                  cssClass="e-outline commodity-multiselect" id="commoditysought" [readonly]="isInputDisabled"
-                  formControlName="commoditysought"></ejs-multiselect>
-              </div>
-              <!-- sales type -->
-              <div class="form-row form-row-inline">
-                <label for="salestype">Sale Type</label>
-                <ejs-dropdownlist [dataSource]="saleTypes()" [fields]="{ text: 'value', value: 'id' }"
-                  placeholder="Select Sale Type" [enabled]="!isInputDisabled" (change)="onSaleTypeSelect($event)"
-                  cssClass="e-outline" id="salestype" formControlName="salestype"
-                  [readonly]="isInputDisabled"></ejs-dropdownlist>
-              </div>
-              <!-- Quantity Planned -->
-              <div class="form-row form-row-inline">
-                <label for="quantityplanned">Quantity Planned</label>
 
-                <ejs-textbox id="quantityplanned" formControlName="quantityplanned" [readonly]="isInputDisabled">
-                </ejs-textbox>
-                <!-- Integer validation -->
-                <small
-                  *ngIf="isInvalid('quantityplanned') && customerSupplierForm.get('quantityplanned')?.errors?.['integerOnly']"
-                  style="color:red">
-                  Quantity must be an integer value
-                </small>
+            <div class="customer-form">
+              <div class="section-title">
+                Particulars of commodity sought / planned for the year
               </div>
+              <div class="section-grid">
+                <!-- commodity sought -->
+                <div class="form-row form-row-inline form-field">
+                  <label for="commoditysought">Commodity Sought</label>
+                  <ejs-multiselect [dataSource]="commodityOptions()" [fields]="{ text: 'description', value: 'id' }"
+                    placeholder="Select Commodity" [enabled]="!isInputDisabled" (change)="onCommoditySelect($event)"
+                    cssClass="e-outline commodity-multiselect" id="commoditysought" [readonly]="isInputDisabled"
+                    formControlName="commoditysought"></ejs-multiselect>
+                </div>
+                <!-- sales type -->
+                <div class="form-row form-row-inline form-field">
+                  <label for="salestype">Sale Type</label>
+                  <ejs-dropdownlist [dataSource]="saleTypes()" [fields]="{ text: 'value', value: 'id' }"
+                    placeholder="Select Sale Type" [enabled]="!isInputDisabled" (change)="onSaleTypeSelect($event)"
+                    cssClass="e-outline" id="salestype" formControlName="salestype"
+                    [readonly]="isInputDisabled"></ejs-dropdownlist>
+                </div>
+                <!-- Quantity Planned -->
+                <div class="form-row form-row-inline">
+                  <label for="quantityplanned">Quantity Planned</label>
 
-              <!-- Credit Collection Type -->
-              <div class="form-row form-row-inline">
-                <label for="creditcollectiontype">Credit Collection Type</label>
-                <ejs-dropdownlist [dataSource]="creditcollectiontypeOptions()"
-                  [fields]="{ text: 'description', value: 'id' }" placeholder="Select Credit Collection Type"
-                  [enabled]="!isInputDisabled" (change)="onCreditCollectionTypeSelect()" cssClass="e-outline"
-                  id="creditcollectiontype" formControlName="creditcollectiontype"
-                  [readonly]="isInputDisabled"></ejs-dropdownlist>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="dl1">DL1</label>
-                <ejs-textbox id="dl1" formControlName="dl1" [readonly]="isInputDisabled"></ejs-textbox>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="dl2">DL2</label>
-                <ejs-textbox id="dl2" formControlName="dl2" [readonly]="isInputDisabled"></ejs-textbox>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="pricecategory">Price Category</label>
-                <ejs-dropdownlist id="pricecategory" [dataSource]="priceCategoryOptions()"
-                  [fields]="{ text: 'name', value: 'id' }" placeholder="Select Price Category"
-                  [enabled]="!isInputDisabled" (change)="onPriceCategorySelect($event)" [readonly]="isInputDisabled"
-                  formControlName="pricecategory"></ejs-dropdownlist>
-              </div>
+                  <ejs-textbox id="quantityplanned" formControlName="quantityplanned" [readonly]="isInputDisabled">
+                  </ejs-textbox>
+                  <!-- Integer validation -->
+                  <small
+                    *ngIf="isInvalid('quantityplanned') && customerSupplierForm.get('quantityplanned')?.errors?.['integerOnly']"
+                    style="color:red">
+                    Quantity must be an integer value
+                  </small>
+                </div>
 
-              <div class="form-row form-row-inline">
-                <label for="placeofsupply">Place Of Supply</label>
-                <ejs-multicolumncombobox id="placeofsupply" formControlName="placeofsupply"
-                  [dataSource]="placeofSupplyOptions()" [fields]="{ text: 'value', value: 'id' }" [columns]="placeKeys"
-                  popupWidth="400px" [disabled]="isInputDisabled" [allowFiltering]="true" sortType="Ascending"
-                  (change)=" onPlayofSupplySelected($event)" [readonly]="isInputDisabled">
-                </ejs-multicolumncombobox>
-              </div>
-            </div>
+                <!-- Credit Collection Type -->
+                <div class="form-row form-row-inline form-field">
+                  <label for="creditcollectiontype">Credit Collection Type</label>
+                  <ejs-dropdownlist [dataSource]="creditcollectiontypeOptions()"
+                    [fields]="{ text: 'description', value: 'id' }" placeholder="Select Credit Collection Type"
+                    [enabled]="!isInputDisabled" (change)="onCreditCollectionTypeSelect()" cssClass="e-outline"
+                    id="creditcollectiontype" formControlName="creditcollectiontype"
+                    [readonly]="isInputDisabled"></ejs-dropdownlist>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="dl1">DL1</label>
+                  <ejs-textbox id="dl1" formControlName="dl1" [readonly]="isInputDisabled"></ejs-textbox>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="dl2">DL2</label>
+                  <ejs-textbox id="dl2" formControlName="dl2" [readonly]="isInputDisabled"></ejs-textbox>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="pricecategory">Price Category</label>
+                  <ejs-dropdownlist id="pricecategory" [dataSource]="priceCategoryOptions()"
+                    [fields]="{ text: 'name', value: 'id' }" placeholder="Select Price Category"
+                    [enabled]="!isInputDisabled" (change)="onPriceCategorySelect($event)" [readonly]="isInputDisabled"
+                    formControlName="pricecategory"></ejs-dropdownlist>
+                </div>
 
-            <div class="section-title">Business Details</div>
-            <div class="section-grid">
-              <div class="form-row form-row-inline">
-                <label for="businesstype">Business Type</label>
-                <ejs-dropdownlist [dataSource]="businessTypes()" [fields]="{ text: 'name', value: 'value' }"
-                  placeholder="Select Business Type" [readonly]="isInputDisabled"
-                  (change)="onBusinessTypeSelect($event)" cssClass="e-outline" id="businesstype"
-                  formControlName="businesstype"></ejs-dropdownlist>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="availedanyloanlimits">Availed Any Loan Limits / Facilities?</label>
-                <ejs-dropdownlist [dataSource]="availedanyloanlimitsOptions()"
-                  [fields]="{ text: 'name', value: 'value' }" placeholder="Select Option" [readonly]="isInputDisabled"
-                  (change)="onAvailedLoanLimitsSelect($event)" cssClass="e-outline" id="availedanyloanlimits"
-                  formControlName="availedanyloanlimits"></ejs-dropdownlist>
+                <div class="form-row form-row-inline form-field">
+                  <label for="placeofsupply">Place Of Supply</label>
+                  <ejs-multicolumncombobox id="placeofsupply" formControlName="placeofsupply"
+                    [dataSource]="placeofSupplyOptions()" [fields]="{ text: 'value', value: 'id' }"
+                    [columns]="placeKeys" popupWidth="400px" [disabled]="isInputDisabled" [allowFiltering]="true"
+                    sortType="Ascending" (change)=" onPlayofSupplySelected($event)" [readonly]="isInputDisabled">
+                  </ejs-multicolumncombobox>
+                </div>
               </div>
 
-              <div class="form-row form-row-inline">
-                <label for="businessnature">Business Nature</label>
-                <ejs-dropdownlist id="businessnature" formControlName="businessnature" [readonly]="isInputDisabled"
-                  [dataSource]="businessNatureOptions" [fields]="{ text: 'text', value: 'value' }"
-                  placeholder="-- Select --" cssClass="e-outline">
-                </ejs-dropdownlist>
+              <div class="section-title">Business Details</div>
+              <div class="section-grid">
+                <div class="form-row form-row-inline form-field mt-1">
+                  <label for="businesstype">Business Type</label>
+                  <ejs-dropdownlist [dataSource]="businessTypes()" [fields]="{ text: 'name', value: 'value' }"
+                    placeholder="Select Business Type" [readonly]="isInputDisabled"
+                    (change)="onBusinessTypeSelect($event)" cssClass="e-outline" id="businesstype"
+                    formControlName="businesstype"></ejs-dropdownlist>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="availedanyloanlimits">Availed Any Loan Limits / Facilities?</label>
+                  <ejs-dropdownlist [dataSource]="availedanyloanlimitsOptions()"
+                    [fields]="{ text: 'name', value: 'value' }" placeholder="Select Option" [readonly]="isInputDisabled"
+                    (change)="onAvailedLoanLimitsSelect($event)" cssClass="e-outline" id="availedanyloanlimits"
+                    formControlName="availedanyloanlimits"></ejs-dropdownlist>
+                </div>
+
+                <div class="form-row form-row-inline form-field">
+                  <label for="businessnature">Business Nature</label>
+                  <ejs-dropdownlist id="businessnature" formControlName="businessnature" [readonly]="isInputDisabled"
+                    [dataSource]="businessNatureOptions" [fields]="{ text: 'text', value: 'value' }"
+                    placeholder="-- Select --" cssClass="e-outline">
+                  </ejs-dropdownlist>
+                </div>
+
+
+                <div class="form-row form-row-inline form-field">
+                  <label for="yearsofbusiness">Years Of Business</label>
+
+                  <ejs-textbox id="yearsofbusiness" formControlName="yearsofbusiness" [readonly]="isInputDisabled">
+                  </ejs-textbox>
+                  <!-- Integer -->
+                  <small
+                    *ngIf="isInvalid('yearsofbusiness') && customerSupplierForm.get('yearsofbusiness')?.errors?.['integerOnly']"
+                    style="color:red">
+                    Must be a whole number (integer)
+                  </small>
+                </div>
+
+                <div class="form-row form-row-inline form-field">
+                  <label for="othermerchantsofcustomer">Other Merchants of Customer</label>
+                  <ejs-textbox id="othermerchantsofcustomer" formControlName="othermerchantsofcustomer"
+                    [readonly]="isInputDisabled"></ejs-textbox>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="marketreputation">Market Reputation</label>
+                  <ejs-dropdownlist id="marketreputation" formControlName="marketreputation"
+                    [readonly]="isInputDisabled" [dataSource]="marketReputations()"
+                    [fields]="{ text: 'value', value: 'id' }" placeholder="-- Select --" [enabled]="!isInputDisabled">
+                  </ejs-dropdownlist>
+                </div>
+
+                <div class="form-row form-row-inline form-field">
+                  <label for="yearlyturnover">Yearly Turnover</label>
+                  <div class="input-with-suffix">
+                    <ejs-textbox id="yearlyturnover" formControlName="yearlyturnover"
+                      [readonly]="isInputDisabled"></ejs-textbox>
+                    <small
+                      *ngIf="isInvalid('yearlyturnover') && customerSupplierForm.get('yearlyturnover')?.errors?.['decimalOnly']"
+                      style="color:red">
+                      Must be a valid decimal number
+                    </small>
+                    <span class="suffix">Rs in LACS</span>
+                  </div>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="businessaddress">Business Address</label>
+                  <ejs-dropdownlist [dataSource]="businessAddressOptions()" [fields]="{ text: 'name', value: 'value' }"
+                    placeholder="Select Business Address" [readonly]="isInputDisabled"
+                    (change)="onBusinessAddressSelect($event)" cssClass="e-outline" id="businessaddress"
+                    formControlName="businessaddress"></ejs-dropdownlist>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="valueofproperty">Value of Property</label>
+                  <div class="input-with-suffix">
+                    <ejs-textbox id="valueofproperty" formControlName="valueofproperty"
+                      [readonly]="isInputDisabled"></ejs-textbox>
+                    <small
+                      *ngIf="isInvalid('valueofproperty') && customerSupplierForm.get('valueofproperty')?.errors?.['decimalOnly']"
+                      style="color:red">
+                      Must be a valid decimal number
+                    </small>
+                    <span class="suffix">Rs in LACS</span>
+                  </div>
+                </div>
               </div>
 
+              <div class="section-title">For Branch</div>
+              <div class="section-grid">
+                <div class="form-row form-row-inline form-field">
+                  <label for="categoryrecommended">Category Recommended</label>
+                  <ejs-dropdownlist id="categoryrecommended" formControlName="categoryrecommended"
+                    [dataSource]="categoryfixed()" [fields]="{ text: 'name', value: 'id' }"
+                    placeholder="Select Category Fixed" [readonly]="isInputDisabled"
+                    (valueChange)="oncategorychanged($event)">
+                  </ejs-dropdownlist>
 
-              <div class="form-row form-row-inline">
-                <label for="yearsofbusiness">Years Of Business</label>
+                </div>
+                <div class="form-row form-row-inline form-field mt-1">
+                  <label for="limitrecommended">Limit Recommended</label>
+                  <ejs-textbox id="limitrecommended" formControlName="limitrecommended"
+                    [readonly]="isInputDisabled"></ejs-textbox>
 
-                <ejs-textbox id="yearsofbusiness" formControlName="yearsofbusiness" [readonly]="isInputDisabled">
-                </ejs-textbox>
-                <!-- Integer -->
-                <small
-                  *ngIf="isInvalid('yearsofbusiness') && customerSupplierForm.get('yearsofbusiness')?.errors?.['integerOnly']"
-                  style="color:red">
-                  Must be a whole number (integer)
-                </small>
+                </div>
               </div>
 
-              <div class="form-row form-row-inline">
-                <label for="othermerchantsofcustomer">Other Merchants of Customer</label>
-                <ejs-textbox id="othermerchantsofcustomer" formControlName="othermerchantsofcustomer"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="marketreputation">Market Reputation</label>
-                <ejs-dropdownlist id="marketreputation" formControlName="marketreputation" [readonly]="isInputDisabled"
-                  [dataSource]="marketReputations()" [fields]="{ text: 'value', value: 'id' }"
-                  placeholder="-- Select --" [enabled]="!isInputDisabled">
-                </ejs-dropdownlist>
-              </div>
-
-              <div class="form-row form-row-inline">
-                <label for="yearlyturnover">Yearly Turnover</label>
-                <div class="input-with-suffix">
-                  <ejs-textbox id="yearlyturnover" formControlName="yearlyturnover"
+              <div class="section-title">For HO</div>
+              <div class="section-grid">
+                <div class="form-row form-row-inline form-field mt-1">
+                  <label for="categoryfixed">Category Fixed</label>
+                  <ejs-dropdownlist id="categoryfixed" formControlName="categoryfixed" [dataSource]="categoryfixed()"
+                    [fields]="{ text: 'name', value: 'id' }" placeholder="Select Category Fixed"
+                    [readonly]="isInputDisabled" (change)="oncategorychanged($event)"></ejs-dropdownlist>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="limitfixedforcustomer">Limit Fixed for Customer</label>
+                  <ejs-textbox id="limitfixedforcustomer" formControlName="limitfixedforcustomer"
                     [readonly]="isInputDisabled"></ejs-textbox>
                   <small
-                    *ngIf="isInvalid('yearlyturnover') && customerSupplierForm.get('yearlyturnover')?.errors?.['decimalOnly']"
+                    *ngIf="isInvalid('limitfixedforcustomer') && customerSupplierForm.get('limitfixedforcustomer')?.errors?.['integerOnly']"
+                    style="color:red">
+                    Must be a whole number (integer)
+                  </small>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="creditperiodpermitted">Credit Period Permitted</label>
+                  <ejs-textbox id="creditperiodpermitted" formControlName="creditperiodpermitted"
+                    [readonly]="isInputDisabled"></ejs-textbox>
+                  <small
+                    *ngIf="isInvalid('creditperiodpermitted') && customerSupplierForm.get('creditperiodpermitted')?.errors?.['integerOnly']"
+                    style="color:red">
+                    Must be a whole number (integer)
+                  </small>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="overdueamountlimit">Overdue Amount Limit</label>
+                  <ejs-textbox id="overdueamountlimit" formControlName="overdueamountlimit"
+                    [readonly]="isInputDisabled"></ejs-textbox>
+                  <small
+                    *ngIf="isInvalid('overdueamountlimit') && customerSupplierForm.get('overdueamountlimit')?.errors?.['integerOnly']"
+                    style="color:red">
+                    Must be a whole number (integer)
+                  </small>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="overdueperiodlimit">Overdue Period Limit</label>
+                  <ejs-textbox id="overdueperiodlimit" formControlName="overdueperiodlimit"
+                    [readonly]="isInputDisabled"></ejs-textbox>
+                  <small
+                    *ngIf="isInvalid('overdueperiodlimit') && customerSupplierForm.get('overdueperiodlimit')?.errors?.['integerOnly']"
+                    style="color:red">
+                    Must be a whole number (integer)
+                  </small>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="chequebouncecountlimit">Cheque Bounce Count Limit</label>
+                  <ejs-textbox id="chequebouncecountlimit" formControlName="chequebouncecountlimit"
+                    [readonly]="isInputDisabled"></ejs-textbox>
+                  <small
+                    *ngIf="isInvalid('chequebouncecountlimit') && customerSupplierForm.get('chequebouncecountlimit')?.errors?.['integerOnly']"
+                    style="color:red">
+                    Must be a whole number (integer)
+                  </small>
+                </div>
+                <div class="form-row form-row-inline form-field">
+                  <label for="salespricelowvarlimit">Sales Price Low Variance Limit</label>
+                  <ejs-textbox id="salespricelowvarlimit" formControlName="salespricelowvarlimit"
+                    [readonly]="isInputDisabled"></ejs-textbox>
+                  <small
+                    *ngIf="isInvalid('salespricelowvarlimit') && customerSupplierForm.get('salespricelowvarlimit')?.errors?.['decimalOnly']"
                     style="color:red">
                     Must be a valid decimal number
                   </small>
-                  <span class="suffix">Rs in LACS</span>
                 </div>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="businessaddress">Business Address</label>
-                <ejs-dropdownlist [dataSource]="businessAddressOptions()" [fields]="{ text: 'name', value: 'value' }"
-                  placeholder="Select Business Address" [readonly]="isInputDisabled"
-                  (change)="onBusinessAddressSelect($event)" cssClass="e-outline" id="businessaddress"
-                  formControlName="businessaddress"></ejs-dropdownlist>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="valueofproperty">Value of Property</label>
-                <div class="input-with-suffix">
-                  <ejs-textbox id="valueofproperty" formControlName="valueofproperty"
+                <div class="form-row form-row-inline form-field">
+                  <label for="salespriceupVarlimit">Sales Price High Variance Limit</label>
+                  <ejs-textbox id="salespriceupVarlimit" formControlName="salespriceupVarlimit"
                     [readonly]="isInputDisabled"></ejs-textbox>
                   <small
-                    *ngIf="isInvalid('valueofproperty') && customerSupplierForm.get('valueofproperty')?.errors?.['decimalOnly']"
+                    *ngIf="isInvalid('salespriceupVarlimit') && customerSupplierForm.get('salespriceupVarlimit')?.errors?.['decimalOnly']"
                     style="color:red">
                     Must be a valid decimal number
                   </small>
-                  <span class="suffix">Rs in LACS</span>
+
                 </div>
               </div>
             </div>
 
-            <div class="section-title">For Branch</div>
-            <div class="section-grid">
-              <div class="form-row form-row-inline">
-                <label for="categoryrecommended">Category Recommended</label>
-                <ejs-dropdownlist id="categoryrecommended" formControlName="categoryrecommended"
-                  [dataSource]="categoryfixed()" [fields]="{ text: 'name', value: 'id' }"
-                  placeholder="Select Category Fixed" [readonly]="isInputDisabled"
-                  (valueChange)="oncategorychanged($event)">
-                </ejs-dropdownlist>
-
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="limitrecommended">Limit Recommended</label>
-                <ejs-textbox id="limitrecommended" formControlName="limitrecommended"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-
-              </div>
-            </div>
-
-            <div class="section-title">For HO</div>
-            <div class="section-grid">
-              <div class="form-row form-row-inline">
-                <label for="categoryfixed">Category Fixed</label>
-                <ejs-dropdownlist id="categoryfixed" formControlName="categoryfixed" [dataSource]="categoryfixed()"
-                  [fields]="{ text: 'name', value: 'id' }" placeholder="Select Category Fixed"
-                  [readonly]="isInputDisabled" (change)="oncategorychanged($event)"></ejs-dropdownlist>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="limitfixedforcustomer">Limit Fixed for Customer</label>
-                <ejs-textbox id="limitfixedforcustomer" formControlName="limitfixedforcustomer"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-                <small
-                  *ngIf="isInvalid('limitfixedforcustomer') && customerSupplierForm.get('limitfixedforcustomer')?.errors?.['integerOnly']"
-                  style="color:red">
-                  Must be a whole number (integer)
-                </small>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="creditperiodpermitted">Credit Period Permitted</label>
-                <ejs-textbox id="creditperiodpermitted" formControlName="creditperiodpermitted"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-                <small
-                  *ngIf="isInvalid('creditperiodpermitted') && customerSupplierForm.get('creditperiodpermitted')?.errors?.['integerOnly']"
-                  style="color:red">
-                  Must be a whole number (integer)
-                </small>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="overdueamountlimit">Overdue Amount Limit</label>
-                <ejs-textbox id="overdueamountlimit" formControlName="overdueamountlimit"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-                <small
-                  *ngIf="isInvalid('overdueamountlimit') && customerSupplierForm.get('overdueamountlimit')?.errors?.['integerOnly']"
-                  style="color:red">
-                  Must be a whole number (integer)
-                </small>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="overdueperiodlimit">Overdue Period Limit</label>
-                <ejs-textbox id="overdueperiodlimit" formControlName="overdueperiodlimit"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-                <small
-                  *ngIf="isInvalid('overdueperiodlimit') && customerSupplierForm.get('overdueperiodlimit')?.errors?.['integerOnly']"
-                  style="color:red">
-                  Must be a whole number (integer)
-                </small>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="chequebouncecountlimit">Cheque Bounce Count Limit</label>
-                <ejs-textbox id="chequebouncecountlimit" formControlName="chequebouncecountlimit"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-                <small
-                  *ngIf="isInvalid('chequebouncecountlimit') && customerSupplierForm.get('chequebouncecountlimit')?.errors?.['integerOnly']"
-                  style="color:red">
-                  Must be a whole number (integer)
-                </small>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="salespricelowvarlimit">Sales Price Low Variance Limit</label>
-                <ejs-textbox id="salespricelowvarlimit" formControlName="salespricelowvarlimit"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-                <small
-                  *ngIf="isInvalid('salespricelowvarlimit') && customerSupplierForm.get('salespricelowvarlimit')?.errors?.['decimalOnly']"
-                  style="color:red">
-                  Must be a valid decimal number
-                </small>
-              </div>
-              <div class="form-row form-row-inline">
-                <label for="salespriceupVarlimit">Sales Price High Variance Limit</label>
-                <ejs-textbox id="salespriceupVarlimit" formControlName="salespriceupVarlimit"
-                  [readonly]="isInputDisabled"></ejs-textbox>
-                <small
-                  *ngIf="isInvalid('salespriceupVarlimit') && customerSupplierForm.get('salespriceupVarlimit')?.errors?.['decimalOnly']"
-                  style="color:red">
-                  Must be a valid decimal number
-                </small>
-
-              </div>
-            </div>
 
           </ng-template>
         </e-tabitem>
 
 
-        <!-- ===== DELIVERY DETAILS ===== -->
+        <!-- Delivery Details-->
 
         <e-tabitem [header]="headerText[2]">
           <ng-template #content>
@@ -683,33 +692,24 @@
 
 
 <style>
-  .customer-form {
-    width: 100%;
-    padding: 10px;
-    font-family: Arial;
-  }
-
-  .section-title {
-    font-weight: bold;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    font-size: 13px;
-  }
-
   .section-grid {
+    margin-top: 2px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(280px, 1fr));
-    gap: 10px 30px;
-    margin-bottom: 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 40px;
+    align-items: start;
   }
 
+  .section-grid .stretch {
+    grid-row: span 2;
+  }
+
+  /* GRID SYSTEM */
   .grid-1,
   .grid-2,
   .grid-3 {
     display: grid;
     gap: 8px 20px;
-    margin-bottom: 10px;
   }
 
   .grid-1 {
@@ -724,54 +724,77 @@
     grid-template-columns: 1fr 1fr 1fr;
   }
 
+  /* FORM */
   .form-row {
     display: flex;
     flex-direction: column;
   }
 
-  .form-row-inline {
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .form-row-inline label {
-    margin-bottom: 0;
-    min-width: 120px;
-  }
-
   .form-row label {
     font-size: 12px;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     font-weight: normal;
   }
 
-  .checkbox-row {
-    display: flex;
+  /* INLINE FORM */
+  .form-row-inline {
+    display: grid;
+    grid-template-columns: 150px 1fr;
     align-items: center;
+    column-gap: 12px;
   }
 
-  .checkbox-row label {
-    margin-right: 10px;
+  .form-row-inline>*:not(label) {
+    width: 100%;
+    min-width: 0;
   }
 
-  .section-grid .form-row-inline.stretch label {
-    min-width: 160px;
+  .form-row-inline label {
+    padding-right: 8px;
   }
 
-  .section-grid .form-row-inline {
-    align-items: baseline;
-  }
-
+  /* INPUT WITH SUFFIX */
   .input-with-suffix {
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 100%;
   }
 
   .suffix {
     font-size: 11px;
     color: #666;
     white-space: nowrap;
+  }
+
+  /* MULTISELECT */
+  .commodity-multiselect {
+    min-height: 50px;
+  }
+
+  /* 📱 RESPONSIVE */
+  @media (max-width: 992px) {
+    .form-row-inline {
+      grid-template-columns: 120px 1fr;
+    }
+
+    .grid-3 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .form-row-inline {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row-inline label {
+      margin-bottom: 4px;
+    }
+
+    .grid-2,
+    .grid-3 {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
