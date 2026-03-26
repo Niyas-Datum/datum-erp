@@ -15,7 +15,7 @@ import { AccountReconciliationComponent } from './account-reconciliation/account
 
 // Syncfusion imports
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
-import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { CalendarModule, DatePickerModule, MaskedDateTimeService } from '@syncfusion/ej2-angular-calendars';
 import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { GridAllModule } from '@syncfusion/ej2-angular-grids';
 import { MultiColumnComboBoxModule } from '@syncfusion/ej2-angular-multicolumn-combobox';
@@ -53,8 +53,8 @@ import { VoucherCommonService } from './common/services/voucher-common.service';
     GridAllModule,
     MultiColumnComboBoxModule,
     PaymentpopupComponent,
-    PoallocationpopupComponent
+    PoallocationpopupComponent,
   ],
-  providers: [DatePipe, FinanceAppService, VoucherService, VoucherCommonService]
+  providers: [DatePipe, FinanceAppService, VoucherService, VoucherCommonService ,MaskedDateTimeService]
 })
 export class VoucherModule {}
