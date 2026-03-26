@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseService, DataSharingService } from '@org/services';
-import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService } from '@syncfusion/ej2-angular-grids';
+import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService, PageSettingsModel, InfiniteScrollService } from '@syncfusion/ej2-angular-grids';
 import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
 ;
@@ -14,7 +14,7 @@ import { LeftGridDto } from '@org/models';
   imports: [CommonModule, GridModule, FormsModule],
   templateUrl: './leftGrid.component.html',
   styleUrl: './leftGrid.component.scss',
-  providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService],
+  providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService,InfiniteScrollService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeftGridComponent {
@@ -50,6 +50,13 @@ export class LeftGridComponent {
 
   isNewMode = input(false);
   isEditMode = input(false);
+
+  // Pagination
+  public pageSettings : PageSettingsModel= {
+    pageSize: 50,
+    pageSizes :[50,100,200],
+    pageCount:5
+  }
 
   isSelectionDisabled = computed(() => this.isNewMode() || this.isEditMode());
 

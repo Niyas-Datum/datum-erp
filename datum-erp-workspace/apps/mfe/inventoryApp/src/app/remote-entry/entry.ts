@@ -9,7 +9,7 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
   standalone: false,
   styles: [`
 
-.container-fluidz{
+.container-fluid{
   height:100vh;
   display:flex;
   flex-direction:column;
@@ -43,7 +43,7 @@ export class RemoteEntry {
   // Sidebar configuration
   isSidebarVisible = true;
   sidebarType = 'Push'; // or 'Slide'
-  width = '258px';
+  width = '260px';
   target = '.main-content-wrapper';
   mediaQuery = '(min-width: 768px)';
 

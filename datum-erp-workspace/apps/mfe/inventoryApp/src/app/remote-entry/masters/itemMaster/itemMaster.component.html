@@ -1,20 +1,17 @@
 <div class="flex-fill overflow-auto p-3 position-relative">
   <div class="card shadow-sm">
     <div class="card-body">
-      <form [formGroup]="itemMasterForm" >
+      <form [formGroup]="itemMasterForm">
         <ejs-tab id="itemMasterForm">
           <div class="d-flex align-items-center gap-2">
             <label for="Branch" style="width: 100px">Branch</label>
-            <ejs-dropdownlist
-              formControlName="branch"
-              [dataSource]="allBranches()"
-              [fields]="{ text: 'name', value: 'id' }"
-              (change)="onBranchChange($event)">
+            <ejs-dropdownlist formControlName="branch" [dataSource]="allBranches()"
+              [fields]="{ text: 'name', value: 'id' }" (change)="onBranchChange($event)">
             </ejs-dropdownlist>
             <div *ngIf="itemMasterForm.get('branch')?.touched && itemMasterForm.get('branch')?.invalid"
-     style="color:red; font-size:12px;">
-  Branch is required
-</div>
+              style="color:red; font-size:12px;">
+              Branch is required
+            </div>
           </div>
           <div class="e-tab-header">
             <div>Item Details</div>
@@ -26,48 +23,25 @@
               <div class="col-md-10">
                 <div class="item-master-row">
                   <div class="item-master-row-left">
-                    <div
-                      class="d-flex align-items-center gap-2 item-code-section"
-                    >
-                      <label for="ItemCode" style="width: 100px"
-                        >Item Code</label>
-                      <ejs-textbox
-                        [multiline]="false"
-                        formControlName="itemcode"
-                      ></ejs-textbox>
+                    <div class="d-flex align-items-center gap-2 item-code-section">
+                      <label for="ItemCode" style="width: 100px">Item Code</label>
+                      <ejs-textbox [multiline]="false" formControlName="itemcode"></ejs-textbox>
                       <div *ngIf="itemMasterForm.get('itemcode')?.touched && itemMasterForm.get('itemcode')?.invalid"
-                       style="color:red; font-size:12px;">
-                       Item Code is required
+                        style="color:red; font-size:12px;">
+                        Item Code is required
                       </div>
                     </div>
-                    <div
-                      class="d-flex align-items-center gap-2 barcode-section"
-                    >
-                      <label
-                        for="barcodeno"
-                        style="width: 100px; padding-left: 30px"
-                        >Barcode</label
-                      >
-                      <ejs-textbox
-                        [multiline]="false"
-                        formControlName="barcodeno"
-                        placeholder="Enter Barcode"
-                      ></ejs-textbox>
+                    <div class="d-flex align-items-center gap-2 barcode-section">
+                      <label for="barcodeno" style="width: 100px; padding-left: 30px">Barcode</label>
+                      <ejs-textbox [multiline]="false" formControlName="barcodeno"
+                        placeholder="Enter Barcode"></ejs-textbox>
                       <div class="barcode-btn-group">
-                        <button
-                          type="button"
-                          class="btn btn-outline-bg"
-                          [disabled]="isInputDisabled"
-                          (click)="generateBarCode(0)"
-                        >
+                        <button type="button" class="btn btn-outline-bg" [disabled]="isInputDisabled"
+                          (click)="generateBarCode(0)">
                           G
                         </button>
-                        <button
-                          type="button"
-                          [disabled]="isInputDisabled"
-                          class="btn btn-outline-bg"
-                          (click)="itemmasterformshow()"
-                        >
+                        <button type="button" [disabled]="isInputDisabled" class="btn btn-outline-bg"
+                          (click)="itemmasterformshow()">
                           IB
                         </button>
                       </div>
@@ -75,49 +49,28 @@
                   </div>
                   <div class="item-master-row-right">
                     <div class="item-master-checkbox-single">
-                      <label for="active" class="form-label" translate
-                        >Active</label>
+                      <label for="active" class="form-label" translate>Active</label>
                       <label class="custom-checkbox">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          id="active"
-                          formControlName="active"
-                          [checked]="active"
-                          (change)="onActiveChange($event)"
-                        />
+                        <input type="checkbox" class="form-check-input" id="active" formControlName="active"
+                          [checked]="active" (change)="onActiveChange($event)" />
                         <span class="checkmark"></span>
                       </label>
                     </div>
 
                     <div class="item-master-checkbox-single">
-                      <label for="unique" class="form-label" translate
-                        >Unique</label>
+                      <label for="unique" class="form-label" translate>Unique</label>
                       <label class="custom-checkbox">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          id="unique"
-                          formControlName="unique"
-                          [checked]="unique"
-                        />
+                        <input type="checkbox" class="form-check-input" id="unique" formControlName="unique"
+                          [checked]="unique" />
                         <span class="checkmark"></span>
                       </label>
                     </div>
 
                     <div class="item-master-checkbox-single">
-                      <label for="stockitem" class="form-label" translate
-                        >Stock Item</label
-                      >
+                      <label for="stockitem" class="form-label" translate>Stock Item</label>
                       <label class="custom-checkbox">
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          id="stockitem"
-                          formControlName="stockitem"
-                          [checked]="stockitem"
-                          (change)="onStockItemChange($event)"
-                        />
+                        <input type="checkbox" class="form-check-input" id="stockitem" formControlName="stockitem"
+                          [checked]="stockitem" (change)="onStockItemChange($event)" />
                         <span class="checkmark"></span>
                       </label>
                     </div>
@@ -125,58 +78,36 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="itemname" style="width: 100px">Item Name</label>
-                  <ejs-textbox
-                    #itemname
-                    [multiline]="false"
-                    formControlName="itemname"
-                    class="flex-grow-1"
-                  ></ejs-textbox>
+                  <ejs-textbox #itemname [multiline]="false" formControlName="itemname"
+                    class="flex-grow-1"></ejs-textbox>
                   <div *ngIf="itemMasterForm.get('itemname')?.touched  && itemMasterForm.get('itemname')?.invalid"
-                       style="color:red; font-size:12px;">Item Name is required</div>
-                  </div>
+                    style="color:red; font-size:12px;">Item Name is required</div>
+                </div>
                 <div class="d-flex align-items-center gap-2">
-                  <label for="arabicname" style="width: 100px"
-                    >Arabic Name</label
-                  >
-                  <ejs-textbox
-                    [multiline]="false"
-                    formControlName="arabicname"
-                    class="flex-grow-1"
-                  ></ejs-textbox>
+                  <label for="arabicname" style="width: 100px">Arabic Name</label>
+                  <ejs-textbox [multiline]="false" formControlName="arabicname" class="flex-grow-1"></ejs-textbox>
                 </div>
                 <div class="item-master-row">
                   <div class="item-master-basicunit">
-                    <label for="basicunit" style="width: 100px"
-                      >Basic Unit</label>
+                    <label for="basicunit" style="width: 100px">Basic Unit</label>
 
-                    <app-multiColumnComboBox
-                      formControlName="basicunit"
-                      [dataSource]="allBasicUnits"
-                      [fields]="{ text: 'unit', value: 'unit' }"
-                      [columns]="basicUnitFields"
-                      popupWidth="450px"
-                      [resetTrigger]="forceComboReset()"
-                      (rowSelected)="onBasicUnitSelected($event, 0)">
+                    <app-multiColumnComboBox formControlName="basicunit" [dataSource]="allBasicUnits"
+                      [fields]="{ text: 'unit', value: 'unit' }" [columns]="basicUnitFields" popupWidth="450px"
+                      [resetTrigger]="forceComboReset()" (rowSelected)="onBasicUnitSelected($event, 0)">
                       ></app-multiColumnComboBox>
                   </div>
                   <div class="item-master-category">
-                    <label for="category" class="form-label col-md-2"
-                      >Category</label>
-                    <app-multiColumnComboBox
-                      formControlName="category"
-                      [dataSource]="allCategories"
-                      [fields]="{ text: 'code', value: 'id' }"
-                      popupWidth="450px"
-                      [disabled]="isDisabled"
-                      [resetTrigger]="forceComboReset()"
-                      (rowSelected)="onCategorySelected($event)"
+                    <label for="category" class="form-label col-md-2">Category</label>
+                    <app-multiColumnComboBox formControlName="category" [dataSource]="allCategories"
+                      [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" [disabled]="isDisabled"
+                      [resetTrigger]="forceComboReset()" (rowSelected)="onCategorySelected($event)"
                       [columns]="categoryFields">
-                      </app-multiColumnComboBox>
+                    </app-multiColumnComboBox>
 
                     <div class="itemmaster-category">
                       <span>{{
                         selectedCategoryObj?.category
-                      }}</span>
+                        }}</span>
                     </div>
                   </div>
                 </div>
@@ -186,69 +117,39 @@
                 <div class="d-flex align-items-center gap-2">
                   <label for="costprice" style="width: 100px">
                     Cost Price</label>
-                  <ejs-textbox
-                    #costprice
-                    [multiline]="false"
-                    formControlName="costprice"
-                    class="flex-grow-1"
-                    (change)="onCostPriceChange()"
-                  ></ejs-textbox>
+                  <ejs-textbox #costprice [multiline]="false" formControlName="costprice" class="flex-grow-1"
+                    (change)="onCostPriceChange()"></ejs-textbox>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="margin" style="width: 100px"> Margin %</label>
-                  <ejs-textbox
-                    #margin
-                    [multiline]="false"
-                    formControlName="margin"
-                    class="flex-grow-1"
-                    (change)="onMarginPercentageChange()"
-                  ></ejs-textbox>
+                  <ejs-textbox #margin [multiline]="false" formControlName="margin" class="flex-grow-1"
+                    (change)="onMarginPercentageChange()"></ejs-textbox>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="marginvalue" style="width: 100px">
                     Margin Value</label>
-                  <ejs-textbox
-                    #marginvalue
-                    [multiline]="false"
-                    formControlName="marginvalue"
-                    class="flex-grow-1"
-                    (change)="onMarginValueChange()"
-                  ></ejs-textbox>
+                  <ejs-textbox #marginvalue [multiline]="false" formControlName="marginvalue" class="flex-grow-1"
+                    (change)="onMarginValueChange()"></ejs-textbox>
                 </div>
               </div>
               <div class="item-master-row">
                 <div class="d-flex align-items-center gap-2">
                   <label for="sellingprice" style="width: 100px">
                     Selling Price</label>
-                  <ejs-textbox
-                    #sellingprice
-                    [multiline]="false"
-                    formControlName="sellingprice"
-                    class="flex-grow-1"
-                    (change)="onFormSellingPriceChange()"
-                  ></ejs-textbox>
+                  <ejs-textbox #sellingprice [multiline]="false" formControlName="sellingprice" class="flex-grow-1"
+                    (change)="onFormSellingPriceChange()"></ejs-textbox>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="marginvalue" style="width: 100px">
                     MRP Value</label>
-                  <ejs-textbox
-                    #mrp
-                    [multiline]="false"
-                    formControlName="mrp"
-                    class="flex-grow-1"
-                    (change)="onItemMrpChange()"
-                  ></ejs-textbox>
+                  <ejs-textbox #mrp [multiline]="false" formControlName="mrp" class="flex-grow-1"
+                    (change)="onItemMrpChange()"></ejs-textbox>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                   <label for="taxtype" style="width: 100px"> Tax Type</label>
-                  
-                  <ejs-dropdownlist
-                  id="taxtype"
-                  formControlName="taxtype"
-                  [dataSource]="allTaxTypes"
-                  [fields]="{ text: 'name', value: 'id' }"
-                  (change)="onChangeTaxType($event)"
-                  class="flex-grow-1">
+
+                  <ejs-dropdownlist id="taxtype" formControlName="taxtype" [dataSource]="allTaxTypes"
+                    [fields]="{ text: 'name', value: 'id' }" (change)="onChangeTaxType($event)" class="flex-grow-1">
                   </ejs-dropdownlist>
 
                 </div>
@@ -260,581 +161,464 @@
               <div class="row" *ngIf="itemMasterForm.get('basicunit')?.value">
                 <!--- Unit details - shown only when basic unit is selected -->
                 <h5 class="form-heading price-details-heading">Unit Details</h5>
-                    <div class="price-head-line-bottom"></div>
+                <div class="price-head-line-bottom"></div>
                 <div class="mb-2" *ngIf="!isInputDisabled || isUpdate">
                   <button type="button" class="btn btn-outline-primary btn-sm" (click)="openAddUnitDialog()">
                     + Add Unit
                   </button>
                 </div>
-                <div class="row">                                            
-                    <div class="item-units-table item-purchase-table">
-             
-                   <div class="table-responsive mt-3">
+                <div class="row">
+                  <div class="item-units-table item-purchase-table">
 
-  <table class="table table-bordered table-striped table-sm align-middle">
+                    <div class="table-responsive mt-3">
 
-    <!-- ================= HEADER ================= -->
-    <thead class="table-light text-center">
-      <tr>
-        <th>#</th>
-        <th>Unit</th>
-        <th>Basic Unit</th>
-        <th>Factor</th>
-        <th>Cost Price</th>
-        <th>Selling Price</th>
-        <th>MRP</th>
-        <th>Wholesale Price</th>
-        <th>Retail Price</th>
-        <th>Wholesale Price 2</th>
-        <th>Retail Price 2</th>
-        <th>Lowest Rate</th>
-        <th>Barcode</th>
-        <th>Active</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+                      <table class="table table-bordered table-striped table-sm align-middle">
 
-    <!-- ================= BODY ================= -->
-    <tbody>
+                        <!-- ================= HEADER ================= -->
+                        <thead class="table-light text-center">
+                          <tr>
+                            <th>#</th>
+                            <th>Unit</th>
+                            <th>Basic Unit</th>
+                            <th>Factor</th>
+                            <th>Cost Price</th>
+                            <th>Selling Price</th>
+                            <th>MRP</th>
+                            <th>Wholesale Price</th>
+                            <th>Retail Price</th>
+                            <th>Wholesale Price 2</th>
+                            <th>Retail Price 2</th>
+                            <th>Lowest Rate</th>
+                            <th>Barcode</th>
+                            <th>Active</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
 
-      <tr *ngFor="let item of itemUnitDetails(); let i = index">
+                        <!-- ================= BODY ================= -->
+                        <tbody>
 
-        <!-- Serial Number -->
-        <td class="text-center">{{ i + 1 }}</td>
+                          <tr *ngFor="let item of itemUnitDetails(); let i = index">
 
-        <!-- unit -->
-        <td>
-         {{ item.unit?.unit || item.basicUnit?.unit || '' }}
-        </td>
-        
-        <!-- Basic unit -->
-        <td>
-         {{ item.basicUnit?.unit || item.basicUnit || '' }}
-        </td>
+                            <!-- Serial Number -->
+                            <td class="text-center">{{ i + 1 }}</td>
 
-        <!-- Factor -->
-        <td class="text-end">{{ item.factor }}</td>
+                            <!-- unit -->
+                            <td>
+                              {{ item.unit?.unit || item.basicUnit?.unit || '' }}
+                            </td>
 
-        <!-- Purchase Rate (Cost Price) -->
-        <td class="text-end">{{ item.purchaseRate }}</td>
+                            <!-- Basic unit -->
+                            <td>
+                              {{ item.basicUnit?.unit || item.basicUnit || '' }}
+                            </td>
 
-        <!-- Selling Price -->
-        <td class="text-end">{{ item.sellingPrice }}</td>
+                            <!-- Factor -->
+                            <td class="text-end">{{ item.factor }}</td>
 
-        <!-- MRP -->
-        <td class="text-end">{{ item.mrp }}</td>
+                            <!-- Purchase Rate (Cost Price) -->
+                            <td class="text-end">{{ item.purchaseRate }}</td>
 
-        <!-- Wholesale Price -->
-        <td class="text-end">{{ item.wholeSalePrice }}</td>
+                            <!-- Selling Price -->
+                            <td class="text-end">{{ item.sellingPrice }}</td>
 
-        <!-- Retail Price -->
-        <td class="text-end">{{ item.retailPrice }}</td>
+                            <!-- MRP -->
+                            <td class="text-end">{{ item.mrp }}</td>
 
-        <!-- Wholesale Price 2 -->
-        <td class="text-end">{{ item.wholeSalePrice2 }}</td>
+                            <!-- Wholesale Price -->
+                            <td class="text-end">{{ item.wholeSalePrice }}</td>
 
-        <!-- Retail Price 2 -->
-        <td class="text-end">{{ item.retailPrice2 }}</td>
+                            <!-- Retail Price -->
+                            <td class="text-end">{{ item.retailPrice }}</td>
 
-        <!-- Lowest Rate -->
-        <td class="text-end">{{ item.lowestRate }}</td>
+                            <!-- Wholesale Price 2 -->
+                            <td class="text-end">{{ item.wholeSalePrice2 }}</td>
 
-        <!-- Barcode -->
-        <td>{{ item.barcode ?? '' }}</td>
+                            <!-- Retail Price 2 -->
+                            <td class="text-end">{{ item.retailPrice2 }}</td>
 
-        <!-- Active -->
-        <td class="text-center">{{ item.active ? 'Yes' : 'No' }}</td>
+                            <!-- Lowest Rate -->
+                            <td class="text-end">{{ item.lowestRate }}</td>
 
-        <!-- Actions -->
-        <td class="text-center">
-          <button *ngIf="!isInputDisabled || isUpdate" type="button" class="btn btn-outline-primary btn-sm me-1" (click)="editUnitRow(i)" title="Edit">
-            Edit
-          </button>
-          <button *ngIf="!isInputDisabled || isUpdate" type="button" class="btn btn-outline-danger btn-sm" (click)="deleteUnitRow(i)" title="Delete">
-            Delete
-          </button>
-        </td>
-      </tr>
+                            <!-- Barcode -->
+                            <td>{{ item.barcode ?? '' }}</td>
 
-      <!-- If No Records -->
-      <tr *ngIf="!itemUnitDetails().length">
-        <td colspan="15" class="text-center text-muted">
-          No unit details found
-        </td>
-      </tr>
+                            <!-- Active -->
+                            <td class="text-center">{{ item.active ? 'Yes' : 'No' }}</td>
 
-    </tbody>
-  </table>
+                            <!-- Actions -->
+                            <td class="text-center">
+                              <button *ngIf="!isInputDisabled || isUpdate" type="button"
+                                class="btn btn-outline-primary btn-sm me-1" (click)="editUnitRow(i)" title="Edit">
+                                Edit
+                              </button>
+                              <button *ngIf="!isInputDisabled || isUpdate" type="button"
+                                class="btn btn-outline-danger btn-sm" (click)="deleteUnitRow(i)" title="Delete">
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
 
-</div>
+                          <!-- If No Records -->
+                          <tr *ngIf="!itemUnitDetails().length">
+                            <td colspan="15" class="text-center text-muted">
+                              No unit details found
+                            </td>
+                          </tr>
 
-</div>
-</div>
-</div>
-</div>
+                        </tbody>
+                      </table>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <div>
               <div class="row">
                 <div class="other-details-section">
 
-                    <div class="checkbox-row">
-                        <div class="checkbox-row-single">
-                            <label for="expiryitem">ExpiryItem</label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" class="form-check-input" id="expiryitem"
-                                    formControlName="expiryitem" [checked]="expiryitem"
-                                    (change)="onActiveChange($event)">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="checkbox-row-single">
-                            <label for="finishedgoods">Finished Goods</label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" class="form-check-input" id="finishedgoods"
-                                    formControlName="finishedgoods" [checked]="finishedgoods"
-                                    (change)="onActiveChange($event)">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                        <div class="checkbox-row-single">
-                            <label for="rawmaterials">Raw Materials</label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" class="form-check-input" id="rawmaterials"
-                                    formControlName="rawmaterials" [checked]="rawmaterials"
-                                    (change)="onActiveChange($event)">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
+                  <div class="checkbox-row">
+                    <div class="checkbox-row-single">
+                      <label for="expiryitem">ExpiryItem</label>
+                      <label class="custom-checkbox">
+                        <input type="checkbox" class="form-check-input" id="expiryitem" formControlName="expiryitem"
+                          [checked]="expiryitem" (change)="onActiveChange($event)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="checkbox-row-single">
+                      <label for="finishedgoods">Finished Goods</label>
+                      <label class="custom-checkbox">
+                        <input type="checkbox" class="form-check-input" id="finishedgoods"
+                          formControlName="finishedgoods" [checked]="finishedgoods" (change)="onActiveChange($event)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="checkbox-row-single">
+                      <label for="rawmaterials">Raw Materials</label>
+                      <label class="custom-checkbox">
+                        <input type="checkbox" class="form-check-input" id="rawmaterials" formControlName="rawmaterials"
+                          [checked]="rawmaterials" (change)="onActiveChange($event)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="checkbox-row">
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="expirydays" translate>Expiry Days
+                        </label>
+                      </div>
+                      <input type="text" class="form-control" id="expirydays" formControlName="expirydays">
                     </div>
 
-                    <div class="checkbox-row">
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="expirydays" translate>Expiry Days
-                                </label>
-                            </div>
-                            <input type="text" class="form-control" id="expirydays"
-                                formControlName="expirydays">
-                        </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="racklocation" translate>Rack Location
+                        </label>
 
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="racklocation" translate>Rack Location
-                                </label>
-
-                            </div>
-                            <input type="text" class="form-control" id="racklocation"
-                                formControlName="racklocation">
-                        </div>
-
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="discount" translate>Discount
-                                </label>
-
-                            </div>
-                            <input type="text" class="form-control" id="discount"
-                                formControlName="discount">
-                        </div>
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="hsncode" translate>HSN
-                                    Code
-                                </label>
-
-                            </div>
-                            <input type="text" class="form-control" id="hsncode"
-                                formControlName="hsncode">
-                        </div>
-
+                      </div>
+                      <input type="text" class="form-control" id="racklocation" formControlName="racklocation">
                     </div>
 
-                    <div class="checkbox-row">
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="parentitem" translate>Parent
-                                    Item
-                                </label>
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="parentitem"
-                                [dataSource]="allParentItems"
-                                [fields]="{ text: 'itemName', value: 'itemName' }"
-                                [columns]="parentItemFields"
-                                [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onParentItemSelected($event?.itemData?.itemName || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="discount" translate>Discount
+                        </label>
 
-                        <div>
-                            <div class="input-label-box">
-                                <label for="quality" translate>Quality
-                                </label>
+                      </div>
+                      <input type="text" class="form-control" id="discount" formControlName="discount">
+                    </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="hsncode" translate>HSN
+                          Code
+                        </label>
 
-                            </div>
-                           
-                            <ejs-dropdownlist
-                            id="quality"
-                            formControlName="quality"
-                            [dataSource]="allQualities"
-                            [fields]="{text: 'value',value: 'id'}"
-                            (change)="onChangeQuality($event)"
-                            >
-                            </ejs-dropdownlist>
+                      </div>
+                      <input type="text" class="form-control" id="hsncode" formControlName="hsncode">
+                    </div>
 
-                        </div>
+                  </div>
 
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="modelno" translate>Model
-                                    No.
-                                </label>
+                  <div class="checkbox-row">
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="parentitem" translate>Parent
+                          Item
+                        </label>
+                      </div>
+                      <app-multiColumnComboBox formControlName="parentitem" [dataSource]="allParentItems"
+                        [fields]="{ text: 'itemName', value: 'itemName' }" [columns]="parentItemFields"
+                        [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onParentItemSelected($event?.itemData?.itemName || $event)"></app-multiColumnComboBox>
+                    </div>
 
-                            </div>
-                            <input type="text" class="form-control" id="modelno"
-                                formControlName="modelno">
-                        </div>
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="hsncolor" translate>HSN
-                                    Color
-                                </label>
+                    <div>
+                      <div class="input-label-box">
+                        <label for="quality" translate>Quality
+                        </label>
 
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="hsncolor"
-                                [dataSource]="allItemColors"
-                                [fields]="{ text: 'value', value: 'id' }"
-                                [columns]="itemColorFields"
-                                [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onItemColorSelected($event?.itemData)"
-                            ></app-multiColumnComboBox>
-                        </div>
+                      </div>
+
+                      <ejs-dropdownlist id="quality" formControlName="quality" [dataSource]="allQualities"
+                        [fields]="{text: 'value',value: 'id'}" (change)="onChangeQuality($event)">
+                      </ejs-dropdownlist>
 
                     </div>
 
-                    <div class="checkbox-row">
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="brandname" translate>Brand
-                                    Name
-                                </label>
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="brandname"
-                                [dataSource]="allItemBrands"
-                                [fields]="{ text: 'value', value: 'value' }"
-                                [columns]="itemBrandFields"
-                                [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onItemBrandSelected($event?.itemData?.value || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="modelno" translate>Model
+                          No.
+                        </label>
 
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="countryoforigin" translate>Country
-                                    of Origin
-                                </label>
+                      </div>
+                      <input type="text" class="form-control" id="modelno" formControlName="modelno">
+                    </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="hsncolor" translate>HSN
+                          Color
+                        </label>
 
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="countryoforigin"
-                                [dataSource]="allCountryOfOrigin"
-                                [fields]="{ text: 'value', value: 'value' }"
-                                [columns]="countryOfOriginFields"
-                                [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onItemOriginSelected($event?.itemData?.value || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
+                      </div>
+                      <app-multiColumnComboBox formControlName="hsncolor" [dataSource]="allItemColors"
+                        [fields]="{ text: 'value', value: 'id' }" [columns]="itemColorFields"
+                        [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onItemColorSelected($event?.itemData)"></app-multiColumnComboBox>
+                    </div>
 
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="manufacturer" translate>Manufacturer
-                                </label>
+                  </div>
 
-                            </div>
-                            <input type="text" class="form-control" id="manufacturer"
-                                formControlName="manufacturer">
-                        </div>
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="rol" translate>ROL
-                                </label>
+                  <div class="checkbox-row">
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="brandname" translate>Brand
+                          Name
+                        </label>
+                      </div>
+                      <app-multiColumnComboBox formControlName="brandname" [dataSource]="allItemBrands"
+                        [fields]="{ text: 'value', value: 'value' }" [columns]="itemBrandFields"
+                        [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onItemBrandSelected($event?.itemData?.value || $event)"></app-multiColumnComboBox>
+                    </div>
 
-                            </div>
-                            <input type="text" class="form-control" id="rol" formControlName="rol">
-                        </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="countryoforigin" translate>Country
+                          of Origin
+                        </label>
+
+                      </div>
+                      <app-multiColumnComboBox formControlName="countryoforigin" [dataSource]="allCountryOfOrigin"
+                        [fields]="{ text: 'value', value: 'value' }" [columns]="countryOfOriginFields"
+                        [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onItemOriginSelected($event?.itemData?.value || $event)"></app-multiColumnComboBox>
+                    </div>
+
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="manufacturer" translate>Manufacturer
+                        </label>
+
+                      </div>
+                      <input type="text" class="form-control" id="manufacturer" formControlName="manufacturer">
+                    </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="rol" translate>ROL
+                        </label>
+
+                      </div>
+                      <input type="text" class="form-control" id="rol" formControlName="rol">
+                    </div>
+
+                  </div>
+
+                  <div class="checkbox-row">
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="roq" translate>ROQ
+                        </label>
+                      </div>
+                      <input type="text" class="form-control" id="roq" formControlName="roq">
+                    </div>
+
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="shipmark" translate>Ship
+                          Mark
+                        </label>
+
+                      </div>
+                      <input type="text" class="form-control" id="shipmark" formControlName="shipmark">
+                    </div>
+
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="paintmark" translate>Paint
+                          Mark
+                        </label>
+
+                      </div>
+                      <input type="text" class="form-control" id="paintmark" formControlName="paintmark">
+                    </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="stockcode" translate>Stock
+                          Code
+                        </label>
+
+                      </div>
+                      <input type="text" class="form-control" id="stockcode" formControlName="stockcode">
+                    </div>
+
+                  </div>
+
+                  <div class="checkbox-row">
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="weight" translate>Weight
+                        </label>
+                      </div>
+                      <input type="text" class="form-control" id="weight" formControlName="weight">
+                    </div>
+
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="purchaseunit" translate>Purchase
+                          Unit
+                        </label>
+
+                      </div>
+                      <app-multiColumnComboBox formControlName="purchaseunit" [dataSource]="unitsInGrid"
+                        [fields]="{ text: 'unit', value: 'unit' }" [columns]="basicUnitFields"
+                        [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onPurchaseUnitSelected($event?.itemData?.unit || $event)"></app-multiColumnComboBox>
+                    </div>
+
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="sellingunit" translate>Selling
+                          Unit
+                        </label>
+
+                      </div>
+                      <app-multiColumnComboBox formControlName="sellingunit" [dataSource]="unitsInGrid"
+                        [fields]="{ text: 'unit', value: 'unit' }" [columns]="basicUnitFields"
+                        [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onSellingUnitSelected($event?.itemData?.unit || $event)"></app-multiColumnComboBox>
+                    </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="oemno" translate>Stock
+                          OEM No
+                        </label>
+
+                      </div>
+                      <input type="text" class="form-control" id="oemno" formControlName="oemno">
+                    </div>
+
+                  </div>
+
+                  <div class="checkbox-row group-item-container">
+                    <div class="checkbox-row-single">
+                      <label for="groupitem" translate>Group
+                        Item
+                      </label>
+                      <label class="custom-checkbox">
+                        <input type="checkbox" class="form-check-input" id="groupitem" formControlName="groupitem">
+                        <span class="checkmark"></span>
+                      </label>
 
                     </div>
 
-                    <div class="checkbox-row">
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="roq" translate>ROQ
-                                </label>
-                            </div>
-                            <input type="text" class="form-control" id="roq"
-                                formControlName="roq">
-                        </div>
+                  </div>
 
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="shipmark" translate>Ship
-                                    Mark
-                                </label>
-
-                            </div>
-                            <input type="text" class="form-control" id="shipmark"
-                                formControlName="shipmark">
-                        </div>
-
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="paintmark" translate>Paint
-                                    Mark
-                                </label>
-
-                            </div>
-                            <input type="text" class="form-control" id="paintmark"
-                                formControlName="paintmark">
-                        </div>
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="stockcode" translate>Stock
-                                    Code
-                                </label>
-
-                            </div>
-                            <input type="text" class="form-control" id="stockcode"
-                                formControlName="stockcode">
-                        </div>
-
+                  <div class="checkbox-row">
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="invaccount" translate>InvAccount
+                        </label>
+                      </div>
+                      <app-multiColumnComboBox formControlName="invaccount" [dataSource]="allInvAccounts"
+                        [fields]="{ text: 'name', value: 'name' }" [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onInvAccountSelected($event?.itemData?.name || $event)"></app-multiColumnComboBox>
                     </div>
 
-                    <div class="checkbox-row">
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="weight" translate>Weight
-                                </label>
-                            </div>
-                            <input type="text" class="form-control" id="weight"
-                                formControlName="weight">
-                        </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="salesaccount" translate>Sales
+                          Account
+                        </label>
 
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="purchaseunit" translate>Purchase
-                                    Unit
-                                </label>
-
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="purchaseunit"
-                                [dataSource]="unitsInGrid"
-                                [fields]="{ text: 'unit', value: 'unit' }"
-                                [columns]="basicUnitFields"
-                                [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onPurchaseUnitSelected($event?.itemData?.unit || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
-
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="sellingunit" translate>Selling
-                                    Unit
-                                </label>
-
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="sellingunit"
-                                [dataSource]="unitsInGrid"
-                                [fields]="{ text: 'unit', value: 'unit' }"
-                                [columns]="basicUnitFields"
-                                [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onSellingUnitSelected($event?.itemData?.unit || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="oemno" translate>Stock
-                                    OEM No
-                                </label>
-
-                            </div>
-                            <input type="text" class="form-control" id="oemno"
-                                formControlName="oemno">
-                        </div>
-
+                      </div>
+                      <app-multiColumnComboBox formControlName="salesaccount" [dataSource]="allSalesAccounts"
+                        [fields]="{ text: 'name', value: 'name' }" [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onSalesAccountSelected($event?.itemData?.name || $event)"></app-multiColumnComboBox>
                     </div>
 
-                    <div class="checkbox-row group-item-container">
-                        <div class="checkbox-row-single">
-                            <label for="groupitem" translate>Group
-                                Item
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" class="form-check-input" id="groupitem"
-                                    formControlName="groupitem">
-                                <span class="checkmark"></span>
-                            </label>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="costaccount" translate>Cost
+                          Account
+                        </label>
 
-                        </div>
+                      </div>
+                      <app-multiColumnComboBox formControlName="costaccount" [dataSource]="allCostAccounts"
+                        [fields]="{ text: 'name', value: 'name' }" [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onCostAccountSelected($event?.itemData?.name || $event)"></app-multiColumnComboBox>
+                    </div>
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="purchaseaccount" translate>Purchase
+                          Account
+                        </label>
 
+                      </div>
+                      <app-multiColumnComboBox formControlName="purchaseaccount" [dataSource]="allPurchaseAccounts"
+                        [fields]="{ text: 'name', value: 'name' }" [resetTrigger]="forceComboReset()"
+                        (rowSelected)="onPurchaseAccountSelected($event?.itemData?.name || $event)"></app-multiColumnComboBox>
                     </div>
 
-                    <div class="checkbox-row">
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="invaccount" translate>InvAccount
-                                </label>
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="invaccount"
-                                [dataSource]="allInvAccounts"
-                                [fields]="{ text: 'name', value: 'name' }"
-                                 [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onInvAccountSelected($event?.itemData?.name || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
+                  </div>
 
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="salesaccount" translate>Sales
-                                    Account
-                                </label>
-
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="salesaccount"
-                                [dataSource]="allSalesAccounts"
-                                [fields]="{ text: 'name', value: 'name' }"
-                                 [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onSalesAccountSelected($event?.itemData?.name || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
-
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="costaccount" translate>Cost
-                                    Account
-                                </label>
-
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="costaccount"
-                                [dataSource]="allCostAccounts"
-                                [fields]="{ text: 'name', value: 'name' }"
-                                 [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onCostAccountSelected($event?.itemData?.name || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="purchaseaccount" translate>Purchase
-                                    Account
-                                </label>
-
-                            </div>
-                            <app-multiColumnComboBox
-                                formControlName="purchaseaccount"
-                                [dataSource]="allPurchaseAccounts"
-                                [fields]="{ text: 'name', value: 'name' }"
-                                 [resetTrigger]="forceComboReset()"
-                                (rowSelected)="onPurchaseAccountSelected($event?.itemData?.name || $event)"
-                            ></app-multiColumnComboBox>
-                        </div>
-
+                  <div class="checkbox-row">
+                    <div class="checkbox-one">
+                      <div class="input-label-box">
+                        <label for="remarks" translate>Remarks
+                        </label>
+                      </div>
+                      <textarea type="text" class="form-control" id="remarks" formControlName="remarks"></textarea>
                     </div>
-
-                    <div class="checkbox-row">
-                        <div class="checkbox-one">
-                            <div class="input-label-box">
-                                <label for="remarks" translate>Remarks
-                                </label>
-                            </div>
-                            <textarea type="text" class="form-control" id="remarks" formControlName="remarks"
-                                ></textarea>
-                        </div>
-                    </div>
+                  </div>
                 </div>
-            </div>
+              </div>
             </div>
             <div>
-              <ejs-grid
-                #itemHistoryGrid
-                id="itemHistoryGrid"
-                [dataSource]="allItemHistoryDetails"
-                [allowSorting]="true"
-                [allowResizing]="true"
-                [allowTextWrap]="true"
-                gridLines="Both"
-                height="400px"
-              >
+              <ejs-grid #itemHistoryGrid id="itemHistoryGrid" [dataSource]="allItemHistoryDetails" [allowSorting]="true"
+                [allowResizing]="true" [allowTextWrap]="true" gridLines="Both" height="400px">
                 <e-columns>
-                  <e-column
-                    field="vType"
-                    headerText="Voucher Name"
-                    width="150"
-                    textAlign="Left"
-                    [allowFiltering]="true"
-                  ></e-column>
-                  <e-column
-                    field="vNo"
-                    headerText="Transaction No"
-                    width="150"
-                    textAlign="Left"
-                  ></e-column>
-                  <e-column
-                    field="vDate"
-                    headerText="Date"
-                    width="120"
-                    textAlign="Center"
-                    format="yMd"
-                    type="date"
-                  ></e-column>
-                  <e-column
-                    field="accountCode"
-                    headerText="Account Code"
-                    width="130"
-                    textAlign="Left"
-                    [allowFiltering]="true"
-                  ></e-column>
-                  <e-column
-                    field="accountName"
-                    headerText="Account Name"
-                    width="200"
-                    textAlign="Left"
-                    [allowFiltering]="true"
-                  ></e-column>
-                  <e-column
-                    field="unit"
-                    headerText="Unit"
-                    width="100"
-                    textAlign="Center"
-                  ></e-column>
-                  <e-column
-                    field="qty"
-                    headerText="Qty"
-                    width="100"
-                    textAlign="Right"
-                    format="N2"
-                    type="number"
-                  ></e-column>
-                  <e-column
-                    field="rate"
-                    headerText="Rate"
-                    width="120"
-                    textAlign="Right"
-                    format="N2"
-                    type="number"
-                  ></e-column>
-                  <e-column
-                    field="amount"
-                    headerText="Amount"
-                    width="120"
-                    textAlign="Right"
-                    format="N2"
-                    type="number"
-                  ></e-column>
+                  <e-column field="vType" headerText="Voucher Name" width="150" textAlign="Left"
+                    [allowFiltering]="true"></e-column>
+                  <e-column field="vNo" headerText="Transaction No" width="150" textAlign="Left"></e-column>
+                  <e-column field="vDate" headerText="Date" width="120" textAlign="Center" format="yMd"
+                    type="date"></e-column>
+                  <e-column field="accountCode" headerText="Account Code" width="130" textAlign="Left"
+                    [allowFiltering]="true"></e-column>
+                  <e-column field="accountName" headerText="Account Name" width="200" textAlign="Left"
+                    [allowFiltering]="true"></e-column>
+                  <e-column field="unit" headerText="Unit" width="100" textAlign="Center"></e-column>
+                  <e-column field="qty" headerText="Qty" width="100" textAlign="Right" format="N2"
+                    type="number"></e-column>
+                  <e-column field="rate" headerText="Rate" width="120" textAlign="Right" format="N2"
+                    type="number"></e-column>
+                  <e-column field="amount" headerText="Amount" width="120" textAlign="Right" format="N2"
+                    type="number"></e-column>
                 </e-columns>
               </ejs-grid>
             </div>
@@ -842,97 +626,87 @@
         </ejs-tab>
       </form>
 
-  <!-- Add Unit Dialog -->
-  <ejs-dialog
-    #addUnitDialog
-    [visible]="addUnitDialogVisible"
-    [isModal]="true"
-    [showCloseIcon]="true"
-    width="520px"
-    header="Add Unit"
-    [buttons]="addUnitDialogButtons"
-    (open)="onAddUnitDialogOpen()"
-    (close)="closeAddUnitDialog()"
-    (created)="onAddUnitDialogCreated()">
-    <div class="add-unit-dialog-form p-3">
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Unit</label>
-          <div class="col-md-8">
-            <ejs-dropdownlist
-              [(value)]="addUnitFormData.unit"
-              [dataSource]="allBasicUnits"
-              [fields]="{ text: 'unit', value: 'unit' }"
-              placeholder="Select unit"
-              (change)="onAddUnitDialogUnitChange($event)"
-              style="width: 100%;">
-            </ejs-dropdownlist>
+      <!-- Add Unit Dialog -->
+      <ejs-dialog #addUnitDialog [visible]="addUnitDialogVisible" [isModal]="true" [showCloseIcon]="true" width="520px"
+        header="Add Unit" [buttons]="addUnitDialogButtons" (open)="onAddUnitDialogOpen()" (close)="closeAddUnitDialog()"
+        (created)="onAddUnitDialogCreated()">
+        <div class="add-unit-dialog-form p-3">
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Unit</label>
+            <div class="col-md-8">
+              <ejs-dropdownlist [(value)]="addUnitFormData.unit" [dataSource]="allBasicUnits"
+                [fields]="{ text: 'unit', value: 'unit' }" placeholder="Select unit"
+                (change)="onAddUnitDialogUnitChange($event)" style="width: 100%;">
+              </ejs-dropdownlist>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Basic Unit</label>
+            <div class="col-md-8">
+              <ejs-dropdownlist [(value)]="addUnitFormData.basicUnit" [dataSource]="addUnitDialogBasicUnitOptions"
+                [fields]="{ text: 'unit', value: 'unit' }" placeholder="Select basic unit" style="width: 100%;">
+              </ejs-dropdownlist>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Factor</label>
+            <div class="col-md-8">
+              <ejs-textbox type="number" [(value)]="addUnitFormData.factor" format="N2"
+                (change)="onAddUnitFormNumberChange('factor', $event)"></ejs-textbox>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Purchase Rate</label>
+            <div class="col-md-8">
+              <ejs-textbox type="number" [(value)]="addUnitFormData.purchaseRate" format="N2"
+                (change)="onAddUnitFormNumberChange('purchaseRate', $event)"></ejs-textbox>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Selling Price</label>
+            <div class="col-md-8">
+              <ejs-textbox type="number" [(value)]="addUnitFormData.sellingPrice" format="N2"
+                (change)="onAddUnitFormNumberChange('sellingPrice', $event)"></ejs-textbox>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">MRP</label>
+            <div class="col-md-8">
+              <ejs-textbox type="number" [(value)]="addUnitFormData.mrp" format="N2"
+                (change)="onAddUnitFormNumberChange('mrp', $event)"></ejs-textbox>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Wholesale Price</label>
+            <div class="col-md-8">
+              <ejs-textbox type="number" [(value)]="addUnitFormData.wholeSalePrice" format="N2"
+                (change)="onAddUnitFormNumberChange('wholeSalePrice', $event)"></ejs-textbox>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Retail Price</label>
+            <div class="col-md-8">
+              <ejs-textbox type="number" [(value)]="addUnitFormData.retailPrice" format="N2"
+                (change)="onAddUnitFormNumberChange('retailPrice', $event)"></ejs-textbox>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Barcode</label>
+            <div class="col-md-8 d-flex align-items-center gap-2">
+              <span class="text-muted small flex-grow-1">{{ addUnitFormData.barcode || '—' }}</span>
+              <button type="button" class="btn btn-primary btn-sm" (click)="generateBarCodeForAddUnitDialog()">
+                Generate
+              </button>
+            </div>
+          </div>
+          <div class="row g-2 mb-2">
+            <label class="col-md-4 col-form-label">Active</label>
+            <div class="col-md-8 d-flex align-items-center">
+              <ejs-checkbox [(checked)]="addUnitFormData.active"></ejs-checkbox>
+            </div>
           </div>
         </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Basic Unit</label>
-          <div class="col-md-8">
-            <ejs-dropdownlist
-              [(value)]="addUnitFormData.basicUnit"
-              [dataSource]="addUnitDialogBasicUnitOptions"
-              [fields]="{ text: 'unit', value: 'unit' }"
-              placeholder="Select basic unit"
-              style="width: 100%;">
-            </ejs-dropdownlist>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Factor</label>
-          <div class="col-md-8">
-            <ejs-textbox type="number" [(value)]="addUnitFormData.factor" format="N2" (change)="onAddUnitFormNumberChange('factor', $event)"></ejs-textbox>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Purchase Rate</label>
-          <div class="col-md-8">
-            <ejs-textbox type="number" [(value)]="addUnitFormData.purchaseRate" format="N2" (change)="onAddUnitFormNumberChange('purchaseRate', $event)"></ejs-textbox>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Selling Price</label>
-          <div class="col-md-8">
-            <ejs-textbox type="number" [(value)]="addUnitFormData.sellingPrice" format="N2" (change)="onAddUnitFormNumberChange('sellingPrice', $event)"></ejs-textbox>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">MRP</label>
-          <div class="col-md-8">
-            <ejs-textbox type="number" [(value)]="addUnitFormData.mrp" format="N2" (change)="onAddUnitFormNumberChange('mrp', $event)"></ejs-textbox>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Wholesale Price</label>
-          <div class="col-md-8">
-            <ejs-textbox type="number" [(value)]="addUnitFormData.wholeSalePrice" format="N2" (change)="onAddUnitFormNumberChange('wholeSalePrice', $event)"></ejs-textbox>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Retail Price</label>
-          <div class="col-md-8">
-            <ejs-textbox type="number" [(value)]="addUnitFormData.retailPrice" format="N2" (change)="onAddUnitFormNumberChange('retailPrice', $event)"></ejs-textbox>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Barcode</label>
-          <div class="col-md-8 d-flex align-items-center gap-2">
-            <span class="text-muted small flex-grow-1">{{ addUnitFormData.barcode || '—' }}</span>
-            <button type="button" class="btn btn-primary btn-sm" (click)="generateBarCodeForAddUnitDialog()">
-              Generate
-            </button>
-          </div>
-        </div>
-        <div class="row g-2 mb-2">
-          <label class="col-md-4 col-form-label">Active</label>
-          <div class="col-md-8 d-flex align-items-center">
-            <ejs-checkbox [(checked)]="addUnitFormData.active"></ejs-checkbox>
-          </div>
-        </div>
-    </div>
-  </ejs-dialog>
+      </ejs-dialog>
 
     </div>
   </div>

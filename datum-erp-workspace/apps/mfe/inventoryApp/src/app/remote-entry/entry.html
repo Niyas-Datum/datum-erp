@@ -35,16 +35,16 @@
         <ejs-sidebar id="sideTree" [(isOpen)]="isSidebarVisible" [width]="width" [target]="target"
           [mediaQuery]="mediaQuery" [type]="sidebarType" position="Left">
 
-          <div class="h-100 overflow-y-auto">
+          <div class="h-100 ">
             <app-left-grid (rowSelected)="onCostCategorySelected($event)" [columns]="leftgridchildData.columns">
             </app-left-grid>
           </div>
         </ejs-sidebar>
 
-        <!-- RIGHT CONTENT -->
+        <!-- RIGHT CONTENT (Main content)-->
         <div class="main-content-wrapper flex-grow-1 d-flex flex-column">
-          <div class="odoo-form-bg flex-grow-1 p-2 overflow-y-auto overflow-x-hidden e-content-animation"
-            style="background:#fff; border-radius:4px;">
+          <div   class="odoo-form-bg flex-grow-1 overflow-y-auto overflow-x-hidden e-content-animation" style="background:#fff; border-radius:4px;"
+             >
 
             <router-outlet></router-outlet>
           </div>

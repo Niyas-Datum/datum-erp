@@ -7,10 +7,10 @@ import { BehaviorSubject } from 'rxjs';
   selector: 'app-financeApp-entry',
   standalone: false,
   template: `
-    <div class="container-fluid h-100 d-flex flex-column overflow-hidden p-0">
+    <div class="container-fluid h-100 p-0">
     <div class="row align-items-center g-0 flex-shrink-0 border-bottom bg-light m-0">
         <!-- Left Grid -->
-        <div class="col-4 col-md-2 ps-3">
+        <div class="col-12 col-md-2 ps-3">
           <div class="d-flex align-items-center gap-2">
                   <div [ngSwitch]="pageType"> 
                       <!-- *ngSwitchCase="1" -->
@@ -28,7 +28,7 @@ import { BehaviorSubject } from 'rxjs';
           </div>
         </div>
         <!-- col -2-d end -->
-        <div class="col-8 col-md-10">
+        <div class="col-12 col-md-10">
           <app-form-toolbar
             [isNewMode]="isNewMode"
             [isEditMode]="isEditMode"
@@ -63,7 +63,7 @@ import { BehaviorSubject } from 'rxjs';
           [type]="sidebarType"
           position="Left"
         >
-          <div class="p-0">
+          <div class="h-100 overflow-y-auto">
             <app-left-grid
               (rowSelected)="onCostCategorySelected($event)"
               [columns]="leftgridchildData.columns">

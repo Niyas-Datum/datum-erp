@@ -1,3 +1,18 @@
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.left-grid-search {
+  width: 100%;
+  .e-input-group {
+    min-height: 32px;
+  }
+}
+
 .overlay {
   position: absolute;
   top: 0;
@@ -23,7 +38,6 @@
 .datatable-wrapper {
   position: relative;
   width: 100%;
-  right: 200px;
 }
 
 /* Ensure grid is clickable */
@@ -77,8 +91,7 @@ ejs-grid {
 }
 
 ::ng-deep .e-grid {
-  flex: 1;
-  height: 100% !important;
+  min-height: 0;
 }
 
 .overlay {
@@ -95,3 +108,51 @@ ejs-grid {
   height: 30px;         
   font-size: 13px;    
 }
+
+
+.grid-container {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/*header container */
+::ng-deep .e-grid .e-gridheader,
+::ng-deep .e-grid .e-headercontent {
+    background-color: #fdfdfd !important;
+}
+
+::ng-deep .e-grid .e-headercell {
+    background-color: #ffffff !important;
+}
+
+::ng-deep .e-grid .e-stackedheadercell {
+    background-color: #ffffff !important;
+}
+
+::ng-deep .e-grid .e-headercelldiv, 
+::ng-deep .e-grid .e-stackedheadercelldiv {
+    background-color: #ffffff !important;
+}
+
+::ng-deep .e-grid .e-columnheader {
+    background-color: #ffffff !important;
+    border: none !important;
+}
+
+/* Centers text in all body cells */
+::ng-deep .e-grid .e-rowcell {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+::ng-deep .e-grid .e-headercell,
+::ng-deep .e-grid .e-stackedheadercell {
+    text-align: center !important;
+}
+
+::ng-deep .e-grid .e-headercelldiv,
+::ng-deep .e-grid .e-stackedheadercelldiv {
+    margin: 0 auto !important;
+    text-align: center !important;
+}
+

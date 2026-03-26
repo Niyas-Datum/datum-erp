@@ -6,12 +6,13 @@
   </div>
 
   <div class="left-grid-search flex-shrink-0" *ngIf="columns.length">
-    <input type="text" class="form-control" placeholder="Search by Invoice No, Customer, VAT..."
-      [ngModel]="searchText()" (ngModelChange)="onSearchChange($event)" />
+    <input type="text" class="form-control text-center" placeholder="...Search..." [ngModel]="searchText()"
+      (ngModelChange)="onSearchChange($event)" />
   </div>
 
   <ejs-grid #grid [dataSource]="this.leftdata$ | async" [allowResizing]="true" [allowTextWrap]="true"
-    (rowSelected)="onRowSelect($event)" gridLines="Both" height="100%" [rowHeight]="30" class="flex-grow-1">
+    (rowSelected)="onRowSelect($event)" gridLines="Both" [allowPaging]="true" [pageSettings]="pageSettings"
+    height="100%" [rowHeight]="30" class="flex-grow-1">
     <e-columns>
       <ng-container *ngFor="let col of columns">
         <!-- Stacked Header -->
