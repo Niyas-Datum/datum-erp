@@ -6,7 +6,7 @@ import { BaseService, validEmail, validPhoneNumber, integerOnly, decimalOnly } f
 import { ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { EndpointConstant } from "@org/constants";
-import { ACCOUNT, ACCOUNTGROUP, AREAGROUPPOPUP, Country, CUSTOMERCOMMODITY, CUSTOMERSUPPLIERCATEGORIES, CUSTOMERSUPPLIERTYPE, Pcustomersuppliergettype, PCustomerSupplierModel, PLACEOFSUPPLY, SALESMAN } from "../Model/pcustomer-supplier.model";
+import { ACCDROPDOWN, ACCOUNT, ACCOUNTGROUP, AREAGROUPPOPUP, Country, CUSTOMERCOMMODITY, CUSTOMERSUPPLIERCATEGORIES, CUSTOMERSUPPLIERTYPE, Pcustomersuppliergettype, PCustomerSupplierModel, PLACEOFSUPPLY, SALESMAN } from "../Model/pcustomer-supplier.model";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { EditSettingsModel } from "@syncfusion/ej2-grids";
 import { GridComponent } from "@syncfusion/ej2-angular-grids";
@@ -59,7 +59,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   areaOptions = signal<AREAGROUPPOPUP[]>([]);
   salesmanData = signal<SALESMAN[]>([]);
   accountGroupData = signal<ACCOUNTGROUP[]>([]);
-  accountData = signal<ACCOUNT[]>([]);
+  accountData = signal<ACCDROPDOWN[]>([]);
 
   listCommoditySought = signal<CUSTOMERCOMMODITY[]>([]);
   commodityOptions = signal<any[]>([]);
@@ -600,16 +600,16 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
   fetchAccount(accountGroupId: any) {
 
     if (!accountGroupId) return;
-
+    console.log(EndpointConstant.FILLACCDROPDOWN + accountGroupId)
     this.httpService
-      .fetch(EndpointConstant.FILLCUSTOMERACCOUNT + accountGroupId + '&tree=true')
+      .fetch(EndpointConstant.FILLACCDROPDOWN + accountGroupId)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
 
           const data = response?.data ?? [] as any;
-
           this.accountData.set(data);
+          console.log("Account dropdown:" + JSON.stringify(this.accountData(), null, 2))
 
           // 🔥 ensure datasource is applied before patch
           setTimeout(() => {
@@ -940,6 +940,184 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
   }
 
+  // private FillById(): void {
+
+  //   this.allDeliveryDetails = [];
+  //   this.deliveryRows = [];
+
+  //   this.customerSupplierForm.reset();
+  //   const cur = this.currentCustomerSupplier();
+  //   this.selectedCustomerSupplierId = cur?.id ?? null;
+  //   this.imageData = null;
+
+  //   if (!cur?.id) return;
+
+  //   this.httpService
+  //     .fetch<any>(EndpointConstant.FILLCUSTOMERSUPPLIERBYID + this.selectedCustomerSupplierId + '&pageId=105')
+  //     .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+  //     .subscribe({
+  //       next: (response: any) => {
+
+  //         const payload = response?.data ?? response;
+  //         const result = payload?.result;
+  //         const custDetails = payload?.custDetails ?? null;
+
+  //         this.allDeliveryDetails = payload?.delDetails ?? [];
+
+  //         const imageString = payload?.img ?? null;
+  //         const accGrp = payload?.accountGroup ?? [];
+
+  //         this.accountGroupData.set(accGrp);
+
+  //         const accountGroupId = accGrp?.[0]?.id ? Number(accGrp[0].id) : null;
+
+  //         if (!result) {
+  //           this.toast.warning('Customer supplier payload missing result', payload);
+  //           return;
+  //         }
+
+  //         // ✅ Selected account
+  //         this.selectedAccountId = result.accountID ?? null;
+
+  //         // ✅ Inject selected account into dropdown (NO API CALL)
+  //         if (this.selectedAccountId) {
+  //           this.accountData.set([
+  //             {
+  //               id: result.accountID,
+  //               name: result.accountName
+  //             } as ACCOUNT
+  //           ]);
+  //         }
+
+  //         // ✅ Image
+  //         if (imageString) {
+  //           this.imageData = `data:image/jpeg;base64,${imageString}`;
+  //         }
+
+  //         // store state
+  //         this.currentCustomerSupplier.set(result);
+
+  //         /* ---------------- FORM PATCH ---------------- */
+
+  //         this.customerSupplierForm.patchValue({
+  //           type: result.nature === 'C' ? 1 : 2,
+  //           code: result.code ?? null,
+  //           name: result.name ?? null,
+  //           category: result.partyCategoryID ?? null,
+  //           active: result.active ?? false,
+  //           salutation: result.salutation ?? null,
+  //           arabicname: result.arabicName ?? null,
+
+  //           contactpersonname: result.contactPerson ?? null,
+  //           telephoneno: result.telephoneNo ?? null,
+  //           addresslineone: result.addressLineOne ?? null,
+  //           addressarabic: result.addressLineTwo ?? null,
+  //           mobileno: result.mobileNo ?? null,
+  //           vatno: result.salesTaxNo ?? null,
+
+  //           creditlimit: result.creditLimit ?? null,
+  //           salesman: result.salesManID ?? null,
+
+  //           city: result.city ?? null,
+  //           pobox: result.pobox ?? null,
+  //           countrycode: result.countryCode ?? null,
+  //           country: result.country ?? null,
+  //           buildingno: result.bulidingNo ?? null,
+  //           district: result.district ?? null,
+  //           districtarabic: result.districtArabic ?? null,
+  //           cityarabic: result.cityArabic ?? null,
+  //           provincearabic: result.provinceArabic ?? null,
+
+  //           area: result.areaID ?? null,
+  //           province: result.province ?? null,
+
+  //           faxno: result.faxNo ?? null,
+  //           contactperson2: result.contactPerson2 ?? null,
+  //           emailaddress: result.emailAddress ?? null,
+  //           telephoneno2: result.telephoneNo2 ?? null,
+  //           centralsalestaxno: result.centralSalesTaxNo ?? null,
+
+  //           actassupplieralso: result.isMultiNature ?? false,
+  //           panno: result.panNo ?? null,
+
+  //           letsystemgeneratenewaccountforparty: false,
+
+  //           accountgroup: accountGroupId,
+  //           account: this.selectedAccountId, // ✅ IMPORTANT FIX
+
+  //           remarks: result.remarks ?? null,
+
+  //           dl1: result.dL1 ?? null,
+  //           dl2: result.dL2 ?? null,
+
+  //           pricecategory: result.priceCategoryID ?? null,
+  //           placeofsupply: result.placeOfSupply ?? null,
+  //           creditperiod: custDetails?.creditPeriod ?? null,
+
+  //           /* ---------- custDetails ---------- */
+
+  //           salestype: custDetails?.cashCreditType ?? null,
+  //           quantityplanned: custDetails?.plannedPcs ?? null,
+  //           basicunit: custDetails?.plannedCFT ?? null,
+  //           creditcollectiontype: custDetails?.creditCollnThru ?? null,
+
+  //           businesstype: custDetails?.busPrimaryType ?? null,
+  //           availedanyloanlimits: custDetails?.isLoanAvailed ?? null,
+  //           businessnature: custDetails?.busRetailType ?? null,
+  //           othermerchantsofcustomer: custDetails?.mainMerchants ?? null,
+  //           businessaddress: custDetails?.addressOwned ?? null,
+  //           valueofproperty: custDetails?.valueofProperty ?? null,
+  //           yearsofbusiness: custDetails?.busYears ?? null,
+  //           yearlyturnover: custDetails?.busYearTurnover ?? null,
+  //           marketreputation: custDetails?.marketReputation ?? null,
+
+  //           categoryrecommended: custDetails?.bandByImportID ?? null,
+  //           limitrecommended: custDetails?.salesLimitByImport ?? null,
+  //           categoryfixed: custDetails?.bandByHOID ?? null,
+  //           limitfixedforcustomer: custDetails?.salesLimitByHO ?? null,
+  //           creditperiodpermitted: custDetails?.creditPeriodByHO ?? null,
+  //           overdueamountlimit: custDetails?.overdueLimitPerc ?? null,
+  //           overdueperiodlimit: custDetails?.overduePeriodLimit ?? null,
+  //           chequebouncecountlimit: custDetails?.chequeBounceLimit ?? null,
+  //           salespricelowvarlimit: custDetails?.salesPriceLowVarPerc ?? null,
+  //           salespriceupVarlimit: custDetails?.salesPriceUpVarPerc ?? null,
+
+  //           commoditysought: (payload?.commoditySought ?? []).map((c: any) => c.id)
+  //         });
+
+  //         /* ---------------- COMBO CLEAR / SET ---------------- */
+
+  //         if (result.salesManID) {
+  //           this.customerSupplierForm.get('salesman')?.setValue(result.salesManID);
+  //         } else {
+  //           this.clearCombo('salesman', this.salesmanCombo);
+  //         }
+
+  //         if (result.areaID) {
+  //           this.customerSupplierForm.get('area')?.setValue(result.areaID);
+  //         } else {
+  //           this.clearCombo('area', this.areaCombo);
+  //         }
+
+  //         /* ---------------- DELIVERY GRID ---------------- */
+
+  //         if (this.allDeliveryDetails?.length > 0) {
+  //           this.deliveryRows = this.allDeliveryDetails.map(x => ({
+  //             locationName: x.locationName || '',
+  //             projectName: x.projectName || '',
+  //             contactPerson: x.contactPerson || '',
+  //             contactNo: x.contactNo || '',
+  //             address: x.address || ''
+  //           }));
+  //         }
+
+  //       },
+  //       error: (err: any) => {
+  //         console.error('Error fetching customer supplier:', err);
+  //       }
+  //     });
+  // }
+
   private FillById(): void {
     this.allDeliveryDetails = [];
     this.deliveryRows = [];
@@ -959,7 +1137,7 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
 
           const payload = response?.data ?? response;
           const result = payload?.result;
-         
+
           const custDetails = payload?.custDetails ?? null;
 
           this.allDeliveryDetails = payload?.delDetails ?? [];
@@ -1137,19 +1315,19 @@ export class CustomerSupplierComponent extends BaseComponent implements OnInit {
     });
     this.customerSupplierForm.get('account')?.enable();
     this.viewDialogFlag = true;
-    
-     // 🔥 ADD THIS BLOCK
-  const cur = this.currentCustomerSupplier();
 
-  if (cur) {
-    const typeText = cur.nature === 'C' ? 'Customer' : 'Supplier';
+    // 🔥 ADD THIS BLOCK
+    const cur = this.currentCustomerSupplier();
 
-    // load account group
-    this.fetchAccountGroup(typeText);
+    if (cur) {
+      const typeText = cur.nature === 'C' ? 'Customer' : 'Supplier';
 
-    // optional: store account id for later patch
-    this.selectedAccountId = cur.accountID ?? null;
-  }
+      // load account group
+      this.fetchAccountGroup(typeText);
+
+      // optional: store account id for later patch
+      this.selectedAccountId = cur.accountID ?? null;
+    }
   }
 
   markTouched(controlName: string) {
