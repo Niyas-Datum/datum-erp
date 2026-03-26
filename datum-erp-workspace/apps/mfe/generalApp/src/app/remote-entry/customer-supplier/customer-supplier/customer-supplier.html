@@ -306,7 +306,7 @@
                     <label>Account</label>
                     <ejs-dropdownlist formControlName="account" [dataSource]="accountData()"
                       [readonly]="isInputDisabled" [fields]="{ text: 'name', value: 'id' }" placeholder="Select Account"
-                      [readonly]="isInputDisabled" (change)="onselectAccount($event)">
+                      (change)="onselectAccount($event)">
                     </ejs-dropdownlist>
                   </div>
                 </div>

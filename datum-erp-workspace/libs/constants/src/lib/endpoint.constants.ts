@@ -382,6 +382,7 @@ export const EndpointConstant = {
 
     GETBRANCHIMG:'api/v1/branch/fillImg?companyId=',
     GETSALESMAN:'api/v1/Hr/getsalesman',
+    FILLACCDROPDOWN:'api/v1/fn/coa/accDropdown?accGrpId='
 }
 
 
