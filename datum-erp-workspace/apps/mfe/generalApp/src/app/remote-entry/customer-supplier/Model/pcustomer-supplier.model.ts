@@ -367,6 +367,11 @@ export interface ACCOUNTGROUP{
     id: number;
     name: string;
 }
+
+export interface ACCDROPDOWN{
+     id: number;
+    name: string;
+}
  
 export interface ACCOUNT{
     id: number;
