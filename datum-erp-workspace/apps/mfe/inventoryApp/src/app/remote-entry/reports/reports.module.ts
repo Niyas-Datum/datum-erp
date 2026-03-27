@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { TextBoxModule } from "@syncfusion/ej2-angular-inputs";
 import { ButtonModule, CheckBoxModule, RadioButtonModule } from "@syncfusion/ej2-angular-buttons";
 import { DropDownListModule } from "@syncfusion/ej2-angular-dropdowns";
-import { GridModule } from "@syncfusion/ej2-angular-grids";
+import { ExcelExportService, GridModule } from "@syncfusion/ej2-angular-grids";
 import { MultiColumnComboBoxModule } from "@syncfusion/ej2-angular-multicolumn-combobox";
 import { DatePickerModule } from "@syncfusion/ej2-angular-calendars";
 
@@ -56,7 +56,7 @@ const reportsRoutes: Routes = [
     DatePickerModule,
     RadioButtonModule
 ],
-  providers: [],
+  providers: [ExcelExportService],
 })
 
 export class ReportsModule{}
