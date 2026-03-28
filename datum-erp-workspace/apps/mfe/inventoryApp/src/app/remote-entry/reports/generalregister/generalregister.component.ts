@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, inject, OnInit, signal, ViewChild } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BaseComponent } from "@org/architecture";
 import { InventoryAppService } from "../../http/inventory-app.service";
@@ -8,8 +8,10 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AREA, BASICTYPE, BRANCHES, COUNTERS, CUSTOMERSUPPLIER, ITEMS, PAYMENTTYPE, STAFF, USERS, VOUCHERTYPE } from "../model/generalregister.model";
 import { PdfGenerationService } from "../common/pdfgeneration.service";
 import { PdfColumn, PdfReportData } from "../model/pdfgeneration.model";
+import { GridComponent } from "@syncfusion/ej2-angular-grids";
 //import { PdfGenerationService } from "../common/pdfgeneration.service";
 //import { GeneralRegisterData, GeneralRegisterRow } from "../model/pdfgeneration.model";
+import { GridModule, ExcelExportService } from '@syncfusion/ej2-angular-grids';
 
 
 interface LeftSummaryRow {
@@ -25,6 +27,15 @@ interface LeftSummaryRow {
 })
 
 export class GeneralRegisterComponent extends BaseComponent implements OnInit {
+
+    @ViewChild('grid') grid!: GridComponent;
+    onSearch(event: any) {
+        const searchText = event.target.value;
+
+        if (this.grid) {
+            this.grid.search(searchText);
+        }
+    }
 
     fromDate!: Date;
     toDate!: Date;
@@ -434,15 +445,24 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
             .subscribe({
                 next: (response: any) => {
-
+                    console.log("filldata:" + JSON.stringify(response, null, 2))
                     //this.reportData = Array.isArray(response.data) ? response.data : [];
                     this.reportData = (Array.isArray(response.data) ? response.data : []).map((x: any) => {
 
                         const spaces = (x.particulars?.match(/^\s*/) || [''])[0].length;
 
                         const formatDate = (val: any) => {
-                            if (!val) return null;
-                            return new Date(val).toLocaleDateString('en-GB'); // dd/mm/yyyy
+
+                            if (!val) return '';
+
+                            // 👇 split date & time
+                            const [datePart] = val.split(' '); // "26-03-2026"
+
+                            const [day, month, year] = datePart.split('-');
+
+                            if (!day || !month || !year) return '';
+
+                            return `${day}/${month}/${year}`; // dd/MM/yyyy
                         };
 
                         return {
@@ -460,6 +480,12 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
                         formValue.selectedView === 'inventory'
                             ? this.inventoryColumns
                             : this.financeColumns;
+
+                    this.excelColumns = this.gridColumns.map(col => ({
+                        field: col.field,
+                        headerText: col.headerText,
+                        checked: true
+                    }));
 
                     this.setLeftSideData(this.reportData);
 
@@ -637,6 +663,61 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
             args.cell.style.paddingLeft = (level * 25) + 'px';
 
         }
-
     }
+
+    //excel
+
+    excelColumns: any[] = [];
+    showExcelFields = false;
+
+    openExcelFields() {
+    this.excelColumns = this.gridColumns.map(col => ({
+        field: col.field,
+        headerText: col.headerText,
+        checked: true
+    }));
+
+    this.showExcelFields = true;
+}
+cancelExcel() {
+    this.showExcelFields = false;
+    this.excelColumns = [];
+}
+
+   exportToExcel() {
+
+    if (!this.grid || !this.grid.columns) return;
+
+    const selectedFields = this.excelColumns
+        .filter(c => c.checked)
+        .map(c => c.field);
+
+    if (!selectedFields.length) {
+        alert("Please select at least one field");
+        return;
+    }
+
+    const exportColumns = (this.grid.columns as any[])
+        .filter(col => selectedFields.includes(col.field));
+
+    this.grid.excelExport({
+        columns: exportColumns,
+        fileName: 'GeneralRegister.xlsx'
+    });
+
+    this.showExcelFields = false;
+}
+onExcelClick() {
+    this.showExcelFields = true;
+
+    this.excelColumns = this.gridColumns.map(col => ({
+        field: col.field,
+        headerText: col.headerText,
+        checked: true
+    }));
+}
+onExcelCheckboxChange(event: any, col: any) {
+    col.checked = event.target.checked;
+}
+
 }
