@@ -6,7 +6,7 @@ import { AREA, BASICTYPE, BRANCHES, COUNTERS, CUSTOMERSUPPLIER, ITEMS, PAYMENTTY
 import { InventoryAppService } from "../../../http/inventory-app.service";
 import { EndpointConstant } from "@org/constants";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { GridComponent } from "@syncfusion/ej2-angular-grids";
+import { GridComponent, ExcelExportService } from "@syncfusion/ej2-angular-grids";
 import { LocalStorageService } from "@org/services";
 import { PdfGenerationService } from "../../common/pdfgeneration.service";
 import { PdfColumn, PdfReportData } from "../../model/pdfgeneration.model";
@@ -24,6 +24,14 @@ interface LeftSummaryRow {
 })
 
 export class SalesRegisterComponent extends BaseComponent implements OnInit {
+    @ViewChild('grid') grid!: GridComponent;
+    onSearch(event: any) {
+        const searchText = event.target.value;
+
+        if (this.grid) {
+            this.grid.search(searchText);
+        }
+    }
 
     fromDate!: Date;
     toDate!: Date;
@@ -40,7 +48,7 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
 
     allVoucherTypes: VOUCHERTYPE[] = [];
     allVoucherTypesarr: VOUCHERTYPE[] = [];
-  
+
 
     ngOnInit(): void {
         this.salesRegisterForm = new FormGroup({
@@ -93,72 +101,72 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
 
     /*Getting data for filters*/
     fetchAllFilterMasterData(): void {
-    this.httpService
-        .fetch(EndpointConstant.FILLGENERALREGISTERMASTERFILTER)
-        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-        .subscribe({
-            next: (response) => {
- 
-                let filterMasterData: any = response?.data;
- 
-                // Assign all master data
-                this.basicTypesarr = filterMasterData.basicTypes || [];
-                this.allVoucherTypesarr = filterMasterData.voucherTypes || []; 
-                this.itemsArr = filterMasterData.items || [];
-                this.staffArr = filterMasterData.staffs || [];
-                this.customerSupplierArr = filterMasterData.customerSupplier || [];
-                this.areaArr = filterMasterData.areas || [];
-                this.paymentTypes = filterMasterData.paymentTypes || [];
-                this.counters = filterMasterData.counters || [];
-                this.users = filterMasterData.users || [];
-                this.branches = filterMasterData.branches || [];
- 
-                //  Filter ONLY "Purchase" voucher types
-                const purchaseBasicType = this.basicTypesarr.find(
-                    b => b.name === 'Sales Invoice'
-                );
- 
-                if (purchaseBasicType) {
-                    const basicTypeId = purchaseBasicType.id;
- 
-                    this.baseTypeObj = purchaseBasicType;
- 
-                    this.voucherTypesarr = this.allVoucherTypesarr.filter(
-                        v => Number(v.primaryVoucherId) === Number(basicTypeId) // change if needed
+        this.httpService
+            .fetch(EndpointConstant.FILLGENERALREGISTERMASTERFILTER)
+            .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+            .subscribe({
+                next: (response) => {
+
+                    let filterMasterData: any = response?.data;
+
+                    // Assign all master data
+                    this.basicTypesarr = filterMasterData.basicTypes || [];
+                    this.allVoucherTypesarr = filterMasterData.voucherTypes || [];
+                    this.itemsArr = filterMasterData.items || [];
+                    this.staffArr = filterMasterData.staffs || [];
+                    this.customerSupplierArr = filterMasterData.customerSupplier || [];
+                    this.areaArr = filterMasterData.areas || [];
+                    this.paymentTypes = filterMasterData.paymentTypes || [];
+                    this.counters = filterMasterData.counters || [];
+                    this.users = filterMasterData.users || [];
+                    this.branches = filterMasterData.branches || [];
+
+                    //  Filter ONLY "Purchase" voucher types
+                    const purchaseBasicType = this.basicTypesarr.find(
+                        b => b.name === 'Sales Invoice'
                     );
-                } else {
-                    this.voucherTypesarr = [];
-                }
- 
-                // Set form values
-                const savedBranchId = Number(this.localstorageService.getLocalStorageItem('current_branch'));
-                const userId = Number(this.localstorageService.getLocalStorageItem('current_user'));
- 
-                this.currentBranch.set(savedBranchId);
-                this.currentUser.set(userId);
- 
-                this.salesRegisterForm.patchValue({
-                    branch: savedBranchId,
-                    user: userId,
-                    basicType: 'Sales Invoice' // since readonly textbox
-                });
- 
-                //  Set selected objects
-                this.branchObj = this.branches.find(b => b.id === savedBranchId) ?? null;
-                this.userObj = this.users.find(u => u.id === userId) ?? null;
- 
-                //  Other setup
-                this.setCashCreditID();
- 
-                // Debug (remove later)
-                console.log('All Voucher Types:', this.allVoucherTypesarr);
-                console.log('Filtered Purchase Voucher Types:', this.voucherTypesarr);
-            },
-            error: (error) => {
-                console.error('An Error Occured', error);
-            },
-        });
-}
+
+                    if (purchaseBasicType) {
+                        const basicTypeId = purchaseBasicType.id;
+
+                        this.baseTypeObj = purchaseBasicType;
+
+                        this.voucherTypesarr = this.allVoucherTypesarr.filter(
+                            v => Number(v.primaryVoucherId) === Number(basicTypeId) // change if needed
+                        );
+                    } else {
+                        this.voucherTypesarr = [];
+                    }
+
+                    // Set form values
+                    const savedBranchId = Number(this.localstorageService.getLocalStorageItem('current_branch'));
+                    const userId = Number(this.localstorageService.getLocalStorageItem('current_user'));
+
+                    this.currentBranch.set(savedBranchId);
+                    this.currentUser.set(userId);
+
+                    this.salesRegisterForm.patchValue({
+                        branch: savedBranchId,
+                        user: userId,
+                        basicType: 'Sales Invoice' // since readonly textbox
+                    });
+
+                    //  Set selected objects
+                    this.branchObj = this.branches.find(b => b.id === savedBranchId) ?? null;
+                    this.userObj = this.users.find(u => u.id === userId) ?? null;
+
+                    //  Other setup
+                    this.setCashCreditID();
+
+                    // Debug (remove later)
+                    console.log('All Voucher Types:', this.allVoucherTypesarr);
+                    console.log('Filtered Purchase Voucher Types:', this.voucherTypesarr);
+                },
+                error: (error) => {
+                    console.error('An Error Occured', error);
+                },
+            });
+    }
 
     //basic type
     basicTypesarr: BASICTYPE[] = [];
@@ -355,9 +363,9 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
         this.reportData = [];
         this.leftSummaryData = [];
 
-        this.salesRegisterForm.patchValue({                   
-                    basicType: 'Sales Invoice' // since readonly textbox
-                });
+        this.salesRegisterForm.patchValue({
+            basicType: 'Sales Invoice' // since readonly textbox
+        });
     }
 
 
@@ -408,7 +416,7 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
             from: formValue.from,
             to: formValue.to,
 
-            baseType: { id: 23 },
+             baseType: { id: 23 },
             voucherType: this.safeObj(this.voucherTypeObj, formValue.voucherType),
             customerSupplier: this.safeObj(this.customerSupplierObj, formValue.customerSupplier),
             item: this.safeObj(this.itemObj, formValue.item),
@@ -435,20 +443,29 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
             .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
             .subscribe({
                 next: (response: any) => {
-
+                    console.log("filldata:" + JSON.stringify(response, null, 2))
                     //this.reportData = Array.isArray(response.data) ? response.data : [];
                     this.reportData = (Array.isArray(response.data) ? response.data : []).map((x: any) => {
 
                         const spaces = (x.particulars?.match(/^\s*/) || [''])[0].length;
 
                         const formatDate = (val: any) => {
-                            if (!val) return null;
-                            return new Date(val).toLocaleDateString('en-GB'); // dd/mm/yyyy
+
+                            if (!val) return '';
+
+                            // 👇 split date & time
+                            const [datePart] = val.split(' '); // "26-03-2026"
+
+                            const [day, month, year] = datePart.split('-');
+
+                            if (!day || !month || !year) return '';
+
+                            return `${day}/${month}/${year}`; // dd/MM/yyyy
                         };
 
                         return {
                             ...x,
-                             VDate: formatDate(x.VDate),
+                            VDate: formatDate(x.VDate),
                             AddedDate: formatDate(x.AddedDate),
                             debit: Number(x.debit || 0),
                             credit: Number(x.credit || 0),
@@ -456,14 +473,20 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
                         };
 
                     });
-
                     console.log("data:" + JSON.stringify(this.reportData, null, 2))
                     this.gridColumns =
                         formValue.selectedView === 'inventory'
                             ? this.inventoryColumns
                             : this.financeColumns;
 
+                    this.excelColumns = this.gridColumns.map(col => ({
+                        field: col.field,
+                        headerText: col.headerText,
+                        checked: true
+                    }));
+
                     this.setLeftSideData(this.reportData);
+
                     if (formValue.selectedView === 'inventory') {
 
                         const totalRow = {
@@ -483,8 +506,6 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
                     this.leftSummaryData = [];
                 }
             });
-
-
     }
 
     /********summary grid******* */
@@ -631,4 +652,58 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
 
     }
 
+    //excel
+
+    excelColumns: any[] = [];
+    showExcelFields = false;
+
+    openExcelFields() {
+        this.excelColumns = this.gridColumns.map(col => ({
+            field: col.field,
+            headerText: col.headerText,
+            checked: true
+        }));
+
+        this.showExcelFields = true;
+    }
+    cancelExcel() {
+        this.showExcelFields = false;
+        this.excelColumns = [];
+    }
+
+    exportToExcel() {
+
+        if (!this.grid || !this.grid.columns) return;
+
+        const selectedFields = this.excelColumns
+            .filter(c => c.checked)
+            .map(c => c.field);
+
+        if (!selectedFields.length) {
+            alert("Please select at least one field");
+            return;
+        }
+
+        const exportColumns = (this.grid.columns as any[])
+            .filter(col => selectedFields.includes(col.field));
+
+        this.grid.excelExport({
+            columns: exportColumns,
+            fileName: 'SalesRegister.xlsx'
+        });
+
+        this.showExcelFields = false;
+    }
+    onExcelClick() {
+        this.showExcelFields = true;
+
+        this.excelColumns = this.gridColumns.map(col => ({
+            field: col.field,
+            headerText: col.headerText,
+            checked: true
+        }));
+    }
+    onExcelCheckboxChange(event: any, col: any) {
+        col.checked = event.target.checked;
+    }
 }
