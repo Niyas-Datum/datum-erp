@@ -1,14 +1,5 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { FormControl,  FormGroup, Validators } from '@angular/forms';
 import { FinanceAppService } from '../../http/finance-app.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EDITABLE_PERIOD, EndpointConstant } from '@org/constants';
@@ -58,7 +49,7 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
   readonly voucherId = 6; // Journal Voucher VoucherId
 
   // Grid configurations
-  public accountDetailsEditSettings: EditSettingsModel = {
+    public accountDetailsEditSettings: EditSettingsModel = {
     allowEditing: true,
     allowAdding: true,
     allowDeleting: true,
@@ -78,21 +69,11 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.onInitBase();
-
-    // Set pageId for journal voucher
-    this.dataSharingService.setPageId(this.pageId);
-
-    // Set to new/add mode on initialization
     this.SetPageType(1);
-
-    // Initialize grid
-    this.voucherCommonService.initializeAccountDetails();
-
-    // Fetch common fill data
-    this.fetchCommonFillData();
-
-    // Fetch account master from service
-    this.voucherService.fetchAccountMaster();
+    this.journalVoucherForm.disable();
+    this.dataSharingService.setPageId(this.pageId);
+      this.voucherService.fetchAccountMaster();
+     this.voucherService.fetchBankDetails();
 
     // Subscribe to pageId from DataSharingService
     this.dataSharingService.pageId$
@@ -104,6 +85,55 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
           this.LeftGridInit();
         }
       });
+        // New mode: enable voucher no auto generation and one empty row for Account Details
+    this.fetchCommonFillData();
+    this.voucherCommonService.initializeAccountDetails();
+     this.updateGridEditSettings();
+    this.LeftGridInit().then(() => this.loadLastSavedEntry());
+  }
+
+  private updateGridEditSettings(): void {
+  const pageType = this.serviceBase.formToolbarService.pagetype;
+
+  if (pageType === 3) {
+    // View mode → disable
+    this.accountDetailsEditSettings = {
+      allowEditing: false,
+      allowAdding: false,
+      allowDeleting: false,
+      mode: 'Batch'
+    };
+  } else {
+    // New (1) & Edit (2) → enable
+    this.accountDetailsEditSettings = {
+      allowEditing: true,
+      allowAdding: true,
+      allowDeleting: true,
+      mode: 'Batch'
+    };
+  }
+}
+
+   /** Load the last saved entry into the form (called after LeftGridInit in ngOnInit). */
+  private loadLastSavedEntry(): void {
+    const list = this.leftGrid?.leftGridData;
+    if (!Array.isArray(list) || list.length === 0) {
+      this.SetPageType(1);
+      this.updateGridEditSettings();
+      this.journalVoucherForm.enable();
+      this.journalVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+      return;
+    }
+    const first = list[0];
+    const id = first?.ID ?? first?.id;
+    if (!id) {
+      this.SetPageType(1);
+     this.updateGridEditSettings();
+      this.journalVoucherForm.enable();
+      this.journalVoucherForm.get('voucherName')?.disable({ emitEvent: false });
+      return;
+    }
+    this.getDataById({ ...first, ID: id } as PVoucherModel);
   }
 
   override FormInitialize() {
@@ -129,6 +159,71 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
     });
     this.formUtil.thisForm = this.journalVoucherForm;
   }
+
+getDateValue(value: any): Date | null {
+  if (!value) return null;
+
+  // Handle common grid shapes without timezone shift.
+  if (typeof value === 'string') {
+    const v = value.trim();
+    const dashParts = v.split('-');
+    if (dashParts.length === 3) {
+      // YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+        const year = Number(dashParts[0]);
+        const month = Number(dashParts[1]) - 1;
+        const day = Number(dashParts[2]);
+        return new Date(year, month, day);
+      }
+      // DD-MM-YYYY
+      if (/^\d{2}-\d{2}-\d{4}$/.test(v)) {
+        const day = Number(dashParts[0]);
+        const month = Number(dashParts[1]) - 1;
+        const year = Number(dashParts[2]);
+        return new Date(year, month, day);
+      }
+    }
+
+    const slashParts = v.split('/');
+    if (slashParts.length === 3) {
+      // YYYY/MM/DD
+      if (/^\d{4}\/\d{2}\/\d{2}$/.test(v)) {
+        const year = Number(slashParts[0]);
+        const month = Number(slashParts[1]) - 1;
+        const day = Number(slashParts[2]);
+        return new Date(year, month, day);
+      }
+      // DD/MM/YYYY
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+        const day = Number(slashParts[0]);
+        const month = Number(slashParts[1]) - 1;
+        const year = Number(slashParts[2]);
+        return new Date(year, month, day);
+      }
+    }
+  }
+
+  return new Date(value); // fallback
+}
+
+onDueDateChange(event: any, rowData: any) {
+  const d: Date = event?.value;
+
+  if (d instanceof Date && !isNaN(d.getTime())) {
+    // ✅ safe formatting (no timezone issue)
+    const formatted =
+      d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+
+    rowData.dueDate = formatted;
+  } else {
+    rowData.dueDate = null;
+  }
+
+  // ✅ trigger change detection properly
+  this.voucherCommonService.updateAccountRow({ ...rowData });
+}
 
   override SaveFormData() {
     try {
@@ -406,14 +501,16 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
 
     if (this.isVoucherBeyondEditablePeriod()) {
       this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
-      this.journalVoucherForm.disable({ emitEvent: false });
-      this.SetPageType(3);
+       this.serviceBase.formToolbarService.pagetype = 3; // View mode
+       this.updateGridEditSettings();
       return;
     }
 
     this.selectedJournalVoucherId = Number(selectedId);
-    this.SetPageType(2);
-    this.journalVoucherForm.enable();
+  // ✅ THIS IS THE ACTUAL REQUIRED FIX
+  this.serviceBase.formToolbarService.pagetype = 2; // Edit mode
+  this.updateGridEditSettings();
+  this.journalVoucherForm.enable();
     this.journalVoucherForm.get('voucherName')?.disable({ emitEvent: false });
     this.journalVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
 
@@ -531,12 +628,13 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
     const isNewMode = currentPageType === 1;
 
     if (isNewMode) {
-      // From New mode, switch to topmost voucher in View mode
-      this.viewTopVoucherFromLeftGrid();
+      //this.viewTopVoucherFromLeftGrid();
+      this.journalVoucherForm.enable();
+      // Refresh voucher no auto generation for new entry
+      this.fetchCommonFillData();
       return;
     }
-
-    // From other modes, return to New mode
+     // From other modes, return to New mode
     this.enterNewMode();
   }
 
@@ -546,6 +644,7 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
 
     // Set page type to new/add mode
     this.SetPageType(1);
+    this.updateGridEditSettings();
 
     // Clear selected voucher data
     this.selectedJournalVoucherId = 0;
@@ -965,11 +1064,65 @@ export class JournalVoucherComponent extends BaseComponent implements OnInit {
     console.log('Voucher data set:', { voucherName: this.voucherName, voucherNo });
   }
 
-  private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+  public formatDate(value: any): string {
+    if (!value) return '';
+
+    if (value instanceof Date) {
+      if (isNaN(value.getTime())) return '';
+      const day = String(value.getDate()).padStart(2, '0');
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const year = value.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    if (typeof value === 'string') {
+      const v = value.trim();
+      // Supported backend/grid shapes:
+      // - YYYY-MM-DD
+      // - YYYY/MM/DD
+      // - DD/MM/YYYY
+      // - DD-MM-YYYY
+      const isoDash = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoDash) {
+        const year = Number(isoDash[1]);
+        const month = Number(isoDash[2]);
+        const day = Number(isoDash[3]);
+        return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+      }
+
+      const isoSlash = v.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+      if (isoSlash) {
+        const year = Number(isoSlash[1]);
+        const month = Number(isoSlash[2]);
+        const day = Number(isoSlash[3]);
+        return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+      }
+
+      const dmyDash = v.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      if (dmyDash) {
+        const day = dmyDash[1];
+        const month = dmyDash[2];
+        const year = dmyDash[3];
+        return `${day}/${month}/${year}`;
+      }
+
+      const dmySlash = v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (dmySlash) {
+        // Already in the desired output format
+        return `${dmySlash[1]}/${dmySlash[2]}/${dmySlash[3]}`;
+      }
+
+      // Fallback: try to parse what JS can understand
+      const parsed = new Date(v);
+      if (!isNaN(parsed.getTime())) {
+        const day = String(parsed.getDate()).padStart(2, '0');
+        const month = String(parsed.getMonth() + 1).padStart(2, '0');
+        const year = parsed.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+    }
+
+    return '';
   }
 
   private isVoucherBeyondEditablePeriod(): boolean {

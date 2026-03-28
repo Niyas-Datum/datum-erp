@@ -5,7 +5,8 @@
       <div class="row align-items-start">
         <div class="col-md-6">
           <div class="row">
-            <label for="voucherNo" class="form-label col-md-4">Voucher No<span class="required-asterisk">*</span></label>
+            <label for="voucherNo" class="form-label col-md-4">Voucher No<span
+                class="required-asterisk">*</span></label>
             <div class="col-md-4">
               <ejs-textbox id="voucherName" formControlName="voucherName" cssClass="e-input"></ejs-textbox>
             </div>
@@ -19,7 +20,8 @@
 
           <!-- Voucher Date Row -->
           <div class="row mt-2">
-            <label for="voucherDate" class="form-label col-md-4">Voucher Date<span class="required-asterisk">*</span></label>
+            <label for="voucherDate" class="form-label col-md-4">Voucher Date<span
+                class="required-asterisk">*</span></label>
             <div class="col-md-8">
               <ejs-datepicker id="voucherDate" formControlName="voucherDate" placeholder="dd/MM/yyyy"
                 format="dd/MM/yyyy">
@@ -63,18 +65,20 @@
         <div class="col-md-12">
           <h6 class="section-title">Account Details</h6>
           <ejs-grid #accountDetailsGrid [dataSource]="voucherCommonService.accountDetailsData()"
-            [editSettings]="accountDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true"
-            gridLines="Both" height="300px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)"
+            [editSettings]="accountDetailsEditSettings"  [allowResizing]="true" [allowTextWrap]="true" gridLines="Both"
+            height="300px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)"
             (actionComplete)="onGridActionComplete($event)" (keyPressed)="onGridKeyPressed($event)">
             <e-columns>
               <!-- Row ID column for tracking -->
-              <e-column field="rowId" headerText="#" width="50" textAlign="Center" [isPrimaryKey]="true" [allowEditing]="false"></e-column>
+              <e-column field="rowId" headerText="#" width="50" textAlign="Center" [isPrimaryKey]="true"
+                [allowEditing]="false"></e-column>
               <e-column field="accountCode" headerText="Account Code" width="150">
                 <ng-template #editTemplate let-data>
                   <ejs-multicolumncombobox [dataSource]="voucherService.accountMasterData()"
                     [fields]='{text: "accountCode", value: "accountCode"}' [value]="data.accountCode"
                     [showClearButton]="true" [allowFiltering]="true" filterType="Contains"
                     placeholder="Search by Account Code or Name..." popupWidth="600px"
+                    [enableVirtualization]="true"
                     (change)="onAccountSelect($event, data)" (filtering)="onAccountFiltering($event)">
                     <e-columns>
                       <e-column field="accountCode" headerText="Account Code" width="150"></e-column>
@@ -85,14 +89,23 @@
               </e-column>
               <e-column field="accountName" headerText="Account Name" width="200" [allowEditing]="false"></e-column>
               <e-column field="description" headerText="Description" width="250"></e-column>
-              <e-column field="dueDate" headerText="Due Date" width="120" editType="datepickeredit" format="dd/MM/yyyy"
-                [edit]="{ params: { format: 'dd/MM/yyyy' } }">
+              <e-column field="dueDate" headerText="Due Date" width="150">
+                <ng-template #template let-data>
+                  {{ formatDate(data.dueDate) }}
+                </ng-template>
+
+                <ng-template #editTemplate let-data>
+                  <ejs-datepicker [value]="getDateValue(data.dueDate)" format="dd/MM/yyyy" placeholder="dd/MM/yyyy"
+                    [enableMask]="true" [maskPlaceholder]="{ day: 'dd', month: 'MM', year: 'yyyy' }"
+                    (change)="onDueDateChange($event, data)">
+                  </ejs-datepicker>
+                </ng-template>
               </e-column>
               <e-column field="debit" headerText="Debit" width="120" textAlign="Right" format="N2" type="number"
-                editType="numericedit" [edit]="debitEditParams">
+                [allowEditing]="true" editType="numericedit" [edit]="debitEditParams">
               </e-column>
               <e-column field="credit" headerText="Credit" width="120" textAlign="Right" format="N2" type="number"
-                editType="numericedit" [edit]="creditEditParams">
+                [allowEditing]="true" editType="numericedit" [edit]="creditEditParams">
               </e-column>
             </e-columns>
 

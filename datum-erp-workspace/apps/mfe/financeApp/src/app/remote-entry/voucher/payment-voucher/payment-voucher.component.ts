@@ -157,34 +157,123 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
    
   }
 
-  private updateGridEditSettings(): void {
-    const pageType = this.serviceBase.formToolbarService.pagetype;
-    if (pageType === 3) {
-      this.accountDetailsEditSettings = {
-        allowEditing: false,
-        allowAdding: false,
-        allowDeleting: false,
-        mode: 'Batch'
-      };
-      this.paymentDetailsEditSettings = {
-        allowEditing: false,
-        allowAdding: false,
-        allowDeleting: false
-      };
-    } else {
-      this.accountDetailsEditSettings = {
-        allowEditing: true,
-        allowAdding: true,
-        allowDeleting: true,
-        mode: 'Batch'
-      };
-      this.paymentDetailsEditSettings = {
-        allowEditing: false,
-        allowAdding: false,
-        allowDeleting: false
-      };
+  // private updateGridEditSettings(): void {
+  //   const pageType = this.serviceBase.formToolbarService.pagetype;
+  //   if (pageType === 3) {
+  //     this.accountDetailsEditSettings = {
+  //       allowEditing: false,
+  //       allowAdding: false,
+  //       allowDeleting: false,
+  //       mode: 'Batch'
+  //     };
+  //     this.paymentDetailsEditSettings = {
+  //       allowEditing: false,
+  //       allowAdding: false,
+  //       allowDeleting: false
+  //     };
+  //   } else {
+  //     this.accountDetailsEditSettings = {
+  //       allowEditing: true,
+  //       allowAdding: true,
+  //       allowDeleting: true,
+  //       mode: 'Batch'
+  //     };
+  //     this.paymentDetailsEditSettings = {
+  //       allowEditing: false,
+  //       allowAdding: false,
+  //       allowDeleting: false
+  //     };
+  //   }
+  // }
+
+    private updateGridEditSettings(): void {
+  const pageType = this.serviceBase.formToolbarService.pagetype;
+
+  if (pageType === 3) {
+    // View mode → disable
+    this.accountDetailsEditSettings = {
+      allowEditing: false,
+      allowAdding: false,
+      allowDeleting: false,
+      mode: 'Batch'
+    };
+  } else {
+    // New (1) & Edit (2) → enable
+    this.accountDetailsEditSettings = {
+      allowEditing: true,
+      allowAdding: true,
+      allowDeleting: true,
+      mode: 'Batch'
+    };
+  }
+}
+
+  
+getDateValue(value: any): Date | null {
+  if (!value) return null;
+
+  // Handle common grid shapes without timezone shift.
+  if (typeof value === 'string') {
+    const v = value.trim();
+    const dashParts = v.split('-');
+    if (dashParts.length === 3) {
+      // YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+        const year = Number(dashParts[0]);
+        const month = Number(dashParts[1]) - 1;
+        const day = Number(dashParts[2]);
+        return new Date(year, month, day);
+      }
+      // DD-MM-YYYY
+      if (/^\d{2}-\d{2}-\d{4}$/.test(v)) {
+        const day = Number(dashParts[0]);
+        const month = Number(dashParts[1]) - 1;
+        const year = Number(dashParts[2]);
+        return new Date(year, month, day);
+      }
+    }
+
+    const slashParts = v.split('/');
+    if (slashParts.length === 3) {
+      // YYYY/MM/DD
+      if (/^\d{4}\/\d{2}\/\d{2}$/.test(v)) {
+        const year = Number(slashParts[0]);
+        const month = Number(slashParts[1]) - 1;
+        const day = Number(slashParts[2]);
+        return new Date(year, month, day);
+      }
+      // DD/MM/YYYY
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+        const day = Number(slashParts[0]);
+        const month = Number(slashParts[1]) - 1;
+        const year = Number(slashParts[2]);
+        return new Date(year, month, day);
+      }
     }
   }
+
+  return new Date(value); // fallback
+}
+
+onDueDateChange(event: any, rowData: any) {
+  const d: Date = event?.value;
+
+  if (d instanceof Date && !isNaN(d.getTime())) {
+    // ✅ safe formatting (no timezone issue)
+    const formatted =
+      d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+
+    rowData.dueDate = formatted;
+  } else {
+    rowData.dueDate = null;
+  }
+
+  // ✅ trigger change detection properly
+  this.voucherCommonService.updateAccountRow({ ...rowData });
+}
+
 
   override SaveFormData() {
     try {
@@ -819,12 +908,65 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     console.log('Voucher data set:', { voucherName: this.voucherName, voucherNo });
   }
 
-  // Format date to dd/MM/yyyy
-  private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+  public formatDate(value: any): string {
+    if (!value) return '';
+
+    if (value instanceof Date) {
+      if (isNaN(value.getTime())) return '';
+      const day = String(value.getDate()).padStart(2, '0');
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const year = value.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    if (typeof value === 'string') {
+      const v = value.trim();
+      // Supported backend/grid shapes:
+      // - YYYY-MM-DD
+      // - YYYY/MM/DD
+      // - DD/MM/YYYY
+      // - DD-MM-YYYY
+      const isoDash = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoDash) {
+        const year = Number(isoDash[1]);
+        const month = Number(isoDash[2]);
+        const day = Number(isoDash[3]);
+        return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+      }
+
+      const isoSlash = v.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+      if (isoSlash) {
+        const year = Number(isoSlash[1]);
+        const month = Number(isoSlash[2]);
+        const day = Number(isoSlash[3]);
+        return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+      }
+
+      const dmyDash = v.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      if (dmyDash) {
+        const day = dmyDash[1];
+        const month = dmyDash[2];
+        const year = dmyDash[3];
+        return `${day}/${month}/${year}`;
+      }
+
+      const dmySlash = v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (dmySlash) {
+        // Already in the desired output format
+        return `${dmySlash[1]}/${dmySlash[2]}/${dmySlash[3]}`;
+      }
+
+      // Fallback: try to parse what JS can understand
+      const parsed = new Date(v);
+      if (!isNaN(parsed.getTime())) {
+        const day = String(parsed.getDate()).padStart(2, '0');
+        const month = String(parsed.getMonth() + 1).padStart(2, '0');
+        const year = parsed.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+    }
+
+    return '';
   }
 
   // Fetch department data for dropdown
