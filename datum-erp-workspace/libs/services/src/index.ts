@@ -15,3 +15,6 @@ export * from './lib/utils/formToolbar.service'
 export * from './lib/utils/alert.service'
 export * from './lib/validation/customvalidation.service'
  export * from './lib/utils/SignalR.service.ts.service'
+
+export * from './lib/storage/cachestorage.service'
+export * from './lib/backgroundHttp.Service'
