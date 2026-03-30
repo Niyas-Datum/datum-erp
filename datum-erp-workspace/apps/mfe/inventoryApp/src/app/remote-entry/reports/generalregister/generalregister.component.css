@@ -17,3 +17,24 @@
   font-weight: 600;
   background-color: #f3f6f9;
 }
+
+
+/* excel */
+.excel-column-panel {
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+    padding: 10px;
+}
+
+.field-list {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 5px;
+    background: white;
+}
+
+.field-list div {
+    padding: 4px;
+    border-bottom: 1px solid #eee;
+}

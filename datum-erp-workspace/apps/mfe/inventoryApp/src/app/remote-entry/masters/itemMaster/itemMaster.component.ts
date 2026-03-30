@@ -303,7 +303,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   }
     fetchAccounts(): void {
     this.httpService
-      .fetch(EndpointConstant.FILLITEMACCOUNT)
+      .fetch(EndpointConstant.FILLITEMACCOUNT, true, 'invAccounts')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
@@ -324,7 +324,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
     fetchCountryOfOrigin(): void {
     this.httpService
-      .fetch(EndpointConstant.FILLITEMORIGIN)
+      .fetch(EndpointConstant.FILLITEMORIGIN, true, 'countryOfOrigin')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
@@ -343,7 +343,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
     fetchParentItems(): void {
     this.httpService
-      .fetch(EndpointConstant.FILLPARENTITEMS)
+      .fetch(EndpointConstant.FILLPARENTITEMS, true, 'parentItems')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
@@ -362,7 +362,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
    fetchItemColors(): void {
     this.httpService
-      .fetch(EndpointConstant.FILLITEMCOLOR)
+      .fetch(EndpointConstant.FILLITEMCOLOR, true, 'itemColors')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
@@ -381,7 +381,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
     fetchItemBrands(): void {
     this.httpService
-      .fetch(EndpointConstant.FILLITEMBRAND)
+      .fetch(EndpointConstant.FILLITEMBRAND, true, 'itemBrands')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: (response) => {
@@ -425,7 +425,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
         : EndpointConstant.FILLALLITEMMASTER;
       const res = await firstValueFrom(
         this.httpService
-          .fetch<any[]>(url)
+          .fetch<any[]>(url, true, 'items')
           .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       );
       const rawData = res?.data ?? (Array.isArray(res) ? res : []);
@@ -475,7 +475,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
           '&Id=' +
           this.selectedItemMasterId() +
           '&BranchId=' +
-          this.filledBranchId
+          this.filledBranchId, false, null
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

@@ -1,6 +1,6 @@
 import { inject,  Injectable } from "@angular/core";
 import { ApiResponseDto } from "@org/models";
-import { BaseService } from "@org/services";
+import { BackgroundHttpService, BaseService } from "@org/services";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -9,16 +9,19 @@ import { Observable } from "rxjs";
 export class InventoryAppService {
 
   baseservice = inject(BaseService); // http request
-
+  backgroundHttpService = inject(BackgroundHttpService);
   constructor() { 
     console.log('InventoryAppService initialized');   
   }
 
-          fetch<T>(endpoint: string):Observable<ApiResponseDto<T>> {
+          fetch<T>(endpoint: string, background: boolean = false, key: string | null = null): Observable<ApiResponseDto<T>> {
+                if (background) {
+                    return this.backgroundHttpService.fetch<ApiResponseDto<T>>(endpoint, key, true);
+                }
 
-                  return this.baseservice.get(endpoint);
+                return this.baseservice.get(endpoint);
           }
-           post<T>(endpoint: string, data: any):Observable<ApiResponseDto<T>> {
+          post<T>(endpoint: string, data: any): Observable<ApiResponseDto<T>> {
 
                   return this.baseservice.post(endpoint, data);
 
