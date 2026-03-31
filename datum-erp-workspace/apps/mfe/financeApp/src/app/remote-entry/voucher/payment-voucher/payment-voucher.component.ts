@@ -30,6 +30,7 @@ interface PaymentBreakdownResult {
 export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   @ViewChild('paymentDetailsGrid') paymentDetailsGrid!: GridComponent;
   @ViewChild('poAllocationPopup') poAllocationPopup!: PoallocationpopupComponent;
+  @ViewChild('accountDetailsGrid') accountDetailsGrid: any;
 
   private httpService = inject(FinanceAppService);
   private datePipe = inject(DatePipe);
@@ -157,36 +158,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
    
   }
 
-  // private updateGridEditSettings(): void {
-  //   const pageType = this.serviceBase.formToolbarService.pagetype;
-  //   if (pageType === 3) {
-  //     this.accountDetailsEditSettings = {
-  //       allowEditing: false,
-  //       allowAdding: false,
-  //       allowDeleting: false,
-  //       mode: 'Batch'
-  //     };
-  //     this.paymentDetailsEditSettings = {
-  //       allowEditing: false,
-  //       allowAdding: false,
-  //       allowDeleting: false
-  //     };
-  //   } else {
-  //     this.accountDetailsEditSettings = {
-  //       allowEditing: true,
-  //       allowAdding: true,
-  //       allowDeleting: true,
-  //       mode: 'Batch'
-  //     };
-  //     this.paymentDetailsEditSettings = {
-  //       allowEditing: false,
-  //       allowAdding: false,
-  //       allowDeleting: false
-  //     };
-  //   }
-  // }
-
-    private updateGridEditSettings(): void {
+  private updateGridEditSettings(): void {
   const pageType = this.serviceBase.formToolbarService.pagetype;
 
   if (pageType === 3) {
@@ -255,6 +227,31 @@ getDateValue(value: any): Date | null {
   return new Date(value); // fallback
 }
 
+onGridKeyDown(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const grid = this.accountDetailsGrid as GridComponent | undefined;
+    if (!grid) return;
+
+    // Commit current cell/row edit first in batch mode.
+    if (grid.isEdit) {
+      (grid as any).editModule?.saveCell?.();
+      grid.endEdit();
+    }
+
+    // Data source is signal-driven, so append via service (not grid.addRecord()).
+    setTimeout(() => {
+      this.voucherCommonService.ensureTrailingEmptyAccountRow();
+      const lastIndex = this.voucherCommonService.accountDetailsData().length - 1;
+      if (lastIndex >= 0) {
+        grid.selectRow(lastIndex);
+      }
+    });
+  }
+}
+
 onDueDateChange(event: any, rowData: any) {
   const d: Date = event?.value;
 
@@ -304,7 +301,15 @@ onDueDateChange(event: any, rowData: any) {
       }
 
       // Debit side (account details)
-      const accRows = this.voucherCommonService.accountDetailsData() || [];
+      const allAccRows = this.voucherCommonService.accountDetailsData() || [];
+      const accRows = allAccRows.filter((r: any) => {
+        const hasAccount = !!(r?.accountCode && String(r.accountCode).trim());
+        const hasDescription = !!(r?.description && String(r.description).trim());
+        const hasDueDate = !!(r?.dueDate && String(r.dueDate).trim());
+        const hasDebit = (Number(r?.debit ?? r?.Debit ?? r?.amount ?? r?.Amount) || 0) > 0;
+        return hasAccount || hasDescription || hasDueDate || hasDebit;
+      });
+
       if (!accRows.length) {
         this.showError('Add at least one account (debit) row');
         return;
