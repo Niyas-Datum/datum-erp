@@ -1,4 +1,5 @@
  <form [formGroup]="warehouseForm">
+  <h1>Warehouse</h1>
   <div class="row">
     <div class="col-md-12">
       <div class="row">
@@ -20,7 +21,7 @@
       <label for="active"  class="form-label col-md-2">Active</label>
     
     <div class="col-md-4">
-      <ejs-checkbox id="active" formControlName="active" ></ejs-checkbox>
+      <ejs-checkbox id="active" formControlName="active" [disabled]="isInputDisabled"></ejs-checkbox>
     </div>
 </div></div>
  <div class="col-md-12">
@@ -49,7 +50,7 @@
       <label for="isDefault"  class="form-label col-md-2">IsDefault</label>
     
     <div class="col-md-4">
-      <ejs-checkbox id="isDefault" formControlName="isDefault"></ejs-checkbox>
+      <ejs-checkbox id="isDefault" formControlName="isDefault" [disabled]="isInputDisabled"></ejs-checkbox>
     </div>
 </div></div>
     <!-- Name -->
@@ -74,41 +75,58 @@
     <!-- Address -->
     <div class="col-span-2 flex items-center">
       <label for="address">Address</label>
+      
     </div>
     <div class="col-span-10">
-      <ejs-textbox id="address" formControlName="address" placeholder="Enter Address"></ejs-textbox>
+      <ejs-textbox id="address" formControlName="address" placeholder="Enter Address" [enabled]="!isInputDisabled"></ejs-textbox>
     </div>
+    @if (warehouseForm.get('address')?.touched &&
+                (warehouseForm.get('address')?.errors?.['required']))
+                {
+                <small style="color: red">
+                  @if (warehouseForm.get('address')?.errors?.['required'])
+                  {address is required }
+                </small>
+                }
 
     <!-- Remarks -->
     <div class="col-span-2 flex items-center">
       <label for="remarks">Remarks</label>
     </div>
     <div class="col-span-10">
-      <ejs-textbox id="remarks" formControlName="remarks" placeholder="Enter Remarks"></ejs-textbox>
+      <ejs-textbox id="remarks" formControlName="remarks" placeholder="Enter Remarks" [enabled]="!isInputDisabled"></ejs-textbox>
     </div>
+    @if (warehouseForm.get('remarks')?.touched &&
+    (warehouseForm.get('remarks')?.errors?.['required']))
+    {
+    <small style="color: red">
+      @if (warehouseForm.get('remarks')?.errors?.['required'])
+      {remarks is required }
+    </small>
+    }
      <div class="col-span-2 flex items-center">
       <label for="clearingPerCFT">clearingPerCFT</label>
     </div>
     <div class="col-span-10">
-      <ejs-textbox id="clearingPerCFT" formControlName="clearingPerCFT" placeholder="Enter ClearingPerCFT"></ejs-textbox>
+      <ejs-textbox id="clearingPerCFT" formControlName="clearingPerCFT" placeholder="Enter ClearingPerCFT" [enabled]="!isInputDisabled"></ejs-textbox>
     </div>
  <div class="col-span-2 flex items-center">
       <label for="groundRentPerCFT">GroundRentPerCFT</label>
     </div>
     <div class="col-span-10">
-      <ejs-textbox id="groundRentPerCFT" formControlName="groundRentPerCFT" placeholder="Enter GroundRentPerCFT"></ejs-textbox>
+      <ejs-textbox id="groundRentPerCFT" formControlName="groundRentPerCFT" placeholder="Enter GroundRentPerCFT" [enabled]="!isInputDisabled"></ejs-textbox>
     </div>
  <div class="col-span-2 flex items-center">
       <label for="lottingPerPiece">LottingPerPiece</label>
     </div>
     <div class="col-span-10">
-      <ejs-textbox id="lottingPerPiece" formControlName="lottingPerPiece" placeholder="Enter LottingPerPiece"></ejs-textbox>
+      <ejs-textbox id="lottingPerPiece" formControlName="lottingPerPiece" placeholder="Enter LottingPerPiece" [enabled]="!isInputDisabled"></ejs-textbox>
     </div>
  <div class="col-span-2 flex items-center">
       <label for="lorryHirePerCFT">LorryHirePerCFT</label>
     </div>
     <div class="col-span-10">
-      <ejs-textbox id="lorryHirePerCFT" formControlName="lorryHirePerCFT" placeholder="Enter LorryHirePerCFT"></ejs-textbox>
+      <ejs-textbox id="lorryHirePerCFT" formControlName="lorryHirePerCFT" placeholder="Enter LorryHirePerCFT" [enabled]="!isInputDisabled"></ejs-textbox>
     </div>
   </div>
 

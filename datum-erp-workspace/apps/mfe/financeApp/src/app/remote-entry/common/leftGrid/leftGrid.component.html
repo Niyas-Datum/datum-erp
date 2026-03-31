@@ -4,6 +4,20 @@
     <p translate>Disabled</p>
   </div>
 
+
+  <div class="left-grid-search mb-2">
+    <ejs-textbox
+      #searchBox
+      placeholder="Search..."
+      [value]="searchFilterText()"
+      (input)="onSearchInput($event)"
+      (change)="onSearchInput($event)"
+      cssClass="e-input"
+      floatLabelType="Never">
+    </ejs-textbox>
+  </div>
+
+
   <ejs-grid class="sidebar-grid" #grid [dataSource]="this.leftdata$ | async  " [allowResizing]="true" [allowTextWrap]="true"
     [enableHover]="false" (rowSelected)="onRowSelect($event)" [allowFiltering]="true" [filterSettings]="filterOptions"
     [allowSorting]="true" gridLines="Both" height="80vh" [rowHeight]="30">

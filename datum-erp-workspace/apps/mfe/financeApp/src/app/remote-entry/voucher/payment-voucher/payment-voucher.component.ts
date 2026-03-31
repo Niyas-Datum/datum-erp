@@ -157,34 +157,123 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
    
   }
 
-  private updateGridEditSettings(): void {
-    const pageType = this.serviceBase.formToolbarService.pagetype;
-    if (pageType === 3) {
-      this.accountDetailsEditSettings = {
-        allowEditing: false,
-        allowAdding: false,
-        allowDeleting: false,
-        mode: 'Batch'
-      };
-      this.paymentDetailsEditSettings = {
-        allowEditing: false,
-        allowAdding: false,
-        allowDeleting: false
-      };
-    } else {
-      this.accountDetailsEditSettings = {
-        allowEditing: true,
-        allowAdding: true,
-        allowDeleting: true,
-        mode: 'Batch'
-      };
-      this.paymentDetailsEditSettings = {
-        allowEditing: false,
-        allowAdding: false,
-        allowDeleting: false
-      };
+  // private updateGridEditSettings(): void {
+  //   const pageType = this.serviceBase.formToolbarService.pagetype;
+  //   if (pageType === 3) {
+  //     this.accountDetailsEditSettings = {
+  //       allowEditing: false,
+  //       allowAdding: false,
+  //       allowDeleting: false,
+  //       mode: 'Batch'
+  //     };
+  //     this.paymentDetailsEditSettings = {
+  //       allowEditing: false,
+  //       allowAdding: false,
+  //       allowDeleting: false
+  //     };
+  //   } else {
+  //     this.accountDetailsEditSettings = {
+  //       allowEditing: true,
+  //       allowAdding: true,
+  //       allowDeleting: true,
+  //       mode: 'Batch'
+  //     };
+  //     this.paymentDetailsEditSettings = {
+  //       allowEditing: false,
+  //       allowAdding: false,
+  //       allowDeleting: false
+  //     };
+  //   }
+  // }
+
+    private updateGridEditSettings(): void {
+  const pageType = this.serviceBase.formToolbarService.pagetype;
+
+  if (pageType === 3) {
+    // View mode → disable
+    this.accountDetailsEditSettings = {
+      allowEditing: false,
+      allowAdding: false,
+      allowDeleting: false,
+      mode: 'Batch'
+    };
+  } else {
+    // New (1) & Edit (2) → enable
+    this.accountDetailsEditSettings = {
+      allowEditing: true,
+      allowAdding: true,
+      allowDeleting: true,
+      mode: 'Batch'
+    };
+  }
+}
+
+  
+getDateValue(value: any): Date | null {
+  if (!value) return null;
+
+  // Handle common grid shapes without timezone shift.
+  if (typeof value === 'string') {
+    const v = value.trim();
+    const dashParts = v.split('-');
+    if (dashParts.length === 3) {
+      // YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+        const year = Number(dashParts[0]);
+        const month = Number(dashParts[1]) - 1;
+        const day = Number(dashParts[2]);
+        return new Date(year, month, day);
+      }
+      // DD-MM-YYYY
+      if (/^\d{2}-\d{2}-\d{4}$/.test(v)) {
+        const day = Number(dashParts[0]);
+        const month = Number(dashParts[1]) - 1;
+        const year = Number(dashParts[2]);
+        return new Date(year, month, day);
+      }
+    }
+
+    const slashParts = v.split('/');
+    if (slashParts.length === 3) {
+      // YYYY/MM/DD
+      if (/^\d{4}\/\d{2}\/\d{2}$/.test(v)) {
+        const year = Number(slashParts[0]);
+        const month = Number(slashParts[1]) - 1;
+        const day = Number(slashParts[2]);
+        return new Date(year, month, day);
+      }
+      // DD/MM/YYYY
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+        const day = Number(slashParts[0]);
+        const month = Number(slashParts[1]) - 1;
+        const year = Number(slashParts[2]);
+        return new Date(year, month, day);
+      }
     }
   }
+
+  return new Date(value); // fallback
+}
+
+onDueDateChange(event: any, rowData: any) {
+  const d: Date = event?.value;
+
+  if (d instanceof Date && !isNaN(d.getTime())) {
+    // ✅ safe formatting (no timezone issue)
+    const formatted =
+      d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+
+    rowData.dueDate = formatted;
+  } else {
+    rowData.dueDate = null;
+  }
+
+  // ✅ trigger change detection properly
+  this.voucherCommonService.updateAccountRow({ ...rowData });
+}
+
 
   override SaveFormData() {
     try {
@@ -245,8 +334,10 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       }
 
       const accountDetails = accRows.map((r: any) => {
+        // Support both camelCase and API/grid field names for debit value.
+        const rawDebit = r.debit ?? r.Debit ?? r.amount ?? r.Amount ?? 0;
         // Round to 2 decimal places to avoid floating-point precision errors
-        const debitAmount = parseFloat((Number(r.debit) || 0).toFixed(2));
+        const debitAmount = parseFloat((Number(rawDebit) || 0).toFixed(2));
 
         const obj: any = {
           accountCode: {
@@ -309,7 +400,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       for (const row of accRows) {
         if (Array.isArray(row.poAllocations) && row.poAllocations.length) {
           const sumAlloc = row.poAllocations.reduce((s: number, a: any) => s + (Number(a.amount) || 0), 0);
-          const rowDebit = Number(row.debit) || 0;
+          const rowDebit = Number(row.debit ?? row.Debit ?? row.amount ?? row.Amount) || 0;
           if (Math.abs(sumAlloc - rowDebit) > 0.0001) {
             this.showError(`Allocation total (${sumAlloc.toFixed(2)}) does not match row debit (${rowDebit.toFixed(2)}) for account ${row.accountName || ''}`);
             return;
@@ -526,40 +617,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   }
 
   // Enter edit mode for the selected voucher
-  // override onEditClick() {
-  //   const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
-  //   if (!selectedId || Number(selectedId) <= 0) {
-  //     this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
-  //     return;
-  //   }
 
-  //   // Check if voucher is beyond editable period
-  //   if (this.isVoucherBeyondEditablePeriod()) {
-  //     this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
-  //     this.updateGridEditSettings();
-  //     return;
-  //   }
-
-  //   this.selectedPaymentVoucherId = Number(selectedId);
-  //   // Set page type to edit mode
-  //   this.updateGridEditSettings();
-
-  //   // Enable the form for editing
-  //   this.paymentVoucherForm.enable();
-
-  //   // Keep voucher name and voucher no disabled (read-only in edit mode)
-  //   this.paymentVoucherForm.get('voucherName')?.disable({ emitEvent: false });
-  //   this.paymentVoucherForm.get('voucherNo')?.disable({ emitEvent: false });
-
-  //   // Ensure dropdown data is loaded for editors/popups
-  //   this.voucherService.fetchAccountMaster();
-  //   this.voucherService.fetchBankDetails();
-
-  //   // Only fetch details if not already loaded
-  //   if (!this.currentPaymentVoucher || this.currentPaymentVoucher.id !== this.selectedPaymentVoucherId) {
-  //     this.fetchPaymentVoucherById();
-  //   }
-  // }
   override onEditClick() {
   const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
 
@@ -850,12 +908,65 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
     console.log('Voucher data set:', { voucherName: this.voucherName, voucherNo });
   }
 
-  // Format date to dd/MM/yyyy
-  private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+  public formatDate(value: any): string {
+    if (!value) return '';
+
+    if (value instanceof Date) {
+      if (isNaN(value.getTime())) return '';
+      const day = String(value.getDate()).padStart(2, '0');
+      const month = String(value.getMonth() + 1).padStart(2, '0');
+      const year = value.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    if (typeof value === 'string') {
+      const v = value.trim();
+      // Supported backend/grid shapes:
+      // - YYYY-MM-DD
+      // - YYYY/MM/DD
+      // - DD/MM/YYYY
+      // - DD-MM-YYYY
+      const isoDash = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoDash) {
+        const year = Number(isoDash[1]);
+        const month = Number(isoDash[2]);
+        const day = Number(isoDash[3]);
+        return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+      }
+
+      const isoSlash = v.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+      if (isoSlash) {
+        const year = Number(isoSlash[1]);
+        const month = Number(isoSlash[2]);
+        const day = Number(isoSlash[3]);
+        return `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+      }
+
+      const dmyDash = v.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+      if (dmyDash) {
+        const day = dmyDash[1];
+        const month = dmyDash[2];
+        const year = dmyDash[3];
+        return `${day}/${month}/${year}`;
+      }
+
+      const dmySlash = v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (dmySlash) {
+        // Already in the desired output format
+        return `${dmySlash[1]}/${dmySlash[2]}/${dmySlash[3]}`;
+      }
+
+      // Fallback: try to parse what JS can understand
+      const parsed = new Date(v);
+      if (!isNaN(parsed.getTime())) {
+        const day = String(parsed.getDate()).padStart(2, '0');
+        const month = String(parsed.getMonth() + 1).padStart(2, '0');
+        const year = parsed.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+    }
+
+    return '';
   }
 
   // Fetch department data for dropdown
@@ -873,9 +984,6 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
         },
       });
   }
-
-  // Fetch account details from ACCOUNTCODEPOPUP endpoint
-  // fetchAccountDetails removed - now using voucherService.fetchAccountMaster()
 
   // Fetch Cash popup data
   fetchCashPopup(): void {
@@ -1277,8 +1385,14 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       return;
     }
 
-    // Handle dueDate edits - store as date-only (dd/MM/yyyy) so grid shows no time
+    // Handle dueDate edits - keep empty values empty (avoid 01/01/1970)
     if (columnName === 'dueDate') {
+      if (value === null || value === undefined || value === '') {
+        rowData.dueDate = '';
+        this.voucherCommonService.updateAccountRow(rowData);
+        return;
+      }
+
       const dateOnly = value instanceof Date
         ? this.datePipe.transform(value, 'dd/MM/yyyy')
         : (typeof value === 'string' && /^\d{2}[\/\-]\d{2}[\/\-]\d{4}$/.test(value)
@@ -1291,7 +1405,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
 
     // Check if debit column was edited (Payment Voucher uses Debit)
     if (columnName === 'debit') {
-      const debitValue = value || 0;
+      const debitValue = Number(value) || 0;
 
       // Validate that account is selected
       if (!rowData.accountId || !rowData.accountCode) {
@@ -1309,6 +1423,9 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
       if (this.voucherService.unpaidPOsData().length > 0) {
         this.openPOAllocationPopup(debitValue, rowData);
       } else {
+        // No PO allocation flow: persist manual debit to shared row state used by SaveFormData.
+        rowData.debit = parseFloat(debitValue.toFixed(2));
+        this.voucherCommonService.updateAccountRow(rowData);
         console.log(`ℹ️ No unpaid POs for account ${rowData.accountCode}. Manual debit entry: ${debitValue}`);
       }
     }

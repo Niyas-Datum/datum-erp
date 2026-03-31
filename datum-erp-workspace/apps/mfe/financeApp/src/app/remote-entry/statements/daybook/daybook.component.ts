@@ -223,6 +223,9 @@ export class DaybookComponent extends BaseComponent implements OnInit {
 
     reportData: any[] = [];
 
+    totalDebit = 0;
+    totalCredit = 0;
+
 
     onClickGo(): void {
     this.getPageID();
