@@ -289,14 +289,14 @@ onDueDateChange(event: any, rowData: any) {
       // Required: voucherNo
       const voucherNo = (formVals.voucherNo ?? '').toString().trim();
       if (!voucherNo) {
-        this.baseService.showCustomDialogue('Voucher No is required.');
+        this.toast.warning('Voucher No is required.');
         return;
       }
 
       // Required: voucherDate (must parse to ISO)
       const voucherDateIso = this.toISO(formVals.voucherDate);
       if (!voucherDateIso) {
-        this.baseService.showCustomDialogue('Voucher Date is required and must be valid.');
+        this.toast.warning('Voucher Date is required and must be valid.');
         return;
       }
 
@@ -522,7 +522,7 @@ onDueDateChange(event: any, rowData: any) {
             if ((typeof httpCode === 'number' && httpCode >= 400) || isValid === false) {
               const details = typeof dataMsg === 'string' ? dataMsg : this.stringifyError(response);
               console.error('Save Payment Voucher returned error payload:', response);
-              this.baseService.showCustomDialogue(`Save failed:\n${details}`);
+             this.toast.error(`Save failed:\n${details}`);
               return;
             }
 
@@ -533,7 +533,7 @@ onDueDateChange(event: any, rowData: any) {
             }
 
             const msg = 'Payment voucher saved successfully';
-            this.baseService.showCustomDialogue(msg);
+            this.toast.success(msg);
 
             // After save, switch to view mode and disable Save button via pagetype
             this.SetPageType(3);
@@ -548,13 +548,13 @@ onDueDateChange(event: any, rowData: any) {
               console.error('Validation errors:', error.error.errors);
             }
             const details = this.stringifyError(error);
-            this.baseService.showCustomDialogue(`Save failed:\n${details}`);
+           this.toast.error(`Save failed:\n${details}`);
           },
         });
     } catch (err: any) {
       const details = this.stringifyError(err);
       console.error('Save Payment Voucher exception:', err);
-      this.baseService.showCustomDialogue(`Save failed:\n${details}`);
+      this.toast.error(`Save failed:\n${details}`);
     }
   }
 
@@ -627,12 +627,12 @@ onDueDateChange(event: any, rowData: any) {
   const selectedId = this.selectedPaymentVoucherId || (this as any).leftgridSelectedData?.ID;
 
   if (!selectedId || Number(selectedId) <= 0) {
-    this.baseService.showCustomDialogue('Please select a voucher from the list to edit.');
+    this.toast.warning('Please select a voucher from the list to edit.');
     return;
   }
 
   if (this.isVoucherBeyondEditablePeriod()) {
-    this.baseService.showCustomDialogue(
+    this.toast.warning(
       `Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`
     );
 
@@ -825,7 +825,7 @@ onDueDateChange(event: any, rowData: any) {
     console.log('Delete requested for payment voucher:', data);
 
     if (!data || !data.ID) {
-      this.baseService.showCustomDialogue('Please select a valid payment voucher to delete.');
+      this.toast.error('Please select a valid payment voucher to delete.');
       return;
     }
 
@@ -1414,7 +1414,7 @@ onDueDateChange(event: any, rowData: any) {
 
       // Validate that account is selected
       if (!rowData.accountId || !rowData.accountCode) {
-        this.baseService.showCustomDialogue('Please select an account first before entering debit amount.');
+       this.toast.warning('Please select an account first before entering debit amount.');
         return;
       }
 
@@ -1533,7 +1533,7 @@ onDueDateChange(event: any, rowData: any) {
       : null;
 
     if (!firstVoucher) {
-      this.baseService.showCustomDialogue('No vouchers available to view.');
+      this.toast.error('No vouchers available to view.');
       return;
     }
 
@@ -1633,7 +1633,7 @@ onDueDateChange(event: any, rowData: any) {
   }
 
   private showError(msg: string): void {
-    this.baseService.showCustomDialogue(msg);
+    this.toast.error(msg);
   }
 
   private toISO(input: any): string | null {
@@ -1978,12 +1978,12 @@ onDueDateChange(event: any, rowData: any) {
     if ((typeof httpCode === 'number' && httpCode >= 400) || isValid === false) {
       const details = typeof dataMsg === 'string' ? dataMsg : this.stringifyError(response);
       console.error('Delete payment voucher returned error:', response);
-      this.baseService.showCustomDialogue(`Delete failed:\n${details}`);
+      this.toast.error(`Delete failed:\n${details}`);
       return;
     }
 
     const successMsg = dataMsg || `Payment Voucher "${voucherNo}" deleted successfully.`;
-    this.baseService.showCustomDialogue(successMsg);
+    this.toast.success(successMsg);
 
     this.clearFormAfterDelete();
     this.LeftGridInit();
@@ -1994,7 +1994,7 @@ onDueDateChange(event: any, rowData: any) {
     const details = this.stringifyError(error);
     console.error('Delete payment voucher failed:', error);
 
-    this.baseService.showCustomDialogue(
+   this.toast.error(
       `Failed to delete Payment Voucher "${voucherNo}":\n${details}`
     );
   }
