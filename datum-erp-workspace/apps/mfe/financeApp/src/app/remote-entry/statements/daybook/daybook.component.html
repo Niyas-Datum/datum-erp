@@ -5,7 +5,7 @@
                 <!-- Action Buttons -->
                 <div class="mb-3 d-flex gap-2">
                     <button type="button">Print</button>
-                    <button type="button">Preview</button>
+                    <button type="button" (click)="onPreview()">Preview</button>
                     <button type="button">Excel</button>
                     <button type="button">Email</button>
                 </div>
@@ -34,7 +34,7 @@
                     <div class="col-4">Voucher Type</div>
                     <div class="col-8">
                         <ejs-dropdownlist formControlName="voucherType" [dataSource]="voucherTypes"
-                            [fields]="voucherTypeFields"  popupHeight="250px">
+                            [fields]="voucherTypeFields" popupHeight="250px">
                         </ejs-dropdownlist>
                     </div>
                 </div>
@@ -43,7 +43,8 @@
                 <div class="row mb-2 align-items-center">
                     <div class="col-4">Branch</div>
                     <div class="col-8">
-                        <ejs-dropdownlist formControlName="branch" [dataSource]="branchData" [fields]="branchFields">                            
+                        <ejs-dropdownlist formControlName="branch" [dataSource]="branchData" [fields]="branchFields"
+                            (change)="onBranchChange($event)">
                         </ejs-dropdownlist>
                     </div>
                 </div>
@@ -80,7 +81,8 @@
             <!-- grid data -->
             <div class="col-md-9 p-0">
 
-                <ejs-grid height="100%" gridLines="Both" allowResizing="true" [dataSource]="reportData">
+                <ejs-grid height="100%" gridLines="Both" allowResizing="true" [dataSource]="reportData"
+                    [allowExcelExport]="true" #grid>
                     <e-columns>
                         <e-column field="VDate" headerText="VDate" width="110"></e-column>
                         <e-column field="VNo" headerText="VNo" width="140"></e-column>
