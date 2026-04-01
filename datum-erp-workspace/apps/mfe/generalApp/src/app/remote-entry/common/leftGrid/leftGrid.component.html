@@ -1,5 +1,5 @@
 
-<div #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()" [class.grid-disabled]="isSelectionDisabled()">
+<div class="h-100 d-flex flex-column" #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()" [class.grid-disabled]="isSelectionDisabled()">
   <div #overlay [class.overlay]="!isInputDisabled()" [style.display]="isInputDisabled() ? 'none' : 'block'">
     <p translate>Disabled</p>
   </div>
@@ -7,18 +7,22 @@
 
 <ejs-grid
   #grid
-  [dataSource]="this.leftdata$ | async  "  
+  [dataSource]="this.leftdata$ | async"
+  [allowPaging]="true"
+  [pageSettings]="{ pageSize: 10, pageSizes: [5, 10, 20, 50] }"
   [allowResizing]="true"
   [allowTextWrap]="true"
   [enableHover]="false"
-   (rowSelected)="onRowSelect($event)"
+  (rowSelected)="onRowSelect($event)"
   [allowFiltering]="true"
   [filterSettings]="filterOptions"
   [allowSorting]="true"
   gridLines="Both"
-  height="80vh"
+  height="100%"
   [rowHeight]="30"
+  class="flex-grow-1"
 >
+
  <e-columns>
   <ng-container *ngFor="let col of columns">
     <!-- Stacked Header -->

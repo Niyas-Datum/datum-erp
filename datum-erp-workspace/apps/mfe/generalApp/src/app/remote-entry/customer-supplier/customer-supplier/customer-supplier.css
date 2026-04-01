@@ -1,3 +1,4 @@
+/* ===== SYNCFUSION FIXES ===== */
 :host ::ng-deep .commodity-multiselect .e-multi-select-wrapper {
   white-space: normal !important;
 }
@@ -5,29 +6,28 @@
 :host ::ng-deep .commodity-multiselect .e-chips-collection {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 2px;
 }
 
 :host ::ng-deep .commodity-multiselect .e-chips {
   margin-bottom: 4px;
 }
 
-/* -------------- */
+/* ===== LAYOUT ===== */
 .customer-form {
-  padding: 12px;
+  padding: 8px;
 }
 
 .section-title {
   font-weight: 600;
-  margin: 12px 0;
   border-bottom: 1px solid #ccc;
-  padding-bottom: 4px;
 }
 
 .general-layout {
   display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 16px;
+  grid-template-columns: 4fr 1.2fr;
+  gap: 20px;
+  align-items: start;
 }
 
 .general-left {
@@ -41,139 +41,58 @@
   justify-content: center;
 }
 
-.photo-box {
-  border: 1px solid #ccc;
-  width: 180px;
-  height: 220px;
-  text-align: center;
-  padding: 8px;
-}
-
-.photo-placeholder {
-  height: 150px;
-  border: 1px dashed #aaa;
-  margin-top: 8px;
-}
-
-.grid-1 { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-.form-row {
-  display: flex;
-  flex-direction: column;
-}
-
+/* ===== CHECKBOX ===== */
 .checkbox-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* for image  */
-
-/* .image-upload-container {
-  width: 350%;
-  height: 200px;            
-  border: 1px dashed #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f8f9fa;
-  overflow: hidden;         
+.checkbox-row label {
+  min-width: 140px;
 }
 
-.image-preview img {
-  max-width: 120%;
-  max-height: 150%;
-  object-fit: contain;       
-  margin-left: 12px; 
-} */
-/* //image */
-
-.profile-upload-box{
-  border: 1px dashed #ccc;
-  border-radius: 10px;
-  padding: 16px;
-  text-align: center;
-  background: #fafafa;
-  position: relative;
+/* ===== INPUT STYLING ===== */
+.e-input,
+.e-control input,
+.e-dropdownlist,
+.e-multiselect {
+  font-size: 12px !important;
 }
 
-/* Image preview */
-.profile-preview{
-  width: 130px;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid #ddd;
-  margin-bottom: 12px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.e-input-group,
+.e-control-wrapper,
+.e-dropdownlist,
+.e-multiselect {
+  background-color: #fff !important;
 }
 
-/* Upload button */
-.upload-btn{
-  display: inline-block;
-  background: #1976d2;
-  color: #fff;
-  padding: 7px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: 0.2s ease;
+.e-input-group input {
+  background-color: #fff !important;
 }
 
-.upload-btn:hover{
-  background: #125ea8;
+.e-input-group:hover,
+.e-input-group.e-focus {
+  background-color: #fff !important;
 }
 
-/* Remove (X) button */
-.remove-button{
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #ff4d4f;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 14px;
-  cursor: pointer;
-  line-height: 20px;
-  text-align: center;
-  padding: 0;
-}
-
-.remove-button:hover{
-  background: #d9363e;
-}
-/* ------------------ */
-.profile-upload-box{
-  border: none;
-  background: transparent;
-  padding: 0;
+/* ===== IMAGE UPLOAD ===== */
+.profile-upload-box {
   text-align: center;
   position: relative;
 }
 
-/* Profile Image */
-.profile-preview{
+.profile-preview {
   width: 140px;
   height: 140px;
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid #ddd;
   display: block;
-  margin: 0 auto 10px auto;
+  margin: 0 auto 10px;
 }
 
-/* Upload Button */
-.upload-btn{
+/* .upload-btn {
   display: inline-block;
   background: #1976d2;
   color: #fff;
@@ -181,15 +100,13 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
-  border: none;
-}
+} */
 
-.upload-btn:hover{
+.upload-btn:hover {
   background: #125ea8;
 }
 
-/* Remove Button (X icon) */
-.remove-button{
+.remove-button {
   position: absolute;
   top: -6px;
   right: calc(50% - 70px);
@@ -201,115 +118,140 @@
   border-radius: 50%;
   font-size: 12px;
   cursor: pointer;
+}
+
+/* ===== DELIVERY GRID ===== */
+.delivery-container {
+  padding: 10px;
+}
+
+.delivery-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-}
-/* Hover effect */
-.profile-upload-box:hover{
-  border-color: #3b82f6;
-}
-/* delivery details */
-/* ===== DELIVERY DETAILS GRID ===== */
-
-.delivery-container{
-  padding:10px;
+  margin-bottom: 10px;
 }
 
-.delivery-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
+.delivery-header h5 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.delivery-header h5{
-  margin:0;
-  font-size:14px;
-  font-weight:600;
+.delivery-grid-wrapper {
+  border: 1px solid #ccc;
+  overflow: auto;
+  background: #fff;
 }
 
-.delivery-grid-wrapper{
-  border:1px solid #ccc;
-  overflow:auto;
-  background:#fff;
+.delivery-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
 }
 
-.delivery-grid{
-  width:100%;
-  border-collapse:collapse;
-  font-size:12px;
+.delivery-grid thead {
+  background: #008cb3;
+  color: #fff;
 }
 
-.delivery-grid thead{
-  background:#008cb3;
-  color:white;
+.delivery-grid th {
+  padding: 8px;
+  text-align: left;
+  border-right: 1px solid #fff;
 }
 
-.delivery-grid th{
-  padding:8px;
-  text-align:left;
-  border-right:1px solid #ffffff;
-  font-weight:600;
+.delivery-grid td {
+  border: 1px solid #ddd;
+  padding: 4px;
 }
 
-.delivery-grid td{
-  border:1px solid #ddd;
-  padding:4px;
+.delivery-grid input {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 6px;
+  background: transparent;
 }
 
-.delivery-grid input{
-  width:100%;
-  border:none;
-  outline:none;
-  padding:6px;
-  font-size:12px;
-  background:transparent;
+.delivery-grid input:focus {
+  background: #f2fbff;
 }
 
-.delivery-grid input:focus{
-  background:#f2fbff;
-}
-
-.delivery-footer{
-  margin-top:10px;
-  text-align:right;
-}
-
-/* image rect */
+/* ===== IMAGE RECT ===== */
 .image-container {
+  border: 1px solid #ccc;
+  max-width: 200px;
+  height: 260px;
+  margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
 }
 
 .preview-img {
   width: 180px;
   height: 150px;
   object-fit: cover;
-  border-radius: 8px;     /* Rectangle with slight curve */
+  border-radius: 8px;
   border: 1px solid #ccc;
 }
 
-.upload-btn {
-  background-color: #2d6cdf;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
+/* ===== TAB FIX ===== */
+.e-tab .e-tab-header,
+.e-tab .e-tab-header .e-toolbar-item,
+.e-tab .e-tab-header .e-toolbar-item.e-active {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-bottom: none !important;
 }
 
-.remove-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 5px;
-  cursor: pointer;
+
+.container-fluid > p:first-child {
+  margin-bottom: 0;
 }
 
-.mobile-input {
-  width: 200px !important;
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .general-layout {
+    grid-template-columns: 1fr;
+  }
 }
+
+@media (max-width: 576px) {
+  .grid-2,
+  .grid-3,
+  .form-row-inline {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*FIELD FIX */
+:host ::ng-deep .form-field .e-input-group,
+:host ::ng-deep .form-field .e-control-wrapper,
+:host ::ng-deep .form-field .e-multicolumncombobox {
+  height: 30px !important;
+  min-height: unset !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Input inside all controls */
+:host ::ng-deep .form-field .e-input-group input,
+:host ::ng-deep .form-field input.e-input {
+  height: 100% !important;
+  padding: 2px 5px !important;
+  box-sizing: border-box;
+}
+
+/* Icons (dropdown / calendar / clear icons) */
+:host ::ng-deep .form-field .e-input-group-icon {
+  height: 100% !important;
+  display: flex;
+  align-items: center;
+}
+
+
+

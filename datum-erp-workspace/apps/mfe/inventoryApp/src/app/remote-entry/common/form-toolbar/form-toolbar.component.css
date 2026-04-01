@@ -113,3 +113,21 @@
 .btn-common-feature:hover{
   background-color: #F29718;
 }
+
+
+.topbar-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.topbar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.topbar-scroll {
+  scrollbar-width: none;
+}
+
+.topbar-scroll {
+  -ms-overflow-style: none;
+}

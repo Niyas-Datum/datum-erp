@@ -149,9 +149,14 @@
     min-height: 25px;
   }
 
-  // .section-content {
-  //   padding-inline: 12px;
-  // }
+
+.e-tab .e-content {
+    height: 100%;
+}
+.e-tab .e-item.e-active {
+    display: flex;
+    flex-direction: column;
+}
 
 
 }

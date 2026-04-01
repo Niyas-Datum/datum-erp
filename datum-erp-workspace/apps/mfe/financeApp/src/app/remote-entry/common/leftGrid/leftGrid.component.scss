@@ -71,34 +71,36 @@ ejs-grid {
   will-change: transform;
 }
 
-/* Make row background white */
-::ng-deep .sidebar-grid .e-rowcell {
-  background-color: #ffffff !important;
-  color: #3c3c3c !important;
-  /* Blue text */
-  font-weight: 500;
-}
-
-/* Header background */
-::ng-deep .sidebar-grid .e-headercontent,
-::ng-deep .sidebar-grid .e-headercell,
-::ng-deep .sidebar-grid .e-stackedheadercell {
-  background-color: #ffffff !important;
-  font-weight: 600;
-}
-
-/* Ccolumn headers */
-::ng-deep .sidebar-grid .e-headercell .e-headertext {
-  color: #187C9A !important;
-}
-
-/* stacked header text color change*/
-::ng-deep .sidebar-grid .e-stackedheadercell .e-stackedheadercelldiv {
+::ng-deep .e-grid .e-stackedheadercelldiv {
   color: #187C9A !important;
   font-weight: 600;
 }
 
-/* Filter icons */
-::ng-deep .sidebar-grid .e-headercell .e-icons {
+::ng-deep .e-grid .e-headercell .e-headertext {
   color: #187C9A !important;
+}
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+::ng-deep .e-grid {
+  flex: 1;
+  height: 100% !important;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+}
+
+.form-control::placeholder {
+  font-size: 11px;     
+  font-weight: 400;    
+  color: #6c757d;           
+}
+.left-grid-search input {
+  height: 30px;         
+  font-size: 13px;    
 }

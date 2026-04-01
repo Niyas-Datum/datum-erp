@@ -7,7 +7,31 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
   selector: 'app-inventoryApp-entry',
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
-  styles: [``],
+  styles: [`
+
+.container-fluid{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+ejs-sidebar .p-2 {
+  height: 100%;
+  padding: 0 !important; 
+}
+
+app-left-grid {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+:host ::ng-deep .e-grid {
+  height: 100% !important;
+}
+
+`]
+  ,
   templateUrl: './entry.html',
 })
 export class RemoteEntry {
@@ -19,14 +43,14 @@ export class RemoteEntry {
   // Sidebar configuration
   isSidebarVisible = true;
   sidebarType = 'Push'; // or 'Slide'
-  width = '258px';
+  width = '260px';
   target = '.main-content-wrapper';
   mediaQuery = '(min-width: 768px)';
 
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;
   }
- 
+
 
   /// Service registration
   private formToolbarService = inject(FormToolbarService);
@@ -40,15 +64,15 @@ export class RemoteEntry {
   }).value;
   // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
   ngOnInit() {
-  
+
     this.sharedService.leftdata$.subscribe((data) => {
       this.leftgridchildData = data;
       this.pageheading = data.pageheading || '';
       console.log('58005', this.leftgridchildData.data);
     });
-     this.formToolbarService.leftGridView$.subscribe((data)=>{
-      
-      this.pageType = this.formToolbarService.pagetype;   
+    this.formToolbarService.leftGridView$.subscribe((data) => {
+
+      this.pageType = this.formToolbarService.pagetype;
       console.log(this.formToolbarService.pagetype);
     });
 
@@ -72,11 +96,11 @@ export class RemoteEntry {
       console.log('58005', this.leftgridchildData.data);
     });
 
-   
+
   }
   constructor() {
     this.pageheading = 'General ';
-      this.pageType = 1;
+    this.pageType = 1;
     console.log('Constructor - Remote Entry Component');
   }
 

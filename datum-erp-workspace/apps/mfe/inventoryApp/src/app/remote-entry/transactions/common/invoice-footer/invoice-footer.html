@@ -1,146 +1,117 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
 <!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <!-- Common Component -->
-<div class="w-100">
-  <form [formGroup]="salesForm" class="border">
+<div class="w-100 h-100 d-flex flex-column overflow-hidden ">
+  <form [formGroup]="salesForm" class="border flex-grow-1 d-flex flex-column ">
 
-    <div class="section-content">
+    <div class="section-content flex-grow-1 container-fluid mt-1">
 
+      <!-- TERMS-->
+      <div class="row g-3 align-items-end">
 
-      <div class="terms-discount-section">
-        <div class="row g-2 align-items-center">
+        <!-- Terms -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 me-4">Terms</label>
+            <ejs-textbox formControlName="terms" class="flex-grow-1"></ejs-textbox>
+          </div>
+        </div>
 
-          <!-- TERMS -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="row align-items-center">
-              <label for="terms" class="col-12 col-lg-3 form-label text-xs">
-                Terms
-              </label>
-              <div class="col-12 col-lg-9">
-                <ejs-textbox id="terms" formControlName="terms" cssClass="terms-input" tabindex="13" class="w-100">
-                </ejs-textbox>
-              </div>
+        <!-- Discount % -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Total Disc %</label>
+            <ejs-textbox formControlName="totaldiscpercent"
+              (change)="onChangeCommonDiscountPercent($event)"
+              class="flex-grow-1">
+            </ejs-textbox>
+          </div>
+        </div>
+
+        <!-- Discount Amount -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Discount Amount</label>
+            <div class="d-flex flex-grow-1 gap-2">
+              <ejs-textbox formControlName="discountamount"
+                (change)="onChangeCommonDiscountAmount($event)"
+                class="flex-grow-1">
+              </ejs-textbox>
+              <button type="button" class="btn btn-secondary">Apl</button>
             </div>
           </div>
+        </div>
 
-          <!-- TOTAL DISC % -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-7 form-label">
-                Total Disc Comm.Disc %
-              </label>
-              <div class="col-12 col-lg-5">
-                <ejs-textbox id="totaldiscpercent" formControlName="totaldiscpercent"
-                  (change)="onChangeCommonDiscountPercent($event)" tabindex="14" appNumberFormat>
-                </ejs-textbox>
-              </div>
-            </div>
+        <!-- Disc Sell Amt -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Disc Sell Amt</label>
+            <ejs-textbox formControlName="discsellamt"
+              (change)="onChangeDiscSellAmount($event)"
+              class="flex-grow-1">
+            </ejs-textbox>
           </div>
-
-          <!-- DISCOUNT AMOUNT -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-2 form-label">
-                Amt
-              </label>
-              <div class="col-12 col-lg-10">
-                <div class="d-flex gap-2">
-                  <ejs-textbox id="discountamount" formControlName="discountamount"
-                    (change)="onChangeCommonDiscountAmount($event)" tabindex="15" appNumberFormat>
-                  </ejs-textbox>
-                  <button type="button" ejs-button class="disc-amt-apl" [disabled]="true" ngbTooltip="Import"
-                    placement="top">
-                    Apl
-                  </button>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- DISC SELL AMT -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-5 form-label">
-                Disc Sell Amt
-              </label>
-              <div class="col-12 col-lg-7">
-                <ejs-textbox class="w-100" id="discsellamt" formControlName="discsellamt"
-                  (change)="onChangeDiscSellAmount($event)" tabindex="10" appNumberFormat>
-                </ejs-textbox>
-
-              </div>
-            </div>
-          </div>
+        </div>
 
         </div>
       </div>
       <div class="container-fluid roundoff-container-start">
 
-        <div class="row g-3 gx-0 align-items-end">
+      <!-- ROUND / TAX / TOTAL -->
+      <div class="row g-3">
 
-          <!-- ROUND OFF -->
-          <div class="col-12 col-md-6 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-5 form-label">Round Off</label>
-              <div class="col-12 col-lg-7 d-flex gap-1">
-                <ejs-textbox formControlName="roundoff"></ejs-textbox>
-                <button type="button" ejs-button class="btn btn-secondary btn-sm">...</button>
-              </div>
+        <!-- Round Off -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Round Off</label>
+            <div class="d-flex flex-grow-1 gap-1">
+              <ejs-textbox formControlName="roundoff" class="flex-grow-1"></ejs-textbox>
+              <button class="btn btn-secondary btn-sm">...</button>
             </div>
           </div>
+        </div>
 
-          <!-- TAX -->
-          <div class="col-12 col-md-6 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-4 form-label">Tax</label>
-              <div class="col-12 col-lg-8 d-flex gap-1">
-                <ejs-textbox formControlName="tax"></ejs-textbox>
-                <button type="button" ejs-button class="btn btn-secondary btn-sm">...</button>
-              </div>
+        <!-- Tax -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label ">Tax</label>
+            <div class="d-flex flex-grow-1 gap-1">
+              <ejs-textbox formControlName="tax" class="flex-grow-1 "></ejs-textbox>
+              <button class="btn btn-secondary btn-sm">...</button>
             </div>
           </div>
+        </div>
 
-          <!-- ADDITIONAL CHARGES -->
-          <div class="col-12 col-md-6 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-5 form-label">Add. Charges</label>
-              <div class="col-12 col-lg-7 d-flex gap-1">
-                <ejs-textbox formControlName="addcharges"></ejs-textbox>
-                <button type="button" ejs-button class="btn btn-secondary btn-sm">...</button>
-              </div>
+        <!-- Add Charges -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label me-4">Add. Charges</label>
+            <div class="d-flex flex-grow-1 gap-1">
+              <ejs-textbox formControlName="addcharges" class="flex-grow-1"></ejs-textbox>
+              <button class="btn btn-secondary btn-sm">...</button>
             </div>
           </div>
+        </div>
 
-          <!-- NET AMOUNT -->
-          <div class="col-12 col-md-6 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-5 form-label">Net Amount</label>
-              <div class="col-12 col-lg-7">
-                <ejs-textbox formControlName="netamount" [readonly]="true"></ejs-textbox>
-              </div>
-            </div>
+        <!-- Net Amount -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Net Amount</label>
+            <ejs-textbox formControlName="netamount" [readonly]="true" class="flex-grow-1"></ejs-textbox>
           </div>
+        </div>
 
         </div>
 
-        <!-- GRAND TOTAL ROW -->
-        <div class="row g-3 mt-2">
-
-          <!-- empty 3 columns to push content right -->
-          <div class="col-lg-9 d-none d-lg-block"></div>
-
-          <!-- Grand Total aligned with Net Amount column -->
-          <div class="col-12 col-md-6 col-lg-3">
-            <div class="row align-items-center">
-              <label class="col-12 col-lg-5 form-label fw-bold">
-                Grand Total
-              </label>
-              <div class="col-12 col-lg-7">
-                <ejs-textbox formControlName="grandtotal" [readonly]="true" class="fw-bold w-100">
-                </ejs-textbox>
-              </div>
-            </div>
+      <!-- GRAND TOTAL -->
+      <div class="d-flex justify-content-lg-end">
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 fw-bold me-3">Grand Total</label>
+            <ejs-textbox formControlName="grandtotal"
+              [readonly]="true"
+              class="flex-grow-1 fw-bold">
+            </ejs-textbox>
           </div>
 
         </div>
@@ -148,119 +119,101 @@
 
       </div>
 
-
-
-
-      <div class="section-separator"></div>
-
-      <!-- Tab -->
-      <div class="payment-tab-outer">
-        <div class="payment-tab">
-          <span>Common payment methods</span>
-        </div>
-        <div class="payment-tab">
-          <span>Additional payment methods</span>
-        </div>
+      <!-- PAYMENT TABS -->
+      <div class="d-flex gap-3 mt-4 flex-wrap">
+        <div class="payment-tab">Common payment methods</div>
+        <div class="payment-tab">Additional payment methods</div>
       </div>
 
-      <div class="payment-tab-content container-fluid" #targetDiv>
-        <div class="row g-3">
+      <!-- PAYMENT SECTION -->
+      <div class="row g-3 mt-1">
 
-          <!-- Pay Type -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 flex-shrink-0" style="width: 90px;">Pay Type</label>
-              <ejs-dropdownlist id="paytype" class="flex-grow-1" [dataSource]="payTypeObj"
-                [fields]="{ text: 'name', value: 'id' }" [value]="salesForm.get('paytype')?.value?.id"
-                (change)="onChangePayType($event)" placeholder="Select">
-              </ejs-dropdownlist>
+        <!-- Pay Type -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Pay Type</label>
+            <ejs-dropdownlist
+              class="flex-grow-1"
+              [dataSource]="payTypeObj"
+              [fields]="{ text: 'name', value: 'id' }"
+              (change)="onChangePayType($event)">
+            </ejs-dropdownlist>
+          </div>
+        </div>
+
+        <!-- Cash -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Cash</label>
+            <div class="d-flex flex-grow-1 gap-1">
+              <ejs-textbox formControlName="cash" class="flex-grow-1"></ejs-textbox>
+              <button class="btn btn-secondary btn-sm" (click)="fetchCashPopup()">...</button>
             </div>
           </div>
+        </div>
 
-          <!-- Cash -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 flex-shrink-0" style="width: 90px;">Cash</label>
-              <div class="d-flex flex-grow-1 gap-1">
-                <ejs-textbox formControlName="cash" cssClass="e-input flex-grow-1"></ejs-textbox>
-                <button type="button" ejs-button class="btn btn-secondary btn-sm"
-                  (click)="fetchCashPopup()">...</button>
-              </div>
+        <!-- Card -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Card</label>
+            <div class="d-flex flex-grow-1 gap-1">
+              <ejs-textbox formControlName="card" class="flex-grow-1 e-input"></ejs-textbox>
+              <button class="btn btn-secondary btn-sm"  (click)="fetchCardPopup()" >...</button>
             </div>
           </div>
+        </div>
 
-          <!-- Card -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 flex-shrink-0" style="width: 90px;">Card</label>
-              <div class="d-flex flex-grow-1 gap-1">
-                <ejs-textbox formControlName="card" cssClass="e-input flex-grow-1"></ejs-textbox>
-                <button type="button" ejs-button class="btn btn-secondary btn-sm"
-                  (click)="fetchCardPopup()">...</button>
-              </div>
+        <!-- Advance -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Advance</label>
+            <div class="d-flex flex-grow-1 gap-1">
+              <ejs-textbox formControlName="advance" class="flex-grow-1"></ejs-textbox>
+              <button class="btn btn-secondary btn-sm">...</button>
             </div>
           </div>
+        </div>
 
-          <!-- Advance -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 flex-shrink-0" style="width: 90px;">Advance</label>
-              <div class="d-flex flex-grow-1 gap-1">
-                <ejs-textbox formControlName="advance" cssClass="e-input flex-grow-1"></ejs-textbox>
-                <button type="button" ejs-button class="btn btn-secondary btn-sm">...</button>
-              </div>
+        <!-- Cheque -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Cheque</label>
+            <div class="d-flex flex-grow-1 gap-1">
+              <ejs-textbox formControlName="cheque" class="flex-grow-1"></ejs-textbox>
+              <button class="btn btn-secondary btn-sm">...</button>
             </div>
           </div>
+        </div>
 
-          <!-- Cheque -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 flex-shrink-0" style="width: 90px;">Cheque</label>
-              <div class="d-flex flex-grow-1 gap-1">
-                <ejs-textbox formControlName="cheque" cssClass="e-input flex-grow-1">
-                </ejs-textbox>
-                <button type="button" ejs-button class="btn btn-secondary btn-sm" (click)="fetchChequePopup()"
-                  [disabled]="!isChequeButtonEnabled">
-                  ...
-                </button>
-              </div>
-            </div>
+        <!-- Due Date -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Due Date</label>
+            <ejs-datepicker formControlName="duedate" class="flex-grow-1"></ejs-datepicker>
           </div>
+        </div>
 
-          <!-- Due Date -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 flex-shrink-0" style="width: 90px;">Due Date</label>
-              <ejs-datepicker class="flex-grow-1" formControlName="duedate" [format]="'dd-MM-yyyy'"
-                [showClearButton]="true" [min]="minDate" [max]="maxDate" [strictMode]="true" [openOnFocus]="true"
-                (change)="onDueDateChange($event)">
-              </ejs-datepicker>
-            </div>
+        <!-- Total Paid -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 ">Total Paid</label>
+            <ejs-textbox formControlName="totalpaid" [readonly]="true" class="flex-grow-1"></ejs-textbox>
           </div>
+        </div>
 
-          <!-- Total Paid -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 flex-shrink-0" style="width: 90px;">Total Paid</label>
-              <ejs-textbox formControlName="totalpaid" [readonly]="true" cssClass="e-input flex-grow-1">
-              </ejs-textbox>
-            </div>
+        <!-- Balance -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="form-label mb-0 fw-bold ">Balance</label>
+            <ejs-textbox formControlName="balance" [readonly]="true" class="flex-grow-1"></ejs-textbox>
           </div>
-
-          <!-- Balance -->
-          <div class="col-12 col-md-4 col-lg-3">
-            <div class="d-flex align-items-center gap-2">
-              <label class="mb-0 fw-bold flex-shrink-0" style="width: 90px;">Balance</label>
-              <ejs-textbox formControlName="balance" [readonly]="true" cssClass="e-input flex-grow-1 balance-input">
-              </ejs-textbox>
-            </div>
-          </div>
+        </div>
 
         </div>
       </div>
 
 
-    </div>
+
   </form>
 
 </div>

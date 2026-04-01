@@ -160,7 +160,7 @@
 
 <!-- <div>---</div> -->
 
-<section class="w-100 p-1">
+<section class="p-0">
   <form [formGroup]="salesForm">
 
     <div class="row">
@@ -226,7 +226,7 @@
                 <ejs-dropdownlist class="w-100" id="warehouse" cssClass="e-outline" formControlName="warehouse"
                   [dataSource]="warehouseData" [fields]="{ text: 'value', value: 'id' }" placeholder="Select warehouse"
                   [value]="salesForm.get('warehouse')?.value" (change)="onChangeWarehouse($event)"
-                  [disabled]="isMobile">
+                  [disabled]="isMobile">[]
                 </ejs-dropdownlist>
               </div>
             </div>

@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
 <!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
-<div class="row main-content-area p-2">
+<div class="row main-content-area">
 
   <!-- Tabs -->
   <div class="odoo-tabs">
@@ -27,7 +27,7 @@
     <form [formGroup]="additionalDetailsForm">
 
       <!-- General -->
-      <div [hidden]="!isActive('general')">
+      <div [hidden]="!isActive('general')" class="p-2" >
         <div class="row g-3">
 
           <ng-container *ngFor="let field of [
@@ -80,7 +80,7 @@
       </div>
 
       <!--Sales -->
-      <div [hidden]="!isActive('sales')">
+      <div [hidden]="!isActive('sales')" class="p-2">
         <div class="row">
 
           <!-- Salesman -->
@@ -141,7 +141,7 @@
       </div>
 
       <!-- Delivery -->
-      <div [hidden]="!isActive('delivery')">
+      <div [hidden]="!isActive('delivery')" class="p-2">
         <div class="row g-3">
 
           <ng-container *ngFor="let field of [
@@ -190,7 +190,7 @@
       </div>
 
       <!-- Terms -->
-      <div [hidden]="!isActive('terms')">
+      <div [hidden]="!isActive('terms')" class="p-2">
         <div class="row g-3">
 
           <div class="col-12">

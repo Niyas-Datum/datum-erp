@@ -128,4 +128,29 @@ element.style {
 //     z-index: 1;
 // }
 
+/* Remove Syncfusion active/focus rectangle */
+.e-menu .e-menu-item.e-selected,
+.e-menu .e-menu-item.e-focused,
+.e-menu .e-menu-item:focus {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
 
+.menu-icon:hover {
+  background-color: rgb(255, 255, 255);
+}
+
+.menu-icon:hover .e-icons {
+  color: #F29718;
+}
+
+.mobile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  background: white;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}

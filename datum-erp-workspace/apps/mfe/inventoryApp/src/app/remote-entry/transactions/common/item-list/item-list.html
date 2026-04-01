@@ -4,7 +4,7 @@
 
     <ejs-grid #grid id="transactionGrid" width="100%" [dataSource]="commonService.tempItemFillDetails()"
       [editSettings]="editSettings()" [allowKeyboard]="true" [allowTextWrap]="false" [enableAdaptiveUI]="true"
-      [allowResizing]="true" height="auto" (actionBegin)="onActionBegin($event)"
+      [allowResizing]="true" height="350" (actionBegin)="onActionBegin($event)"
       (actionComplete)="onActionComplete($event)">
 
       <e-columns>

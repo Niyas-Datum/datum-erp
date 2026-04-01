@@ -7,20 +7,21 @@ import { BehaviorSubject } from 'rxjs';
   selector: 'app-financeApp-entry',
   standalone: false,
   template: `
-    <div class="container-fluid">
-    <div class="row align-items-center">
+    <div class="container-fluid h-100 p-0">
+    <div class="row align-items-center g-0 flex-shrink-0 border-bottom bg-light m-0">
         <!-- Left Grid -->
-        <div class="col-12 col-md-2">
+        <div class="col-12 col-md-2 ps-3">
           <div class="d-flex align-items-center gap-2">
-                  <div [ngSwitch]="pageType">   
-                    <div  *ngSwitchCase="1">
-                        <button (click)="toggleSidebar()" class="e-btn-sm">
+                  <div [ngSwitch]="pageType"> 
+                      <!-- *ngSwitchCase="1" -->
+                    <div >
+                        <button (click)="toggleSidebar()" class="e-btn-sm e-flat">
                           <span class="e-icons e-menu"></span>
                         </button>
                     </div>
                   </div>
            
-              <div class="fs-6 fw-medium text-secondary">
+              <div class="fw-medium text-secondary fs-6 fs-md-5 fs-lg-4">
                 {{ pageheading }}
               </div>
            
@@ -49,13 +50,10 @@ import { BehaviorSubject } from 'rxjs';
       
       <!-- row end -->
 
-
-      <div [ngSwitch]="pageType">
-         <div *ngSwitchDefault>
-
-      <!-- SIDEBAR OUTSIDE OF THE ROW -->
+      <div [ngSwitch]="pageType" class="flex-grow-1 overflow-hidden" >
+         <div *ngSwitchDefault class="h-100" >
       <!-- SIDEBAR -->
-      <section class="leftgrid-section overflow-hidden" >
+      <section class="d-flex flex-row h-100 overflow-hidden" >
         <ejs-sidebar
           id="sideTree"
           [(isOpen)]="isSidebarVisible"
@@ -65,7 +63,7 @@ import { BehaviorSubject } from 'rxjs';
           [type]="sidebarType"
           position="Left"
         >
-          <div class="p-2">
+          <div class="h-100 overflow-y-auto">
             <app-left-grid
               (rowSelected)="onCostCategorySelected($event)"
               [columns]="leftgridchildData.columns">
@@ -74,23 +72,18 @@ import { BehaviorSubject } from 'rxjs';
         </ejs-sidebar>
 
         <!-- MAIN CONTENT WRAPPER -->
-        <div class="main-content-wrapper px-2 w-100">
-          <div class="row">
-            <div class="col-12 transition-col">
-              <div
-                class="odoo-form-bg row"
-                style="background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);"
+        <div class="main-content-wrapper flex-grow-1 d-flex flex-column">
+            <div
+                class="odoo-form-bg flex-grow-1 overflow-y-auto overflow-x-hidden e-content-animation" style="background:#fff; border-radius:4px;"
               >
                 <router-outlet></router-outlet>
-              </div>
             </div>
-          </div>
         </div>
-       
-
+  
       </section>
        </div>
-      <div *ngSwitchCase="2"                 style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 18px 18px 18px; margin-bottom: 18px;"
+      <div *ngSwitchCase="2"  class="h-100 p-0">
+      <div style="background:#fff;border-radius:4px;"
 >
           <router-outlet></router-outlet>
 
@@ -103,10 +96,10 @@ import { BehaviorSubject } from 'rxjs';
     </div>
   `,
 })
-export class RemoteEntry implements OnInit,AfterViewInit{
-  public pageType=0 ;
+export class RemoteEntry implements OnInit, AfterViewInit {
+  public pageType = 0;
   public pageheading = '';
-    // Left side sectio hide and show
+  // Left side section hide and show
   // Sidebar config
   isSidebarVisible = true;
   sidebarType = 'Push'; // or 'Slide'
@@ -117,7 +110,7 @@ export class RemoteEntry implements OnInit,AfterViewInit{
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;
   }
-  
+
   /// Service registration
   private formToolbarService = inject(FormToolbarService);
 
@@ -129,22 +122,22 @@ export class RemoteEntry implements OnInit,AfterViewInit{
     data: [],
   }).value;
 
-    ngOnInit() {
-  
+  ngOnInit() {
+
     this.sharedService.leftdata$.subscribe((data) => {
       this.leftgridchildData = data;
       this.pageheading = data.pageheading || '';
       console.log('58005', this.leftgridchildData.data);
     });
-     this.formToolbarService.leftGridView$.subscribe((data)=>{
-      
-      this.pageType = this.formToolbarService.pagetype;   
+    this.formToolbarService.leftGridView$.subscribe((data) => {
+
+      this.pageType = this.formToolbarService.pagetype;
       console.log(this.formToolbarService.pagetype);
     })
   }
-    constructor() {
+  constructor() {
     this.pageheading = 'General ';
-      this.pageType = 1;
+    this.pageType = 1;
     console.log('Constructor - Remote Entry Component');
   }
   ngAfterViewInit() {
@@ -154,7 +147,7 @@ export class RemoteEntry implements OnInit,AfterViewInit{
       console.log('58005', this.leftgridchildData.data);
     });
   }
-    onCostCategorySelected(event: any) {
+  onCostCategorySelected(event: any) {
     this.isSaveBtnDisabled = true;
     this.isEditBtnDisabled = false;
     this.isDeleteBtnDisabled = false;
@@ -176,42 +169,42 @@ export class RemoteEntry implements OnInit,AfterViewInit{
     // TODO: Implement event handler logic
   }
 
-    // Add the missing properties and methods
-    isNewMode = false;
-    isEditMode = false;
-    isNewBtnDisabled = false;
-    isEditBtnDisabled = true;
-    isDeleteBtnDisabled = true;
-    isSaveBtnDisabled = true;
-    isPrintBtnDisabled = true;
+  // Add the missing properties and methods
+  isNewMode = false;
+  isEditMode = false;
+  isNewBtnDisabled = false;
+  isEditBtnDisabled = true;
+  isDeleteBtnDisabled = true;
+  isSaveBtnDisabled = true;
+  isPrintBtnDisabled = true;
 
-    onDeleteClick() {
-      this.formToolbarService.emitDeleteClicked();
-      this.isSaveBtnDisabled = true;
-      this.isNewBtnDisabled = true;
-    }
-    onPrintClick() {
-      /* TODO: Implement print click logic */
-    }
-    onEditClick() {
-      this.isSaveBtnDisabled = false;
-      this.formToolbarService.emitEditClicked();
-    }
-  
-    onNewClick() {
-      this.formToolbarService.emitNewClicked();
-      this.isSaveBtnDisabled = false;
-      this.isEditBtnDisabled = true;
-      this.isDeleteBtnDisabled = true;
-    }
-  
-    onSaveClick() {
-      this.formToolbarService.emitSaveClicked();
-      // The actual form data will be sent from the child via the service (see below)
-    }
-  
-    leftGridView() {
-      // this.isSidebarVisible = !this.isSidebarVisible;
-      // console.log('Left Grid View clicked');
-    }
+  onDeleteClick() {
+    this.formToolbarService.emitDeleteClicked();
+    this.isSaveBtnDisabled = true;
+    this.isNewBtnDisabled = true;
+  }
+  onPrintClick() {
+    /* TODO: Implement print click logic */
+  }
+  onEditClick() {
+    this.isSaveBtnDisabled = false;
+    this.formToolbarService.emitEditClicked();
+  }
+
+  onNewClick() {
+    this.formToolbarService.emitNewClicked();
+    this.isSaveBtnDisabled = false;
+    this.isEditBtnDisabled = true;
+    this.isDeleteBtnDisabled = true;
+  }
+
+  onSaveClick() {
+    this.formToolbarService.emitSaveClicked();
+    // The actual form data will be sent from the child via the service (see below)
+  }
+
+  leftGridView() {
+    // this.isSidebarVisible = !this.isSidebarVisible;
+    // console.log('Left Grid View clicked');
+  }
 }   
