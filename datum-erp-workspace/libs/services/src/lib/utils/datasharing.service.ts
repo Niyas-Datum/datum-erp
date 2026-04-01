@@ -50,18 +50,49 @@ export class DataSharingService {
       // Clear left grid so it doesn't show previous page's data until the new page calls setData()
       this.dataSource.next({ columns: [], data: [], pageheading: '' });
 
-      const menItems =  this.localStorageService.getLocalStorageItem("menuData")
-      console.log(menItems);
-      const menItemsArr = JSON.parse(menItems);
-      const result = this.menuDataService.findMenuItemByUrl(menItemsArr, this.router.url.replace(/^\/+/, ""));
-        if(result)
-             this.currentPageInfoSubject.next(result);
+      const menuRaw = this.localStorageService.getLocalStorageItem('menuData');
+      let menuItemsArr: MenuItemDto[] = [];
+      try {
+        menuItemsArr = menuRaw ? JSON.parse(menuRaw) : [];
+      } catch {
+        menuItemsArr = [];
+      }
+
+      const normalizedCurrentUrl = this.normalizeUrl(this.router.url);
+      const result = this.findMenuItemByUrlNormalized(menuItemsArr, normalizedCurrentUrl);
+
+      // Always emit on navigation so subscribers don't keep stale page/voucher ids.
+      this.currentPageInfoSubject.next(result ?? new MenuItemDto([]));
 
       
     //  this.updateCurrentPageIdFromUrl();
     });
     // Initial set
     //this.updateCurrentPageIdFromUrl();
+  }
+
+  private normalizeUrl(url: string): string {
+    if (!url) return '';
+    // Remove query/hash and normalize slashes/case for reliable matching
+    const noQueryOrHash = url.split('?')[0].split('#')[0];
+    return noQueryOrHash
+      .replace(/^\/+/, '')
+      .replace(/\/+$/, '')
+      .toLowerCase();
+  }
+
+  private findMenuItemByUrlNormalized(menuItems: MenuItemDto[], targetUrl: string): MenuItemDto | null {
+    for (const item of menuItems ?? []) {
+      const itemUrl = this.normalizeUrl((item as any)?.url ?? '');
+      if (itemUrl && itemUrl === targetUrl) {
+        return item;
+      }
+      if (item?.submenu && item.submenu.length > 0) {
+        const found = this.findMenuItemByUrlNormalized(item.submenu as any, targetUrl);
+        if (found) return found;
+      }
+    }
+    return null;
   }
   //END NEW CHANGES
 

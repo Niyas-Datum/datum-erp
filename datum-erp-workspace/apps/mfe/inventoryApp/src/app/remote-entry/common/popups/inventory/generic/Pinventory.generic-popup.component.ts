@@ -4,12 +4,13 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
 
 @Component({
   selector: 'generic-popup',
   standalone: true,
-  imports: [CommonModule, GridModule],
+  imports: [CommonModule, GridModule, FormsModule],
   template: `
     <!-- Syncfusion Grid Implementation -->
      <div class="p-4" >
@@ -18,6 +19,16 @@ import { GridModule } from '@syncfusion/ej2-angular-grids';
       <button (click)="onClose()">
         <span class="e-icons e-close"></span>
       </button>
+    </div>
+
+    <div class="mb-2">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search..."
+        [ngModel]="searchText"
+        (ngModelChange)="onSearchChange($event)"
+      />
     </div>
 
       <ejs-grid
@@ -69,6 +80,7 @@ export class PinventoryGenericPopupComponent implements OnInit {
 
   selectionSettings = { type: 'Multiple', mode: 'Row' };
   private cachedPopupGridData: any[] = [];
+  private filteredPopupGridData: any[] = [];
   searchText = '';
 
   ngOnInit(): void {
@@ -78,6 +90,7 @@ export class PinventoryGenericPopupComponent implements OnInit {
     if (this.initialSearchText != null && this.initialSearchText !== '') {
       this.searchText = String(this.initialSearchText).trim();
     }
+    this.applySearch();
   }
 
   get popupGridColumns() {
@@ -92,7 +105,7 @@ export class PinventoryGenericPopupComponent implements OnInit {
   }
 
   get popupGridData() {
-    return this.cachedPopupGridData;
+    return this.filteredPopupGridData;
   }
 
   get editSettings() {
@@ -111,6 +124,22 @@ export class PinventoryGenericPopupComponent implements OnInit {
         return mappedData;
       }, {});
     });
+  }
+
+  onSearchChange(value: string): void {
+    this.searchText = (value ?? '').toString();
+    this.applySearch();
+  }
+
+  private applySearch(): void {
+    const q = (this.searchText || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredPopupGridData = [...this.cachedPopupGridData];
+      return;
+    }
+    this.filteredPopupGridData = this.cachedPopupGridData.filter((row: any) =>
+      Object.values(row ?? {}).some((v) => String(v ?? '').toLowerCase().includes(q))
+    );
   }
 
   onRowClick(row: any): void {
