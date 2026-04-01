@@ -113,8 +113,11 @@ public itemService = inject(ItemService);
   constructor() {
     // Only add new row when explicitly entering edit mode (not on page load)
     effect(() => {
-      if (this.isEditMode() && this.selectedSalesId) {
-        setTimeout(() => this.itemService.addNewRow(), 100);
+      if (this.isEditMode()) {
+        // First ensure right after switching to Edit mode.
+        setTimeout(() => this.ensureEntryRowInEditMode(true), 180);
+        // Re-ensure after async transaction/grid refreshes.
+        setTimeout(() => this.ensureEntryRowInEditMode(false), 700);
       }
     });
 
@@ -199,7 +202,17 @@ public itemService = inject(ItemService);
         this.selectedSalesId = salesId;
         if (salesId) {
           this.fetchPurchaseById();
+          // When editing an existing transaction, row data may refresh asynchronously.
+          // Re-ensure entry row after selection settles.
+          if (this.isEditMode()) {
+            setTimeout(() => this.ensureEntryRowInEditMode(false), 700);
+          }
         } else {
+          if (this.isEditMode()) {
+            // Ignore transient null selection during edit transitions.
+            setTimeout(() => this.ensureEntryRowInEditMode(false), 400);
+            return;
+          }
           this.itemService.clearGridData();
           // If in new mode, add a row after clearing
           if (this.isNewMode()) {
@@ -207,6 +220,25 @@ public itemService = inject(ItemService);
           }
         }
       });
+  }
+
+  private ensureEntryRowInEditMode(focus: boolean): void {
+    if (!this.isEditMode()) return;
+    const rows = this.commonService.tempItemFillDetails();
+    const hasEmptyRow = rows.some((r: any) => !(r?.itemCode ?? '').toString().trim());
+    if (!hasEmptyRow) {
+      this.itemService.addNewRow();
+      this.refreshGridAfterRowChange();
+    }
+    if (!focus) return;
+    setTimeout(() => {
+      const updatedRows = this.commonService.tempItemFillDetails();
+      const emptyRow = updatedRows.find((r: any) => !(r?.itemCode ?? '').toString().trim());
+      if (emptyRow) {
+        this.moveToNextColumn(emptyRow.rowId, 'itemCode');
+        this.onItemCodeFocus();
+      }
+    }, 120);
   }
 
   ngOnDestroy(): void {
@@ -258,8 +290,7 @@ public itemService = inject(ItemService);
    */
   onItemCodeFocus(): void {
     setTimeout(() => {
-      const list = this.itemCodeCombos?.toArray();
-      const combo = list?.find((c) => c.element?.contains(document.activeElement)) ?? list?.[0];
+      const combo = this.getActiveItemCodeCombo();
       if (combo && typeof (combo as any).showPopup === 'function') {
         (combo as any).showPopup();
       }
@@ -678,12 +709,27 @@ public itemService = inject(ItemService);
     }
 
     setTimeout(() => {
-      const list = this.itemCodeCombos?.toArray();
-      const combo = list?.find((c) => c.element?.contains(document.activeElement)) ?? list?.[0];
+      const combo = this.getActiveItemCodeCombo();
       if (combo && typeof (combo as any).showPopup === 'function') {
         (combo as any).showPopup();
       }
     }, 0);
+  }
+
+  private getActiveItemCodeCombo(): MultiColumnComboBoxComponent | undefined {
+    const active = document.activeElement as HTMLElement | null;
+    const list = this.itemCodeCombos?.toArray() ?? [];
+    if (!active || list.length === 0) return undefined;
+
+    return list.find((c: any) => {
+      const host = c?.element as HTMLElement | undefined;
+      const input = c?.inputEle as HTMLElement | undefined;
+      return (
+        (host && host.contains(active)) ||
+        (input && input === active) ||
+        (input && input.contains(active))
+      );
+    });
   }
 
   /** -------------------- Grid Actions -------------------- **/
