@@ -1,7 +1,7 @@
 /* Layout Fixes */
 
 .e-sidebar-context {
-    height: calc(100vh - 115px);
+    // height: calc(100vh - 115px);
   }
   @media (max-width: 768px) {
     #reswrapper .sidebar-treeview {
@@ -449,4 +449,42 @@
       border: 0.5px solid var(--Tertiary-500, #767676);
     
   }
+}
+
+
+/*Syncfusion Tab Header Styling */
+.e-tab .e-tab-header .e-toolbar-item .e-tab-wrap {
+  background-color:  rgb(24, 124, 154); 
+  color: #fff;
+  border-radius: 6px 6px 0 0;
+}
+
+.e-tab .e-tab-header .e-toolbar-item .e-tab-text {
+  color: #fff !important;
+}
+
+.e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-wrap {
+  background-color: #F29718 !important;
+}
+
+.e-tab .e-tab-header {
+  bottom: 2px;
+}
+
+#itemMasterForm.e-tab .e-tab-header::before {
+  background-color: #ffffff !important;
+  border-bottom: none !important;
+}
+
+#itemMasterForm.e-tab .e-tab-header {
+  background-color: #ffffff !important;
+}
+
+#itemMasterForm.e-tab .e-toolbar {
+  background-color: #ffffff !important;
+}
+
+::ng-deep .e-dropdownlist .e-input {
+  padding: 4px 8px !important;
+  height: 28px;
 }

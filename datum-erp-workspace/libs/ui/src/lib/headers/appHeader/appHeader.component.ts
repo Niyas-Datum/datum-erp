@@ -36,16 +36,16 @@ interface CustomMenuItemModel extends MenuItemModel {
     ListViewModule,
     AppHeaderMobileView,
     ToolbarModule,
-    DropDownListModule,  
-    TextBoxModule         
+    DropDownListModule,
+    TextBoxModule
   ],
   templateUrl: './appHeader.component.html',
   styleUrls: ['./appHeader.component.scss'],
 })
 export class AppHeaderComponent implements OnInit {
-toggleMobileMenu() {
-throw new Error('Method not implemented.');
-}
+  toggleMobileMenu() {
+    throw new Error('Method not implemented.');
+  }
   @ViewChild('menu')
   public menuObj!: MenuComponent;
   router = inject(Router);
@@ -54,7 +54,7 @@ throw new Error('Method not implemented.');
   menuItems: any[] = [];
   shortCutMenuItems: any[] = [];
   userName = signal<string>('');
-currencyList: any;
+  currencyList: any;
 
   ngOnInit() {
     this.menuItems = this.menuService.getMenuDataWithMId();
@@ -74,13 +74,13 @@ currencyList: any;
     children: ['submenu'],
   };
   onBeforeOpen(args: BeforeOpenCloseMenuEventArgs): void {
-   
+
     const parentItem = args.parentItem as CustomMenuItemModel;
 
     // if (parentItem.m_id == 189) {
     //   (close(args.element, '.e-menu-wrapper') as HTMLElement).style.height =
     //     '600px';
-   
+
     // }
   }
   onMenuSelect(args: MenuEventArgs) {
@@ -98,14 +98,14 @@ currencyList: any;
     // Leaf node clicked — navigate (or let default anchor work)
     if (item.url) {
       this.router.navigateByUrl(item.url);
-     
+
 
     }
-   
+
   }
 
   onClicked(args: any) {
-   
+
 
     // Check if this is a dropdown arrow click (not a toolbar item click)
     if (args.originalEvent) {
@@ -117,7 +117,7 @@ currencyList: any;
         clickedElement.closest('.e-dropdown-btn');
 
       if (isDropdownArrow) {
-       
+
         return; // Don't try to navigate for dropdown clicks
       }
     }
@@ -153,22 +153,22 @@ currencyList: any;
       }
     }
 
-   
+
     if (item && item.url) {
       // Navigate using Angular router
       this.router.navigateByUrl(item.url);
 
     } else {
       console.log(
-        
+
       );
-      
+
     }
- 
+
   }
 
 
-  
+
   onDropdownItemSelect(args: any): void {
     if (args.item.id === 'logout') {
       this.menuService.onLogout();
@@ -187,7 +187,7 @@ currencyList: any;
     this.translateX -= this.scrollAmount;
   }
 
-  onShortcutClick(item:any) {
+  onShortcutClick(item: any) {
     if (item.url) {
       this.router.navigateByUrl(item.url);
     }

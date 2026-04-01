@@ -1,5 +1,5 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
-<div #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()" [class.grid-disabled]="isSelectionDisabled()">
+<div class="h-100 d-flex flex-column overflow-hidden" #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()" [class.grid-disabled]="isSelectionDisabled()">
   <div #overlay [class.overlay]="!isInputDisabled()" [style.display]="isInputDisabled() ? 'none' : 'block'">
     <p translate>Disabled</p>
   </div>
@@ -20,7 +20,7 @@
 
   <ejs-grid class="sidebar-grid" #grid [dataSource]="this.leftdata$ | async  " [allowResizing]="true" [allowTextWrap]="true"
     [enableHover]="false" (rowSelected)="onRowSelect($event)" [allowFiltering]="true" [filterSettings]="filterOptions"
-    [allowSorting]="true" gridLines="Both" height="80vh" [rowHeight]="30">
+    [allowSorting]="true" gridLines="Both" height="100%" [rowHeight]="30" class="flex-grow-1" >
     <e-columns>
       <ng-container *ngFor="let col of columns">
         <!-- Stacked Header -->
@@ -34,7 +34,7 @@
 
         <!-- Single Column -->
         <ng-template #singleCol>
-          <e-column [field]="col.field" [headerText]="col.headerText" textAlign="Center" width="120"></e-column>
+          <e-column [field]="col.field" [headerText]="col.headerText" textAlign="Center" [width]="col.field === 'someMainField' ? 'auto' : '120'"></e-column>
         </ng-template>
       </ng-container>
     </e-columns>
