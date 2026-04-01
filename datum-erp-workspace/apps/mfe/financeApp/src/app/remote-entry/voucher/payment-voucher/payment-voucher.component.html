@@ -139,7 +139,8 @@
       <h6 class="section-title">Account Details</h6>
       <ejs-grid #accountDetailsGrid [dataSource]="voucherCommonService.accountDetailsData()"
         [editSettings]="accountDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true" gridLines="Both"
-        height="200px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)">
+        height="200px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)"
+        (actionComplete)="onAccountDetailsActionComplete($event)" (keydown)="onGridKeyDown($event)">
         <e-columns>
           <e-column field="accountCode" headerText="AccountCode" width="150">
             <ng-template #editTemplate let-data>
@@ -158,9 +159,7 @@
           </e-column>
           <e-column field="accountName" headerText="AccountName" width="200" [allowEditing]="false"></e-column>
           <e-column field="description" headerText="Description" width="250"></e-column>
-            <!-- <e-column field="dueDate" headerText="DueDate" width="120" editType="datepickeredit" format="dd/MM/yyyy"
-                [edit]="{ params: { format: 'dd/MM/yyyy' } }">
-              </e-column> -->
+            
               <e-column field="dueDate" headerText="Due Date" width="150">
                 <ng-template #template let-data>
                   {{ formatDate(data.dueDate) }}
