@@ -813,10 +813,17 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
    * Opens the Customer popup.
    * @param immediate - if true, opens immediately (e.g. when clicking search icon). If false, debounces (e.g. on input).
    */
-  openCustomerPopup(immediate = false): void {
+  openCustomerPopup(immediate = false, retry = false): void {
     this.isUserInteraction = true;
     // When user explicitly clicks the search icon (immediate), open even if not yet "initialized" so first click works
     if (!immediate && (!this.isComponentInitialized || this.isSettingDefaultValues)) {
+      return;
+    }
+    if ((!this.customerData || this.customerData.length === 0) && !retry) {
+      // First click should still work even if data is not ready yet.
+      this.fetchCustomer();
+      this.fetchParty();
+      setTimeout(() => this.openCustomerPopup(true, true), 250);
       return;
     }
     if (!this.customerData || this.customerData.length === 0) {
@@ -849,7 +856,12 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
    * Opens the Project popup.
    * @param immediate - if true, opens immediately (e.g. when clicking search icon). If false, debounces (e.g. on input).
    */
-  openProjectPopup(immediate = false): void {
+  openProjectPopup(immediate = false, retry = false): void {
+    if ((!this.projectData || this.projectData.length === 0) && !retry) {
+      this.fetchCommonFillData();
+      setTimeout(() => this.openProjectPopup(true, true), 250);
+      return;
+    }
     if (!this.projectData || this.projectData.length === 0) return;
     const doOpen = () => {
       const initialSearch = (this.salesForm.get('project')?.value ?? '').toString().trim();
@@ -1168,6 +1180,13 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   async openImportReferencePopup(): Promise<void> {
     this.importedReferenceList = [];
     this.isReferenceImported = false;
+
+    // Ensure first-click open has data.
+    if (!this.referenceFillData || this.referenceFillData.length === 0) {
+      this.fetchReferenceData();
+      this.fetchVoucherType();
+      this.fetchParty();
+    }
     
     try {
       const ref = await this.popupService.openLazy('reference', {
