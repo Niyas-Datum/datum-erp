@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from "@angular/core";
+import { Component, inject, OnInit, signal, ViewChild } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { BaseComponent } from "@org/architecture";
 import { FinanceAppService } from "../../http/finance-app.service";
@@ -8,6 +8,8 @@ import { BranchDto } from "@org/models";
 import { filter, firstValueFrom, take } from "rxjs";
 import { LocalStorageService } from "@org/services";
 import { USERSPOP } from "../model/accountstatement.model";
+import { PdfGenerationService } from "../pdfgeneration.service";
+import { GridComponent } from "@syncfusion/ej2-angular-grids";
 
 @Component({
     selector: 'app-daybook',
@@ -16,9 +18,14 @@ import { USERSPOP } from "../model/accountstatement.model";
 })
 export class DaybookComponent extends BaseComponent implements OnInit {
 
+    @ViewChild('grid') grid!: GridComponent;
+
     dayBookForm!: FormGroup;
     private httpService = inject(FinanceAppService);
     private localstorageService = inject(LocalStorageService);
+    private pdfgenService = inject(PdfGenerationService);
+
+    selectedBranch: any = null;
 
     //filters
     //vouchertype
@@ -76,19 +83,6 @@ export class DaybookComponent extends BaseComponent implements OnInit {
         this.fetchUserPopup();
     }
 
-    /** Load voucher types */
-    // fetchVoucherTypes(): void {
-    //     this.httpService
-    //         .fetch(EndpointConstant.VOUCHERDROPDOWN)
-    //         .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
-    //         .subscribe({
-    //             next: (res: any) => {
-    //                 this.voucherTypes = Array.isArray(res?.data) ? res.data : [];
-
-    //             },
-    //             error: (err) => console.error('Voucher type load failed', err)
-    //         });
-    // }
 
     fetchVoucherTypes(): void {
         this.httpService
@@ -99,12 +93,12 @@ export class DaybookComponent extends BaseComponent implements OnInit {
                     const apiData = Array.isArray(res?.data) ? res.data : [];
 
                     this.voucherTypes = [
-                        { id: -1, name: 'All' },
+                        { id: 0, name: 'All' },
                         ...apiData
                     ];
 
                     this.dayBookForm.patchValue({
-                        voucherType: -1
+                        voucherType: 0
                     });
                 },
                 error: (err) => console.error('Voucher type load failed', err)
@@ -138,6 +132,16 @@ export class DaybookComponent extends BaseComponent implements OnInit {
         } catch (error) {
             console.error('An error occurred while fetching branches:', error);
         }
+    }
+
+    // selectedBranch: any = null;
+
+    onBranchChange(event: any) {
+        const branchId = event.value;
+
+        this.selectedBranch = this.branchData.find(
+            b => b.id === branchId
+        ) ?? null;
     }
 
 
@@ -224,36 +228,97 @@ export class DaybookComponent extends BaseComponent implements OnInit {
 
 
     onClickGo(): void {
-        this.getPageID();
-        const payload = this.buildPayload();
+    this.getPageID();
 
-        console.log('DayBook Payload:', JSON.stringify(payload, null, 2));
+    const payload = this.buildPayload();
+    console.log('DayBook Payload:', JSON.stringify(payload, null, 2));
 
-        this.httpService
-            .post<any>(EndpointConstant.FILLDAYBOOK + this.pageId, payload)
-            .subscribe({
-                next: (res) => {
-                    this.reportData = Array.isArray(res?.data) ? res.data : [];
-                    this.totalDebit = this.reportData.reduce((sum, row) => sum + (Number(row.Debit) || 0), 0);
-                    this.totalCredit = this.reportData.reduce((sum, row) => sum + (Number(row.Credit) || 0), 0);
-                    console.log("Report:" + JSON.stringify(this.reportData, null, 2));
-                },
-                error: (err) => {
-                    console.error('DayBook load failed', err);
-                }
-            });
-    }
+    const formatDate = (val: any) => {
+        if (!val) return '';
+
+        const str = String(val);
+        const [datePart] = str.split(' ');
+        const parts = datePart.split('-');
+
+        if (parts.length !== 3) return '';
+
+        const [day, month, year] = parts;
+        return `${day}/${month}/${year}`;
+    };
+
+    this.httpService
+        .post<any>(EndpointConstant.FILLDAYBOOK + this.pageId, payload)
+        .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
+        .subscribe({
+            next: (res) => {
+
+                const rawData = Array.isArray(res?.data) ? res.data : [];
+
+                // 🔍 1. RAW DATA
+                console.log("RAW DATA:", rawData);
+
+                this.reportData = rawData.map((x: any, index: number) => {
+
+                    // 🔍 2. EACH ROW BEFORE
+                    console.log(`Row ${index} BEFORE:`, x);
+
+                    const formatted = {
+                        ...x,
+                        VDate: formatDate(x.VDate)
+                    };
+
+                    // 🔍 3. EACH ROW AFTER
+                    console.log(`Row ${index} AFTER:`, formatted);
+
+                    return formatted;
+                });
+
+                // 🔍 4. FINAL REPORT DATA
+                console.log("FINAL REPORT DATA:", JSON.stringify(this.reportData,null,2));
+            },
+
+            error: (err) => {
+                console.error('DayBook load failed', err);
+                this.reportData = [];
+            }
+        });
+}
 
     onClear(): void {
         // Reset entire form
         this.dayBookForm.reset();
 
-         this.dayBookForm.patchValue({
+        this.dayBookForm.patchValue({
             from: new Date()
         });
         this.dayBookForm.patchValue({
             to: new Date()
         });
 
+    }
+
+    //report
+
+    onPreview(): void {
+        this.pdfgenService.preview({
+            companyName: this.selectedBranch?.company ?? '',
+            address: '',
+            pageName: 'Day Book',
+            fromDate: "", //this.fromDate,
+            toDate: "",// this.toDate,
+
+            columns: [
+                { header: 'Date', field: 'VDate', format: 'date', align: 'center' },
+                { header: 'VNo', field: 'VNo' },
+                { header: 'Type', field: 'VType' },
+                { header: 'Particulars', field: 'Particulars' },
+                { header: 'Debit', field: 'Debit', align: 'right', format: 'amount' },
+                { header: 'Credit', field: 'Credit', align: 'right', format: 'amount' },
+                { header: 'Balance', field: 'RBalance', align: 'right', format: 'amount' }
+            ],
+
+            rows: this.reportData,
+            showTotals: true
+        });
     }
 }

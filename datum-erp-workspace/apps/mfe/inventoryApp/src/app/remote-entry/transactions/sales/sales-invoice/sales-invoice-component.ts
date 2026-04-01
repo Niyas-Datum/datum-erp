@@ -862,6 +862,9 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
 
     this.isLoading.set(true);
 
+    // Ensure optional lookups are normalized before sending to backend.
+    this.sanitizeOptionalPayload(transactionData);
+
     // Backend [FromBody] binds the whole body to InventoryTransactionDto - send transaction object as root
     const saveOperation = isUpdate
       ? this.transactionService.patchDetails(endpoint, transactionData)
@@ -895,16 +898,20 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
         'SUCCESS'
       );
 
-      // Refresh common fill data (next voucher number) before entering new mode so second save gets a fresh voucher
-      const refresh$ = this.invoiceHeader?.refreshCommonFillDataForNewMode?.();
-      if (refresh$) {
-        refresh$.pipe(takeUntil(this.destroySubscription)).subscribe({
-          next: () => setTimeout(() => this.enterNewMode(), 300),
-          error: () => setTimeout(() => this.enterNewMode(), 300),
-        });
-      } else {
-        setTimeout(() => this.enterNewMode(), 500);
-      }
+      // Keep the success dialog visible before resetting to New Mode.
+      const postSuccessDelayMs = 1200;
+      setTimeout(() => {
+        // Refresh common fill data (next voucher number) before entering new mode
+        const refresh$ = this.invoiceHeader?.refreshCommonFillDataForNewMode?.();
+        if (refresh$) {
+          refresh$.pipe(takeUntil(this.destroySubscription)).subscribe({
+            next: () => this.enterNewMode(),
+            error: () => this.enterNewMode(),
+          });
+        } else {
+          this.enterNewMode();
+        }
+      }, postSuccessDelayMs);
     } else {
       // Response returned 200 but body has httpCode 500 or other non-success (e.g. backend error in response body)
       const errMsg = (response as any)?.exception ?? (response as any)?.data ?? 'Save failed. Please try again.';
@@ -930,6 +937,26 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     return isBackendCastError
       ? 'The save operation failed due to a server error (database or backend). Please try again or contact support with the transaction details.'
       : (serverMessage || 'Save failed. Please try again.');
+  }
+
+  /** Optional fields should be empty objects when not selected (API contract). */
+  private sanitizeOptionalPayload(transactionData: any): void {
+    if (!transactionData || typeof transactionData !== 'object') return;
+    const project = transactionData.project;
+    if (project == null) {
+      transactionData.project = {};
+      return;
+    }
+    if (typeof project === 'string') {
+      transactionData.project = project.trim() ? project : {};
+      return;
+    }
+    if (typeof project === 'object') {
+      const id = (project as any).id;
+      if (id == null || id === '' || Number.isNaN(Number(id))) {
+        transactionData.project = {};
+      }
+    }
   }
 
   // ========== Delete Methods ==========
@@ -1204,7 +1231,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       party: this.extractCustomerInfo(headerForm.customer),
       currency: { id: 1, value: 'SAR' },
       exchangeRate: 1,
-      project: this.normalizeLookup(this.extractProjectInfo(headerForm.project)),
+      project: this.extractProjectInfo(headerForm.project),
       description: headerForm.description || null,
       grossAmountEdit: this.invoiceHeader?.isgrossAmountEditable || false,
       fiTransactionAdditional: this.buildAdditionalInfo(headerForm, footerForm),
