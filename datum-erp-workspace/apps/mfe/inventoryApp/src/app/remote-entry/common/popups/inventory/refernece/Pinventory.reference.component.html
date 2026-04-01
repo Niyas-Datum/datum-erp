@@ -35,10 +35,21 @@
     </div>
     <div class="col-md-3">
       <label>Party</label>
-      <ejs-textbox
+      <ejs-multicolumncombobox
         formControlName="party"
-        placeholder="Enter party name">
-      </ejs-textbox>
+        [dataSource]="partyData"
+        [fields]="{ text: 'accountName', value: 'accountName' }"
+        [allowFiltering]="true"
+        filterType="Contains"
+        placeholder="Search party..."
+        popupWidth="100%">
+        <e-columns>
+          <e-column field="accountCode" headerText="Code" width="100"></e-column>
+          <e-column field="accountName" headerText="Party Name" width="180"></e-column>
+          <e-column field="mobileNo" headerText="Mobile" width="120"></e-column>
+          <e-column field="vatNo" headerText="VAT No" width="140"></e-column>
+        </e-columns>
+      </ejs-multicolumncombobox>
     </div>
     <div class="col-md-2">
       <label>&nbsp;</label>
