@@ -116,6 +116,7 @@ export class PaymentVoucherComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.toast.clear();
     this.onInitBase();
     this.SetPageType(1);
     this.paymentVoucherForm.disable();
