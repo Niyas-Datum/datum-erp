@@ -388,12 +388,34 @@ onSaveClick(): void {
 
   if (payType && payType.name === 'Cash' && balanceAmount > 0 && cashAmount === 0) {
     if (!this.isDefaultCash) {
-      if (confirm('Do you want to allocate the balance amount to default cash account?')) {
-        this.settingCashAmountOnSave();
-      } else {
-        alert('Balance must be zero for cash type');
-    return;
-      }
+      this.viewDialog(
+        'Do you want to allocate the balance amount to default cash account?',
+        'Default Cash',
+        '450px',
+        [
+          {
+            click: () => {
+              this.alertService.hideDialog();
+              this.settingCashAmountOnSave();
+              const payload = this.collectTransactionData();
+              this.performSave(payload);
+            },
+            buttonModel: { content: 'Yes', isPrimary: true },
+          },
+          {
+            click: () => {
+              this.alertService.hideDialog();
+              this.baseService.showCustomDialoguePopup(
+                'Balance must be zero for cash type',
+                'Cannot Save',
+                'WARN'
+              );
+            },
+            buttonModel: { content: 'No' },
+          },
+        ]
+      );
+      return;
     } else {
       this.settingCashAmountOnSave();
     }

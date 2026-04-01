@@ -7,6 +7,7 @@ import { inject, Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { LocalStorageService } from './storage/localStorage.service';
 import { APP_URL } from '@org/utils';
+import { DialogUtility } from '@syncfusion/ej2-popups';
 //import { MatDialog } from '@angular/material/dialog';
 //import { DialogTemplateComponent, ModalType } from './utils/dialog-template/dialog-template.component';
 //import { CustomDialogueComponent } from './utils/custom-dialogue/custom-dialogue.component';
@@ -181,12 +182,28 @@ export class BaseService {
     title = 'Alert',
     type: any = 'INFO'
   ): void {
-    alert(`${message} title: ${title},
-        key: ${type}  `);
-    // this.dialog.open(DialogTemplateComponent, {
-    //   data: { title, message, type },
-    //   width: '400px',
-    //   disableClose: true
-    // });
+    const normalizedType = (type ?? '').toString().toUpperCase();
+    const iconCss =
+      normalizedType === 'SUCCESS'
+        ? 'e-icons e-check'
+        : normalizedType === 'WARN' || normalizedType === 'WARNING'
+          ? 'e-icons e-warning'
+          : normalizedType === 'ERROR'
+            ? 'e-icons e-error'
+            : 'e-icons e-info';
+
+    DialogUtility.alert({
+      title: title || 'Alert',
+      content: message || '',
+      okButton: { text: 'OK', cssClass: 'e-primary' },
+      showCloseIcon: true,
+      closeOnEscape: true,
+      position: { X: 'center', Y: 'center' },
+      cssClass: `app-alert-dialog app-alert-${normalizedType.toLowerCase()}`,
+      animationSettings: { effect: 'FadeZoom', duration: 250, delay: 0 },
+      // keep icon in title for visual type cue
+      header: `<span class="${iconCss}" style="margin-right:8px;"></span>${title || 'Alert'}`,
+      isModal: true,
+    } as any);
   }
 }

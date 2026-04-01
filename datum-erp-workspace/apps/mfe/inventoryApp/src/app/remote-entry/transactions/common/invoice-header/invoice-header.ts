@@ -159,8 +159,17 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   // Constants
   readonly partyId: string | number = 12230;
   readonly locId = 1;
-  readonly voucherNo = 23;
-  readonly pageId = 149;
+  private currentVoucherNo = 23;
+  private currentPageId = 149;
+  private currentMenuText = '';
+  /** Backward-compatible access for existing transaction components. */
+  get voucherNo(): number {
+    return this.currentVoucherNo;
+  }
+  /** Backward-compatible access for existing transaction components. */
+  get pageId(): number {
+    return this.currentPageId;
+  }
 
   // Computed signals
   readonly currentMode = computed(() => {
@@ -202,6 +211,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   // ========== Initialization Methods ==========
 
   private initializeComponent(): void {
+    this.subscribeToCurrentPageInfo();
     this.initForm();
     this.setupFormValueChanges();
     this.subscribeToTransactionSelection();
@@ -219,6 +229,22 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     document.addEventListener('keydown', () => {
       this.isUserInteraction = true;
     }, { once: true, capture: true });
+  }
+
+  private subscribeToCurrentPageInfo(): void {
+    this.dataSharingService.currentPageInfo$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((pageInfo: any) => {
+        const nextPageId = pageInfo?.id ?? this.currentPageId;
+        const nextVoucherId = pageInfo?.voucherID ?? this.currentVoucherNo;
+        this.currentMenuText = (pageInfo?.menuText ?? this.currentMenuText ?? '').toString();
+        const changed = nextPageId !== this.currentPageId || nextVoucherId !== this.currentVoucherNo;
+        this.currentPageId = nextPageId;
+        this.currentVoucherNo = nextVoucherId;
+        if (changed) {
+          this.loadInitialData();
+        }
+      });
   }
 
   private initForm(): void {
@@ -284,7 +310,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   private fetchCommonFillData(): void {
-    const endpoint = `${EndpointConstant.FILLCOMMONPURCHASEDATA}${this.pageId}&voucherId=${this.voucherNo}`;
+    const endpoint = `${EndpointConstant.FILLCOMMONPURCHASEDATA}${this.currentPageId}&voucherId=${this.currentVoucherNo}`;
 
     this.transactionService
       .getDetails(endpoint)
@@ -300,7 +326,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
    * Call this before entering new mode after a save so the second save gets a fresh voucher number.
    */
   public refreshCommonFillDataForNewMode(): Observable<void> {
-    const endpoint = `${EndpointConstant.FILLCOMMONPURCHASEDATA}${this.pageId}&voucherId=${this.voucherNo}`;
+    const endpoint = `${EndpointConstant.FILLCOMMONPURCHASEDATA}${this.currentPageId}&voucherId=${this.currentVoucherNo}`;
     return this.transactionService.getDetails(endpoint).pipe(
       take(1),
       tap((response) => this.handleCommonFillResponse(response)),
@@ -313,7 +339,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
 
     this.transactionService
       .getDetails(
-        `${EndpointConstant.FILLPURCHASEBYID}${this.selectedSalesId}&pageId=${this.pageId}`
+        `${EndpointConstant.FILLPURCHASEBYID}${this.selectedSalesId}&pageId=${this.currentPageId}`
       )
       .pipe(
         takeUntil(this.destroy$)
@@ -333,7 +359,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
 
   private fetchReferenceData(): void {
     this.transactionService
-      .getDetails(`${EndpointConstant.FILLREFERENCEDATA}${this.voucherNo}`)
+      .getDetails(`${EndpointConstant.FILLREFERENCEDATA}${this.currentVoucherNo}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -345,7 +371,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
 
   fetchVoucherType(): void {
     this.transactionService
-      .getDetails(`${EndpointConstant.FILLPURCHASEVOUCHERTYPE}${this.voucherNo}`)
+      .getDetails(`${EndpointConstant.FILLPURCHASEVOUCHERTYPE}${this.currentVoucherNo}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -356,7 +382,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   fetchParty(): void {
-    const endpoint = `${EndpointConstant.FILLPURCHASEPARTY}&voucherId=${this.voucherNo}&pageId=${this.pageId}`;
+    const endpoint = `${EndpointConstant.FILLPURCHASEPARTY}&voucherId=${this.currentVoucherNo}&pageId=${this.currentPageId}`;
 
     this.transactionService
       .getDetails(endpoint)
@@ -579,7 +605,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   private setVoucherData(): void {
     const formattedDate = this.formatDate(this.today);
     this.voucherName = this.commonFillData?.vNo?.code || '';
-    const voucherNo = this.commonFillData?.vNo?.result || '';
+    const voucherNo = this.formatVoucherNoByPageType(this.commonFillData?.vNo?.result || '');
 
     this.salesForm.patchValue({
       vouchername: this.voucherName,
@@ -969,7 +995,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       // ✅ Fetch items if both customer and warehouse are selected
       const warehouseId = this.salesForm.get('warehouse')?.value;
       if (warehouseId && this.selectedPartyId && (this.isNewMode() || this.isEditMode())) {
-        this.itemService.fetchItemsWithParams(this.pageId, Number(warehouseId), this.voucherNo, Number(this.selectedPartyId));
+        this.itemService.fetchItemsWithParams(this.currentPageId, Number(warehouseId), this.currentVoucherNo, Number(this.selectedPartyId));
       }
     }
   }
@@ -982,7 +1008,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     // This prevents unnecessary API calls on page load
     if (warehouseId && customerId && (this.isNewMode() || this.isEditMode())) {
       // Trigger item fetch through itemService
-      this.itemService.fetchItemsWithParams(this.pageId, Number(warehouseId), this.voucherNo, Number(customerId));
+      this.itemService.fetchItemsWithParams(this.currentPageId, Number(warehouseId), this.currentVoucherNo, Number(customerId));
     }
   }
 
@@ -1070,7 +1096,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     this.isReferenceImported = false;
 
     this.voucherName = this.commonFillData?.vNo?.code || '';
-    const voucherNo = this.commonFillData?.vNo?.result || '';
+    const voucherNo = this.formatVoucherNoByPageType(this.commonFillData?.vNo?.result || '');
     this.formVoucherNo = voucherNo;
 
     const patchData: any = {
@@ -1149,8 +1175,8 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
         voucherTypes: this.voucherTypeData,
         partyData: this.partyData,
         customerData: this.customerData,
-        voucherNo: this.voucherNo,
-        pageId: this.pageId,
+        voucherNo: this.currentVoucherNo,
+        pageId: this.currentPageId,
         partyId: this.partyId,
         locId: this.locId
       });
@@ -1219,7 +1245,15 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   private buildCustomerEndpoint(): string {
     return this.isMobile
       ? EndpointConstant.FETCHCUSTOMERMOBILE
-      : `${EndpointConstant.FILLSALESCUSTOMER}&voucherId=${this.voucherNo}&pageId=${this.pageId}`;
+      : `${EndpointConstant.FILLSALESCUSTOMER}&voucherId=${this.currentVoucherNo}&pageId=${this.currentPageId}`;
+  }
+
+  private formatVoucherNoByPageType(voucherNo: string): string {
+    const text = (voucherNo ?? '').toString().trim();
+    if (!text) return text;
+    // Display only numeric voucher portion in UI (e.g. "INV-12" -> "12", "PO/0012" -> "0012")
+    const numericMatch = text.match(/(\d+)(?!.*\d)/);
+    return numericMatch ? numericMatch[1] : text.replace(/^[A-Za-z]+[\s\-\/]*/, '');
   }
 
   /** Format date using system locale (DD/MM/YYYY or MM/DD/YYYY). */

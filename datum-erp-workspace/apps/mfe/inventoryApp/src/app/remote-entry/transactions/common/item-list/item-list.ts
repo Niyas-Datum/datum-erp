@@ -71,6 +71,7 @@ public itemService = inject(ItemService);
   // Dynamic page info properties
   private currentPageId: number | null = null;
   private currentVoucherId: number | null = null;
+  private itemMasterPreloaded = false;
 
   /** Set true after we auto-focus Item Code on New Mode load so we don't refocus repeatedly. */
   private hasAutoFocusedItemCodeInNewMode = false;
@@ -227,10 +228,26 @@ public itemService = inject(ItemService);
             // Update dynamic properties
             this.currentPageId = pageInfo.id ?? null;
             this.currentVoucherId = pageInfo.voucherID ?? null;
-            
+            this.preloadItemMasterData();
           }, 0);
         }
       });
+  }
+
+  /**
+   * Preload item master in background to avoid first-open "No records found" flash in combobox.
+   */
+  private preloadItemMasterData(): void {
+    if (this.itemMasterPreloaded) return;
+    if (this.itemService.fillItemDataOptions().length > 0) {
+      this.itemMasterPreloaded = true;
+      return;
+    }
+    if (!this.currentPageId || !this.currentVoucherId) return;
+    this.itemMasterPreloaded = true;
+    setTimeout(() => {
+      this.itemService.fetchItemsWithParams(this.currentPageId!, 1, this.currentVoucherId!, 12230);
+    }, 200);
   }
 
   /** -------------------- Data Fetching -------------------- **/
@@ -547,6 +564,10 @@ public itemService = inject(ItemService);
 
   /** -------------------- Keyboard Navigation -------------------- **/
   onKeyDown(event: KeyboardEvent, data: any, currentField: string): void {
+    if (currentField === 'itemCode') {
+      this.handleItemCodeTyping(event);
+    }
+
     const fields = ['itemCode', 'unit', 'qty', 'rate'];
     const currentIndex = fields.indexOf(currentField);
 
@@ -617,17 +638,52 @@ public itemService = inject(ItemService);
 
   /** -------------------- Filtering -------------------- **/
   onFiltering(args: any): void {
-    if (!args?.text) return;
+    const query = (args?.text ?? '').toString().toLowerCase().trim();
 
-    const query = args.text.toLowerCase();
+    // Ensure list is loaded when user starts searching.
+    if (!this.itemService.fillItemDataOptions().length && this.currentPageId && this.currentVoucherId) {
+      this.itemService.fetchItemsWithParams(this.currentPageId, 1, this.currentVoucherId, 12230);
+      args.updateData([]);
+      return;
+    }
+
     const data = this.itemService.fillItemDataOptions();
-    
+    if (!query) {
+      args.updateData(data);
+      return;
+    }
+
     const filtered = data?.filter((item: any) =>
       item?.itemCode?.toLowerCase().includes(query) ||
-      item?.itemName?.toLowerCase().includes(query)
+      item?.itemName?.toLowerCase().includes(query) ||
+      item?.barCode?.toLowerCase().includes(query) ||
+      String(item?.stock ?? '').toLowerCase().includes(query)
     ) || [];
 
-    args.updateData(filtered.length ? filtered : data);
+    args.updateData(filtered);
+  }
+
+  private handleItemCodeTyping(event: KeyboardEvent): void {
+    // For normal character typing, force popup to stay open and show filtered rows.
+    const isPrintable =
+      event.key.length === 1 &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.altKey;
+    const isSearchEditKey = event.key === 'Backspace' || event.key === 'Delete';
+    if (!isPrintable && !isSearchEditKey) return;
+
+    if (!this.itemService.fillItemDataOptions().length && this.currentPageId && this.currentVoucherId) {
+      this.itemService.fetchItemsWithParams(this.currentPageId, 1, this.currentVoucherId, 12230);
+    }
+
+    setTimeout(() => {
+      const list = this.itemCodeCombos?.toArray();
+      const combo = list?.find((c) => c.element?.contains(document.activeElement)) ?? list?.[0];
+      if (combo && typeof (combo as any).showPopup === 'function') {
+        (combo as any).showPopup();
+      }
+    }, 0);
   }
 
   /** -------------------- Grid Actions -------------------- **/
