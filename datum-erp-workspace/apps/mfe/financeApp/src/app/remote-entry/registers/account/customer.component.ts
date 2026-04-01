@@ -35,6 +35,7 @@ import { MultiColumnComboBoxComponent } from '@syncfusion/ej2-angular-multicolum
         this.commonInit();
     }
     ngOnInit(): void {
+      this.toast.clear();
       this.onInitBase();
       this.SetPageType(2);
       this.loadInitData();

@@ -72,6 +72,7 @@ export class BranchComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.toast.clear();
     this.onInitBase();
     this.SetPageType(1);
     this.branchForm.disable();
