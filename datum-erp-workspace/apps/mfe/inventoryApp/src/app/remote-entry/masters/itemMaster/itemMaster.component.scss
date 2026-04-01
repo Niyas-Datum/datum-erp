@@ -483,3 +483,8 @@
 #itemMasterForm.e-tab .e-toolbar {
   background-color: #ffffff !important;
 }
+
+::ng-deep .e-dropdownlist .e-input {
+  padding: 4px 8px !important;
+  height: 28px;
+}
