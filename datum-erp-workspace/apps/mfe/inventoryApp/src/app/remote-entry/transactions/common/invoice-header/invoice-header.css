@@ -61,3 +61,10 @@
   white-space: nowrap;
 }
 
+::ng-deep .e-input-group .e-input, 
+::ng-deep .e-control.e-textbox, 
+::ng-deep .e-dropdownlist.e-control, 
+::ng-deep .e-datepicker.e-control {
+    font-size: 11px !important;  
+}
+

@@ -160,7 +160,7 @@
 
 <!-- <div>---</div> -->
 
-<section class="p-0">
+<section class="px-2 py-0 mt-1">
   <form [formGroup]="salesForm">
 
     <div class="row">
@@ -177,11 +177,11 @@
               <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Voucher No</p>
               <div class="col-12 col-md-8 d-flex gap-1">
                 <ejs-textbox formControlName="vouchername" cssClass="e-outline text-center" style="width:3rem"
-                  [readonly]="true">
+                  [readonly]="true" id="vouchername" [tabindex]="1">
                 </ejs-textbox>
 
-                <ejs-textbox class="w-100" formControlName="voucherno" cssClass="e-outline flex-fill"
-                  [readonly]="!(isNewMode() || isEditMode())">
+                <ejs-textbox class="w-100" formControlName="voucherno" id="voucherno" cssClass="e-input flex-fill"
+                  [readonly]="!(isNewMode() || isEditMode())" [tabindex]="2">
                 </ejs-textbox>
               </div>
             </div>
@@ -192,8 +192,11 @@
             <div class="row g-1">
               <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Date</p>
               <div class="col-12 col-md-8">
-                <ejs-datepicker class="w-100" cssClass="e-outline" formControlName="purchasedate" [disabled]="true">
-                </ejs-datepicker>
+                <ejs-datepicker class="w-100" cssClass="e-outline" formControlName="purchasedate"
+                  (keydown)="onFormKeyDown($event,4)" [disabled]="true"
+                  (change)="validationbase.validateDate(salesForm, 'purchasedate', $event.value)">
+
+                  ></ejs-datepicker>
               </div>
             </div>
           </div>
@@ -205,10 +208,9 @@
               <div class="col-12 col-md-8">
                 <div class="e-input-group w-100 d-flex">
 
-                  <ejs-textbox cssClass="e-outline w-100" formControlName="reference">
-                  </ejs-textbox>
-
-                  <span class="e-input-group-icon e-btn flex-shrink-0" (click)="$event.stopPropagation(); openImportReferencePopup()">
+                  <ejs-textbox cssClass="e-outline w-100" id="reference" formControlName="reference"
+                    (keydown)="onFormKeyDown($event,5)" [tabindex]="4"></ejs-textbox>
+                  <span class="e-input-group-icon e-btn flex-shrink-0 " (click)="openImportReferencePopup()">
                     <i class="e-icons e-search"></i>
                   </span>
 
@@ -223,10 +225,10 @@
             <div class="row g-2">
               <p class="col-12 col-md-3 mb-0 font-size-custome form-label">Warehouse</p>
               <div class="col-12 col-md-9">
-                <ejs-dropdownlist class="w-100" id="warehouse" cssClass="e-outline" formControlName="warehouse"
-                  [dataSource]="warehouseData" [fields]="{ text: 'value', value: 'id' }" placeholder="Select warehouse"
+                <ejs-dropdownlist class="w-100" cssClass="e-outline" id="warehouse" formControlName="warehouse"
+                  [dataSource]="warehouseData" [fields]="{ text: 'value', value: 'id' }"
                   [value]="salesForm.get('warehouse')?.value" (change)="onChangeWarehouse($event)"
-                  [disabled]="isMobile">[]
+                  placeholder="Select warehouse" [disabled]="isMobile">
                 </ejs-dropdownlist>
               </div>
             </div>
@@ -245,7 +247,8 @@
               </p>
               <div class="col-12 col-md-8">
                 <div class="e-input-group w-100">
-                  <ejs-textbox cssClass="e-outline" formControlName="customer"></ejs-textbox>
+                  <ejs-textbox cssClass="e-outline" formControlName="customer" (input)="openCustomerPopup()"
+                    (click)="openCustomerPopup()" (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
                   <span class="e-input-group-icon e-btn" (click)="$event.stopPropagation(); openCustomerPopup(true)">
                     <i class="e-icons e-search"></i>
                   </span>
@@ -259,7 +262,8 @@
             <div class="row g-1">
               <p class="col-12 col-md-4 mb-0 font-size-custome form-label">VAT No</p>
               <div class="col-12 col-md-8">
-                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="vatno"></ejs-textbox>
+                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="vatno"
+                  (keydown)="onFormKeyDown($event,10)" [tabindex]="9"></ejs-textbox>
               </div>
             </div>
           </div>
@@ -269,7 +273,8 @@
             <div class="row g-1">
               <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Sales Man</p>
               <div class="col-12 col-md-8">
-                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="salesman"></ejs-textbox>
+                <ejs-textbox class="w-100" formControlName="salesman" cssClass="e-outline"
+                  (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
               </div>
             </div>
           </div>
@@ -281,9 +286,13 @@
                 Party Inv<br> No & Date
               </p>
               <div class="col-12 col-md-9 d-flex gap-1">
-                <ejs-textbox cssClass="e-outline" style="width: 4em;" formControlName="partyinvoiceno">
+                <ejs-textbox cssClass="e-outline" style="width: 4em;" formControlName="partyinvoiceno"
+                  id="partyinvoiceno" (change)="onChangePartyInvNo($event)" (keydown)="onFormKeyDown($event,11)"
+                  [tabindex]="10">
                 </ejs-textbox>
-                <ejs-datepicker class="flex-fill" cssClass="e-outline" formControlName="partyinvoicedate">
+
+                <ejs-datepicker class="flex-fill" cssClass="e-outline" formControlName="partyinvoicedate"
+                  (dateChange)="onChangePartyInvDate($event)" (keydown)="onFormKeyDown($event,12)">
                 </ejs-datepicker>
               </div>
             </div>
@@ -299,8 +308,11 @@
               <p class="col-12 col-md-2 mb-0 font-size-custome form-label">Project</p>
               <div class="col-12 col-md-10">
                 <div class="e-input-group w-100">
-                  <ejs-textbox class="w-100" cssClass="e-outline" formControlName="project" placeholder="Search..."></ejs-textbox>
-                  <span class="e-input-group-icon e-btn flex-shrink-0" (click)="$event.stopPropagation(); openProjectPopup(true)">
+                  <ejs-textbox class="w-100" cssClass="e-outline" formControlName="project"
+                    (keydown)="onFormKeyDown($event, 4)" (input)="openProjectPopup()" formControlName="project"
+                    placeholder="Search..."></ejs-textbox>
+                  <span class="e-input-group-icon e-btn flex-shrink-0"
+                    (click)="$event.stopPropagation(); openProjectPopup(true)">
                     <i class="e-icons e-search"></i>
                   </span>
                 </div>
@@ -312,7 +324,9 @@
             <div class="row g-1">
               <p class="col-12 col-md-2 mb-0 font-size-custome form-label">Description</p>
               <div class="col-12 col-md-10">
-                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="description"></ejs-textbox>
+                <ejs-textbox class="w-100" cssClass="e-outline" formControlName="description" id="description"
+                  [tabindex]="12" (keydown)="onFormKeyDown($event,-1)"></ejs-textbox>
+
               </div>
             </div>
           </div>
@@ -326,4 +340,14 @@
 
     </div>
   </form>
+  <!-- Legacy Reference Popup (can be removed if not needed) -->
+  <!-- <app-reference-popup
+    *ngIf="isPopuprefVisible"
+    [popuprefData]="popuprefData"
+    [visible]="isPopuprefVisible"
+    [referenceData]="referenceFillData"
+    [voucherTypes]="voucherTypeData"
+    [partyData]="partyData"
+    (close)="closeReferencePopup()">
+</app-reference-popup> -->
 </section>
