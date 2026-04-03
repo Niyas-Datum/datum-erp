@@ -86,9 +86,10 @@
       <div class="row mt-3">
         <div class="col-md-12">
           <h6 class="section-title">Account Details</h6>
-          <ejs-grid #accountDetailsGrid [dataSource]="voucherCommonService.accountDetailsData()" [editSettings]="accountDetailsEditSettings"
-            [allowResizing]="true" [allowTextWrap]="true" gridLines="Both" height="200px" [rowHeight]="30"
-            (cellSave)="onAccountDetailsCellSave($event)">
+          <ejs-grid #accountDetailsGrid [dataSource]="voucherCommonService.accountDetailsData()"
+        [editSettings]="accountDetailsEditSettings" [allowResizing]="true" [allowTextWrap]="true" gridLines="Both"
+        height="200px" [rowHeight]="30" (cellSave)="onAccountDetailsCellSave($event)"
+        (actionComplete)="onAccountDetailsActionComplete($event)" (keydown)="onGridKeyDown($event)">
             <e-columns>
               <e-column field="accountCode" headerText="AccountCode" width="150">
                 <ng-template #editTemplate let-data>
