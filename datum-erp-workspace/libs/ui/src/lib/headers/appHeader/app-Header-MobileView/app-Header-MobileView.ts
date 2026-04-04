@@ -26,6 +26,7 @@ export class AppHeaderMobileView implements OnInit {
     // easing: 'ease-in-out'
   };
   onMenuSelect(args: MenuEventArgs) {
+
     const item = args.item as any;            // the menu model object
     const hasChildren = Array.isArray(item.submenu) && item.submenu.length > 0;
   

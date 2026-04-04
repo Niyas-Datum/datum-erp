@@ -55,10 +55,14 @@
 
               <div class="row g-2 mb-2 align-items-center">
                 <div class="col-md-12 d-flex align-items-center">
-                  <label class="col-2">Arabic Name</label>
-                  <div class="input-group flex-grow-1">
-                    <ejs-textbox [multiline]="false" class="form-control" formControlName="arabicname"></ejs-textbox>
-                    <button class="btn btn-outline-secondary" type="button">T</button>
+                  <label class="col-2 mb-0">Arabic Name</label>
+
+                  <div class="input-group flex-grow-1 d-flex flex-nowrap">
+
+                    <ejs-textbox [multiline]="false" class="e-input flex-grow-1" formControlName="arabicname">
+                    </ejs-textbox>
+
+                    <button class="btn-outline-secondary" type="button">T</button>
                   </div>
                 </div>
               </div>
@@ -72,7 +76,6 @@
                   </app-multiColumnComboBox>
                 </div>
                 <div class="col-md-6 d-flex align-items-center ps-md-4">
-                  <label class="col-4">Category</label>
                   <div class="d-flex flex-grow-1 gap-1">
                     <app-multiColumnComboBox class="w-50" formControlName="category" [dataSource]="allCategories"
                       [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" [disabled]="isDisabled"
@@ -91,12 +94,13 @@
 
               <div class="row g-2 mb-3 align-items-center">
                 <div class="col-md-6 d-flex align-items-center">
-                  <label class="col-4">Barcode No.</label>
-                  <div class="input-group">
-                    <ejs-textbox [multiline]="false" class="form-control" formControlName="barcodeno"></ejs-textbox>
-                    <button class="btn btn-outline-secondary" type="button" [disabled]="isInputDisabled"
+                  <label class="col-4 mb-0">Barcode No.</label>
+
+                  <div class="input-group d-flex flex-nowrap">
+                    <ejs-textbox [multiline]="false" formControlName="barcodeno"></ejs-textbox>
+                    <button class="btn-outline-secondary" type="button" [disabled]="isInputDisabled"
                       (click)="generateBarCode(0)">G</button>
-                    <button [disabled]="isInputDisabled" class="btn btn-outline-secondary " type="button"
+                    <button [disabled]="isInputDisabled" class="btn-outline-secondary" type="button"
                       (click)="itemmasterformshow()">IB</button>
                   </div>
                 </div>
@@ -266,58 +270,46 @@
               <div class="other-details-section container-fluid">
 
                 <!-- CHECKBOX ROW -->
-   
-<div class="row mb-2">
-  
-  <!-- Expiry Item -->
-  <div class="col-12 col-sm-6 col-lg-4 mb-2">
-    <div class="d-flex align-items-center justify-content-between">
-      <label for="expiryitem" class="mb-0">Expiry Item</label>
-      <label class="custom-checkbox mb-0">
-        <input type="checkbox"
-               class="form-check-input"
-               id="expiryitem"
-               formControlName="expiryitem"
-               [checked]="expiryitem"
-               (change)="onActiveChange($event)">
-        <span class="checkmark"></span>
-      </label>
-    </div>
-  </div>
 
-  <!-- Finished Goods -->
-  <div class="col-12 col-sm-6 col-lg-4 mb-2">
-    <div class="d-flex align-items-center justify-content-between">
-      <label for="finishedgoods" class="mb-0">Finished Goods</label>
-      <label class="custom-checkbox mb-0">
-        <input type="checkbox"
-               class="form-check-input"
-               id="finishedgoods"
-               formControlName="finishedgoods"
-               [checked]="finishedgoods"
-               (change)="onActiveChange($event)">
-        <span class="checkmark"></span>
-      </label>
-    </div>
-  </div>
+                <div class="row mb-2">
 
-  <!-- Raw Materials -->
-  <div class="col-12 col-sm-6 col-lg-4 mb-2">
-    <div class="d-flex align-items-center justify-content-between">
-      <label for="rawmaterials" class="mb-0">Raw Materials</label>
-      <label class="custom-checkbox mb-0">
-        <input type="checkbox"
-               class="form-check-input"
-               id="rawmaterials"
-               formControlName="rawmaterials"
-               [checked]="rawmaterials"
-               (change)="onActiveChange($event)">
-        <span class="checkmark"></span>
-      </label>
-    </div>
-  </div>
+                  <!-- Expiry Item -->
+                  <div class="col-12 col-sm-6 col-lg-4 mb-2">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <label for="expiryitem" class="mb-0">Expiry Item</label>
+                      <label class="custom-checkbox mb-0">
+                        <input type="checkbox" class="form-check-input" id="expiryitem" formControlName="expiryitem"
+                          [checked]="expiryitem" (change)="onActiveChange($event)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
 
-</div>
+                  <!-- Finished Goods -->
+                  <div class="col-12 col-sm-6 col-lg-4 mb-2">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <label for="finishedgoods" class="mb-0">Finished Goods</label>
+                      <label class="custom-checkbox mb-0">
+                        <input type="checkbox" class="form-check-input" id="finishedgoods"
+                          formControlName="finishedgoods" [checked]="finishedgoods" (change)="onActiveChange($event)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Raw Materials -->
+                  <div class="col-12 col-sm-6 col-lg-4 mb-2">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <label for="rawmaterials" class="mb-0">Raw Materials</label>
+                      <label class="custom-checkbox mb-0">
+                        <input type="checkbox" class="form-check-input" id="rawmaterials" formControlName="rawmaterials"
+                          [checked]="rawmaterials" (change)="onActiveChange($event)">
+                        <span class="checkmark"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                </div>
 
 
                 <!-- INPUT ROW -->
@@ -728,7 +720,7 @@
       </form>
 
 
-       <!-- Add Unit Dialog -->
+      <!-- Add Unit Dialog -->
       <ejs-dialog #addUnitDialog [visible]="addUnitDialogVisible" [isModal]="true" [showCloseIcon]="true" width="520px"
         header="Add Unit" [buttons]="addUnitDialogButtons" (open)="onAddUnitDialogOpen()" (close)="closeAddUnitDialog()"
         (created)="onAddUnitDialogCreated()">
