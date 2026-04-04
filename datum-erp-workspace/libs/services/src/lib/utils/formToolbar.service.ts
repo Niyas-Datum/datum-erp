@@ -18,6 +18,8 @@ export class FormToolbarService {
   voucherId?:number;
   leftgridselectedData:any;
   pagetype:number ;
+  newbuttonClick:number =0;
+  editbuttonClick:number =0;
   constructor(){this.pagetype = 1}
 
   /** Toolbar state pushed by child (e.g. sales-invoice) so entry can show New + Save on initial load */
@@ -37,31 +39,35 @@ export class FormToolbarService {
   private editClickedSource = new Subject<void>();
   editClicked$ = this.editClickedSource.asObservable();
 
-   private deleteClickedSource = new Subject<void>();
-      deleteClicked$ = this.deleteClickedSource.asObservable();
+  private deleteClickedSource = new Subject<void>();
+  deleteClicked$ = this.deleteClickedSource.asObservable();
 
-      private leftGridClickedSource = new Subject<void>();
-      leftGridClicked$ = this.leftGridClickedSource.asObservable();
+  private leftGridClickedSource = new Subject<void>();
+  leftGridClicked$ = this.leftGridClickedSource.asObservable();
 
-       private leftGridViewSource = new Subject<void>();
-      leftGridView$ = this.leftGridViewSource.asObservable();
+  private leftGridViewSource = new Subject<void>();
+  leftGridView$ = this.leftGridViewSource.asObservable();
 
-
-
-  emitNewClicked() {
+  emitNewClicked(num: number = 0) {
+    this.newbuttonClick =num;
+    console.log("emitNewClicked");
+  
     this.newClickedSource.next();
+   
   }
 
   emitSaveClicked() {
     this.saveClickedSource.next();
   }
-   emitEditClicked() {
+
+   emitEditClicked(num: number = 0) {
+        this.editbuttonClick = num;
     this.editClickedSource.next();
   }
 
      emitDeleteClicked() {
-    this.deleteClickedSource.next();
-  }
+      this.deleteClickedSource.next();
+    }
        emitLeftGridClicked(event:any) {
         this.leftgridselectedData = event;
         this.leftGridClickedSource.next();
@@ -73,4 +79,11 @@ export class FormToolbarService {
         this.leftGridViewSource.next();
 
   }
-}
+
+  //*** Left Grid View Status */
+  emitLeftGridtatus(event:number){
+    console.log("emitLeftGridViewStatus");
+        this.pagetype = event;
+        this.leftGridViewSource.next();
+    }
+  }

@@ -45,16 +45,21 @@ export abstract class BaseComponent {
     //           });
 
     this.serviceBase.formToolbarService.newClicked$.subscribe(() => {
+                    if(this.serviceBase.formToolbarService.newbuttonClick === 1){
+                            this.onNewButtonFormDisabled();
 
+                    }else{
+                             this.newbuttonClicked();
+                    }
          if(!this.currentPageInfo?.isCreate || this.currentPageInfo?.isCreate===0){
           this.toast.warning('You do not have permission to create new records.');
           return;
          }
 
-      console.log('New button clicked - Cost Category Component');
+     
       // this.costCategoryForm.enable();
 
-     this.newbuttonClicked();
+     
 
     });
 
@@ -104,8 +109,14 @@ export abstract class BaseComponent {
 
   }
 
+  /***
+   * New button clicked
+   */
+  protected onNewButtonFormDisabled() {
+    console.log('New button first click');
+  }
 
-  // new button clicked 
+  // new button clicked
   protected newbuttonClicked() {
 
     console.log(this.currentPageInfo?.isHigherApprove)

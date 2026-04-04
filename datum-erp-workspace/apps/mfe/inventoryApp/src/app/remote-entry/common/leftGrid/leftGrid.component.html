@@ -1,8 +1,9 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
-<div class="h-100 d-flex flex-column" #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()"
-  [class.grid-disabled]="isSelectionDisabled()">
-  <div #overlay [class.overlay]="!isInputDisabled()" [style.display]="isInputDisabled() ? 'none' : 'block'">
-    <p translate>Disabled</p>
+<div class="h-100 d-flex flex-column" #scrollableDivLeft
+>
+  <div #overlay *ngIf="isLeftGridDisabled$ | async"   class="overlay">
+    <h3 translate>Disabled </h3><br /> 
+    <p>Left grid is enabled when the New or Edit button is clicked.</p>
   </div>
 
   <div class="left-grid-search flex-shrink-0" *ngIf="columns.length">

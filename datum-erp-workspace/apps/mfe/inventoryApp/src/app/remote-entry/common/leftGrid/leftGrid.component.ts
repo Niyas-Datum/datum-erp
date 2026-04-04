@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, DestroyRef, input, computed, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BaseService, DataSharingService } from '@org/services';
+import { BaseService, DataSharingService, FormToolbarService } from '@org/services';
 import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService, PageSettingsModel, InfiniteScrollService } from '@syncfusion/ej2-angular-grids';
 import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
@@ -18,6 +18,7 @@ import { LeftGridDto } from '@org/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeftGridComponent {
+  
 
   sharedService = inject(DataSharingService);
 
@@ -50,6 +51,14 @@ export class LeftGridComponent {
 
   isNewMode = input(false);
   isEditMode = input(false);
+  /**
+   * @author Niyas
+   * @description Controls the disabled state of the left grid
+   */
+  formToolbarService = inject(FormToolbarService);
+  isLeftGridDisabled$ = new BehaviorSubject<boolean>(true);
+
+ 
 
   // Pagination
   public pageSettings : PageSettingsModel= {
@@ -86,6 +95,21 @@ export class LeftGridComponent {
     setTimeout(() => {
       this.loadColumns();
     },100);
+
+        this.formToolbarService.newClicked$.subscribe(() => {
+              if(this.formToolbarService.newbuttonClick === 1){
+                this.isLeftGridDisabled$.next(false);
+              }else{
+                this.isLeftGridDisabled$.next(true);
+              }
+        });
+        this.formToolbarService.editClicked$.subscribe(() => {
+              if(this.formToolbarService.editbuttonClick === 1){
+                this.isLeftGridDisabled$.next(true);
+              }else{
+                this.isLeftGridDisabled$.next(false);
+              }
+        });
    }
               constructor() {
                 //this.loadColumns();
