@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
-import { FormControl,FormGroup,Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FinanceAppService } from '../../http/finance-app.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EDITABLE_PERIOD, EndpointConstant } from '@org/constants';
@@ -30,6 +30,7 @@ interface PaymentBreakdownResult {
 export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   @ViewChild('paymentDetailsGrid') paymentDetailsGrid!: GridComponent;
   @ViewChild('poAllocationPopup') poAllocationPopup!: PoallocationpopupComponent;
+  @ViewChild('accountDetailsGrid') accountDetailsGrid: any;
 
   private httpService = inject(FinanceAppService);
   private datePipe = inject(DatePipe);
@@ -142,8 +143,8 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.onInitBase();
     this.SetPageType(1);
-     this.receiptVoucherForm.disable();
-     // Set pageId for receipt voucher
+    this.receiptVoucherForm.disable();
+    // Set pageId for receipt voucher
     this.dataSharingService.setPageId(this.pageId);
     this.fetchDepartmentData();
     // Fetch dropdown data from services
@@ -166,7 +167,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
     this.LeftGridInit().then(() => this.loadLastSavedEntry());
   }
 
-    private loadLastSavedEntry(): void {
+  private loadLastSavedEntry(): void {
     const list = this.leftGrid?.leftGridData;
     if (!Array.isArray(list) || list.length === 0) {
       this.SetPageType(1);
@@ -189,9 +190,9 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
 
   override FormInitialize() {
     this.receiptVoucherForm = new FormGroup({
-      voucherName: new FormControl({ value: '', disabled: true },Validators.required),
-      voucherNo: new FormControl({ value: '', disabled: false },Validators.required),
-      voucherDate: new FormControl({ value: '', disabled: false },Validators.required),
+      voucherName: new FormControl({ value: '', disabled: true }, Validators.required),
+      voucherNo: new FormControl({ value: '', disabled: false }, Validators.required),
+      voucherDate: new FormControl({ value: '', disabled: false }, Validators.required),
       narration: new FormControl({ value: '', disabled: false }),
       costCentre: new FormControl({ value: '', disabled: false }),
       department: new FormControl({ value: '', disabled: false }),
@@ -257,7 +258,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         console.error('Invalid account rows (could not resolve accountId):', invalidAccounts);
         return;
       }
-    
+
       const accountDetails = accRows.map((r: any) => {
         // Round to 2 decimal places to avoid floating-point precision errors
         const creditAmount = parseFloat((Number(r.credit) || 0).toFixed(2));
@@ -304,8 +305,8 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         this.showError(`Credit and Debit do not match. Credit: ${creditTotal.toFixed(2)}, Debit: ${debitTotal.toFixed(2)}`);
         return;
       }
-    
-      
+
+
       // Paydetails summary (optional description)
       const paydetails = this.buildPaydetailsSummary();
 
@@ -321,7 +322,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         console.log('Built new billandRef:', billandRef);
       }
 
-      
+
 
       // Validate allocation sums per credit row
       for (const row of accRows) {
@@ -336,11 +337,11 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         }
       }
 
-      
+
 
       // Prepare header fields with default values
       let costCentrePayload: any = {};
-        
+
       if (formVals.costCentre) {
         const cc = this.findById(this.costCentreData, formVals.costCentre);
         if (cc) {
@@ -354,7 +355,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
       }
 
       let departmentPayload: any = {};
-        
+
       if (formVals.department) {
         const dept = this.findById(this.departmentData, formVals.department);
         if (dept) {
@@ -402,7 +403,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
 
       // Optional header fields
       if (formVals.narration) payload.narration = formVals.narration;
-      
+
       if (formVals.referenceNo) payload.referenceNo = formVals.referenceNo;
 
       // Endpoint with voucherId
@@ -435,7 +436,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
       const httpRequest = isUpdate
         ? this.httpService.patch(url, payload)
         : this.httpService.post(url, payload);
-        debugger;
+      debugger;
 
       httpRequest
         .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -446,7 +447,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
             const isValid = (response as any)?.isValid ?? (response as any)?.data?.isValid;
             const dataMsg = (response as any)?.data?.msg || (response as any)?.message || (response as any)?.data;
             debugger;
-          
+
             if ((typeof httpCode === 'number' && httpCode >= 400) || isValid === false) {
               const details = typeof dataMsg === 'string' ? dataMsg : this.stringifyError(response);
               console.error('Save Receipt Voucher returned error payload:', response);
@@ -546,13 +547,13 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
     }
     if (this.isVoucherBeyondEditablePeriod()) {
       this.baseService.showCustomDialogue(`Editing disabled for vouchers older than ${EDITABLE_PERIOD} days.`);
-       this.serviceBase.formToolbarService.pagetype = 3; // View mode
-    this.updateGridEditSettings();
-    return;
+      this.serviceBase.formToolbarService.pagetype = 3; // View mode
+      this.updateGridEditSettings();
+      return;
     }
     this.selectedReceiptVoucherId = Number(selectedId);
-  // ✅ THIS IS THE ACTUAL REQUIRED FIX
-  this.serviceBase.formToolbarService.pagetype = 2; // Edit mode
+    // ✅ THIS IS THE ACTUAL REQUIRED FIX
+    this.serviceBase.formToolbarService.pagetype = 2; // Edit mode
     // Set page type to edit mode
     this.updateGridEditSettings();
     // Enable the form for editing
@@ -591,7 +592,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
           const transactionEntries = response?.data?.transaction?.fillTransactionEntries || [];
           const billAndRefData = response?.data?.voucherAllocation?.data || [];
           debugger;
-      
+
 
           // Store original billandRef data for use when saving updates
           this.originalBillAndRef = billAndRefData;
@@ -634,7 +635,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
                   console.log(`Resolved accountId for ${entry.alias}: ${accountId}`);
                 }
               }
-              
+
 
               const accountRow: any = {
                 accountCode: entry.alias?.toString() || '',
@@ -678,9 +679,9 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
               if (poAllocationsForAccount.length > 0) {
                 accountRow.poAllocations = poAllocationsForAccount;
               }
-              
+
               return accountRow;
-              
+
             });
           this.voucherCommonService.accountDetailsData.set(accountDetails);
           this.voucherCommonService.assignAccountRowIds();
@@ -711,7 +712,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
           console.error('An Error Occurred', error);
         },
       });
-      
+
   }
 
   override newbuttonClicked() {
@@ -905,7 +906,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         this.popupData = this.cashPopupObj;
         this.showPaymentPopup = true;
         this.cdr.detectChanges();
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       this.httpService
         .fetch<any>(EndpointConstant.FILLCASHPOPUP)
@@ -977,7 +978,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         this.popupData = this.cardPopupObj;
         this.showPaymentPopup = true;
         this.cdr.detectChanges();
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       this.httpService
         .fetch<any>(EndpointConstant.FILLCARDPOPUP)
@@ -1049,7 +1050,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         this.popupData = this.chequePopupObj;
         this.showPaymentPopup = true;
         this.cdr.detectChanges();
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       this.httpService
         .fetch<any>(EndpointConstant.FILLCHEQUEPOPUP)
@@ -1121,7 +1122,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         this.popupData = this.epayPopupObj;
         this.showPaymentPopup = true;
         this.cdr.detectChanges();
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       this.httpService
         .fetch<any>(EndpointConstant.FILLEPAYPOPUP)
@@ -1332,7 +1333,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
         promise.then(() => {
           args.updateData(this.voucherService.accountMasterData());
           this.cdr.detectChanges();
-        }).catch(() => {});
+        }).catch(() => { });
         return;
       }
       args.updateData(accountMasterData);
@@ -1843,7 +1844,7 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
   }
   private buildBillAndRef(accRows: any[], isUpdate: boolean): any[] {
     const out: any[] = [];
-    
+
     for (const r of accRows) {
       if (Array.isArray(r.poAllocations)) {
         for (const alloc of r.poAllocations) {
@@ -2028,6 +2029,37 @@ export class ReceiptVoucherComponent extends BaseComponent implements OnInit {
     this.SetPageType(0);
 
     console.log('✅ Form cleared after deletion');
+  }
+
+  onGridKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const grid = this.accountDetailsGrid as GridComponent | undefined;
+      if (!grid) return;
+
+      // Commit current cell/row edit first in batch mode.
+      if (grid.isEdit) {
+        (grid as any).editModule?.saveCell?.();
+        grid.endEdit();
+      }
+
+      // Data source is signal-driven, so append via service (not grid.addRecord()).
+      setTimeout(() => {
+        this.voucherCommonService.ensureTrailingEmptyAccountRow();
+        const lastIndex = this.voucherCommonService.accountDetailsData().length - 1;
+        if (lastIndex >= 0) {
+          grid.selectRow(lastIndex);
+        }
+      });
+    }
+  }
+  onAccountDetailsActionComplete(args: any): void {
+    const pageType = this.serviceBase.formToolbarService.pagetype;
+    if (pageType === 1 || pageType === 2) {
+      this.voucherCommonService.ensureTrailingEmptyAccountRow();
+    }
   }
 
 }
