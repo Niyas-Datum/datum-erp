@@ -17,7 +17,7 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 }
 ejs-sidebar .p-2 {
   height: 100%;
-  padding: 0 !important; 
+  padding: 0 !important;
 }
 
 app-left-grid {
@@ -37,6 +37,12 @@ app-left-grid {
 export class RemoteEntry {
   public pageType: number;
   public pageheading: string;
+
+  /** Button click counts
+   * Tracks the number of times each button is clicked
+   */
+  private  newbuttonClick:number=0;
+  private  editbuttonClick:number=0;
 
 
   // Left side section - hide and show
@@ -95,8 +101,20 @@ export class RemoteEntry {
       this.pageheading = data.pageheading || '';
       console.log('58005', this.leftgridchildData.data);
     });
+      /// new updates
+      /**
+       * @author Niyas
+       * @description On form load, left grid should be disabled and New, Save buttons should be enabled. Once user clicks on New or selects a record from left grid, left grid should be enabled.
+       * First Form Load "
+       * Buttons -enable : New, Save
+       * Left Grid - disable
+       */
 
+      this.isLeftGridDisabled = true;
+      this.isNewBtnDisabled = false;
+      this.isSaveBtnDisabled = false;
 
+ console.log("onload - make leftgrid disabled" )
   }
   constructor() {
     this.pageheading = 'General ';
@@ -144,6 +162,8 @@ export class RemoteEntry {
   isDeleteBtnDisabled = true;
   isSaveBtnDisabled = true;
   isPrintBtnDisabled = true;
+  isLeftGridDisabled = true;
+
 
   onDeleteClick() {
     this.formToolbarService.emitDeleteClicked();
@@ -154,15 +174,50 @@ export class RemoteEntry {
     /* TODO: Implement print click logic */
   }
   onEditClick() {
-    this.isSaveBtnDisabled = false;
-    this.formToolbarService.emitEditClicked();
+       this.editbuttonClick++;
+       /**
+        * @description On first click of Edit,
+        *  New and Save buttons should be disabled and left grid should be disabled. 
+        * On second click of Edit, New button should be enabled, 
+        * Save button should be disabled and left grid should be disabled.
+        **/
+    if(this.editbuttonClick === 1){
+          this.isNewBtnDisabled = true;
+          this.isEditBtnDisabled = false;
+          this.isDeleteBtnDisabled = true;
+          this.isLeftGridDisabled = true;
+          this.isSaveBtnDisabled = false;
+    }else if(this.editbuttonClick === 2){
+           this.isNewBtnDisabled = false;
+          this.isEditBtnDisabled = false;
+          this.isDeleteBtnDisabled = false;
+          this.isLeftGridDisabled = false;
+          this.isSaveBtnDisabled = true;
+          this.editbuttonClick = 0;
+    }
+    this.formToolbarService.emitEditClicked( this.editbuttonClick);
   }
 
+  /// New button clicked\
+  /// Button Visible:  new edit delete
   onNewClick() {
-    this.formToolbarService.emitNewClicked();
-    this.isSaveBtnDisabled = false;
-    this.isEditBtnDisabled = true;
-    this.isDeleteBtnDisabled = true;
+    this.newbuttonClick++;
+    if(this.newbuttonClick === 1){
+          this.isNewBtnDisabled = false;
+          this.isEditBtnDisabled = false;
+          this.isDeleteBtnDisabled = false;
+          this.isLeftGridDisabled = false;
+          this.isSaveBtnDisabled = true;
+    }else if(this.newbuttonClick === 2){
+           this.isNewBtnDisabled = false;
+          this.isEditBtnDisabled = true;
+          this.isDeleteBtnDisabled = true;
+          this.isLeftGridDisabled = true;
+          this.isSaveBtnDisabled = false;
+          this.newbuttonClick = 0;
+    }
+    // Emit the new clicked event
+    this.formToolbarService.emitNewClicked(this.newbuttonClick);
   }
 
   onSaveClick() {
