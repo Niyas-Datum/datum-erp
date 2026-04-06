@@ -196,4 +196,47 @@ export class DataSharingService {
   getCurrentSelectedPartyId(): number | string | null {
     return this.selectedPartyIdSubject.value;
   }
+
+  /** Warehouse / location id from invoice header (for item fill APIs). */
+  private selectedWarehouseLocIdSubject = new BehaviorSubject<number | string | null>(
+    null
+  );
+  public selectedWarehouseLocId$ =
+    this.selectedWarehouseLocIdSubject.asObservable();
+
+  setSelectedWarehouseLocId(locId: number | string | null): void {
+    this.selectedWarehouseLocIdSubject.next(locId);
+  }
+
+  getCurrentSelectedWarehouseLocId(): number | string | null {
+    return this.selectedWarehouseLocIdSubject.value;
+  }
+
+  /** Invoice / voucher header date (e.g. sales invoice date) for APIs such as advance popup. */
+  private voucherTransactionDateSubject = new BehaviorSubject<Date | null>(null);
+  voucherTransactionDate$ = this.voucherTransactionDateSubject.asObservable();
+
+  setVoucherTransactionDate(date: Date | null): void {
+    this.voucherTransactionDateSubject.next(date);
+  }
+
+  getVoucherTransactionDate(): Date | null {
+    return this.voucherTransactionDateSubject.value;
+  }
+
+  getCurrentPageInfo(): MenuItemDto {
+    return this.currentPageInfoSubject.value;
+  }
+
+  /** Header-selected salesman name; keeps Additional Details tab in sync for save payload. */
+  private headerSalesmanNameSubject = new BehaviorSubject<string>('');
+  headerSalesmanName$ = this.headerSalesmanNameSubject.asObservable();
+
+  setHeaderSalesmanName(name: string): void {
+    this.headerSalesmanNameSubject.next(name != null ? String(name) : '');
+  }
+
+  getHeaderSalesmanName(): string {
+    return this.headerSalesmanNameSubject.value;
+  }
 }

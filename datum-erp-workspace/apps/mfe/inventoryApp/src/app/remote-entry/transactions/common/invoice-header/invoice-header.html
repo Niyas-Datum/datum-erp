@@ -193,10 +193,9 @@
               <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Date</p>
               <div class="col-12 col-md-8">
                 <ejs-datepicker class="w-100" cssClass="e-outline" formControlName="purchasedate"
-                  (keydown)="onFormKeyDown($event,4)" [disabled]="true"
+                  (keydown)="onFormKeyDown($event,4)" [disabled]="!(isNewMode() || isEditMode())"
                   (change)="validationbase.validateDate(salesForm, 'purchasedate', $event.value)">
-
-                  ></ejs-datepicker>
+                </ejs-datepicker>
               </div>
             </div>
           </div>
@@ -210,7 +209,8 @@
 
                   <ejs-textbox cssClass="e-outline w-100" id="reference" formControlName="reference"
                     (keydown)="onFormKeyDown($event,5)" [tabindex]="4"></ejs-textbox>
-                  <span class="e-input-group-icon e-btn flex-shrink-0 " (click)="openImportReferencePopup()">
+                  <span class="e-input-group-icon e-btn flex-shrink-0 "
+                    (click)="$event.stopPropagation(); openImportReferencePopup()">
                     <i class="e-icons e-search"></i>
                   </span>
 
@@ -248,7 +248,7 @@
               <div class="col-12 col-md-8">
                 <div class="e-input-group w-100">
                   <ejs-textbox cssClass="e-outline" formControlName="customer" (input)="openCustomerPopup()"
-                    (click)="openCustomerPopup()" (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
+                    (click)="$event.stopPropagation(); openCustomerPopup(true)" (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
                   <span class="e-input-group-icon e-btn" (click)="$event.stopPropagation(); openCustomerPopup(true)">
                     <i class="e-icons e-search"></i>
                   </span>
@@ -273,8 +273,14 @@
             <div class="row g-1">
               <p class="col-12 col-md-4 mb-0 font-size-custome form-label">Sales Man</p>
               <div class="col-12 col-md-8">
-                <ejs-textbox class="w-100" formControlName="salesman" cssClass="e-outline"
-                  (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
+                <div class="e-input-group w-100">
+                  <ejs-textbox class="w-100" formControlName="salesman" cssClass="e-outline"
+                    (click)="$event.stopPropagation(); openSalesmanPopup()"
+                    (keydown)="onFormKeyDown($event,4)"></ejs-textbox>
+                  <span class="e-input-group-icon e-btn" (click)="$event.stopPropagation(); openSalesmanPopup()">
+                    <i class="e-icons e-search"></i>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -309,7 +315,8 @@
               <div class="col-12 col-md-10">
                 <div class="e-input-group w-100">
                   <ejs-textbox class="w-100" cssClass="e-outline" formControlName="project"
-                    (keydown)="onFormKeyDown($event, 4)" (input)="openProjectPopup()" formControlName="project"
+                    (keydown)="onFormKeyDown($event, 4)" (input)="openProjectPopup()"
+                    (click)="$event.stopPropagation(); openProjectPopup(true)"
                     placeholder="Search..."></ejs-textbox>
                   <span class="e-input-group-icon e-btn flex-shrink-0"
                     (click)="$event.stopPropagation(); openProjectPopup(true)">

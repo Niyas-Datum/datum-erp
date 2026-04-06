@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Component, EventEmitter, inject, OnInit, Output, Renderer2, ChangeDetectorRef, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   additonalChargesPopup,
@@ -24,6 +24,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { PaymentpopupComponent } from 'apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/paymentpopup/paymentpopup.component';
+import {
+  AdvanceBillRow,
+  AdvancePopupComponent,
+  AdvancePopupResult,
+} from 'apps/mfe/inventoryApp/src/app/remote-entry/transactions/common/advance-popup/advance-popup.component';
 import { BaseService, DataSharingService } from '@org/services';
 import { ItemService } from '../services/item.services';
 import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -37,6 +42,7 @@ import { CommonService } from '../services/common.services';
   imports: [
     CommonModule,
     PaymentpopupComponent,
+    AdvancePopupComponent,
     ReactiveFormsModule,
     DatePickerModule,
     TextBoxModule,
@@ -103,6 +109,12 @@ export class InvoiceFooter implements OnInit {
   public taxSelected: any[] = [];
   public addChargesSelected: any[] = [];
   public isChequeButtonEnabled = false;
+
+  /** Pending bills from `popupAdvance`; shown in advance allocation dialog. */
+  showAdvancePopup = false;
+  advancePopupRows: AdvanceBillRow[] = [];
+  /** Lines sent on save in `transactionEntries.advance` (legacy sales invoice). */
+  selectedAdvanceData: any[] = [];
   grossAmt = 0.0000;
   taxTotal=0.0000;
   grandtotal=0.0000;
@@ -1102,6 +1114,9 @@ export class InvoiceFooter implements OnInit {
     this.chequeSelected = [];
     this.taxSelected = [];
     this.addChargesSelected = [];
+    this.selectedAdvanceData = [];
+    this.advancePopupRows = [];
+    this.showAdvancePopup = false;
 
     this.enableCreditOption = false;
     this.enableCashOption = false;
@@ -1362,6 +1377,10 @@ onClickRoundOff() {
       pcs: this.toNum(item.pcs),
       stockItemId: item.stockItemId || 0,
       stockItem: item.stockItem || '',
+      availableStock:
+        item.stock !== undefined && item.stock !== null && item.stock !== ''
+          ? this.toNum(item.stock)
+          : undefined,
       expiryDate: item.expiryDate || null,
       manufactureDate: item.manufactureDate || null,
       description: item.description || null,
@@ -1542,5 +1561,121 @@ onClickRoundOff() {
   getGrandTotalForPopup(): number {
     const formValue = this.salesForm.get('grandtotal')?.value;
     return this.toNum(formValue) || this.grandtotal || 0;
+  }
+
+  /** Same as grand total; caps per-line allocation when > 0 (legacy advance popup behaviour). */
+  getGrandTotalForAdvancePopup(): number {
+    return this.getGrandTotalForPopup();
+  }
+
+  /**
+   * Opens advance / pending-bills popup (`popupAdvance`), matching legacy sales invoice behaviour.
+   */
+  openAdvanceAllocationPopup(): void {
+    const partyRaw = this.dataSharingService.getCurrentSelectedPartyId();
+    if (partyRaw == null || partyRaw === '' || Number(partyRaw) === 0) {
+      this.baseService.showCustomDialogue('Select a customer first');
+      return;
+    }
+    const pageInfo = this.dataSharingService.getCurrentPageInfo();
+    const voucherId = pageInfo?.voucherID ?? 0;
+    if (!voucherId) {
+      this.baseService.showCustomDialogue('Voucher is not ready. Reload the page.');
+      return;
+    }
+    let voucherDate = this.dataSharingService.getVoucherTransactionDate();
+    if (!voucherDate) {
+      voucherDate = new Date();
+    }
+    const dateStr = formatDate(voucherDate, 'MM-dd-yyyy', 'en-US');
+    const partyId = String(partyRaw);
+    const primaryUrl = `${EndpointConstant.FILLADVANCE}${partyId}&voucherId=${voucherId}&date=${dateStr}`;
+    const fallbackUrl = `${EndpointConstant.FILLADVANCE}${partyId}&voucherId=${voucherId}&drcr=D`;
+
+    const tryFallback = (): void => {
+      this.transactionService
+        .getDetails(fallbackUrl)
+        .pipe(takeUntil(this.destroySubscription))
+        .subscribe({
+          next: (res2: any) => {
+            this.finishAdvancePopupOpen(this.mapAdvanceApiToRows(res2?.data ?? []));
+          },
+          error: () => {
+            this.baseService.showCustomDialogue('Could not load advance bills');
+          },
+        });
+    };
+
+    this.transactionService
+      .getDetails(primaryUrl)
+      .pipe(takeUntil(this.destroySubscription))
+      .subscribe({
+        next: (response: any) => {
+          const rows = this.mapAdvanceApiToRows(response?.data ?? []);
+          if (rows.length === 0) {
+            tryFallback();
+          } else {
+            this.finishAdvancePopupOpen(rows);
+          }
+        },
+        error: () => tryFallback(),
+      });
+  }
+
+  private finishAdvancePopupOpen(rows: AdvanceBillRow[]): void {
+    if (rows.length === 0) {
+      this.baseService.showCustomDialogue('No pending Bills');
+      return;
+    }
+    this.advancePopupRows = rows;
+    this.showAdvancePopup = true;
+    this.cdr.markForCheck();
+  }
+
+  private mapAdvanceApiToRows(responseData: any[]): AdvanceBillRow[] {
+    if (!Array.isArray(responseData)) return [];
+    return responseData.map((item: any) => {
+      const invoiceAmount = Number(item.billAmount ?? item.invoiceAmount ?? 0);
+      const allocated = Number(item.allocated ?? 0);
+      const amount = Number(item.amount ?? 0);
+      return {
+        selection: !!item.selection,
+        invoiceNo: (item.vNo ?? item.invoiceNo ?? '').toString(),
+        invoiceDate: item.vDate
+          ? formatDate(new Date(item.vDate), 'dd/MM/yyyy', 'en-US')
+          : '',
+        partyInvNo: item.partyInvNo ?? null,
+        partyInvDate: item.partyInvDate
+          ? formatDate(new Date(item.partyInvDate), 'dd/MM/yyyy', 'en-US')
+          : null,
+        description: item.description ?? null,
+        account: item.account ?? null,
+        invoiceAmount,
+        allocated,
+        amount,
+        balance: Math.max(0, invoiceAmount - allocated),
+        vid: item.vid,
+        veid: item.veid,
+        accountID: item.accountID,
+        drCr: item.drCr,
+        vNo: item.vNo,
+      };
+    });
+  }
+
+  onAdvanceConfirmed(result: AdvancePopupResult): void {
+    this.showAdvancePopup = false;
+    const alloc = Number(result.allocatedAmount) || 0;
+    this.salesForm.patchValue({ advance: alloc.toFixed(4) }, { emitEvent: false });
+    this.selectedAdvanceData = result.selectedAdvanceData ?? [];
+    this.advancePopupRows = result.advanceData ?? [];
+    this.updateTotalPaid();
+    this.updateBalance();
+    this.cdr.markForCheck();
+  }
+
+  onAdvanceClosed(): void {
+    this.showAdvancePopup = false;
+    this.cdr.markForCheck();
   }
 }

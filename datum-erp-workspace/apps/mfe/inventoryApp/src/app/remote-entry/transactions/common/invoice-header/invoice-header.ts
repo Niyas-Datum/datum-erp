@@ -13,8 +13,8 @@ import {
   input,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { map, take, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject, firstValueFrom, forkJoin, of } from 'rxjs';
+import { catchError, map, take, takeUntil, tap } from 'rxjs/operators';
 import { TransactionService } from '../services/transaction.services';
 import { EndpointConstant } from '@org/constants';
 import { ItemService } from '../services/item.services';
@@ -112,6 +112,10 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   private projectPopupDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private customerPopupDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly popupDebounceMs = 300;
+
+  /** All three reference-popup API slices finished (or parallel preload completed). */
+  private referenceHeaderDatasetsReady = false;
+  private referenceHeaderSlices = { ref: false, vt: false, party: false };
   gridSettings: GridSettings = {
     allowEditing: false,
     allowAdding: false,
@@ -139,7 +143,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   // Transaction State
   selectedSalesId: number | null = null;
   currentSales: any;
-  selectedPartyId: string | number = 12230;
+  selectedPartyId: string | number = 0;
   defaultCustomer = 0;
   updatedCustomer = '';
   selectedCustomerObj: any = {};
@@ -157,7 +161,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   prevPayType: any;
 
   // Constants
-  readonly partyId: string | number = 12230;
+  readonly partyId: string | number = 0;
   readonly locId = 1;
   private currentVoucherNo = 23;
   private currentPageId = 149;
@@ -214,12 +218,14 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     this.subscribeToCurrentPageInfo();
     this.initForm();
     this.setupFormValueChanges();
+    this.subscribeVoucherDateToDataSharing();
+    this.subscribeWarehouseToDataSharing();
     this.subscribeToTransactionSelection();
     this.loadInitialData();
     // Mark component as initialized after a delay to prevent popup on load
     setTimeout(() => {
       this.isComponentInitialized = true;
-    }, 1000);
+    }, 200);
     
     // Track user interactions to distinguish from programmatic focus
     document.addEventListener('click', () => {
@@ -274,6 +280,39 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       });
   }
 
+  /** Keeps footer advance API and other consumers in sync with the active voucher date. */
+  private subscribeVoucherDateToDataSharing(): void {
+    const ctrl = this.salesForm.get('purchasedate');
+    ctrl?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((v) => {
+      this.dataSharingService.setVoucherTransactionDate(this.coerceToDate(v));
+    });
+    this.dataSharingService.setVoucherTransactionDate(this.coerceToDate(ctrl?.value));
+  }
+
+  /** Keeps item grid item-fill APIs in sync with the selected warehouse. */
+  private subscribeWarehouseToDataSharing(): void {
+    const ctrl = this.salesForm.get('warehouse');
+    const emit = (v: unknown) => {
+      if (v == null || v === '') {
+        this.dataSharingService.setSelectedWarehouseLocId(null);
+        return;
+      }
+      const id = Number(v);
+      this.dataSharingService.setSelectedWarehouseLocId(
+        Number.isFinite(id) && !Number.isNaN(id) && id > 0 ? id : null
+      );
+    };
+    ctrl?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(emit);
+    emit(ctrl?.value);
+  }
+
+  private coerceToDate(v: unknown): Date | null {
+    if (v == null || v === '') return null;
+    if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
+    const d = new Date(v as string | number);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
   private subscribeToTransactionSelection(): void {
     this.dataSharingService.selectedSalesId$
       .pipe(takeUntil(this.destroy$))
@@ -288,11 +327,55 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   private loadInitialData(): void {
+    this.resetReferenceHeaderDatasetTracking();
     this.fetchCommonFillData();
     this.fetchCustomer();
     this.fetchVoucherType();
     this.fetchReferenceData();
     this.fetchParty();
+  }
+
+  private resetReferenceHeaderDatasetTracking(): void {
+    this.referenceHeaderSlices = { ref: false, vt: false, party: false };
+    this.referenceHeaderDatasetsReady = false;
+  }
+
+  private markReferenceHeaderSliceDone(key: 'ref' | 'vt' | 'party'): void {
+    this.referenceHeaderSlices[key] = true;
+    if (
+      this.referenceHeaderSlices.ref &&
+      this.referenceHeaderSlices.vt &&
+      this.referenceHeaderSlices.party
+    ) {
+      this.referenceHeaderDatasetsReady = true;
+    }
+  }
+
+  /** Parallel load so the reference popup never opens with stale empty inputs. */
+  private loadReferenceDatasetsForPopupOnce(): Observable<unknown> {
+    const vid = this.currentVoucherNo;
+    const pageId = this.currentPageId;
+    return forkJoin({
+      ref: this.transactionService
+        .getDetails(`${EndpointConstant.FILLREFERENCEDATA}${vid}`)
+        .pipe(take(1), catchError(() => of({ data: [] }))),
+      vt: this.transactionService
+        .getDetails(`${EndpointConstant.FILLPURCHASEVOUCHERTYPE}${vid}`)
+        .pipe(take(1), catchError(() => of({ data: [] }))),
+      party: this.transactionService
+        .getDetails(
+          `${EndpointConstant.FILLPURCHASEPARTY}&voucherId=${vid}&pageId=${pageId}`
+        )
+        .pipe(take(1), catchError(() => of({ data: { customerData: [] } }))),
+    }).pipe(
+      tap(({ ref, vt, party }) => {
+        this.referenceFillData = ref?.data ?? [];
+        this.voucherTypeData = vt?.data ?? [];
+        this.partyData = this.mapPartyData(party?.data?.customerData ?? []);
+        this.referenceHeaderSlices = { ref: true, vt: true, party: true };
+        this.referenceHeaderDatasetsReady = true;
+      })
+    );
   }
 
   // ========== Data Fetching Methods ==========
@@ -364,8 +447,12 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       .subscribe({
         next: (response) => {
           this.referenceFillData = response?.data || [];
+          this.markReferenceHeaderSliceDone('ref');
         },
-        error: (error) => this.handleError('Error loading reference data', error),
+        error: (error) => {
+          this.handleError('Error loading reference data', error);
+          this.markReferenceHeaderSliceDone('ref');
+        },
       });
   }
 
@@ -376,8 +463,12 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       .subscribe({
         next: (response) => {
           this.voucherTypeData = response?.data || [];
+          this.markReferenceHeaderSliceDone('vt');
         },
-        error: (error) => this.handleError('Error loading voucher type', error),
+        error: (error) => {
+          this.handleError('Error loading voucher type', error);
+          this.markReferenceHeaderSliceDone('vt');
+        },
       });
   }
 
@@ -391,8 +482,12 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
         next: (response) => {
           this.partyData = this.mapPartyData(response?.data?.customerData || []);
           this.fetchDefaultCustomer();
+          this.markReferenceHeaderSliceDone('party');
         },
-        error: (error) => this.handleError('Error loading party data', error),
+        error: (error) => {
+          this.handleError('Error loading party data', error);
+          this.markReferenceHeaderSliceDone('party');
+        },
       });
   }
 
@@ -413,9 +508,13 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   fetchPartyBalance(): void {
-    if (!this.selectedPartyId) return;
+    const id = this.selectedPartyId;
+    if (id == null || id === '' || Number(id) === 0) {
+      this.partyBalance = '';
+      return;
+    }
 
-    const endpoint = `${EndpointConstant.FETCHPARTYBALANCE}${this.selectedPartyId}`;
+    const endpoint = `${EndpointConstant.FETCHPARTYBALANCE}${id}`;
 
     this.transactionService
       .getDetails(endpoint)
@@ -423,10 +522,19 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
       .subscribe({
         next: (response) => {
           const result = response?.data;
-          this.partyBalance =
-            result && result.length > 0
-              ? this.baseService.formatInput(result[0].stock)
-              : '';
+          const row = result?.[0];
+          if (!row) {
+            this.partyBalance = '';
+            return;
+          }
+          const raw =
+            row.stock ??
+            row.balance ??
+            row.accBalance ??
+            row.amount ??
+            row.partyBalance ??
+            0;
+          this.partyBalance = this.baseService.formatInput(raw);
         },
         error: (error) => {
           this.handleError('Error fetching party balance', error);
@@ -465,6 +573,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
             }
             if (salesmanName) {
               this.salesForm.patchValue({ salesman: salesmanName });
+              this.dataSharingService.setHeaderSalesmanName(salesmanName);
             }
           }
         },
@@ -566,24 +675,22 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   // ========== Default Value Setters ==========
 
   private setDefaultCustomer(): void {
-      const cashCustomer = this.customerData.find(
-        (c) => c.accountName === 'Cash Customer'
-      );
+    const cashCustomer = this.customerData.find(
+      (c) => c.accountName === 'Cash Customer'
+    );
 
-      if (cashCustomer) {
-        this.isSettingDefaultValues = true;
-        this.salesForm.patchValue({ customer: cashCustomer.accountName });
-        // Reset flag after a short delay to allow form to update
-        setTimeout(() => {
-          this.isSettingDefaultValues = false;
-        }, 100);
+    if (cashCustomer) {
+      this.onCustomerSelected(cashCustomer.id, false);
     }
-      }
+  }
 
   private setDefaultSalesman(responseData: any[]): void {
     if (responseData.length > 0) {
-        const salesmanName = responseData[0].salesman;
+      const salesmanName = responseData[0].salesman;
+      if (salesmanName) {
         this.salesForm.patchValue({ salesman: salesmanName });
+        this.dataSharingService.setHeaderSalesmanName(String(salesmanName));
+      }
     }
   }
 
@@ -603,14 +710,13 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   }
 
   private setVoucherData(): void {
-    const formattedDate = this.formatDate(this.today);
     this.voucherName = this.commonFillData?.vNo?.code || '';
     const voucherNo = this.formatVoucherNoByPageType(this.commonFillData?.vNo?.result || '');
 
     this.salesForm.patchValue({
       vouchername: this.voucherName,
       voucherno: voucherNo,
-      purchasedate: formattedDate,
+      purchasedate: new Date(this.today),
     });
 
     this.formVoucherNo = voucherNo;
@@ -621,9 +727,11 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   private clearForm(): void {
     if (this.salesForm) {
       this.salesForm.reset();
-      this.selectedPartyId = 12230;
-      this.dataSharingService.setSelectedPartyId(12230);
-      this.fetchSalesman(12230);
+      this.selectedPartyId = 0;
+      this.dataSharingService.setSelectedPartyId(null);
+      this.dataSharingService.setHeaderSalesmanName('');
+      this.partyBalance = '';
+      this.salesmanData = [];
     }
   }
 
@@ -665,7 +773,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     }
 
     if (transaction.date) {
-      formValues.purchasedate = this.formatDate(new Date(transaction.date));
+      formValues.purchasedate = new Date(transaction.date);
     }
 
     // Support both accountName (fillTransactions) and party (normalized API shape)
@@ -886,17 +994,49 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     }
   }
 
-  openSalesmanPopup(): void {
+  openSalesmanPopup(immediate = true): void {
+    const accountId = Number(this.selectedPartyId);
+    if (!accountId) {
+      this.baseService.showCustomDialogue('Select a customer first');
+      return;
+    }
+
     let initialSearch: string = (this.salesForm?.get('salesman')?.value ?? '').toString().trim();
     if (typeof this.salesForm?.get('salesman')?.value === 'object' && this.salesForm?.get('salesman')?.value != null) {
       const v = this.salesForm.get('salesman')?.value as any;
       initialSearch = (v?.name ?? v?.accountName ?? '').toString().trim();
     }
-    this.openPopup('salesman', this.salesmanData, {
-      allowEditing: false,
-      allowAdding: false,
-      allowDeleting: false,
-    }, initialSearch);
+
+    const doOpen = () => {
+      if (!this.salesmanData?.length) {
+        this.baseService.showCustomDialogue('No salesmen available for this customer');
+        return;
+      }
+      this.openPopup('salesman', this.salesmanData, {
+        allowEditing: false,
+        allowAdding: false,
+        allowDeleting: false,
+      }, initialSearch);
+    };
+
+    if (this.salesmanData?.length) {
+      doOpen();
+      return;
+    }
+
+    this.transactionService
+      .getDetails(`${EndpointConstant.FETCHSALESMAN}${accountId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.salesmanData = response?.data || [];
+          doOpen();
+        },
+        error: () => {
+          this.salesmanData = [];
+          this.baseService.showCustomDialogue('Could not load salesmen');
+        },
+      });
   }
 
   openReferencePopup(): void {
@@ -957,6 +1097,9 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
           selectedItem.accountName ||
           selectedItem.projectname;
         this.salesForm.patchValue({ [formControlName]: value });
+        if (type === 'salesman' && value) {
+          this.dataSharingService.setHeaderSalesmanName(String(value));
+        }
       }
     }
   }
@@ -987,6 +1130,9 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
         patch.salesman = customer.salesman;
       }
       this.salesForm.patchValue(patch);
+      if (patch.salesman) {
+        this.dataSharingService.setHeaderSalesmanName(String(patch.salesman));
+      }
       // Reset flag after a short delay
       if (!userInput) {
         setTimeout(() => {
@@ -1098,8 +1244,6 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
   // ========== Public Methods ==========
 
   public resetFormForNewMode(): void {
-    const formattedDate = this.formatDate(this.today);
-
     // Clear the form
     this.salesForm.reset({}, { emitEvent: false });
 
@@ -1114,20 +1258,22 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     const patchData: any = {
       vouchername: this.voucherName,
       voucherno: voucherNo,
-      purchasedate: formattedDate,
+      purchasedate: new Date(this.today),
     };
 
-    // Bind default customer: "Cash Customer"
+    this.salesForm.patchValue(patchData, { emitEvent: false });
+
     const cashCustomer = this.customerData.find(
       (c) => c.accountName === 'Cash Customer'
     );
-
     if (cashCustomer) {
-      patchData.customer = cashCustomer.accountName;
-      this.address = cashCustomer.address || '';
+      this.onCustomerSelected(cashCustomer.id, false);
+    } else {
+      this.selectedPartyId = 0;
+      this.dataSharingService.setSelectedPartyId(null);
+      this.dataSharingService.setHeaderSalesmanName('');
+      this.partyBalance = '';
     }
-
-    this.salesForm.patchValue(patchData, { emitEvent: false });
 
     this.bindDefaultWarehouse();
   }
@@ -1181,13 +1327,15 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     this.importedReferenceList = [];
     this.isReferenceImported = false;
 
-    // Ensure first-click open has data.
-    if (!this.referenceFillData || this.referenceFillData.length === 0) {
-      this.fetchReferenceData();
-      this.fetchVoucherType();
-      this.fetchParty();
+    if (!this.referenceHeaderDatasetsReady) {
+      try {
+        await firstValueFrom(this.loadReferenceDatasetsForPopupOnce());
+      } catch (e) {
+        console.error('Error loading reference popup data:', e);
+        return;
+      }
     }
-    
+
     try {
       const ref = await this.popupService.openLazy('reference', {
         referenceData: this.referenceFillData,
@@ -1196,7 +1344,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
         customerData: this.customerData,
         voucherNo: this.currentVoucherNo,
         pageId: this.currentPageId,
-        partyId: this.partyId,
+        partyId: this.selectedPartyId || this.partyId,
         locId: this.locId
       });
 

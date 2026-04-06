@@ -60,6 +60,43 @@
 //   background-color: #f9f9f9;
 // }
 
+.item-row-remove-btn {
+  min-width: 2rem;
+  line-height: 1.2;
+
+  .e-icons {
+    font-size: 1.1rem;
+  }
+}
+
+:host {
+  display: block;
+  position: relative;
+}
+
+.item-code-edit-wrap {
+  min-width: 8rem;
+}
+
+/* Floating list: position comes from itemSearchPanelStyle (fixed, viewport coords) */
+.item-search-floating-panel.item-search-panel {
+  pointer-events: auto;
+  min-width: min(280px, 92vw);
+}
+
+.item-search-panel-inner {
+  max-height: 220px;
+  overflow: auto;
+}
+
+.item-search-panel .table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 // .item-qty,
 // .item-rate {
 //   flex: 1;
