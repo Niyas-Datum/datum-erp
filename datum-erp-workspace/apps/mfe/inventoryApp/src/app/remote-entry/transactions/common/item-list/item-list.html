@@ -118,9 +118,12 @@
     </ejs-grid>
   </div>
 
-  @if (activeItemSearchRowId !== null) {
-  <div class="item-search-floating-panel item-search-panel shadow-sm border rounded bg-white" [ngStyle]="itemSearchPanelStyle"
-    (mousedown)="$event.preventDefault()" role="listbox" aria-label="Item search results">
+  <div #itemSearchFloating class="item-search-floating-panel item-search-panel shadow-sm border rounded bg-white"
+    [class.d-none]="activeItemSearchRowId === null"
+    [ngStyle]="activeItemSearchRowId !== null ? itemSearchPanelStyle : {}"
+    (mousedown)="$event.preventDefault()" role="listbox" aria-label="Item search results"
+    [attr.aria-hidden]="activeItemSearchRowId === null">
+    @if (activeItemSearchRowId !== null) {
     @if (itemSearchFilteredList().length === 0) {
     <div class="p-2 text-muted small">{{ itemSearchEmptyHint() }}</div>
     } @else {
@@ -149,6 +152,6 @@
       </table>
     </div>
     }
+    }
   </div>
-  }
 </div>

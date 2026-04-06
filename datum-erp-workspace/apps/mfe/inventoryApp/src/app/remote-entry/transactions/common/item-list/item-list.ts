@@ -5,6 +5,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   HostListener,
   inject,
   OnDestroy,
@@ -45,6 +46,11 @@ import { CommonService } from '../services/common.services';
 })
 export class ItemList implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('grid') public grid!: GridComponent;
+  @ViewChild('itemSearchFloating')
+  itemSearchFloating?: ElementRef<HTMLElement>;
+
+  /** Parent of the floating panel in the template; used to reparent back after opening on document.body. */
+  private itemSearchFloatingAnchorParent: HTMLElement | null = null;
 
   // Injected services
   private transactionService = inject(TransactionService);
@@ -270,6 +276,7 @@ public itemService = inject(ItemService);
   }
 
   ngOnDestroy(): void {
+    this.restoreItemSearchFloatingPanelToHost();
     document.removeEventListener('keydown', this.documentEnterHandler, true);
     document.removeEventListener('scroll', this.documentScrollReposition, true);
     this.detachGridScrollReposition();
@@ -450,8 +457,42 @@ public itemService = inject(ItemService);
     this.itemSearchQuery = query;
     this.itemSearchHighlightIndex = 0;
     this.isItemSearchPopupOpen = true;
+    // Hide until measured — avoids a flash in normal flow and avoids empty ngStyle (panel at page bottom).
+    this.itemSearchPanelStyle = {
+      position: 'fixed',
+      top: '-9999px',
+      left: '0',
+      width: '280px',
+      'max-height': '260px',
+      visibility: 'hidden',
+      'z-index': '10050',
+      'pointer-events': 'none',
+      'box-sizing': 'border-box',
+    };
     this.schedulePositionItemSearchPanel(rowId, anchor ?? null);
     this.cdr.markForCheck();
+  }
+
+  /** Reparent to document.body so position:fixed uses the viewport (shell/MFE transforms break fixed inside host). */
+  private ensureItemSearchFloatingOnBody(): void {
+    if (this.activeItemSearchRowId == null) return;
+    const el = this.itemSearchFloating?.nativeElement;
+    if (!el || el.parentElement === document.body) return;
+    if (!this.itemSearchFloatingAnchorParent) {
+      this.itemSearchFloatingAnchorParent = el.parentElement;
+    }
+    document.body.appendChild(el);
+  }
+
+  private restoreItemSearchFloatingPanelToHost(): void {
+    const el = this.itemSearchFloating?.nativeElement;
+    if (!el || el.parentElement !== document.body) return;
+    const p = this.itemSearchFloatingAnchorParent;
+    if (p?.isConnected) {
+      p.appendChild(el);
+    } else {
+      el.remove();
+    }
   }
 
   private schedulePositionItemSearchPanel(
@@ -459,6 +500,7 @@ public itemService = inject(ItemService);
     anchor?: HTMLElement | null
   ): void {
     const run = () => {
+      this.ensureItemSearchFloatingOnBody();
       const el =
         anchor ??
         this.itemSearchAnchorEl ??
@@ -475,7 +517,21 @@ public itemService = inject(ItemService);
 
   private positionItemSearchPanel(anchor: HTMLElement | null): void {
     if (!anchor || !anchor.isConnected) {
-      this.itemSearchPanelStyle = {};
+      if (this.activeItemSearchRowId != null) {
+        this.itemSearchPanelStyle = {
+          position: 'fixed',
+          top: '-9999px',
+          left: '0',
+          width: '280px',
+          'max-height': '260px',
+          visibility: 'hidden',
+          'z-index': '10050',
+          'pointer-events': 'none',
+          'box-sizing': 'border-box',
+        };
+      } else {
+        this.itemSearchPanelStyle = {};
+      }
       return;
     }
     const r = anchor.getBoundingClientRect();
@@ -513,6 +569,7 @@ public itemService = inject(ItemService);
       'z-index': '10050',
       overflow: 'hidden',
       'box-sizing': 'border-box',
+      visibility: 'visible',
     };
   }
 
@@ -521,6 +578,7 @@ public itemService = inject(ItemService);
       clearTimeout(this.itemSearchBlurTimer);
       this.itemSearchBlurTimer = null;
     }
+    this.restoreItemSearchFloatingPanelToHost();
     this.activeItemSearchRowId = null;
     this.itemSearchQuery = '';
     this.itemSearchHighlightIndex = 0;
