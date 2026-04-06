@@ -37,7 +37,7 @@
       {label:'Order Date', type:'date', control:'orderDate'},
       {label:'Party Name', type:'text', control:'partyName'},
       {label:'Party Address', type:'text', control:'partyAddress'},
-      {label:'Expiry Date', type:'date', control:'expiryDate'}
+      {label:'Expiry / Effective Date', type:'date', control:'expirydate'}
     ]">
 
             <div class="col-12 col-md-6 col-lg-3">
@@ -90,8 +90,9 @@
                 Salesman
               </label>
               <div class="col-12 col-lg-7">
-                <ejs-dropdownlist formControlName="salesman" [dataSource]="[{ text: 'Select', value: '1' }]"
-                  [fields]="{ text: 'text', value: 'value' }" width="100%">
+                <ejs-dropdownlist formControlName="salesman" [dataSource]="salesmanData"
+                  [fields]="{ text: 'name', value: 'name' }"
+                  (change)="onSalesmanDropdownChange($event)" width="100%" placeholder="Select salesman">
                 </ejs-dropdownlist>
               </div>
             </div>

@@ -169,7 +169,7 @@
             <label class="form-label mb-0 ">Advance</label>
             <div class="d-flex flex-grow-1 gap-1">
               <ejs-textbox formControlName="advance" class="flex-grow-1"></ejs-textbox>
-              <button class="btn btn-secondary btn-sm">...</button>
+              <button type="button" class="btn btn-secondary btn-sm" (click)="openAdvanceAllocationPopup()">...</button>
             </div>
           </div>
         </div>
@@ -222,3 +222,11 @@
 <app-paymentpopup *ngIf="showPopup" [popupData]="popupData" [bankData]="bankData" [popupType]="popupType"
   [grandTotal]="getGrandTotalForPopup()" (itemSelected)="onItemSelected($event)"
   (closePopup)="closePopup()"></app-paymentpopup>
+
+<app-advance-popup
+  *ngIf="showAdvancePopup"
+  [advanceRows]="advancePopupRows"
+  [crdrAmount]="getGrandTotalForAdvancePopup()"
+  (confirmed)="onAdvanceConfirmed($event)"
+  (closed)="onAdvanceClosed()">
+</app-advance-popup>

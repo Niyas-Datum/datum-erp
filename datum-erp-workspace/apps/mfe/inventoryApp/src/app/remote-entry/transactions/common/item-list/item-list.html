@@ -19,30 +19,27 @@
           </ng-template>
         </e-column>
 
-        <!-- 2. Item Code -->
-        <e-column field="itemCode" headerText="Item Code" width="160" editType="stringedit"
+        <!-- 2. Item Code (textbox + popup always in New/Edit; fixed panel avoids grid clip) -->
+        <e-column field="itemCode" headerText="Item Code" width="180" editType="stringedit"
           [allowEditing]="isNewMode() || isEditMode()">
+          <ng-template #itemCodeSearch let-data>
+            <div class="item-code-edit-wrap" [attr.data-item-row-id]="data.rowId">
+              <input type="text" class="form-control form-control-sm item-code-search-input"
+                [value]="data.itemCode ?? ''" (input)="onItemCodeInput($event, data)"
+                (focus)="onItemCodeFieldFocus($event, data)" (blur)="onItemCodeFieldBlur($event, data)"
+                (keydown)="onItemCodeKeyDown($event, data)" placeholder="Type to search…" autocomplete="off"
+                spellcheck="false" />
+            </div>
+          </ng-template>
           <ng-template #template let-data>
+            @if (isNewMode() || isEditMode()) {
+            <ng-container *ngTemplateOutlet="itemCodeSearch; context: {$implicit: data}"></ng-container>
+            } @else {
             {{ data.itemCode || '' }}
+            }
           </ng-template>
           <ng-template #editTemplate let-data>
-            <ejs-multicolumncombobox cssClass="item-search-combobox" [dataSource]="itemService.fillItemDataOptions()"
-              [fields]='{text: "itemCode", value: "itemCode"}' [showClearButton]="true" [allowFiltering]="true"
-              filterType="Contains" placeholder="Search Item..." popupWidth="100%" (change)="onItemSelect($event, data)"
-              (filtering)="onFiltering($event)" (keydown)="onKeyDown($event, data, 'itemCode')"
-              (focus)="onItemCodeFocus()" (open)="onItemSearchOpen($event)" (close)="onItemSearchClose()">
-
-              <e-columns>
-                <e-column field="itemCode" headerText="Item Code" width="120"></e-column>
-                <e-column field="itemName" headerText="Item Name" width="150"></e-column>
-                <e-column field="unitname" headerText="Unit" width="80"></e-column>
-                <e-column field="stock" headerText="Stock" width="80"></e-column>
-                <e-column field="rate" headerText="Rate" width="100" format="N2" type="number"></e-column>
-                <e-column field="purchaseRate" headerText="Purchase Rate" width="120" format="N2" type="number"></e-column>
-                <e-column field="taxPerc" headerText="Tax %" width="80" format="N2" type="number"></e-column>
-                <e-column field="barCode" headerText="Barcode" width="140"></e-column>
-              </e-columns>
-            </ejs-multicolumncombobox>
+            <ng-container *ngTemplateOutlet="itemCodeSearch; context: {$implicit: data}"></ng-container>
           </ng-template>
         </e-column>
 
@@ -64,13 +61,19 @@
         </e-column>
 
         <!-- Qty -->
-        <e-column field="qty" headerText="Qty" editType="numericedit" width="100"
+        <e-column field="qty" headerText="Qty" editType="numericedit" width="120"
           [allowEditing]="isNewMode() || isEditMode()">
-
-
+          <ng-template #template let-data>
+            <span>{{ data.qty }}</span>
+            <small *ngIf="stockQtyWarning(data)" class="d-block text-danger mt-1">{{ stockQtyWarning(data) }}</small>
+          </ng-template>
           <ng-template #editTemplate let-data>
-            <input class="form-control form-control-sm" type="number" [value]="data.qty"
-              (blur)="onQTYChange($event, data)" (keydown)="onKeyDown($event, data, 'qty')" placeholder="Qty" />
+            <div class="qty-edit-cell">
+              <input class="form-control form-control-sm" type="number" [value]="data.qty"
+                (input)="onQtyInput($event, data)" (blur)="onQTYChange($event, data)"
+                (keydown)="onKeyDown($event, data, 'qty')" placeholder="Qty" />
+              <small *ngIf="stockQtyWarning(data)" class="d-block text-danger mt-1">{{ stockQtyWarning(data) }}</small>
+            </div>
           </ng-template>
         </e-column>
 
@@ -100,7 +103,52 @@
 
         </e-column>
 
+        <!-- Remove row -->
+        <e-column headerText="" width="52" textAlign="Center" [allowEditing]="false">
+          <ng-template #template let-data>
+            <button *ngIf="isNewMode() || isEditMode()" type="button"
+              class="btn btn-link text-danger p-0 item-row-remove-btn" [attr.aria-label]="'Remove row'"
+              (click)="removeRow(data, $event)" title="Remove row">
+              <span class="e-icons e-trash" aria-hidden="true"></span>
+            </button>
+          </ng-template>
+        </e-column>
+
       </e-columns>
     </ejs-grid>
   </div>
+
+  @if (activeItemSearchRowId !== null) {
+  <div class="item-search-floating-panel item-search-panel shadow-sm border rounded bg-white" [ngStyle]="itemSearchPanelStyle"
+    (mousedown)="$event.preventDefault()" role="listbox" aria-label="Item search results">
+    @if (itemSearchFilteredList().length === 0) {
+    <div class="p-2 text-muted small">{{ itemSearchEmptyHint() }}</div>
+    } @else {
+    <div class="table-responsive item-search-panel-inner">
+      <table class="table table-sm table-hover mb-0 small">
+        <thead class="table-light">
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Unit</th>
+            <th class="text-end">Stock</th>
+            <th class="text-end">Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (it of itemSearchFilteredList(); track $index; let i = $index) {
+          <tr [class.table-active]="i === itemSearchHighlightIndex" (mousedown)="selectItemFromSearchPopup(it, $event)">
+            <td>{{ it.itemCode }}</td>
+            <td>{{ it.itemName }}</td>
+            <td>{{ it.unitname }}</td>
+            <td class="text-end">{{ it.stock }}</td>
+            <td class="text-end">{{ it.rate | number:'1.2-2' }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+  </div>
+  }
 </div>

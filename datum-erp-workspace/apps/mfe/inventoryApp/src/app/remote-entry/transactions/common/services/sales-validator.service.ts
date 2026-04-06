@@ -65,7 +65,7 @@ export class SalesValidatorService {
     
     // Required: purchasedate, customer, warehouse
     // Project is optional
-    this.required(header?.purchasedate, 'header', 'purchasedate', 'Purchase Date is required.', errors);
+    this.required(header?.purchasedate, 'header', 'purchasedate', 'Date is required.', errors);
     this.required(header?.customer, 'header', 'customer', 'Customer is required.', errors);
     this.required(header?.warehouse, 'header', 'warehouse', 'Warehouse is required.', errors);
     // this.required(header?.project, 'header', 'project', 'Project is required.', errors);
@@ -180,6 +180,13 @@ export class SalesValidatorService {
   private required(v: any, scope: ValidationError['scope'], field: string, message: string, errors: ValidationError[]) {
     // Check if value is empty
     if (v === null || v === undefined) {
+      errors.push({ scope, field, message });
+      return;
+    }
+
+    // Date from header datepicker: Object.keys(new Date()) is [] so never treat as "empty object"
+    if (v instanceof Date) {
+      if (!isNaN(v.getTime())) return;
       errors.push({ scope, field, message });
       return;
     }

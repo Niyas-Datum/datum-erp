@@ -50,13 +50,8 @@ export class InventoryPopupService {
       return;
     }
 
-    let popupComponent: Type<any>;
-      const moduleObj = await Inventoryloader();
-     popupComponent= moduleObj.component;
-  if (Inventoryloader) {  
     const moduleObj = await Inventoryloader();
-     popupComponent= moduleObj.component;
-    }
+    const popupComponent: Type<any> = moduleObj.component;
 
     if (this.container) {
       const { compRef, afterClosed$ } = await this.openComponent(popupComponent, inputs);

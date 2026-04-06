@@ -166,6 +166,15 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
           this.deliveryLocationData = [];
         }
       });
+
+    this.dataSharingService.headerSalesmanName$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((name) => {
+        const n = (name ?? '').toString().trim();
+        if (!n) return;
+        this.updatedSalesman = n;
+        this.additionalDetailsForm.patchValue({ salesman: n }, { emitEvent: false });
+      });
   }
 
   private updateFormControls(isEnabled: boolean): void {
@@ -256,12 +265,7 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.salesmanData = response?.data || [];
-          if (this.salesmanData.length > 0) {
-            const firstSalesman = (this.salesmanData[0] as any)?.name ?? '';
-            this.updatedSalesman = firstSalesman;
-            this.additionalDetailsForm.patchValue({ salesman: firstSalesman });
-            this.emitFormChanges();
-          }
+          // Do not overwrite salesman: header + customer mapping owns the default via headerSalesmanName$.
         },
         error: (error) => {
           console.error('Error fetching salesman:', error);
@@ -323,6 +327,14 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
     const option = event?.target?.value ?? event ?? '';
     this.updatedSalesman = option;
     this.additionalDetailsForm.patchValue({ salesman: option });
+    this.emitFormChanges();
+  }
+
+  onSalesmanDropdownChange(e: any): void {
+    const name = (e?.itemData?.name ?? e?.value ?? '').toString();
+    this.updatedSalesman = name;
+    this.additionalDetailsForm.patchValue({ salesman: name });
+    this.dataSharingService.setHeaderSalesmanName(name);
     this.emitFormChanges();
   }
 
@@ -394,7 +406,7 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
     const partyInvDate = fillAdditionals.partyInvoiceDate ?? fillAdditionals.entryDate;
     const formData: any = {
       partyInvoiceNo: partyInvNoStr,
-      partyInvoiceDate: partyInvDate ? this.formatDateForInput(partyInvDate) : '',
+      partyInvoiceDate: partyInvDate ? new Date(partyInvDate) : null,
       invoiceno: fillAdditionals.entryNo || '',
       invoicedate: fillAdditionals.entryDate ? new Date(fillAdditionals.entryDate) : null,
       orderno: fillAdditionals.referenceNo || '',
@@ -411,9 +423,17 @@ export class AdditionalDetailsComponent implements OnInit, OnDestroy {
       vehicleno: fillAdditionals.vehicleNo || fillAdditionals.vehicleID || '',
       attention: fillAdditionals.bankAddress || fillAdditionals.attention || '',
       deliverynote: fillAdditionals.passNo || fillAdditionals.deliveryNote || '',
-      deliverydate: fillAdditionals.submitDate || fillAdditionals.deliveryDate ? new Date(fillAdditionals.deliveryDate) : null,
+      deliverydate: fillAdditionals.submitDate
+        ? new Date(fillAdditionals.submitDate)
+        : fillAdditionals.deliveryDate
+          ? new Date(fillAdditionals.deliveryDate)
+          : null,
       dispatchno: fillAdditionals.documentNo || fillAdditionals.despatchNo || '',
-      dispatchdate: fillAdditionals.documentDate || fillAdditionals.despatchDate ? new Date(fillAdditionals.despatchDate) : null,
+      dispatchdate: fillAdditionals.documentDate
+        ? new Date(fillAdditionals.documentDate)
+        : fillAdditionals.despatchDate
+          ? new Date(fillAdditionals.despatchDate)
+          : null,
       deliverypartyname: fillAdditionals.partyName || '',
       addressline1: fillAdditionals.address1 || fillAdditionals.addressLine1 || '',
       addressline2: fillAdditionals.address2 || fillAdditionals.addressLine2 || '',

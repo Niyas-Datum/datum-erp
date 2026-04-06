@@ -2,21 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import {
+  AfterViewInit,
+  ChangeDetectorRef,
   Component,
+  HostListener,
   inject,
   OnDestroy,
   OnInit,
   input,
   computed,
   ViewChild,
-  ViewChildren,
-  QueryList,
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil, finalize } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { BaseService, DataSharingService } from '@org/services';
 import { EndpointConstant } from '@org/constants';
@@ -29,11 +30,6 @@ import {
   ToolbarService,
   GridComponent,
 } from '@syncfusion/ej2-angular-grids';
-import {
-  MultiColumnComboBoxModule,
-  MultiColumnComboBoxComponent,
-} from '@syncfusion/ej2-angular-multicolumn-combobox';
-import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 
 import { TransactionService } from '../services/transaction.services';
 import { TransactionsComponent } from '../../transactions-component';
@@ -42,20 +38,20 @@ import { CommonService } from '../services/common.services';
 
 @Component({
   selector: 'app-item-list',
-  imports: [CommonModule, GridModule, MultiColumnComboBoxModule, FormsModule],
+  imports: [CommonModule, GridModule, FormsModule],
   templateUrl: './item-list.html',
   styleUrl: './item-list.scss',
   providers: [FilterService, VirtualScrollService, EditService, ToolbarService],
 })
-export class ItemList implements OnInit, OnDestroy {
+export class ItemList implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('grid') public grid!: GridComponent;
-  @ViewChildren(MultiColumnComboBoxComponent) private itemCodeCombos!: QueryList<MultiColumnComboBoxComponent>;
 
   // Injected services
   private transactionService = inject(TransactionService);
   private transactionsComponent = inject(TransactionsComponent);
   private dataSharingService = inject(DataSharingService);
   private baseService = inject(BaseService);
+  private readonly cdr = inject(ChangeDetectorRef);
 public commonService = inject(CommonService);
 public itemService = inject(ItemService);
 
@@ -76,10 +72,37 @@ public itemService = inject(ItemService);
   /** Set true after we auto-focus Item Code on New Mode load so we don't refocus repeatedly. */
   private hasAutoFocusedItemCodeInNewMode = false;
 
-  /** True while the Item Search (multicolumn combobox) dropdown list is open. Enter must select item, not create row. */
+  /** True while the item search suggestion panel is open (textbox + popup). */
   private isItemSearchPopupOpen = false;
 
-  /** Capture-phase handler: prevent form submit on Enter when popup is open; do not stopPropagation so combobox still receives Enter to select item. */
+  /** Row currently showing the item search popup (Item Code textbox). */
+  activeItemSearchRowId: number | null = null;
+  itemSearchQuery = '';
+  itemSearchHighlightIndex = 0;
+  private itemSearchBlurTimer: ReturnType<typeof setTimeout> | null = null;
+  private itemSearchSelecting = false;
+
+  private readonly itemSearchMaxResults = 150;
+
+  /** Fixed-position panel (rendered outside the grid to avoid transform/containing-block issues). */
+  itemSearchPanelStyle: Record<string, string> = {};
+
+  /** Input that opened the popup — used for positioning (avoids wrong querySelector when DOM has duplicates). */
+  private itemSearchAnchorEl: HTMLElement | null = null;
+
+  private readonly documentScrollReposition = (): void => {
+    if (this.activeItemSearchRowId != null) {
+      this.schedulePositionItemSearchPanel(this.activeItemSearchRowId);
+    }
+  };
+
+  private gridScrollHandler = (): void => {
+    if (this.activeItemSearchRowId != null) {
+      this.schedulePositionItemSearchPanel(this.activeItemSearchRowId);
+    }
+  };
+
+  /** Capture-phase: prevent form submit on Enter while choosing from item popup. */
   private documentEnterHandler = (event: KeyboardEvent): void => {
     if (this.isItemSearchPopupOpen && event.key === 'Enter') {
       event.preventDefault();
@@ -190,6 +213,7 @@ public itemService = inject(ItemService);
   ngOnInit(): void {
     // Prevent Enter from submitting form / refreshing page when Item Search popup is open (capture = before form).
     document.addEventListener('keydown', this.documentEnterHandler, true);
+    document.addEventListener('scroll', this.documentScrollReposition, true);
 
     // Subscribe to currentPageInfo to get dynamic pageId and voucherId
     this.subscribeToCurrentPageInfo();
@@ -236,15 +260,42 @@ public itemService = inject(ItemService);
       const emptyRow = updatedRows.find((r: any) => !(r?.itemCode ?? '').toString().trim());
       if (emptyRow) {
         this.moveToNextColumn(emptyRow.rowId, 'itemCode');
-        this.onItemCodeFocus();
+        setTimeout(() => this.focusItemCodeInput(emptyRow.rowId), 160);
       }
     }, 120);
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => this.attachGridScrollReposition(), 0);
+  }
+
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.documentEnterHandler, true);
+    document.removeEventListener('scroll', this.documentScrollReposition, true);
+    this.detachGridScrollReposition();
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (this.activeItemSearchRowId != null) {
+      this.schedulePositionItemSearchPanel(this.activeItemSearchRowId);
+    }
+  }
+
+  private attachGridScrollReposition(): void {
+    const root = this.grid?.element as HTMLElement | undefined;
+    root
+      ?.querySelector('.e-content')
+      ?.addEventListener('scroll', this.gridScrollHandler, { passive: true });
+  }
+
+  private detachGridScrollReposition(): void {
+    const root = this.grid?.element as HTMLElement | undefined;
+    root
+      ?.querySelector('.e-content')
+      ?.removeEventListener('scroll', this.gridScrollHandler);
   }
 
   /**
@@ -267,67 +318,300 @@ public itemService = inject(ItemService);
   }
 
   /**
-   * Preload item master in background to avoid first-open "No records found" flash in combobox.
+   * Preload item master when page/voucher + header customer/warehouse are available.
+   * Avoids hardcoded party/loc overwriting the header-driven item list.
    */
   private preloadItemMasterData(): void {
-    if (this.itemMasterPreloaded) return;
     if (this.itemService.fillItemDataOptions().length > 0) {
       this.itemMasterPreloaded = true;
       return;
     }
     if (!this.currentPageId || !this.currentVoucherId) return;
+    const p = this.resolveItemFetchParams();
+    if (!p) return;
+    if (this.itemMasterPreloaded) return;
     this.itemMasterPreloaded = true;
     setTimeout(() => {
-      this.itemService.fetchItemsWithParams(this.currentPageId!, 1, this.currentVoucherId!, 12230);
+      this.itemService.fetchItemsWithParams(
+        p.pageId,
+        p.locId,
+        p.voucherId,
+        p.partyId
+      );
     }, 200);
   }
 
+  private resolveItemFetchParams(): {
+    pageId: number;
+    locId: number;
+    voucherId: number;
+    partyId: number;
+  } | null {
+    if (this.currentPageId == null || this.currentVoucherId == null) return null;
+    const pageId = Number(this.currentPageId);
+    const voucherId = Number(this.currentVoucherId);
+    const partyRaw = this.dataSharingService.getCurrentSelectedPartyId();
+    const locRaw = this.dataSharingService.getCurrentSelectedWarehouseLocId();
+    const partyId = Number(partyRaw);
+    const locId = Number(locRaw);
+    if (
+      partyRaw == null ||
+      partyRaw === '' ||
+      Number.isNaN(partyId) ||
+      partyId <= 0
+    ) {
+      return null;
+    }
+    if (
+      locRaw == null ||
+      locRaw === '' ||
+      Number.isNaN(locId) ||
+      locId <= 0
+    ) {
+      return null;
+    }
+    return { pageId, locId, voucherId, partyId };
+  }
+
   /** -------------------- Data Fetching -------------------- **/
-  
-  /**
-   * Opens the item search popup when the Item Code field receives focus (click or Tab).
-   * This restores the behavior where typing in Item Code shows the search list.
-   */
-  onItemCodeFocus(): void {
-    setTimeout(() => {
-      const combo = this.getActiveItemCodeCombo();
-      if (combo && typeof (combo as any).showPopup === 'function') {
-        (combo as any).showPopup();
-      }
-    }, 0);
+
+  isItemSearchOpenForRow(rowId: number): boolean {
+    return this.activeItemSearchRowId === rowId;
   }
 
-  /**
-   * Lazy loads items when user opens the item search dropdown and ensures popup is visible above header/tabs.
-   * This improves initial page load performance by only loading items when needed.
-   */
-  onItemSearchOpen(args?: any): void {
+  itemSearchFilteredList(): any[] {
+    return this.filterItemsByQuery(this.itemSearchQuery).slice(
+      0,
+      this.itemSearchMaxResults
+    );
+  }
+
+  private filterItemsByQuery(query: string): any[] {
+    const q = query.toLowerCase().trim();
+    const data = this.itemService.fillItemDataOptions();
+    if (!data?.length) return [];
+    if (!q) return [...data].slice(0, this.itemSearchMaxResults);
+    return (
+      data.filter(
+        (item: any) =>
+          item?.itemCode?.toLowerCase().includes(q) ||
+          item?.itemName?.toLowerCase().includes(q) ||
+          item?.barCode?.toLowerCase().includes(q) ||
+          String(item?.stock ?? '')
+            .toLowerCase()
+            .includes(q)
+      ) || []
+    );
+  }
+
+  private ensureItemsLoadedForSearch(): void {
+    if (this.itemService.fillItemDataOptions().length > 0) return;
+    const p = this.resolveItemFetchParams();
+    if (!p) return;
+    this.itemService.fetchItemsWithParams(
+      p.pageId,
+      p.locId,
+      p.voucherId,
+      p.partyId
+    );
+  }
+
+  itemSearchEmptyHint(): string {
+    if (!this.resolveItemFetchParams()) {
+      return 'Select customer and warehouse in the header to load items.';
+    }
+    if (!this.itemService.fillItemDataOptions().length) {
+      return 'Loading items…';
+    }
+    return 'No matching items. Keep typing to filter.';
+  }
+
+  /** Row object for the active item search (popup is rendered outside the cell). */
+  getActiveItemSearchRowData(): any | null {
+    const id = this.activeItemSearchRowId;
+    if (id == null) return null;
+    return (
+      this.commonService
+        .tempItemFillDetails()
+        .find((r: any) => r.rowId === id) ?? null
+    );
+  }
+
+  private openItemSearchForRow(
+    rowId: number,
+    query: string,
+    anchor?: HTMLElement | null
+  ): void {
+    this.ensureItemsLoadedForSearch();
+    if (anchor) {
+      this.itemSearchAnchorEl = anchor;
+    }
+    this.activeItemSearchRowId = rowId;
+    this.itemSearchQuery = query;
+    this.itemSearchHighlightIndex = 0;
     this.isItemSearchPopupOpen = true;
-
-    // Ensure item search dropdown appears above header, tabs, and other content
-    if (args?.popup) {
-      args.popup.zIndex = 9999;
-    }
-
-    // Check if items are already loaded
-    if (this.itemService.fillItemDataOptions().length > 0) {
-      return;
-    }
-
-    // Only load if we have valid pageId and voucherId
-    if (!this.currentPageId || !this.currentVoucherId) {
-      return;
-    }
-
-    // Lazy load items when user opens the search dropdown
-    this.itemService.fetchItemsWithParams(this.currentPageId, 1, this.currentVoucherId, 12230);
+    this.schedulePositionItemSearchPanel(rowId, anchor ?? null);
+    this.cdr.markForCheck();
   }
 
-  /**
-   * Called when the Item Search dropdown closes. Ensures Enter is not interpreted as "next row" while list is open.
-   */
-  public onItemSearchClose(): void {
+  private schedulePositionItemSearchPanel(
+    rowId: number,
+    anchor?: HTMLElement | null
+  ): void {
+    const run = () => {
+      const el =
+        anchor ??
+        this.itemSearchAnchorEl ??
+        (document.querySelector(
+          `[data-item-row-id="${rowId}"] .item-code-search-input`
+        ) as HTMLElement | null);
+      this.positionItemSearchPanel(el);
+      this.cdr.markForCheck();
+    };
+    requestAnimationFrame(() => {
+      requestAnimationFrame(run);
+    });
+  }
+
+  private positionItemSearchPanel(anchor: HTMLElement | null): void {
+    if (!anchor || !anchor.isConnected) {
+      this.itemSearchPanelStyle = {};
+      return;
+    }
+    const r = anchor.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const margin = 6;
+    const preferredMaxH = 260;
+    const minW = 280;
+
+    let panelW = Math.max(r.width, minW);
+    panelW = Math.min(panelW, vw - 16);
+
+    let left = r.left;
+    left = Math.min(Math.max(margin, left), vw - panelW - margin);
+
+    const spaceBelow = vh - r.bottom - margin;
+    const spaceAbove = r.top - margin;
+    let top: number;
+    let maxH: number;
+
+    if (spaceBelow >= 100 || spaceBelow >= spaceAbove) {
+      top = Math.round(r.bottom + margin);
+      maxH = Math.min(preferredMaxH, Math.max(80, spaceBelow - margin));
+    } else {
+      maxH = Math.min(preferredMaxH, Math.max(80, spaceAbove - margin));
+      top = Math.round(Math.max(margin, r.top - maxH - margin));
+    }
+
+    this.itemSearchPanelStyle = {
+      position: 'fixed',
+      top: `${top}px`,
+      left: `${Math.round(left)}px`,
+      width: `${Math.round(panelW)}px`,
+      'max-height': `${Math.round(maxH)}px`,
+      'z-index': '10050',
+      overflow: 'hidden',
+      'box-sizing': 'border-box',
+    };
+  }
+
+  closeItemSearchPopup(): void {
+    if (this.itemSearchBlurTimer) {
+      clearTimeout(this.itemSearchBlurTimer);
+      this.itemSearchBlurTimer = null;
+    }
+    this.activeItemSearchRowId = null;
+    this.itemSearchQuery = '';
+    this.itemSearchHighlightIndex = 0;
     this.isItemSearchPopupOpen = false;
+    this.itemSearchPanelStyle = {};
+    this.itemSearchAnchorEl = null;
+  }
+
+  onItemCodeInput(event: Event, data: any): void {
+    const input = event.target as HTMLInputElement;
+    const v = input?.value ?? '';
+    data.itemCode = v;
+    this.patchRowItemCode(data);
+    this.openItemSearchForRow(data.rowId, v, input);
+  }
+
+  onItemCodeFieldFocus(event: FocusEvent, data: any): void {
+    if (this.itemSearchBlurTimer) {
+      clearTimeout(this.itemSearchBlurTimer);
+      this.itemSearchBlurTimer = null;
+    }
+    const input = event.target as HTMLInputElement;
+    const v = (input?.value ?? data.itemCode ?? '').toString();
+    this.openItemSearchForRow(data.rowId, v, input);
+  }
+
+  onItemCodeFieldBlur(event: FocusEvent, data: any): void {
+    if (this.itemSearchBlurTimer) clearTimeout(this.itemSearchBlurTimer);
+    this.itemSearchBlurTimer = setTimeout(() => {
+      this.itemSearchBlurTimer = null;
+      if (this.itemSearchSelecting) {
+        this.itemSearchSelecting = false;
+        return;
+      }
+      this.closeItemSearchPopup();
+      const input = event.target as HTMLInputElement;
+      const text = (input?.value ?? data.itemCode ?? '').toString().trim();
+      data.itemCode = text;
+      this.patchRowItemCode(data);
+      if (!text) return;
+      if (!this.itemService.fillItemDataOptions().length) return;
+      const exact = this.findExactMasterItem(text);
+      if (exact) {
+        this.applyItemMasterSelection(this.normalizeSelectedItem(exact), data);
+      } else {
+        this.clearRowAsInvalidItem(data);
+      }
+    }, 200);
+  }
+
+  selectItemFromSearchPopup(item: any, ev: MouseEvent): void {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const data = this.getActiveItemSearchRowData();
+    if (!data) return;
+    this.itemSearchSelecting = true;
+    const normalized = this.normalizeSelectedItem({ ...item });
+    this.applyItemMasterSelection(normalized, data);
+    this.closeItemSearchPopup();
+  }
+
+  private findExactMasterItem(text: string): any | null {
+    const t = text.trim();
+    if (!t) return null;
+    const options = this.itemService.fillItemDataOptions();
+    return (
+      options.find(
+        (item: any) =>
+          (item.itemCode || '').toString().trim() === t ||
+          (item.itemName || '').toString().trim() === t
+      ) ?? null
+    );
+  }
+
+  private patchRowItemCode(data: any): void {
+    const rows = [...this.commonService.tempItemFillDetails()];
+    const i = rows.findIndex((r: any) => r.rowId === data.rowId);
+    if (i === -1) return;
+    rows[i] = { ...rows[i], itemCode: data.itemCode };
+    this.commonService.tempItemFillDetails.set(rows);
+  }
+
+  focusItemCodeInput(rowId: number): void {
+    setTimeout(() => {
+      const wrap = document.querySelector(`[data-item-row-id="${rowId}"]`);
+      const input = wrap?.querySelector(
+        'input.item-code-search-input'
+      ) as HTMLInputElement | null;
+      input?.focus();
+      input?.select?.();
+    }, 160);
   }
 
   private fetchPurchaseById(): void {
@@ -343,25 +627,10 @@ public itemService = inject(ItemService);
   }
 
   /** -------------------- Grid Edit Handlers -------------------- **/
-  onItemSelect(args: any, data: any): void {
-    const value = (args?.value ?? args?.itemData?.itemCode ?? args?.itemData?.itemName ?? '').toString().trim();
-    const options = this.itemService.fillItemDataOptions();
-    // Resolve selected item from master only (so typed "test1" with no match shows invalid)
-    let selectedItem: any = null;
-    if (args?.itemData && typeof args.itemData === 'object' && (args.itemData.itemCode != null || args.itemData.itemName != null)) {
-      const code = (args.itemData.itemCode ?? args.itemData.itemName ?? '').toString().trim();
-      selectedItem = options.find((item: any) =>
-        (item.itemCode || '') === code || (item.itemName || '') === code
-      ) ?? null;
-      if (selectedItem) selectedItem = this.normalizeSelectedItem({ ...selectedItem, ...args.itemData });
-    }
-    if (!selectedItem && value) {
-      selectedItem = options.find((item: any) =>
-        (item.itemCode || item.itemName || '') === value
-      ) ?? null;
-      if (selectedItem) selectedItem = this.normalizeSelectedItem(selectedItem);
-    }
-
+  /**
+   * Applies a resolved item-master row to the grid line (popup click, Enter, or exact blur match).
+   */
+  applyItemMasterSelection(selectedItem: any, data: any): void {
     if (selectedItem) {
       // Check if the same item already exists in the grid (same itemId and unit)
       const currentItems = this.commonService.tempItemFillDetails();
@@ -378,7 +647,9 @@ public itemService = inject(ItemService);
       if (existingItem) {
         // Item already exists - increase quantity instead of adding new row
         existingItem.qty = (existingItem.qty || 0) + 1;
-        
+        if (existingItem.availableStock == null) {
+          existingItem.availableStock = this.parseStock(selectedItem.stock);
+        }
         // Recalculate totals for existing item
         const taxPerc = selectedItem.taxPerc || existingItem.taxPerc || 0;
         this.calculateRowTotals(existingItem, taxPerc);
@@ -395,6 +666,7 @@ public itemService = inject(ItemService);
           amount: 0,
           taxValue: 0,
           totalAmount: 0,
+          availableStock: null,
         });
         
         setTimeout(() => {
@@ -422,6 +694,7 @@ public itemService = inject(ItemService);
           qty: 1,
           rate: selectedItem.rate,
           taxPerc: selectedItem.taxPerc ?? 0,
+          availableStock: this.parseStock(selectedItem.stock),
         });
         this.calculateRowTotals(data, selectedItem.taxPerc ?? 0);
         this.updateRowInGrid(data);
@@ -431,33 +704,33 @@ public itemService = inject(ItemService);
           this.moveToNextColumn(data.rowId, 'qty');
         }, 100);
       }
-    } else {
-      // Invalid entry: not in item master - show error and clear field
-      if (value) {
-        this.baseService.showCustomDialoguePopup(
-          'Entered item is not in item master. Please select a valid item.',
-          'Invalid Entry',
-          'WARN'
-        );
-        Object.assign(data, {
-          itemId: '',
-          itemCode: '',
-          itemName: '',
-          unit: '',
-          qty: 0,
-          rate: 0,
-          amount: 0,
-          taxValue: 0,
-          totalAmount: 0,
-        });
-        this.updateRowInGrid(data);
-      }
-      setTimeout(() => {
-        this.grid.endEdit();
-        this.itemService.addNewRow();
-        this.refreshGridAfterRowChange();
-      }, 100);
     }
+  }
+
+  private clearRowAsInvalidItem(data: any): void {
+    this.baseService.showCustomDialoguePopup(
+      'Entered item is not in item master. Please select a valid item.',
+      'Invalid Entry',
+      'WARN'
+    );
+    Object.assign(data, {
+      itemId: '',
+      itemCode: '',
+      itemName: '',
+      unit: '',
+      qty: 0,
+      rate: 0,
+      amount: 0,
+      taxValue: 0,
+      totalAmount: 0,
+      availableStock: null,
+    });
+    this.updateRowInGrid(data);
+    setTimeout(() => {
+      this.grid.endEdit();
+      this.itemService.addNewRow();
+      this.refreshGridAfterRowChange();
+    }, 100);
   }
 
   /** Ensures the grid re-renders after tempItemFillDetails is updated (e.g. new row added). */
@@ -492,6 +765,83 @@ public itemService = inject(ItemService);
       : (data?.qty != null ? parseFloat(String(data.qty)) : 0);
     data.qty = qty;
     this.recalculateAndUpdateRow(data);
+  }
+
+  /** Live stock warning while typing in Qty (totals recalc on blur). */
+  onQtyInput(event: any, data: any): void {
+    const raw = event?.target?.value;
+    const qty =
+      raw === '' || raw == null ? 0 : parseFloat(String(raw)) || 0;
+    data.qty = qty;
+    this.patchRowQty(data);
+  }
+
+  /** Shown under Qty when master/row has stock and qty is higher. */
+  stockQtyWarning(data: any): string {
+    const avail = this.getAvailableStockForRow(data);
+    const qty = parseFloat(String(data?.qty)) || 0;
+    if (avail == null) return '';
+    if (qty > avail) {
+      return `Qty exceeds available stock (${avail}).`;
+    }
+    return '';
+  }
+
+  removeRow(data: any, $event?: Event): void {
+    $event?.stopPropagation();
+    if (!this.isNewMode() && !this.isEditMode()) return;
+
+    const rows = this.commonService.tempItemFillDetails();
+    const next = rows.filter((r: any) => r.rowId !== data.rowId);
+    this.commonService.newlyAddedRows.update((ids) =>
+      ids.filter((id) => id !== data.rowId)
+    );
+
+    if (next.length === 0) {
+      this.commonService.tempItemFillDetails.set([]);
+      this.itemService.addNewRow();
+    } else {
+      this.commonService.tempItemFillDetails.set(next);
+      this.commonService.assignRowIds();
+    }
+
+    this.dataSharingService.triggerRecalculateTotal$.next();
+    this.dataSharingService.triggerRTaxValueTotal$.next();
+    this.dataSharingService.triggerNetAmountTotal$.next();
+    this.dataSharingService.triggerGrossAmountTotal$.next();
+    this.refreshGridAfterRowChange();
+  }
+
+  private parseStock(v: unknown): number | null {
+    if (v == null || v === '') return null;
+    const n = parseFloat(String(v).replace(/,/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  /** Resolves available quantity from row snapshot or current item master. */
+  private getAvailableStockForRow(data: any): number | null {
+    const rowVal = data?.availableStock;
+    if (rowVal != null && rowVal !== '' && Number.isFinite(Number(rowVal))) {
+      return Number(rowVal);
+    }
+    const code = (data?.itemCode ?? '').toString().trim();
+    if (!code) return null;
+    const m = this.itemService
+      .fillItemDataOptions()
+      .find(
+        (i: any) =>
+          (i.itemCode || '').toString().trim() === code ||
+          (i.itemName || '').toString().trim() === code
+      );
+    return m ? this.parseStock(m.stock) : null;
+  }
+
+  private patchRowQty(data: any): void {
+    const rows = [...this.commonService.tempItemFillDetails()];
+    const i = rows.findIndex((r: any) => r.rowId === data.rowId);
+    if (i === -1) return;
+    rows[i] = { ...rows[i], qty: data.qty };
+    this.commonService.tempItemFillDetails.set(rows);
   }
 
   onRateChange(event: any, data: any): void {
@@ -547,6 +897,9 @@ public itemService = inject(ItemService);
       (item.itemCode || '') === (data?.itemName ?? '')
     );
     const taxPerc = selectedItem?.taxPerc ?? data?.taxPerc ?? 0;
+    if (data.availableStock == null && selectedItem) {
+      data.availableStock = this.parseStock(selectedItem.stock);
+    }
     this.calculateRowTotals(data, taxPerc);
     this.updateRowInGrid(data);
   }
@@ -594,31 +947,85 @@ public itemService = inject(ItemService);
 
 
   /** -------------------- Keyboard Navigation -------------------- **/
-  onKeyDown(event: KeyboardEvent, data: any, currentField: string): void {
-    if (currentField === 'itemCode') {
-      this.handleItemCodeTyping(event);
+  onItemCodeKeyDown(event: KeyboardEvent, data: any): void {
+    const list =
+      this.activeItemSearchRowId === data.rowId
+        ? this.itemSearchFilteredList()
+        : [];
+    if (this.activeItemSearchRowId === data.rowId && list.length > 0) {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        this.itemSearchHighlightIndex = Math.min(
+          this.itemSearchHighlightIndex + 1,
+          list.length - 1
+        );
+        this.cdr.markForCheck();
+        this.schedulePositionItemSearchPanel(data.rowId);
+        return;
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        this.itemSearchHighlightIndex = Math.max(
+          this.itemSearchHighlightIndex - 1,
+          0
+        );
+        this.cdr.markForCheck();
+        this.schedulePositionItemSearchPanel(data.rowId);
+        return;
+      }
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        const item = list[this.itemSearchHighlightIndex];
+        if (item) {
+          this.itemSearchSelecting = true;
+          this.applyItemMasterSelection(
+            this.normalizeSelectedItem({ ...item }),
+            data
+          );
+          this.closeItemSearchPopup();
+        }
+        return;
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        this.closeItemSearchPopup();
+        return;
+      }
     }
+    this.onKeyDown(event, data, 'itemCode');
+  }
 
+  onKeyDown(event: KeyboardEvent, data: any, currentField: string): void {
     const fields = ['itemCode', 'unit', 'qty', 'rate'];
     const currentIndex = fields.indexOf(currentField);
 
     if (event.key === 'Tab') {
       event.preventDefault();
+      if (currentField === 'itemCode') {
+        this.closeItemSearchPopup();
+      }
+      this.commitActiveFieldFromEvent(event, data, currentField);
+      this.grid.endEdit();
       const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
       if (nextIndex >= 0 && nextIndex < fields.length) {
-        this.moveToNextColumn(data.rowId, fields[nextIndex]);
+        setTimeout(
+          () => this.moveToNextColumn(data.rowId, fields[nextIndex]),
+          0
+        );
       } else if (!event.shiftKey && nextIndex >= fields.length) {
-        this.handleRowNavigation(data);
+        setTimeout(() => this.handleRowNavigation(data), 0);
       }
       return;
     }
 
     if (event.key !== 'Enter') return;
 
-    // When Item Search popup is open: prevent form submit (page refresh) but let Syncfusion select the highlighted item.
-    // We must preventDefault + stopPropagation so Enter does not submit the form; Syncfusion still handles selection.
-    // (change) will then fire, onItemSelect will run and move focus to Qty.
-    if (currentField === 'itemCode' && this.isItemSearchPopupOpen) {
+    if (
+      currentField === 'itemCode' &&
+      this.isItemSearchPopupOpen &&
+      this.itemSearchFilteredList().length > 0
+    ) {
       event.preventDefault();
       event.stopPropagation();
       return;
@@ -628,23 +1035,55 @@ public itemService = inject(ItemService);
     if (currentIndex < fields.length - 1) {
       this.moveToNextColumn(data.rowId, fields[currentIndex + 1]);
     } else {
-      this.handleRowNavigation(data);
+      this.commitActiveFieldFromEvent(event, data, currentField);
+      this.grid.endEdit();
+      setTimeout(() => this.handleRowNavigation(data), 0);
+    }
+  }
+
+  private commitActiveFieldFromEvent(
+    event: KeyboardEvent,
+    data: any,
+    field: string
+  ): void {
+    const t = event.target as HTMLInputElement;
+    if (!t || (t.tagName !== 'INPUT' && t.tagName !== 'SELECT')) return;
+    if (field === 'rate') this.onRateChange({ target: t }, data);
+    if (field === 'qty') this.onQTYChange({ target: t }, data);
+    if (field === 'unit') this.onUnitChange({ target: t }, data);
+    if (field === 'itemCode') {
+      data.itemCode = t.value ?? '';
+      this.patchRowItemCode(data);
     }
   }
 
   private handleRowNavigation(data: any): void {
-    const rows = this.commonService.tempItemFillDetails();
-    const currentRowIndex = rows.findIndex((row: any) => row.rowId === data.rowId);
+    const rows = [...this.commonService.tempItemFillDetails()];
+    const idx = rows.findIndex((row: any) => row.rowId === data.rowId);
+    if (idx === -1) return;
 
-    if (currentRowIndex < rows.length - 1) {
-      this.moveToNextColumn(rows[currentRowIndex + 1].rowId, 'itemCode');
-    } else {
-      this.itemService.addNewRow();
-      setTimeout(() => {
-        const updated = this.commonService.tempItemFillDetails();
-        const newRow = updated[updated.length - 1];
-        if (newRow) this.moveToNextColumn(newRow.rowId, 'itemCode');
-      }, 100);
+    for (let i = idx + 1; i < rows.length; i++) {
+      const code = (rows[i]?.itemCode ?? '').toString().trim();
+      if (!code) {
+        this.moveToNextColumn(rows[i].rowId, 'itemCode');
+        setTimeout(() => this.focusItemCodeInput(rows[i].rowId), 180);
+        return;
+      }
+    }
+
+    const lenBefore = this.commonService.tempItemFillDetails().length;
+    this.itemService.addNewRow();
+    let updated = this.commonService.tempItemFillDetails();
+    if (updated.length === lenBefore) {
+      this.itemService.addNewRow(true);
+      updated = this.commonService.tempItemFillDetails();
+    }
+
+    const newRow = updated[updated.length - 1];
+    if (newRow) {
+      this.refreshGridAfterRowChange();
+      this.moveToNextColumn(newRow.rowId, 'itemCode');
+      setTimeout(() => this.focusItemCodeInput(newRow.rowId), 180);
     }
   }
 
@@ -665,71 +1104,6 @@ public itemService = inject(ItemService);
         this.grid.startEdit();
       }
     }, 50);
-  }
-
-  /** -------------------- Filtering -------------------- **/
-  onFiltering(args: any): void {
-    const query = (args?.text ?? '').toString().toLowerCase().trim();
-
-    // Ensure list is loaded when user starts searching.
-    if (!this.itemService.fillItemDataOptions().length && this.currentPageId && this.currentVoucherId) {
-      this.itemService.fetchItemsWithParams(this.currentPageId, 1, this.currentVoucherId, 12230);
-      args.updateData([]);
-      return;
-    }
-
-    const data = this.itemService.fillItemDataOptions();
-    if (!query) {
-      args.updateData(data);
-      return;
-    }
-
-    const filtered = data?.filter((item: any) =>
-      item?.itemCode?.toLowerCase().includes(query) ||
-      item?.itemName?.toLowerCase().includes(query) ||
-      item?.barCode?.toLowerCase().includes(query) ||
-      String(item?.stock ?? '').toLowerCase().includes(query)
-    ) || [];
-
-    args.updateData(filtered);
-  }
-
-  private handleItemCodeTyping(event: KeyboardEvent): void {
-    // For normal character typing, force popup to stay open and show filtered rows.
-    const isPrintable =
-      event.key.length === 1 &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.altKey;
-    const isSearchEditKey = event.key === 'Backspace' || event.key === 'Delete';
-    if (!isPrintable && !isSearchEditKey) return;
-
-    if (!this.itemService.fillItemDataOptions().length && this.currentPageId && this.currentVoucherId) {
-      this.itemService.fetchItemsWithParams(this.currentPageId, 1, this.currentVoucherId, 12230);
-    }
-
-    setTimeout(() => {
-      const combo = this.getActiveItemCodeCombo();
-      if (combo && typeof (combo as any).showPopup === 'function') {
-        (combo as any).showPopup();
-      }
-    }, 0);
-  }
-
-  private getActiveItemCodeCombo(): MultiColumnComboBoxComponent | undefined {
-    const active = document.activeElement as HTMLElement | null;
-    const list = this.itemCodeCombos?.toArray() ?? [];
-    if (!active || list.length === 0) return undefined;
-
-    return list.find((c: any) => {
-      const host = c?.element as HTMLElement | undefined;
-      const input = c?.inputEle as HTMLElement | undefined;
-      return (
-        (host && host.contains(active)) ||
-        (input && input === active) ||
-        (input && input.contains(active))
-      );
-    });
   }
 
   /** -------------------- Grid Actions -------------------- **/

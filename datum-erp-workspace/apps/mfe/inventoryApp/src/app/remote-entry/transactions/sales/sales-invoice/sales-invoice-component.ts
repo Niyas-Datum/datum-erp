@@ -82,8 +82,6 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   // ========== UI State Properties ==========
   isGrossAmountEditable = false;
   isApproved = false;
-  partyBalance = 0;
-
   // ========== Computed Properties ==========
   private get currentPageId(): number | null {
     return this.currentPageInfo?.id ?? null;
@@ -1254,7 +1252,13 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       expiryDate: this.convertToISODate(additionalForm.expirydate),
       transPortationType: this.normalizeLookup(this.extractIdValue(additionalForm.transportationtype)),
       creditPeriod: additionalForm.creditperiod || null,
-      salesMan: this.normalizeLookup(this.extractSalesmanInfo(additionalForm.salesman)),
+      salesMan: this.normalizeLookup(
+        this.extractSalesmanInfo(
+          additionalForm.salesman ??
+            headerForm.salesman ??
+            this.dataSharingService.getHeaderSalesmanName()
+        )
+      ),
       salesArea: this.normalizeLookup(this.extractIdValue(additionalForm.salesarea)),
       staffIncentives: additionalForm.staffincentive || null,
       mobileNo: additionalForm.mobilenumber || null,
@@ -1423,7 +1427,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       dueDate: footerForm.duedate ? new Date(footerForm.duedate).toISOString() : null,
       totalPaid: formatAmount(parseFloat(footerForm.totalpaid) || 0),
       balance: formatAmount(parseFloat(footerForm.balance) || 0),
-      advance: [],
+      advance: this.invoiceFooter?.selectedAdvanceData ?? [],
       cash: (this.invoiceFooter?.cashSelected ?? []).map((entry: any) => {
         // entry.id = transaction entry id (for updates); accountCode.id/accountId = account master id
         const accountMasterId = parseInt(String(entry.accountCode?.id ?? entry.accountId ?? 61));
@@ -1561,18 +1565,29 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   }
 
   private extractSalesmanInfo(salesman: any): any {
-    if (!salesman) return {};
+    if (salesman == null || salesman === '') return {};
 
-    const additionalDetails = this.additionalDetailsRef;
-    if (!additionalDetails) return {};
-
-    const match = additionalDetails.salesmanData?.find(
-      (s: any) => s.name === salesman || s.id === salesman
+    const headerList = this.invoiceHeader?.salesmanData ?? [];
+    const addList = this.additionalDetailsRef?.salesmanData ?? [];
+    const merged = [...headerList, ...addList];
+    const match = merged.find(
+      (s: any) => s.name === salesman || String(s.id) === String(salesman)
     );
 
-    return match
-      ? { id: match.id, name: match.name, code: match.code || '', description: '' }
-      : {};
+    if (match) {
+      return {
+        id: match.id,
+        name: match.name,
+        code: match.code || '',
+        description: '',
+      };
+    }
+
+    if (typeof salesman === 'string') {
+      return { name: salesman, code: '', description: '' };
+    }
+
+    return {};
   }
 
   private extractVehicleInfo(vehicleNo: any): any {
@@ -1612,27 +1627,66 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     return String(value).trim() || null;
   }
 
-  private convertToISODate(dateStr: string | Date | null | undefined): string | null {
-    if (dateStr == null) return null;
+  /**
+   * Calendar date in local timezone (no time component drift).
+   */
+  private parseToLocalCalendarDate(
+    value: string | Date | null | undefined
+  ): Date | null {
+    if (value == null || value === '') return null;
 
-    if (dateStr instanceof Date) {
-      return isNaN(dateStr.getTime()) ? null : dateStr.toISOString();
+    if (value instanceof Date) {
+      if (isNaN(value.getTime())) return null;
+      return new Date(value.getFullYear(), value.getMonth(), value.getDate());
     }
 
-    if (typeof dateStr === 'string') {
-      const s = dateStr.trim();
-      if (!s) return null;
-      const d = new Date(s);
-      if (!isNaN(d.getTime())) return d.toISOString();
-      const parts = s.split('/');
-      if (parts.length === 3) {
-        const [day, month, year] = parts;
-        const d2 = new Date(`${year}-${month}-${day}`);
-        return isNaN(d2.getTime()) ? null : d2.toISOString();
-      }
+    const s = value.trim();
+    if (!s) return null;
+
+    const isoYmd = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);
+    if (isoYmd) {
+      const y = Number(isoYmd[1]);
+      const m = Number(isoYmd[2]) - 1;
+      const day = Number(isoYmd[3]);
+      const dt = new Date(y, m, day);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
+
+    const parts = s.split('/');
+    if (parts.length === 3) {
+      const day = Number(parts[0]);
+      const month = Number(parts[1]) - 1;
+      const year = Number(parts[2]);
+      const dt = new Date(year, month, day);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
+
+    const parsed = new Date(s);
+    if (!isNaN(parsed.getTime())) {
+      return new Date(
+        parsed.getFullYear(),
+        parsed.getMonth(),
+        parsed.getDate()
+      );
     }
 
     return null;
+  }
+
+  /** ISO string at local midday so UTC serialization keeps the same calendar day. */
+  private convertToISODate(value: string | Date | null | undefined): string | null {
+    const d = this.parseToLocalCalendarDate(value);
+    if (!d) return null;
+    const localNoon = new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      12,
+      0,
+      0,
+      0
+    );
+    return localNoon.toISOString();
   }
 
   /** Normalize unresolved lookup objects to null so API doesn't receive empty {} payloads. */

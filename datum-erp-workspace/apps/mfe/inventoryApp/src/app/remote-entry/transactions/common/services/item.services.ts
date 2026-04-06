@@ -41,11 +41,15 @@ export class ItemService {
    * Only fetches when customer and warehouse are selected
    */
   fetchItemsWithParams(pageId: number, locId: number, voucherId: number, partyId: number): void {
-    // Don't fetch if already loaded for same parameters
-    if (this.fillItemDataOptions().length > 0 && 
-        this.partyId === partyId && 
-        this.locId === locId) {
-      console.log('✅ Items already loaded for this customer/warehouse');
+    // Don't fetch if already loaded for the same page, voucher, customer, and warehouse
+    if (
+      this.fillItemDataOptions().length > 0 &&
+      this.partyId === partyId &&
+      this.locId === locId &&
+      this.pageId === pageId &&
+      this.voucherNo === voucherId
+    ) {
+      console.log('✅ Items already loaded for this context');
       return;
     }
 
@@ -629,12 +633,17 @@ export class ItemService {
     return this.commonService.newlyAddedRows().length > 0;
   }
 
-  addNewRow(): void {
+  addNewRow(force = false): void {
     const currentData = this.commonService.tempItemFillDetails();
     const lastRow = currentData[currentData.length - 1];
-    
+
     // Don't add new row if previous row is empty (unless it's the first row in new mode)
-    if (lastRow && (!lastRow.itemCode || lastRow.itemCode.trim() === '') && currentData.length > 1) {
+    if (
+      !force &&
+      lastRow &&
+      (!lastRow.itemCode || lastRow.itemCode.trim() === '') &&
+      currentData.length > 1
+    ) {
       return;
     }
     const newItem = {
@@ -648,6 +657,7 @@ export class ItemService {
       taxPerc: 0,
       taxValue: 0,
       totalAmount: 0,
+      availableStock: undefined as number | undefined,
     };
 
     this.commonService.tempItemFillDetails.set([...currentData, newItem]);
