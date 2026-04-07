@@ -14,13 +14,13 @@ export interface ToolbarState {
 @Injectable({ providedIn: 'root' })
 export class FormToolbarService {
 
-  pageId?:number;
-  voucherId?:number;
-  leftgridselectedData:any;
-  pagetype:number ;
-  newbuttonClick:number =0;
-  editbuttonClick:number =0;
-  constructor(){this.pagetype = 1}
+  pageId?: number;
+  voucherId?: number;
+  leftgridselectedData: any;
+  pagetype: number;
+  newbuttonClick: number = 0;
+  editbuttonClick: number = 0;
+  constructor() { this.pagetype = 1 }
 
   /** Toolbar state pushed by child (e.g. sales-invoice) so entry can show New + Save on initial load */
   private toolbarState$ = new BehaviorSubject<ToolbarState>({});
@@ -48,42 +48,49 @@ export class FormToolbarService {
   private leftGridViewSource = new Subject<void>();
   leftGridView$ = this.leftGridViewSource.asObservable();
 
+  private toolbarVisibilitySource = new BehaviorSubject<boolean>(true);
+  toolbarVisibility$ = this.toolbarVisibilitySource.asObservable();
+
   emitNewClicked(num: number = 0) {
-    this.newbuttonClick =num;
+    this.newbuttonClick = num;
     console.log("emitNewClicked");
-  
+
     this.newClickedSource.next();
-   
+
   }
 
   emitSaveClicked() {
     this.saveClickedSource.next();
   }
 
-   emitEditClicked(num: number = 0) {
-        this.editbuttonClick = num;
+  emitEditClicked(num: number = 0) {
+    this.editbuttonClick = num;
     this.editClickedSource.next();
   }
 
-     emitDeleteClicked() {
-      this.deleteClickedSource.next();
-    }
-       emitLeftGridClicked(event:any) {
-        this.leftgridselectedData = event;
-        this.leftGridClickedSource.next();
+  emitDeleteClicked() {
+    this.deleteClickedSource.next();
+  }
+  emitLeftGridClicked(event: any) {
+    this.leftgridselectedData = event;
+    this.leftGridClickedSource.next();
   }
 
-  emitLeftGridViewSatus(event:number){
+  emitLeftGridViewSatus(event: number) {
     console.log("emitLeftGridViewSatus");
-        this.pagetype = event;
-        this.leftGridViewSource.next();
+    this.pagetype = event;
+    this.leftGridViewSource.next();
 
   }
 
   //*** Left Grid View Status */
-  emitLeftGridtatus(event:number){
+  emitLeftGridtatus(event: number) {
     console.log("emitLeftGridViewStatus");
-        this.pagetype = event;
-        this.leftGridViewSource.next();
-    }
+    this.pagetype = event;
+    this.leftGridViewSource.next();
   }
+
+  emitToolbarVisibility(status: boolean) {
+  this.toolbarVisibilitySource.next(status);
+}
+}

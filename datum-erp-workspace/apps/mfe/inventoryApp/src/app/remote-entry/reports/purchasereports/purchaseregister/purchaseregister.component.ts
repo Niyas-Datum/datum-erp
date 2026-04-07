@@ -220,7 +220,7 @@ export class PurchaseRegisterComponent extends BaseComponent implements OnInit {
         this.purchaseRegisterForm.patchValue({
             to: new Date()
         });
-        this.SetPageType(2);
+        this.SetPageType(3);
         this.fetchAllFilterMasterData();
 
     }

@@ -81,7 +81,7 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
         this.salesRegisterForm.patchValue({
             to: new Date()
         });
-        this.SetPageType(2);
+        this.SetPageType(3);
         this.fetchAllFilterMasterData();
         //  this.setInitialState();
         //this.setCashCreditID();
