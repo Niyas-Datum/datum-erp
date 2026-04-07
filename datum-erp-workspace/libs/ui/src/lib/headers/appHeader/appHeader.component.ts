@@ -18,6 +18,7 @@ import { AppHeaderMobileView } from './app-Header-MobileView/app-Header-MobileVi
 import { DataSharingService } from '@org/services';
 import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { CommonModule } from '@angular/common';
 
 // Extend MenuItemModel to include m_id
 interface CustomMenuItemModel extends MenuItemModel {
@@ -37,14 +38,19 @@ interface CustomMenuItemModel extends MenuItemModel {
     AppHeaderMobileView,
     ToolbarModule,
     DropDownListModule,
-    TextBoxModule
+    TextBoxModule,
+    CommonModule
   ],
   templateUrl: './appHeader.component.html',
   styleUrls: ['./appHeader.component.scss'],
 })
 export class AppHeaderComponent implements OnInit {
+  isMobileMenuOpen =  false
+  isMobileContentOpen = false
+
   toggleMobileMenu() {
-    throw new Error('Method not implemented.');
+      this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    // throw new Error('Method not implemented.');
   }
   @ViewChild('menu')
   public menuObj!: MenuComponent;
@@ -193,7 +199,14 @@ export class AppHeaderComponent implements OnInit {
     }
   }
 
+mobileView(){
+  this.isMobileMenuOpen = !this.isMobileMenuOpen
+  if (!this.isMobileMenuOpen) {
+    this.isMobileContentOpen = false
+  }
+}
 
-
-
+openMobileContent() {
+  this.isMobileContentOpen = true
+}
 }
