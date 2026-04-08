@@ -351,27 +351,50 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     }
   }
 
-  /** Parallel load so the reference popup never opens with stale empty inputs. */
+  /**
+   * Loads any reference-popup slices not already filled by `loadInitialData()`.
+   * Avoids refetching completed slices so opening Import Reference is only blocked
+   * on the slowest missing API (previously every open repeated all three calls).
+   */
   private loadReferenceDatasetsForPopupOnce(): Observable<unknown> {
     const vid = this.currentVoucherNo;
     const pageId = this.currentPageId;
-    return forkJoin({
-      ref: this.transactionService
-        .getDetails(`${EndpointConstant.FILLREFERENCEDATA}${vid}`)
-        .pipe(take(1), catchError(() => of({ data: [] }))),
-      vt: this.transactionService
-        .getDetails(`${EndpointConstant.FILLPURCHASEVOUCHERTYPE}${vid}`)
-        .pipe(take(1), catchError(() => of({ data: [] }))),
-      party: this.transactionService
-        .getDetails(
-          `${EndpointConstant.FILLPURCHASEPARTY}&voucherId=${vid}&pageId=${pageId}`
-        )
-        .pipe(take(1), catchError(() => of({ data: { customerData: [] } }))),
-    }).pipe(
-      tap(({ ref, vt, party }) => {
-        this.referenceFillData = ref?.data ?? [];
-        this.voucherTypeData = vt?.data ?? [];
-        this.partyData = this.mapPartyData(party?.data?.customerData ?? []);
+    const hadRef = this.referenceHeaderSlices.ref;
+    const hadVt = this.referenceHeaderSlices.vt;
+    const hadParty = this.referenceHeaderSlices.party;
+
+    const ref$ = hadRef
+      ? of(null)
+      : this.transactionService
+          .getDetails(`${EndpointConstant.FILLREFERENCEDATA}${vid}`)
+          .pipe(take(1), catchError(() => of({ data: [] })));
+    const vt$ = hadVt
+      ? of(null)
+      : this.transactionService
+          .getDetails(`${EndpointConstant.FILLPURCHASEVOUCHERTYPE}${vid}`)
+          .pipe(take(1), catchError(() => of({ data: [] })));
+    const party$ = hadParty
+      ? of(null)
+      : this.transactionService
+          .getDetails(
+            `${EndpointConstant.FILLPURCHASEPARTY}&voucherId=${vid}&pageId=${pageId}`
+          )
+          .pipe(take(1), catchError(() => of({ data: { customerData: [] } })));
+
+    return forkJoin({ ref: ref$, vt: vt$, party: party$ }).pipe(
+      tap((bundle: { ref: unknown; vt: unknown; party: unknown }) => {
+        if (!hadRef) {
+          const r = bundle.ref as { data?: Reference[] } | null;
+          this.referenceFillData = r?.data ?? [];
+        }
+        if (!hadVt) {
+          const v = bundle.vt as { data?: VoucherType[] } | null;
+          this.voucherTypeData = v?.data ?? [];
+        }
+        if (!hadParty) {
+          const p = bundle.party as { data?: { customerData?: any[] } } | null;
+          this.partyData = this.mapPartyData(p?.data?.customerData ?? []);
+        }
         this.referenceHeaderSlices = { ref: true, vt: true, party: true };
         this.referenceHeaderDatasetsReady = true;
       })
@@ -552,7 +575,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     const customer = this.customerData.find((c) => c.id === accountId);
 
     this.transactionService
-      .getDetails(`${EndpointConstant.FETCHSALESMAN}${accountId}`)
+      .getDetails(`${EndpointConstant.FILLPURCHASESALESMAN}?accountId=${accountId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -773,7 +796,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     }
 
     if (transaction.date) {
-      formValues.purchasedate = new Date(transaction.date);
+      formValues.purchasedate = this.parseApiDatePreserveCalendar(transaction.date);
     }
 
     // Support both accountName (fillTransactions) and party (normalized API shape)
@@ -1043,7 +1066,7 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
     this.isPopuprefVisible = true;
   }
 
-  private async openPopup(type: PopupType, data: any[], gridSettings: GridSettings, initialSearchText = ''): Promise<void> {
+  private async openPopup(type: PopupType, data: any[], gridSettings: GridSettings, initialSearchText = '', retried = false): Promise<void> {
     this.currentPopupType = type;
     
     try {
@@ -1059,7 +1082,13 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
           this.onPopupItemSelected(result.item, result.popupType);
         }
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (!retried && String(error?.message ?? '').includes('Host not available')) {
+        setTimeout(() => {
+          this.openPopup(type, data, gridSettings, initialSearchText, true);
+        }, 80);
+        return;
+      }
       console.error('Error opening popup:', error);
     }
   }
@@ -1433,5 +1462,25 @@ export class InvoiceHeader extends BasetransactionComponent implements OnInit, O
 
   private handleError(message: string, error: any): void {
     console.error(message, error);
+  }
+
+  /**
+   * Preserve the same calendar day from API date strings, avoiding timezone day shifts.
+   */
+  private parseApiDatePreserveCalendar(value: any): Date | null {
+    if (!value) return null;
+    const s = String(value).trim();
+    if (!s) return null;
+    const ymd = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);
+    if (ymd) {
+      const y = Number(ymd[1]);
+      const m = Number(ymd[2]) - 1;
+      const d = Number(ymd[3]);
+      const dt = new Date(y, m, d);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
+    const parsed = new Date(s);
+    if (isNaN(parsed.getTime())) return null;
+    return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
   }
 }

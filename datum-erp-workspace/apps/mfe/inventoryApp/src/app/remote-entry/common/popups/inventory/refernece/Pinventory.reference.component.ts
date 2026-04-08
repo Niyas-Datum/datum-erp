@@ -8,6 +8,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
@@ -47,7 +48,7 @@ import { ItemService } from '../../../../transactions/common/services/item.servi
   templateUrl: './Pinventory.reference.component.html',
 })
 
-export class PinventoryReferencePopupComponent implements OnInit {
+export class PinventoryReferencePopupComponent implements OnInit, AfterViewInit {
   // Inputs from popup service (will be assigned via Object.assign)
   referenceData: any[] = [];
   voucherTypes: any[] = [];
@@ -99,12 +100,37 @@ export class PinventoryReferencePopupComponent implements OnInit {
     });
 
     // Defer so inputs (referenceData, etc.) are applied by popup container's Object.assign
-    // before we read them - otherwise first search shows no data
-    setTimeout(() => {
-      this.modifiedArray = JSON.parse(JSON.stringify(this.referenceData || []));
-      this.setReferenceData();
-      this.cdr.detectChanges();
-    }, 0);
+    setTimeout(() => this.applyReferenceDataToGrid(), 0);
+  }
+
+  ngAfterViewInit(): void {
+    // createComponent + Object.assign can land after ngOnInit; refresh once view is up
+    setTimeout(() => this.applyReferenceDataToGrid(), 0);
+  }
+
+  /** Build modifiedArray from inputs and run filters (handles Syncfusion object form values). */
+  private applyReferenceDataToGrid(): void {
+    const raw = Array.isArray(this.referenceData) ? this.referenceData : [];
+    this.modifiedArray = raw.map((row: Record<string, unknown>) => ({
+      ...(row || {}),
+    }));
+    this.setReferenceData();
+    this.cdr.detectChanges();
+  }
+
+  /** ejs-dropdownlist / multicolumn combobox often store `{ name }` or `{ accountName }`, not a string. */
+  private normalizeFilterText(v: unknown): string {
+    if (v == null || v === '') return '';
+    if (typeof v === 'string' || typeof v === 'number') return String(v).trim();
+    if (typeof v === 'object' && v !== null) {
+      const o = v as Record<string, unknown>;
+      const pick =
+        o['name'] ?? o['value'] ?? o['text'] ?? o['accountName'] ?? o['accountCode'];
+      if (pick != null && pick !== '') return String(pick).trim();
+    }
+    const s = String(v).trim();
+    if (s === '[object Object]') return '';
+    return s;
   }
 
   private resetSelectionState(): void {
@@ -118,12 +144,20 @@ export class PinventoryReferencePopupComponent implements OnInit {
     const { vouchertype, voucherno, voucherdate, party } =
       this.referenceSearchForm?.value ?? {};
 
-    const vtFilter = (vouchertype ?? '').toString().trim();
+    const vtFilter = this.normalizeFilterText(vouchertype).toLowerCase();
     const vnFilter = (voucherno ?? '').toString().trim().toLowerCase();
     const pdFilter = voucherdate ?? null;
-    const partyFilter = (party ?? '').toString().trim().toLowerCase();
+    const partyFilter = this.normalizeFilterText(party).toLowerCase();
 
-    const hasFilters = !!(vnFilter || pdFilter || partyFilter) || (vtFilter && vtFilter.toLowerCase() !== 'all');
+    const hasVoucherNo = !!vnFilter;
+    const hasDate = pdFilter != null && pdFilter !== '';
+    const hasParty = !!partyFilter;
+    const hasVoucherTypeOtherThanAll =
+      !!vtFilter && vtFilter !== 'all';
+
+    const hasFilters =
+      hasVoucherNo || hasDate || hasParty || hasVoucherTypeOtherThanAll;
+
     if (!hasFilters) {
       this.filteredData = [...(this.modifiedArray || [])];
       this.cdr.detectChanges();
@@ -140,8 +174,8 @@ export class PinventoryReferencePopupComponent implements OnInit {
 
       let matches = true;
 
-      if (vtFilter && vtFilter.toLowerCase() !== 'all') {
-        matches = matches && itemVoucherType.includes(vtFilter.toLowerCase());
+      if (hasVoucherTypeOtherThanAll) {
+        matches = matches && itemVoucherType.includes(vtFilter);
       }
 
       if (vnFilter) {

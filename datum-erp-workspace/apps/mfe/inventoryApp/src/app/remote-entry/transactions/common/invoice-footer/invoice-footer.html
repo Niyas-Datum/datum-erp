@@ -134,6 +134,7 @@
             <label class="form-label mb-0 ">Pay Type</label>
             <ejs-dropdownlist
               class="flex-grow-1"
+              formControlName="paytype"
               [dataSource]="payTypeObj"
               [fields]="{ text: 'name', value: 'id' }"
               (change)="onChangePayType($event)">
