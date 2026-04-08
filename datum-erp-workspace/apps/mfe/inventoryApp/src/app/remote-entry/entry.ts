@@ -35,6 +35,7 @@ app-left-grid {
   templateUrl: './entry.html',
 })
 export class RemoteEntry {
+  showToolbar: boolean = true;
   public pageType: number;
   public pageheading: string;
 
@@ -81,6 +82,12 @@ export class RemoteEntry {
       this.pageType = this.formToolbarService.pagetype;
       console.log(this.formToolbarService.pagetype);
     });
+
+   this.formToolbarService.toolbarVisibility$.subscribe((status) => {
+  setTimeout(() => {
+    this.showToolbar = status;
+  });
+});
 
     // Apply toolbar state from child (e.g. Sales Invoice) so Save is enabled when in New Mode
     this.formToolbarService.getToolbarState$().subscribe((state) => {

@@ -1,26 +1,21 @@
 <!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
-<div class="h-100 d-flex flex-column overflow-hidden" #scrollableDivLeft [class.overlay-disabled]="!isInputDisabled()" [class.grid-disabled]="isSelectionDisabled()">
-  <div #overlay [class.overlay]="!isInputDisabled()" [style.display]="isInputDisabled() ? 'none' : 'block'">
-    <p translate>Disabled</p>
+<div class="h-100 d-flex flex-column" #scrollableDivLeft
+>
+  <div #overlay *ngIf="isLeftGridDisabled$ | async"   class="overlay">
+    <h3 translate>Disabled </h3><br /> 
+    <p>Left grid is enabled when the New or Edit button is clicked.</p>
+  </div>
+
+  <div class="left-grid-search flex-shrink-0" *ngIf="columns.length">
+    <input type="text" class="form-control text-center" placeholder="...Search..." [ngModel]="searchText()"
+      (ngModelChange)="onSearchChange($event)" />
   </div>
 
 
-  <div class="left-grid-search mb-2">
-    <ejs-textbox
-      #searchBox
-      placeholder="Search..."
-      [value]="searchFilterText()"
-      (input)="onSearchInput($event)"
-      (change)="onSearchInput($event)"
-      cssClass="e-input"
-      floatLabelType="Never">
-    </ejs-textbox>
-  </div>
-
-
-  <ejs-grid class="sidebar-grid" #grid [dataSource]="this.leftdata$ | async  " [allowResizing]="true" [allowTextWrap]="true"
+  <ejs-grid #grid [dataSource]="this.filteredData$ | async" [allowResizing]="true" [allowTextWrap]="true"
     [enableHover]="false" (rowSelected)="onRowSelect($event)" [allowFiltering]="true" [filterSettings]="filterOptions"
-    [allowSorting]="true" gridLines="Both" height="100%" [rowHeight]="30" class="flex-grow-1" >
+    [allowSorting]="true" gridLines="Both"    height="100%" [rowHeight]="30" class="flex-grow-1">
+
     <e-columns>
       <ng-container *ngFor="let col of columns">
         <!-- Stacked Header -->
@@ -28,18 +23,21 @@
           <e-stacked-columns>
             <e-stacked-column *ngFor="let child of col.columns" [field]="child.field" [headerText]="child.headerText"
               textAlign="Center" width="120">
+
             </e-stacked-column>
           </e-stacked-columns>
         </e-column>
 
         <!-- Single Column -->
         <ng-template #singleCol>
-          <e-column [field]="col.field" [headerText]="col.headerText" textAlign="Center" [width]="col.field === 'someMainField' ? 'auto' : '120'"></e-column>
+          <e-column [field]="col.field" [headerText]="col.headerText" textAlign="Center"
+            [width]="col.field === 'someMainField' ? 'auto' : '120'">
+          </e-column>
         </ng-template>
       </ng-container>
     </e-columns>
 
-</ejs-grid>
+  </ejs-grid>
 
 
 </div>

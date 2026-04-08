@@ -1,8 +1,8 @@
-import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, DestroyRef, input, computed, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, DestroyRef, input, computed, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseService, DataSharingService } from '@org/services';
-import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService } from '@syncfusion/ej2-angular-grids';
-import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { FormsModule } from '@angular/forms';
+import { BaseService, DataSharingService, FormToolbarService } from '@org/services';
+import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService, PageSettingsModel, InfiniteScrollService } from '@syncfusion/ej2-angular-grids';
 import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
 ;
@@ -11,27 +11,28 @@ import { LeftGridDto } from '@org/models';
 
 @Component({
   selector: 'app-left-grid',
-  imports: [CommonModule, GridModule, TextBoxModule],
+  imports: [CommonModule, GridModule, FormsModule],
   templateUrl: './leftGrid.component.html',
   styleUrl: './leftGrid.component.scss',
-  providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService],
+  providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService,InfiniteScrollService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LeftGridComponent implements OnInit, AfterViewInit {
+export class LeftGridComponent {
+  
 
   sharedService = inject(DataSharingService);
 
-    public columns$ = new BehaviorSubject<any[]>([]);
-    public leftdata$ = new BehaviorSubject<any[]>([]);
-    /** Filtered data for the grid (based on search). */
-    public filteredData$ = new BehaviorSubject<any[]>([]);
-    public data: any[] = [];
-    /** Search text for filtering the left grid. */
-    searchFilterText = signal('');
+  public columns$ = new BehaviorSubject<any[]>([]);
+  public leftdata$ = new BehaviorSubject<any[]>([]);
+  /** Filtered data for grid (live search by invoice no, customer, vat, id). */
+  public filteredData$ = new BehaviorSubject<any[]>([]);
+  public data: any[] = [];
+  private rawData: any[] = [];
+  searchText = signal('');
   // Input properties
 
-  public pageheading = '';
-  @Input() columns: any[] = [];
+      public pageheading = '';
+      @Input() columns: any[] = [];
 
 
   //local init
@@ -40,8 +41,8 @@ export class LeftGridComponent implements OnInit, AfterViewInit {
   @Output() rowSelected = new EventEmitter<any>(); // output event
 
 
-  //public datas: any[] = [];
-  public configureEditSettings: object = {};
+   //public datas: any[] = [];
+ public configureEditSettings: object = {};
   public filterOptions: object = {};
 
   // public colum
@@ -50,6 +51,21 @@ export class LeftGridComponent implements OnInit, AfterViewInit {
 
   isNewMode = input(false);
   isEditMode = input(false);
+  /**
+   * @author Niyas
+   * @description Controls the disabled state of the left grid
+   */
+  formToolbarService = inject(FormToolbarService);
+  isLeftGridDisabled$ = new BehaviorSubject<boolean>(true);
+
+ 
+
+  // Pagination
+  public pageSettings : PageSettingsModel= {
+    pageSize: 50,
+    pageSizes :[50,100,200],
+    pageCount:5
+  }
 
   isSelectionDisabled = computed(() => this.isNewMode() || this.isEditMode());
 
@@ -62,85 +78,82 @@ export class LeftGridComponent implements OnInit, AfterViewInit {
 
 
 
-  ngOnInit(): void {
-
+  ngOnInit(): void { 
+   
     console.log('LeftGridComponent initialized with data:', this.data);
+    
 
-
-    this.configureEditSettings = {
+   this.configureEditSettings = {
       allowEditing: true,
       allowAdding: true,
       allowDeleting: true,
     };
     this.filterOptions = { type: 'Menu' };
-
+ 
   }
-  ngAfterViewInit(): void {
+   ngAfterViewInit(): void { 
     setTimeout(() => {
       this.loadColumns();
-    }, 100);
-  }
-  constructor() {
-    //this.loadColumns();
+    },100);
 
-  }
-  onRowSelect(event: any) {
-    const selected = event.data; // Or event.rowData depending on your grid setup
-    console.log("Selected unit in LeftGrid:", selected);
-    this.rowSelected.emit(selected);
-  }
+        this.formToolbarService.newClicked$.subscribe(() => {
+              if(this.formToolbarService.newbuttonClick === 1){
+                this.isLeftGridDisabled$.next(false);
+              }else{
+                this.isLeftGridDisabled$.next(true);
+              }
+        });
+        this.formToolbarService.editClicked$.subscribe(() => {
+              if(this.formToolbarService.editbuttonClick === 1){
+                this.isLeftGridDisabled$.next(true);
+              }else{
+                this.isLeftGridDisabled$.next(false);
+              }
+        });
+   }
+              constructor() {
+                //this.loadColumns();
+              
+              }
+                          onRowSelect(event: any) {
+                            const selected = event.data; // Or event.rowData depending on your grid setup
+                            console.log("Selected unit in LeftGrid:", selected);
+                            this.rowSelected.emit(selected);
+                          }
 
+  
 
-
-  /** Get list of field names to search from current column config. */
-  private getSearchableFields(): string[] {
-    const cols = this.columns ?? [];
-    const fields: string[] = [];
-    for (const col of cols) {
-      if (col.columns) {
-        for (const child of col.columns) {
-          if (child.field) fields.push(child.field);
-        }
-      } else if (col.field) {
-        fields.push(col.field);
-      }
-    }
-    return fields;
-  }
-
-  /** Filter rows by search text across all column values. */
+  /** Apply live filter by invoice no, customer name, vat no, id. */
   private applyFilter(): void {
-    const term = (this.searchFilterText() ?? '').trim().toLowerCase();
-    const raw = this.leftdata$.value ?? [];
-    if (!term) {
-      this.filteredData$.next(raw);
+    const q = (this.searchText() || '').trim().toLowerCase();
+    if (!q) {
+      this.filteredData$.next([...this.rawData]);
       return;
     }
-    const fields = this.getSearchableFields();
-    const filtered = raw.filter((row: any) => {
-      for (const field of fields) {
-        const val = row[field];
-        if (val != null && String(val).toLowerCase().includes(term)) return true;
-      }
-      return false;
+    const filtered = this.rawData.filter((row: any) => {
+      const invoiceNo = (row.TransactionNo ?? row.transactionNo ?? row.VoucherNo ?? row.voucherNo ?? '').toString().toLowerCase();
+      const customer = (row.AccountName ?? row.accountName ?? row.PartyName ?? row.partyName ?? '').toString().toLowerCase();
+      const vat = (row.VatNo ?? row.vatNo ?? row.VATNo ?? '').toString().toLowerCase();
+      const id = (row.ID ?? row.Id ?? row.id ?? '').toString().toLowerCase();
+      return invoiceNo.includes(q) || customer.includes(q) || vat.includes(q) || id.includes(q);
     });
     this.filteredData$.next(filtered);
   }
 
-  onSearchInput(event: any): void {
-    const value = event?.target?.value ?? event?.value ?? '';
-    this.searchFilterText.set(String(value));
+  onSearchChange(value: string): void {
+    this.searchText.set(value || '');
     this.applyFilter();
   }
 
   loadColumns() {
-       
-        this.sharedService.leftdata$.subscribe(data => {
-          this.pageheading = data.pageheading ?? '';
-            this.leftdata$.next(data.data ?? []);
-            this.data = this.leftdata$.value;
-            this.applyFilter();
-          });
+    this.sharedService.leftdata$.subscribe(data => {
+      this.pageheading = data.pageheading ?? '';
+      const list = data.data ?? [];
+      this.leftdata$.next(list);
+      this.data = list;
+      this.rawData = list;
+      this.applyFilter();
+    });
          
          
           
