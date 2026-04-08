@@ -33,11 +33,13 @@
           aria-label="user menu" type="button">
         </button>
 
-        <div class="border-end border-secondary-subtle  me-3" style="height: 24px"></div>
+        <div class="border-end border-secondary-subtle d-lg-none me-3" style="height: 24px"></div>
 
-        <button ejs-button cssClass="e-flat me-3 menu-icon text-white" type="button" (click)="onClicked($event)" >
+        <button ejs-button cssClass="e-flat me-3 d-lg-none menu-icon text-white" type="button"
+          (click)="mobileView()">
           <span class="e-icons e-menu"></span>
         </button>
+
 
 
       </div>
@@ -90,7 +92,7 @@
   </section>
 
 
-  <section class="mobilesec-view d-lg-none border-top">
+  <section *ngIf="isMobileMenuOpen" class="mobilesec-view d-lg-none border-top">
 
     <!-- Mobile Header View -->
     <div class="px-2 py-2">
