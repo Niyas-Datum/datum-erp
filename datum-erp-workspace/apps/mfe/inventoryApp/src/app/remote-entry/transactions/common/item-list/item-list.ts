@@ -717,6 +717,7 @@ public itemService = inject(ItemService);
           itemCode: '',
           itemName: '',
           unit: '',
+          unitsPopup: [],
           qty: 0,
           rate: 0,
           amount: 0,
@@ -739,13 +740,14 @@ public itemService = inject(ItemService);
           this.refreshGridAfterRowChange();
         }, 100);
       } else {
-        // New item - bind to row (unit as object so grid display and save stay consistent)
-        const unitStr = (selectedItem.unitname ?? selectedItem.unit ?? '').toString();
-        const unitObj = { unit: unitStr, basicunit: unitStr, factor: 1 };
+        // New item — mirror legacy onItemCodeSelected: unitsPopup from master + unit object
+        const unitsPopup = this.buildUnitsPopupForMasterItem(selectedItem);
+        const unitObj = this.resolveUnitObjectForSelection(selectedItem, unitsPopup);
         Object.assign(data, {
           itemId: selectedItem.id,
           itemCode: selectedItem.itemCode,
           itemName: selectedItem.itemName,
+          unitsPopup,
           unit: unitObj,
           qty: 1,
           rate: selectedItem.rate,
@@ -784,6 +786,7 @@ public itemService = inject(ItemService);
       itemCode: '',
       itemName: '',
       unit: '',
+      unitsPopup: [],
       qty: 0,
       rate: 0,
       amount: 0,
@@ -951,41 +954,99 @@ public itemService = inject(ItemService);
     this.recalculateAndUpdateRow(data);
   }
 
-  /** Get allowed units for this row from item master (current item's unitPopup or distinct units). */
-  getUnitsForRow(data: any): { unit: string }[] {
-    const options = this.itemService.fillItemDataOptions();
-    if (!options?.length) return [];
-    const itemCode = (data?.itemCode ?? '').toString().trim();
-    if (itemCode) {
-      const item = options.find((i: any) => (i.itemCode || i.itemName) === itemCode);
-      if (item?.unitPopup?.length) return item.unitPopup.map((u: any) => ({ unit: u.unit || u }));
-      if (item?.unitname) return [{ unit: item.unitname }];
+  /**
+   * Legacy `unitsPopup` on the row, or resolved from master `unitPopup` (same as old searchable dropdown options).
+   */
+  getUnitsPopupForRow(data: any): { unit: string; basicunit: string; factor: number }[] {
+    if (Array.isArray(data?.unitsPopup) && data.unitsPopup.length > 0) {
+      return data.unitsPopup;
     }
-    const distinct = new Set<string>();
-    options.forEach((i: any) => {
-      const u = (i.unitname || i.unit || '').toString().trim();
-      if (u) distinct.add(u);
-    });
-    return Array.from(distinct).map((u) => ({ unit: u }));
+    const options = this.itemService.fillItemDataOptions();
+    const itemCode = (data?.itemCode ?? '').toString().trim();
+    if (!itemCode || !options?.length) return [];
+    const item = options.find(
+      (i: any) =>
+        (i.itemCode || '').toString().trim() === itemCode ||
+        (i.itemName || '').toString().trim() === itemCode
+    );
+    return this.mapMasterUnitPopupToRow(item?.unitPopup);
   }
 
-  onUnitChange(event: any, data: any): void {
-    const raw = event?.value ?? event?.target?.value ?? event?.itemData?.unit ?? '';
-    const value = (typeof raw === 'object' ? (raw?.unit ?? raw) : raw).toString().trim();
-    const allowed = this.getUnitsForRow(data).map((x) => (x.unit || '').toString().trim());
-    const valid = !value || (allowed.length ? allowed.includes(value) : false);
-    if (value && !valid) {
+  /** Bound value for &lt;select&gt; (unit code). */
+  unitSelectValue(data: any): string {
+    const u = data?.unit;
+    if (u && typeof u === 'object' && u.unit != null) return String(u.unit);
+    if (typeof u === 'string') return u;
+    return '';
+  }
+
+  onUnitSelect(event: Event, data: any): void {
+    const el = event.target as HTMLSelectElement;
+    const value = (el?.value ?? '').trim();
+    this.applyUnitSelection(data, value);
+  }
+
+  private applyUnitSelection(data: any, value: string): void {
+    if (!value) {
+      data.unit = '';
+      this.updateRowInGrid(data);
+      return;
+    }
+    const units = this.getUnitsPopupForRow(data);
+    const unitObj = units.find((u) => u.unit === value);
+    if (!unitObj) {
       this.baseService.showCustomDialoguePopup(
         'Unit must be from item master. Please select a valid unit.',
         'Invalid Unit',
         'WARN'
       );
-      data.unit = '';
-      this.updateRowInGrid(data);
       return;
     }
-    data.unit = value || '';
+    if (!data.unitsPopup?.length && units.length) {
+      data.unitsPopup = [...units];
+    }
+    data.unit = { ...unitObj };
     this.updateRowInGrid(data);
+  }
+
+  private mapMasterUnitPopupToRow(
+    popup: any[] | undefined
+  ): { unit: string; basicunit: string; factor: number }[] {
+    if (!Array.isArray(popup) || !popup.length) return [];
+    return popup.map((u: any) => ({
+      unit: (u.unit ?? '').toString(),
+      basicunit: (u.basicUnit ?? u.basicunit ?? u.unit ?? '').toString(),
+      factor: parseFloat(String(u.factor ?? 1)) || 1,
+    }));
+  }
+
+  private buildUnitsPopupForMasterItem(selectedItem: any): {
+    unit: string;
+    basicunit: string;
+    factor: number;
+  }[] {
+    const options = this.itemService.fillItemDataOptions();
+    const code = (selectedItem.itemCode ?? '').toString().trim();
+    const master = options.find(
+      (i: any) =>
+        (i.itemCode || '').toString().trim() === code ||
+        (i.id != null && String(i.id) === String(selectedItem.id ?? selectedItem.itemId)) ||
+        (i.itemId != null &&
+          String(i.itemId) === String(selectedItem.itemId ?? selectedItem.id))
+    );
+    const mapped = this.mapMasterUnitPopupToRow(master?.unitPopup);
+    if (mapped.length) return mapped;
+    const u = (selectedItem.unitname ?? selectedItem.unit ?? 'PCS').toString().trim() || 'PCS';
+    return [{ unit: u, basicunit: u, factor: 1 }];
+  }
+
+  private resolveUnitObjectForSelection(
+    selectedItem: any,
+    unitsPopup: { unit: string; basicunit: string; factor: number }[]
+  ): { unit: string; basicunit: string; factor: number } {
+    const wanted = (selectedItem.unitname ?? selectedItem.unit ?? '').toString().trim();
+    const hit = wanted ? unitsPopup.find((x) => x.unit === wanted) : undefined;
+    return hit ?? unitsPopup[0] ?? { unit: 'PCS', basicunit: 'PCS', factor: 1 };
   }
 
   private recalculateAndUpdateRow(data: any): void {
@@ -1226,12 +1287,16 @@ public itemService = inject(ItemService);
     data: any,
     field: string
   ): void {
-    const t = event.target as HTMLInputElement;
-    if (!t || (t.tagName !== 'INPUT' && t.tagName !== 'SELECT')) return;
+    const t = event.target;
+    if (!t || !(t instanceof HTMLInputElement) && !(t instanceof HTMLSelectElement)) {
+      return;
+    }
     if (field === 'rate') this.onRateChange({ target: t }, data);
     if (field === 'qty') this.onQTYChange({ target: t }, data);
-    if (field === 'unit') this.onUnitChange({ target: t }, data);
-    if (field === 'itemCode') {
+    if (field === 'unit' && t instanceof HTMLSelectElement) {
+      this.applyUnitSelection(data, t.value?.trim() ?? '');
+    }
+    if (field === 'itemCode' && t instanceof HTMLInputElement) {
       data.itemCode = t.value ?? '';
       this.patchRowItemCode(data);
     }
@@ -1337,7 +1402,7 @@ public itemService = inject(ItemService);
       let selector = 'input.item-code-search-input';
       if (field === 'qty') selector = 'input.item-qty-input';
       if (field === 'rate') selector = 'input.item-rate-input';
-      if (field === 'unit') selector = 'input.item-unit-input';
+      if (field === 'unit') selector = 'select.item-unit-select';
       const candidates = gridRoot.querySelectorAll(selector);
       for (let i = 0; i < candidates.length; i++) {
         const el = candidates[i] as HTMLInputElement;
@@ -1361,9 +1426,56 @@ public itemService = inject(ItemService);
       return;
     }
 
+    // Batch save: Syncfusion merges `args.data` from its editor model. Custom templates + numericedit
+    // can leave qty/rate as 0/undefined. Our signal (`tempItemFillDetails`) is updated by input/blur — keep it authoritative.
+    if (args.requestType === 'save' && args.data) {
+      this.mergeBatchSaveRowFromStore(args);
+    }
+
     // Do not call onQTYChange here: batch `save`/`edit` fires for every column (rate, unit, …).
     // Passing that event into onQTYChange used the wrong `target`/`value` and overwrote qty with 0.
     // Qty is committed via (blur) and onQtyInput on the qty cell only.
+  }
+
+  /**
+   * Before batch commit, overlay numeric/line fields from the store so the grid does not overwrite
+   * user input with stale zeros (common with custom edit templates in Batch mode).
+   */
+  private mergeBatchSaveRowFromStore(args: any): void {
+    const rows = this.commonService.tempItemFillDetails();
+    if (!rows.length) return;
+
+    let src: any | undefined;
+    const rid = args.data?.rowId;
+    if (rid != null && rid !== '') {
+      src = rows.find((r: any) => this.rowIdEquals(r.rowId, rid));
+    }
+    const idx =
+      typeof args.rowIndex === 'number' && !Number.isNaN(args.rowIndex)
+        ? args.rowIndex
+        : typeof args.data?.index === 'number'
+          ? args.data.index
+          : -1;
+    if (!src && idx >= 0 && idx < rows.length) {
+      src = rows[idx];
+    }
+    if (!src) return;
+
+    args.data.qty = src.qty;
+    args.data.rate = src.rate;
+    args.data.unit = src.unit;
+    args.data.unitsPopup = src.unitsPopup;
+    args.data.amount = src.amount;
+    args.data.taxValue = src.taxValue;
+    args.data.totalAmount = src.totalAmount;
+    args.data.grossAmt = src.grossAmt;
+    args.data.discount = src.discount;
+    args.data.discountPerc = src.discountPerc;
+    args.data.taxPerc = src.taxPerc;
+    args.data.itemCode = src.itemCode;
+    args.data.itemName = src.itemName;
+    args.data.itemId = src.itemId;
+    args.data.availableStock = src.availableStock;
   }
 
   onActionComplete(args: any): void {

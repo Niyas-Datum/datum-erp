@@ -741,20 +741,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
           [
             {
               click: () => {
-                this.alertService.hideDialog();
-                this.settingCashAmountOnSave();
-                if (this.invoiceFooter?.cashSelected?.length === 0) {
-                  this.ensureCashEntriesForCashPayment(grandTotal);
-                }
-                if (this.invoiceFooter?.cashSelected?.length === 0) {
-                  this.baseService.showCustomDialoguePopup(
-                    'Default Cash account is not configured. Please select a cash account.',
-                    'Default Cash Required',
-                    'WARN'
-                  );
-                  return;
-                }
-                this.continueSaveFlow();
+                void this.handleDefaultCashYesAllocate(grandTotal);
               },
               buttonModel: { content: 'Yes', isPrimary: true },
             },
@@ -770,6 +757,39 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       return;
     }
 
+    this.continueSaveFlow();
+  }
+
+  /**
+   * User chose to auto-allocate to default cash: load cash accounts from API if needed, then save.
+   */
+  private async handleDefaultCashYesAllocate(grandTotal: number): Promise<void> {
+    this.alertService.hideDialog();
+    const loaded = await this.invoiceFooter?.ensureCashAccountsLoaded();
+    if (!loaded) {
+      this.baseService.showCustomDialoguePopup(
+        'Default Cash account is not configured. Please select a cash account.',
+        'Default Cash Required',
+        'WARN'
+      );
+      return;
+    }
+    if (this.invoiceFooter) {
+      const acc = this.invoiceFooter.defaultCashAccount;
+      this.defaultCashAccount = Array.isArray(acc) ? [...acc] : [];
+    }
+    this.settingCashAmountOnSave();
+    if (this.invoiceFooter?.cashSelected?.length === 0) {
+      this.ensureCashEntriesForCashPayment(grandTotal);
+    }
+    if (this.invoiceFooter?.cashSelected?.length === 0) {
+      this.baseService.showCustomDialoguePopup(
+        'Default Cash account is not configured. Please select a cash account.',
+        'Default Cash Required',
+        'WARN'
+      );
+      return;
+    }
     this.continueSaveFlow();
   }
 
@@ -827,20 +847,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
           [
             {
               click: () => {
-                this.alertService.hideDialog();
-                this.settingCashAmountOnSave();
-                if (this.invoiceFooter?.cashSelected?.length === 0) {
-                  this.ensureCashEntriesForCashPayment(grandTotal);
-                }
-                if (this.invoiceFooter?.cashSelected?.length === 0) {
-                  this.baseService.showCustomDialoguePopup(
-                    'Default Cash account is not configured. Please select a cash account.',
-                    'Default Cash Required',
-                    'WARN'
-                  );
-                  return;
-                }
-                this.continueSaveFlow();
+                void this.handleDefaultCashYesAllocate(grandTotal);
               },
               buttonModel: { content: 'Yes', isPrimary: true },
             },

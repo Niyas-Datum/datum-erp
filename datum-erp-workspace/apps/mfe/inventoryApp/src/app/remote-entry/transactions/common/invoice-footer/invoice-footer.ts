@@ -13,7 +13,7 @@ import {
   taxPopup,
 } from '../interface/transactions.interface';
 import { TransactionService } from '../services/transaction.services';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { finalize, firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { EndpointConstant } from '@org/constants';
 import { LogLevel } from '@microsoft/signalr';
 import {
@@ -629,6 +629,71 @@ export class InvoiceFooter implements OnInit {
 
   closePopup() {
     this.showPopup = false;
+  }
+
+  /**
+   * When pay type is Cash but no cash accounts are in memory, loads them from the API
+   * (cash popup list, then default cash account) so "Yes" on the default-cash prompt can allocate.
+   */
+  async ensureCashAccountsLoaded(): Promise<boolean> {
+    const hasAny =
+      (Array.isArray(this.defaultCashAccount) && this.defaultCashAccount.length > 0) ||
+      (Array.isArray(this.pettyCashObj) && this.pettyCashObj.length > 0);
+    if (hasAny) {
+      return true;
+    }
+    try {
+      const popupRes = await firstValueFrom(
+        this.transactionService.getDetails(EndpointConstant.FILLCASHPOPUP)
+      );
+      const rows = popupRes?.data;
+      if (Array.isArray(rows) && rows.length > 0) {
+        this.applyCashPopupApiRows(rows);
+        return this.defaultCashAccount.length > 0;
+      }
+      const defRes = await firstValueFrom(
+        this.transactionService.getDetails(EndpointConstant.FILLDEFAULTCASHACCOUNT)
+      );
+      const raw = defRes?.data;
+      const list = Array.isArray(raw) ? raw : raw != null ? [raw] : [];
+      if (list.length === 0) {
+        return false;
+      }
+      const normalized = list.map((item: any) => ({
+        alias: item.alias ?? item.accountCode,
+        name: item.name ?? item.accountName,
+        id: item.id,
+      }));
+      this.applyCashPopupApiRows(normalized);
+      return this.defaultCashAccount.length > 0;
+    } catch (e) {
+      console.error('ensureCashAccountsLoaded', e);
+      return false;
+    }
+  }
+
+  /** Maps API rows to cashPopupObj / defaultCashAccount / pettyCashObj (single shape for allocation). */
+  private applyCashPopupApiRows(responseData: any[]): void {
+    const mapped = responseData.map((item: any) => {
+      const code =
+        item.alias ?? item.accountcode ?? item.accountCode ?? item.accontcode ?? '';
+      const name =
+        item.name ?? item.accountname ?? item.accountName ?? item.accontname ?? '';
+      const id = item.id;
+      return {
+        id,
+        accountcode: code,
+        accountname: name,
+        accountCode: code,
+        accountName: name,
+        alias: item.alias ?? code,
+        name: item.name ?? name,
+      };
+    });
+    this.cashPopupObj = mapped as any;
+    this.defaultCashAccount = this.cashPopupObj;
+    this.pettyCashObj = this.cashPopupObj;
+    this.cdr.markForCheck();
   }
 
   /**

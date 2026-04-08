@@ -56,14 +56,24 @@
           </ng-template>
           <ng-template #editTemplate let-data>
             <div [attr.data-item-row-id]="data.rowId">
-            <input class="form-control form-control-sm item-unit-input" type="text" [value]="data.unit?.unit || data.unit"
-              (blur)="onUnitChange($event, data)" (keydown)="onKeyDown($event, data, 'unit')" placeholder="Unit" />
+            @let units = getUnitsPopupForRow(data);
+            <select
+              class="form-select form-select-sm item-unit-select"
+              [disabled]="units.length === 0"
+              [value]="unitSelectValue(data)"
+              (change)="onUnitSelect($event, data)"
+              (keydown)="onKeyDown($event, data, 'unit')">
+              <option value="">{{ units.length ? 'Unit' : '—' }}</option>
+              @for (u of units; track u.unit) {
+                <option [value]="u.unit">{{ u.unit }}</option>
+              }
+            </select>
             </div>
           </ng-template>
         </e-column>
 
-        <!-- Qty -->
-        <e-column field="qty" headerText="Qty" editType="numericedit" width="120"
+        <!-- Qty: stringedit avoids Syncfusion numericedit batch merge fighting the custom input -->
+        <e-column field="qty" headerText="Qty" editType="stringedit" width="120"
           [allowEditing]="isNewMode() || isEditMode()">
           <ng-template #template let-data>
             <span>{{ data.qty }}</span>
