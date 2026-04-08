@@ -102,7 +102,7 @@ export class GeneralRegisterComponent extends BaseComponent implements OnInit {
         this.generalRegisterForm.patchValue({
             to: new Date()
         });
-        this.SetPageType(2);
+        this.SetPageType(3);
         this.fetchAllFilterMasterData();
     }
 

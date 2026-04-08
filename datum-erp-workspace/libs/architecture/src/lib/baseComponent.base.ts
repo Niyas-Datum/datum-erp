@@ -15,7 +15,7 @@ export abstract class BaseComponent {
   protected toast = inject(ToastService); // <-- use DI service
 
 
-  
+
 
   commonInit() {
     console.log('init');
@@ -23,10 +23,10 @@ export abstract class BaseComponent {
 
   onInitBase() {
 
-      this.serviceBase.dataSharingService.currentPageInfo$.subscribe(info => {
-           this.currentPageInfo = info;
-           console.log('Current page info:', this.currentPageInfo.url);
-      });
+    this.serviceBase.dataSharingService.currentPageInfo$.subscribe(info => {
+      this.currentPageInfo = info;
+      console.log('Current page info:', this.currentPageInfo.url);
+    });
 
     //
     this.FormInitialize();
@@ -45,48 +45,48 @@ export abstract class BaseComponent {
     //           });
 
     this.serviceBase.formToolbarService.newClicked$.subscribe(() => {
-                    if(this.serviceBase.formToolbarService.newbuttonClick === 1){
-                            this.onNewButtonFormDisabled();
+      if (this.serviceBase.formToolbarService.newbuttonClick === 1) {
+        this.onNewButtonFormDisabled();
 
-                    }else{
-                             this.newbuttonClicked();
-                    }
-         if(!this.currentPageInfo?.isCreate || this.currentPageInfo?.isCreate===0){
-          this.toast.warning('You do not have permission to create new records.');
-          return;
-         }
+      } else {
+        this.newbuttonClicked();
+      }
+      if (!this.currentPageInfo?.isCreate || this.currentPageInfo?.isCreate === 0) {
+        this.toast.warning('You do not have permission to create new records.');
+        return;
+      }
 
-     
+
       // this.costCategoryForm.enable();
 
-     
+
 
     });
 
     //edit  click
     this.serviceBase.formToolbarService.editClicked$.subscribe(() => {
-       if(!this.currentPageInfo?.isEdit || this.currentPageInfo?.isEdit===0){
-          this.toast.warning('You do not have permission to edit records.');
-          return;
-         }
+      if (!this.currentPageInfo?.isEdit || this.currentPageInfo?.isEdit === 0) {
+        this.toast.warning('You do not have permission to edit records.');
+        return;
+      }
       console.log('edit clicked - Cost Category Component');
       this.onEditClick();
       // this.costCategoryForm.enable();
       // this.initializeForm();
     });
     this.serviceBase.formToolbarService.deleteClicked$.subscribe(() => {
-       if(!this.currentPageInfo?.isDelete || this.currentPageInfo?.isDelete===0){
-          this.toast.warning('You do not have permission to delete records.');
-          return;
-         }
+      if (!this.currentPageInfo?.isDelete || this.currentPageInfo?.isDelete === 0) {
+        this.toast.warning('You do not have permission to delete records.');
+        return;
+      }
       this.DeleteData(this.leftgridSelectedData);
     });
     this.serviceBase.formToolbarService.saveClicked$.subscribe(() => {
 
-       if(!this.currentPageInfo?.isCreate || this.currentPageInfo?.isCreate===0 || !this.currentPageInfo?.isEdit || this.currentPageInfo?.isEdit===0){
-          this.toast.warning('You do not have permission to save new records.');
-          return;
-         }
+      if (!this.currentPageInfo?.isCreate || this.currentPageInfo?.isCreate === 0 || !this.currentPageInfo?.isEdit || this.currentPageInfo?.isEdit === 0) {
+        this.toast.warning('You do not have permission to save new records.');
+        return;
+      }
       if (this.formUtil.thisForm.invalid) {
         for (const field of Object.keys(this.formUtil.thisForm.controls)) {
           const control: any = this.formUtil.thisForm.get(field);
@@ -97,16 +97,25 @@ export abstract class BaseComponent {
             return; // Stop after showing the first invalid field
           }
         }
-      
+
         return;
       }
-        this.SaveFormData();
+      this.SaveFormData();
     });
   }
 
-  SetPageType=(status:number)=>{
-    this.serviceBase.formToolbarService.emitLeftGridViewSatus(status);
+  SetPageType = (status: number) => {
 
+    if (status === 3) {
+      // ❌ remove both
+      this.serviceBase.formToolbarService.emitLeftGridViewSatus(2); // hide left grid
+      this.serviceBase.formToolbarService.emitToolbarVisibility(false); // hide toolbar
+    }
+    else {
+      // existing behavior
+      this.serviceBase.formToolbarService.emitLeftGridViewSatus(status);
+      this.serviceBase.formToolbarService.emitToolbarVisibility(true);
+    }
   }
 
   /***
@@ -122,15 +131,15 @@ export abstract class BaseComponent {
     console.log(this.currentPageInfo?.isHigherApprove)
 
     console.log('new button clicked - base component');
-  
+
   }
 
   protected FormInitialize() {
     console.log('form initialization missing');
   }
-// protected onEditClick(){
-//   console.log("edit operation");
-// }
+  // protected onEditClick(){
+  //   console.log("edit operation");
+  // }
   protected SaveFormData() {
     console.log('save opertion not started');
   }
