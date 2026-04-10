@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-10">
+    <div class="col-12 col-md-10" *ngIf="showToolbar">
       <app-form-toolbar [isNewMode]="isNewMode" [isEditMode]="isEditMode" [isNewBtnDisabled]="isNewBtnDisabled"
         [isEditBtnDisabled]="isEditBtnDisabled" [isDeleteBtnDisabled]="isDeleteBtnDisabled"
         [isSaveBtnDisabled]="isSaveBtnDisabled" [isPrintBtnDisabled]="isPrintBtnDisabled" (new)="onNewClick()"

@@ -13,7 +13,7 @@ import {
   taxPopup,
 } from '../interface/transactions.interface';
 import { TransactionService } from '../services/transaction.services';
-import { finalize, Subject, takeUntil } from 'rxjs';
+import { finalize, firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { EndpointConstant } from '@org/constants';
 import { LogLevel } from '@microsoft/signalr';
 import {
@@ -158,7 +158,7 @@ export class InvoiceFooter implements OnInit {
       if (!this.salesForm.get('paytype')?.value && this.payTypeObj.length > 0) {
         const fallbackPayType = this.payTypeObj.find((pt: any) => pt.name === 'Cash') || this.payTypeObj[0];
         if (fallbackPayType) {
-          this.salesForm.patchValue({ paytype: fallbackPayType });
+          this.salesForm.patchValue({ paytype: fallbackPayType.id });
           this.selectedPayTypeObj = {
             id: fallbackPayType.id,
             value: fallbackPayType.name,
@@ -317,7 +317,7 @@ export class InvoiceFooter implements OnInit {
         this.selectedPayTypeObj = payType;
         this.selectedPayType = payType.name;
 
-        this.salesForm.patchValue({ paytype: payType }, { emitEvent: false });
+        this.salesForm.patchValue({ paytype: payType.id }, { emitEvent: false });
 
         this.enableCashOption = payType.name === 'Cash';
         this.enableCreditOption = payType.name === 'Credit';
@@ -632,6 +632,71 @@ export class InvoiceFooter implements OnInit {
   }
 
   /**
+   * When pay type is Cash but no cash accounts are in memory, loads them from the API
+   * (cash popup list, then default cash account) so "Yes" on the default-cash prompt can allocate.
+   */
+  async ensureCashAccountsLoaded(): Promise<boolean> {
+    const hasAny =
+      (Array.isArray(this.defaultCashAccount) && this.defaultCashAccount.length > 0) ||
+      (Array.isArray(this.pettyCashObj) && this.pettyCashObj.length > 0);
+    if (hasAny) {
+      return true;
+    }
+    try {
+      const popupRes = await firstValueFrom(
+        this.transactionService.getDetails(EndpointConstant.FILLCASHPOPUP)
+      );
+      const rows = popupRes?.data;
+      if (Array.isArray(rows) && rows.length > 0) {
+        this.applyCashPopupApiRows(rows);
+        return this.defaultCashAccount.length > 0;
+      }
+      const defRes = await firstValueFrom(
+        this.transactionService.getDetails(EndpointConstant.FILLDEFAULTCASHACCOUNT)
+      );
+      const raw = defRes?.data;
+      const list = Array.isArray(raw) ? raw : raw != null ? [raw] : [];
+      if (list.length === 0) {
+        return false;
+      }
+      const normalized = list.map((item: any) => ({
+        alias: item.alias ?? item.accountCode,
+        name: item.name ?? item.accountName,
+        id: item.id,
+      }));
+      this.applyCashPopupApiRows(normalized);
+      return this.defaultCashAccount.length > 0;
+    } catch (e) {
+      console.error('ensureCashAccountsLoaded', e);
+      return false;
+    }
+  }
+
+  /** Maps API rows to cashPopupObj / defaultCashAccount / pettyCashObj (single shape for allocation). */
+  private applyCashPopupApiRows(responseData: any[]): void {
+    const mapped = responseData.map((item: any) => {
+      const code =
+        item.alias ?? item.accountcode ?? item.accountCode ?? item.accontcode ?? '';
+      const name =
+        item.name ?? item.accountname ?? item.accountName ?? item.accontname ?? '';
+      const id = item.id;
+      return {
+        id,
+        accountcode: code,
+        accountname: name,
+        accountCode: code,
+        accountName: name,
+        alias: item.alias ?? code,
+        name: item.name ?? name,
+      };
+    });
+    this.cashPopupObj = mapped as any;
+    this.defaultCashAccount = this.cashPopupObj;
+    this.pettyCashObj = this.cashPopupObj;
+    this.cdr.markForCheck();
+  }
+
+  /**
    * Loads default cash account data (for use when cash popup is opened)
    * Does NOT auto-allocate - user must explicitly open popup and click OK
    */
@@ -674,7 +739,9 @@ export class InvoiceFooter implements OnInit {
       this.cashPopupObj = this.pettyCashObj;
       this.defaultCashAccount = this.pettyCashObj;
       this.popupData = this.cashPopupObj;
-      this.showPopup = true;
+      setTimeout(() => {
+        this.showPopup = true;
+      }, 0);
     } else {
       this.transactionService
         .getDetails(EndpointConstant.FILLCASHPOPUP)
@@ -690,7 +757,9 @@ export class InvoiceFooter implements OnInit {
             this.defaultCashAccount = this.cashPopupObj;
             this.pettyCashObj = this.cashPopupObj;
             this.popupData = this.cashPopupObj;
-            this.showPopup = true;
+            setTimeout(() => {
+              this.showPopup = true;
+            }, 0);
           },
           error: (error) => {
             console.error('An Error Occured', error);
@@ -793,7 +862,9 @@ export class InvoiceFooter implements OnInit {
             id: item.id,
           }));
           this.popupData = this.cardPopupObj;
-          this.showPopup = true;
+          setTimeout(() => {
+            this.showPopup = true;
+          }, 0);
           
           // Auto-select default card account after popup opens
           setTimeout(() => {
@@ -830,7 +901,9 @@ export class InvoiceFooter implements OnInit {
             id: item.id,
           }));
           this.popupData = this.chequePopupObj;
-          this.showPopup = true;
+          setTimeout(() => {
+            this.showPopup = true;
+          }, 0);
         },
         error: (error) => {
           console.error('An Error Occured', error);
@@ -954,28 +1027,30 @@ export class InvoiceFooter implements OnInit {
 
 
   onChangePayType(event?: { itemData?: PayType }) {
-    const paytype: PayType = event?.itemData ?? this.salesForm.get('paytype')?.value;
+    const formVal = this.salesForm.get('paytype')?.value;
+    const selected = event?.itemData
+      ?? this.payTypeObj.find((p: any) => Number(p.id) === Number(formVal))
+      ?? null;
 
-    if (paytype) {
-      if (event?.itemData) {
-        this.salesForm.patchValue({ paytype }, { emitEvent: false });
-      }
-      this.selectedPayType = paytype.name;
-      this.selectedPayTypeObj = paytype;
+    if (!selected) return;
 
-      this.enableCreditOption = paytype.name === 'Credit';
-      this.enableCashOption = paytype.name === 'Cash';
+    if (event?.itemData) {
+      this.salesForm.patchValue({ paytype: selected.id }, { emitEvent: false });
+    }
 
-      this.isChequeButtonEnabled = paytype.name === 'Credit';
+    this.selectedPayType = selected.name;
+    this.selectedPayTypeObj = selected;
 
-      this.applyPayTypeGate(paytype.name);
-      
-      // Don't auto-allocate cash - let sales person decide when to open cash popup
-      // Only load default cash account data for when popup is opened
-      if (paytype.name === 'Cash') {
-        this.loadDefaultCashAccount();
-        // Remove auto-allocation - user must explicitly open cash popup and click OK
-      }
+    this.enableCreditOption = selected.name === 'Credit';
+    this.enableCashOption = selected.name === 'Cash';
+
+    this.isChequeButtonEnabled = selected.name === 'Credit';
+
+    this.applyPayTypeGate(selected.name);
+
+    // Don't auto-allocate cash - let sales person decide when to open cash popup
+    if (selected.name === 'Cash') {
+      this.loadDefaultCashAccount();
     }
   }
 
@@ -1005,7 +1080,7 @@ export class InvoiceFooter implements OnInit {
             }
 
             if (defaultPayType) {
-              this.salesForm.patchValue({ paytype: defaultPayType });
+              this.salesForm.patchValue({ paytype: defaultPayType.id });
               this.selectedPayTypeObj = {
                 id: defaultPayType.id,
                 value: defaultPayType.name,
@@ -1044,7 +1119,9 @@ export class InvoiceFooter implements OnInit {
             id: item.id,
           }));
           this.popupData = this.taxPopupObj;
-          this.showPopup = true;
+          setTimeout(() => {
+            this.showPopup = true;
+          }, 0);
         },
         error: (error) => {
           console.error('An Error Occured', error);
@@ -1075,7 +1152,9 @@ export class InvoiceFooter implements OnInit {
             } as additonalChargesPopup;
           });
           this.popupData = this.additonalChargesPopupObj;
-          this.showPopup = true;
+          setTimeout(() => {
+            this.showPopup = true;
+          }, 0);
         },
         error: (error) => {
           console.error('An Error Occured', error);
@@ -1128,7 +1207,7 @@ export class InvoiceFooter implements OnInit {
       if (this.payTypeObj && this.payTypeObj.length > 0 && !this.salesForm.get('paytype')?.value) {
         const defaultPayType = this.payTypeObj.find((pt: any) => pt.name === 'Cash') || this.payTypeObj[0];
         if (defaultPayType) {
-          this.salesForm.patchValue({ paytype: defaultPayType });
+          this.salesForm.patchValue({ paytype: defaultPayType.id });
           this.selectedPayTypeObj = {
             id: defaultPayType.id,
             value: defaultPayType.name,

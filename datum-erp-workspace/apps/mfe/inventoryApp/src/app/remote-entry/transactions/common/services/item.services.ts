@@ -118,36 +118,45 @@ export class ItemService {
    * Process items response - common logic for both fetch methods
    */
   private processItemsResponse(response: any): void {
-    // Get response items
-    this.responseData.set(response?.data.items);
+    // Get response items (legacy shape may nest under `item` + `unitPopup`; flat rows also supported)
+    this.responseData.set(response?.data?.items ?? []);
 
-    // Add dummy unitPopup for each item
     this.responseData.set(
-      this.responseData().map((item: any) => {
-        return {
-          ...item,
-          unitPopup: [
-            { unit: 'PCS', basicUnit: 'PCS', factor: 1 },
-            { unit: 'BOX', basicUnit: 'PCS', factor: 10 },
-            { unit: 'CARTON', basicUnit: 'PCS', factor: 100 },
-          ],
-        };
+      this.responseData().map((row: any) => {
+        const nested = row?.item ?? row;
+        const rawPopup = row.unitPopup ?? nested?.unitPopup;
+        let unitPopup: any[];
+        if (Array.isArray(rawPopup) && rawPopup.length > 0) {
+          unitPopup = rawPopup.map((u: any) => ({
+            unit: u.unit,
+            basicUnit: u.basicUnit ?? u.basicunit ?? u.unit,
+            factor: u.factor != null ? Number(u.factor) : 1,
+            purchaseRate: u.purchaseRate,
+            mrp: u.mrp,
+          }));
+        } else {
+          const fallback = (nested?.unit ?? row.unit ?? 'PCS').toString();
+          unitPopup = [{ unit: fallback, basicUnit: fallback, factor: 1 }];
+        }
+        return { ...row, unitPopup };
       })
     );
 
-    // Map the data for dropdown/options usage
+    // Map the data for dropdown/options usage (aligns with legacy fillItemDataOptions)
     const itemData = this.responseData().map((item: any) => {
+      const nested = item?.item ?? item;
+      const firstUnit = item.unitPopup?.[0];
       return {
-        itemId: item.itemId,
-        itemCode: item.itemCode,
-        itemName: item.itemName,
-        barCode: item.barCode,
-        id: item.id,
-        unitname: item.unit,
-        stock: item.stock,
-        rate: item.rate,
-        purchaseRate: item.purchaseRate,
-        taxPerc: item.taxPerc,
+        itemId: nested?.itemId ?? item.itemId,
+        itemCode: nested?.itemCode ?? item.itemCode,
+        itemName: nested?.itemName ?? item.itemName,
+        barCode: nested?.barCode ?? item.barCode,
+        id: nested?.id ?? item.id,
+        unitname: firstUnit?.unit ?? nested?.unit ?? item.unit,
+        stock: nested?.stock ?? item.stock,
+        rate: nested?.rate ?? item.rate,
+        purchaseRate: nested?.purchaseRate ?? item.purchaseRate,
+        taxPerc: nested?.taxPerc ?? item.taxPerc,
         unitPopup: item.unitPopup,
       };
     });
@@ -650,6 +659,7 @@ export class ItemService {
       itemCode: '',
       itemName: '',
       unit: '',
+      unitsPopup: [] as { unit: string; basicunit: string; factor: number }[],
       qty: 0,
       rate: 0,
       discountPerc: 0,

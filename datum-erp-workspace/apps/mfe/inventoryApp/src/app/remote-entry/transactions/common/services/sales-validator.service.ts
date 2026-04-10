@@ -63,8 +63,9 @@ export class SalesValidatorService {
   private validateHeader(headerForm: FormGroup | null | undefined, header: any, errors: ValidationError[]) {
     // Debug logging
     
-    // Required: purchasedate, customer, warehouse
+    // Required: voucher no, purchasedate, customer, warehouse
     // Project is optional
+    this.required(header?.voucherno, 'header', 'voucherno', 'Invoice Number is required.', errors);
     this.required(header?.purchasedate, 'header', 'purchasedate', 'Date is required.', errors);
     this.required(header?.customer, 'header', 'customer', 'Customer is required.', errors);
     this.required(header?.warehouse, 'header', 'warehouse', 'Warehouse is required.', errors);
@@ -140,11 +141,7 @@ export class SalesValidatorService {
         errors.push({ scope: 'items', field: `rows[${rowIdx}].itemCode`, message: `Row ${rowIdx + 1}: Item Code is required.`, rowIndex: rowIdx });
       }
 
-      // qty > 0
-      const qty = this.num(row?.qty);
-      if (!(qty > 0)) {
-        errors.push({ scope: 'items', field: `rows[${rowIdx}].qty`, message: `Row ${rowIdx + 1}: Quantity must be greater than 0.`, rowIndex: rowIdx });
-      }
+      // qty: allow 0 or positive (do not block save on zero qty)
 
       // unit required (string or object)
       const unit = row?.unit;

@@ -201,6 +201,10 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     this.onEditClickHandler();
   }
 
+  protected onPrintClick(): void {
+    this.onPrintTransactionClick();
+  }
+
   protected override FormInitialize(): void {
     this.syncFormsWithBaseComponent();
     this.captureInitialValues();
@@ -368,6 +372,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       isSaveBtnDisabled: true,
       isEditBtnDisabled: false,
       isDeleteBtnDisabled: false,
+      isPrintBtnDisabled: false,
     });
   }
 
@@ -407,6 +412,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       isSaveBtnDisabled: false,
       isEditBtnDisabled: true,
       isDeleteBtnDisabled: true,
+      isPrintBtnDisabled: true,
     });
 
     // Refresh left grid so it shows latest invoice list when starting a new invoice
@@ -456,6 +462,7 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       isSaveBtnDisabled: false,
       isEditBtnDisabled: true,
       isDeleteBtnDisabled: true,
+      isPrintBtnDisabled: false,
     });
     
     // Ensure grid is editable; empty row for new items is added by invoice-footer when transaction data is bound
@@ -656,14 +663,34 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       return;
     }
 
+    const headerForm = this.invoiceHeader?.salesForm?.value || {};
+    const party = this.extractCustomerInfo(headerForm.customer);
+    if (!party || (party.id == null && !party.name)) {
+      this.baseService.showCustomDialoguePopup(
+        'Selected customer is invalid. Please pick a valid customer.',
+        'Validation Error',
+        'WARN'
+      );
+      return;
+    }
+
     const footerForm = this.invoiceFooter?.salesForm?.value || {};
     const payType = footerForm.paytype;
+    const payTypeName = this.resolvePayTypeName(payType);
+    if (!payTypeName) {
+      this.baseService.showCustomDialoguePopup(
+        'Please select Pay Type (Cash/Card) before saving.',
+        'Validation Error',
+        'WARN'
+      );
+      return;
+    }
     const grandTotal = parseFloat(footerForm.grandtotal) || 0;
     const balanceAmount = parseFloat(footerForm.balance) || 0;
     const totalPaid = parseFloat(footerForm.totalpaid) || 0;
     const cashSelectedLength = this.invoiceFooter?.cashSelected?.length || 0;
-    const isCashPayment = payType && (payType.name === 'Cash' || payType.value === 'Cash');
-    const isCreditPayment = payType && (payType.name === 'Credit' || payType.value === 'Credit');
+    const isCashPayment = payTypeName === 'Cash';
+    const isCreditPayment = payTypeName === 'Credit';
 
     // Auto-change paytype logic from old code:
     // If Credit and balance is 0, change to Cash
@@ -706,40 +733,21 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     }
 
     if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
-      // Require Default Cash to be configured before allowing save with Cash payment
-      if (!this.isDefaultCashConfigured()) {
-        this.baseService.showCustomDialoguePopup(
-          'Default Cash account is not configured. Please configure Default Cash account before saving.',
-          'Default Cash Required',
-          'WARN'
-        );
-        return;
-      }
-      // Show default payment confirmation popup when no cash entries are allocated
       setTimeout(() => {
         this.viewDialog(
-          'Do you want to allocate the payment amount to default cash account?',
+          'Default Cash Account is not selected. Do you want to allocate to default cash account?',
           'Default Cash',
           '450px',
           [
             {
               click: () => {
-                this.alertService.hideDialog();
-                this.settingCashAmountOnSave();
-                if (this.invoiceFooter?.cashSelected?.length === 0) {
-                  this.ensureCashEntriesForCashPayment(grandTotal);
-                }
-                this.continueSaveFlow();
+                void this.handleDefaultCashYesAllocate(grandTotal);
               },
               buttonModel: { content: 'Yes', isPrimary: true },
             },
             {
               click: () => {
                 this.alertService.hideDialog();
-                this.baseService.showCustomDialoguePopup(
-                  'Cash payment entries are required for cash transactions',
-                  'WARN'
-                );
               },
               buttonModel: { content: 'No' },
             },
@@ -749,6 +757,39 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       return;
     }
 
+    this.continueSaveFlow();
+  }
+
+  /**
+   * User chose to auto-allocate to default cash: load cash accounts from API if needed, then save.
+   */
+  private async handleDefaultCashYesAllocate(grandTotal: number): Promise<void> {
+    this.alertService.hideDialog();
+    const loaded = await this.invoiceFooter?.ensureCashAccountsLoaded();
+    if (!loaded) {
+      this.baseService.showCustomDialoguePopup(
+        'Default Cash account is not configured. Please select a cash account.',
+        'Default Cash Required',
+        'WARN'
+      );
+      return;
+    }
+    if (this.invoiceFooter) {
+      const acc = this.invoiceFooter.defaultCashAccount;
+      this.defaultCashAccount = Array.isArray(acc) ? [...acc] : [];
+    }
+    this.settingCashAmountOnSave();
+    if (this.invoiceFooter?.cashSelected?.length === 0) {
+      this.ensureCashEntriesForCashPayment(grandTotal);
+    }
+    if (this.invoiceFooter?.cashSelected?.length === 0) {
+      this.baseService.showCustomDialoguePopup(
+        'Default Cash account is not configured. Please select a cash account.',
+        'Default Cash Required',
+        'WARN'
+      );
+      return;
+    }
     this.continueSaveFlow();
   }
 
@@ -784,43 +825,35 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
   private runCashCheckAndSave(): void {
     const footerForm = this.invoiceFooter?.salesForm?.value || {};
     const payType = footerForm.paytype;
+    const payTypeName = this.resolvePayTypeName(payType);
+    if (!payTypeName) {
+      this.baseService.showCustomDialoguePopup(
+        'Please select Pay Type (Cash/Card) before saving.',
+        'Validation Error',
+        'WARN'
+      );
+      return;
+    }
     const grandTotal = parseFloat(footerForm.grandtotal) || 0;
     const cashSelectedLength = this.invoiceFooter?.cashSelected?.length || 0;
-    const isCashPayment = payType && (payType.name === 'Cash' || payType.value === 'Cash');
+    const isCashPayment = payTypeName === 'Cash';
 
     if (isCashPayment && grandTotal > 0 && cashSelectedLength === 0) {
-      if (!this.isDefaultCashConfigured()) {
-        this.baseService.showCustomDialoguePopup(
-          'Default Cash account is not configured. Please configure Default Cash account before saving.',
-          'Default Cash Required',
-          'WARN'
-        );
-        return;
-      }
       setTimeout(() => {
         this.viewDialog(
-          'Do you want to allocate the payment amount to default cash account?',
+          'Default Cash Account is not selected. Do you want to allocate to default cash account?',
           'Default Cash',
           '450px',
           [
             {
               click: () => {
-                this.alertService.hideDialog();
-                this.settingCashAmountOnSave();
-                if (this.invoiceFooter?.cashSelected?.length === 0) {
-                  this.ensureCashEntriesForCashPayment(grandTotal);
-                }
-                this.continueSaveFlow();
+                void this.handleDefaultCashYesAllocate(grandTotal);
               },
               buttonModel: { content: 'Yes', isPrimary: true },
             },
             {
               click: () => {
                 this.alertService.hideDialog();
-                this.baseService.showCustomDialoguePopup(
-                  'Cash payment entries are required for cash transactions',
-                  'WARN'
-                );
               },
               buttonModel: { content: 'No' },
             },
@@ -830,6 +863,30 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       return;
     }
     this.continueSaveFlow();
+  }
+
+  private resolvePayTypeName(payType: any): string {
+    if (payType == null || payType === '') return '';
+    if (typeof payType === 'object') {
+      const name = (payType.name ?? payType.value ?? '').toString().trim();
+      if (name) return name;
+      const id = Number(payType.id);
+      if (Number.isFinite(id) && id > 0) {
+        const found = (this.invoiceFooter?.payTypeObj ?? []).find(
+          (p: any) => Number(p.id) === id
+        );
+        return (found?.name ?? '').toString().trim();
+      }
+      return '';
+    }
+    const raw = String(payType).trim();
+    if (!raw) return '';
+    if (!/^\d+$/.test(raw)) return raw;
+    const id = Number(raw);
+    const found = (this.invoiceFooter?.payTypeObj ?? []).find(
+      (p: any) => Number(p.id) === id
+    );
+    return (found?.name ?? '').toString().trim();
   }
 
   private collectTransactionData(): any {
@@ -896,6 +953,28 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
         'SUCCESS'
       );
 
+      const txnIdForPrint = this.selectedTransactionId() ?? 0;
+      if (txnIdForPrint > 0) {
+        this.viewDialog(
+          'Do you want to download invoice PDF now?',
+          'Download PDF',
+          '420px',
+          [
+            {
+              click: () => {
+                this.alertService.hideDialog();
+                this.executePrintPdf(txnIdForPrint);
+              },
+              buttonModel: { content: 'Yes', isPrimary: true },
+            },
+            {
+              click: () => this.alertService.hideDialog(),
+              buttonModel: { content: 'No' },
+            },
+          ]
+        );
+      }
+
       // Keep the success dialog visible before resetting to New Mode.
       const postSuccessDelayMs = 1200;
       setTimeout(() => {
@@ -925,6 +1004,48 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
     const msgStr = typeof serverMessage === 'string' ? serverMessage : JSON.stringify(serverMessage ?? '');
     const displayMessage = this.getSaveErrorMessage(msgStr);
     this.baseService.showCustomDialoguePopup(displayMessage, 'Save Failed', 'WARN');
+  }
+
+  private onPrintTransactionClick(): void {
+    const transactionId = this.selectedTransactionId() ?? 0;
+    if (!transactionId) {
+      this.baseService.showCustomDialoguePopup(
+        'Please select a transaction to print.',
+        'Print',
+        'WARN'
+      );
+      return;
+    }
+
+    this.viewDialog(
+      'Do you want to generate invoice PDF?',
+      'Print',
+      '420px',
+      [
+        {
+          click: () => {
+            this.alertService.hideDialog();
+            this.executePrintPdf(transactionId);
+          },
+          buttonModel: { content: 'Yes', isPrimary: true },
+        },
+        {
+          click: () => this.alertService.hideDialog(),
+          buttonModel: { content: 'No' },
+        },
+      ]
+    );
+  }
+
+  private executePrintPdf(transactionId: number): void {
+    const pageId = this.invoiceHeader?.pageId ?? this.currentPageId ?? 149;
+    this.pdfGenerationService.generatePdf(
+      transactionId,
+      pageId,
+      'download',
+      this.invoiceHeader?.address ?? '',
+      true
+    );
   }
 
   /** User-friendly message for save failures; detects backend SqlException/cast errors. */
@@ -1487,9 +1608,20 @@ export class SalesInvoiceComponent extends BaseComponent implements OnInit, OnDe
       (c) => c.accountName === customer || c.id === customer
     );
 
-    return match
-      ? { id: match.id, name: match.accountName, code: match.accountCode, description: '' }
-      : {};
+    if (match) {
+      return {
+        id: match.id,
+        name: match.accountName,
+        code: match.accountCode,
+        description: '',
+      };
+    }
+    // Allow explicit walk-in/cash free text; block unknown accidental entries.
+    const text = String(customer ?? '').trim().toLowerCase();
+    if (text === 'walk-in customer' || text === 'walk in customer' || text === 'walkin customer') {
+      return { id: 0, name: 'Walk-in Customer', code: '', description: '' };
+    }
+    return {};
   }
 
   private extractProjectInfo(project: any): any {

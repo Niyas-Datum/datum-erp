@@ -55,10 +55,11 @@
         <div class="p-1">
           
           <app-left-grid
-            (rowSelected)="onLeftGridClicked($event)"
-            [columns]="leftgridchildData.columns"
-          >
-          </app-left-grid>
+              (rowSelected)="onCostCategorySelected($event)"
+              [columns]="leftgridchildData.columns"
+              [isNewMode]="isNewMode"
+              [isEditMode]="isEditMode">
+            </app-left-grid>
         </div>
       </ejs-sidebar>
 

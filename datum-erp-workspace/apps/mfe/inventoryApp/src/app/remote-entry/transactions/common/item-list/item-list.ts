@@ -95,6 +95,7 @@ public itemService = inject(ItemService);
 
   /** Input that opened the popup — used for positioning (avoids wrong querySelector when DOM has duplicates). */
   private itemSearchAnchorEl: HTMLElement | null = null;
+  private suppressItemSearchOpenUntil = 0;
 
   private readonly documentScrollReposition = (): void => {
     if (this.activeItemSearchRowId != null) {
@@ -596,6 +597,9 @@ public itemService = inject(ItemService);
   }
 
   onItemCodeFieldFocus(event: FocusEvent, data: any): void {
+    if (Date.now() < this.suppressItemSearchOpenUntil) {
+      return;
+    }
     if (this.itemSearchBlurTimer) {
       clearTimeout(this.itemSearchBlurTimer);
       this.itemSearchBlurTimer = null;
@@ -634,6 +638,7 @@ public itemService = inject(ItemService);
     ev.stopPropagation();
     const data = this.getActiveItemSearchRowData();
     if (!data) return;
+    this.suppressItemSearchOpenUntil = Date.now() + 350;
     this.itemSearchSelecting = true;
     const normalized = this.normalizeSelectedItem({ ...item });
     this.applyItemMasterSelection(normalized, data);
@@ -662,14 +667,7 @@ public itemService = inject(ItemService);
   }
 
   focusItemCodeInput(rowId: number): void {
-    setTimeout(() => {
-      const wrap = document.querySelector(`[data-item-row-id="${rowId}"]`);
-      const input = wrap?.querySelector(
-        'input.item-code-search-input'
-      ) as HTMLInputElement | null;
-      input?.focus();
-      input?.select?.();
-    }, 160);
+    setTimeout(() => this.focusFieldInput(rowId, 'itemCode'), 80);
   }
 
   private fetchPurchaseById(): void {
@@ -719,6 +717,7 @@ public itemService = inject(ItemService);
           itemCode: '',
           itemName: '',
           unit: '',
+          unitsPopup: [],
           qty: 0,
           rate: 0,
           amount: 0,
@@ -741,13 +740,14 @@ public itemService = inject(ItemService);
           this.refreshGridAfterRowChange();
         }, 100);
       } else {
-        // New item - bind to row (unit as object so grid display and save stay consistent)
-        const unitStr = (selectedItem.unitname ?? selectedItem.unit ?? '').toString();
-        const unitObj = { unit: unitStr, basicunit: unitStr, factor: 1 };
+        // New item — mirror legacy onItemCodeSelected: unitsPopup from master + unit object
+        const unitsPopup = this.buildUnitsPopupForMasterItem(selectedItem);
+        const unitObj = this.resolveUnitObjectForSelection(selectedItem, unitsPopup);
         Object.assign(data, {
           itemId: selectedItem.id,
           itemCode: selectedItem.itemCode,
           itemName: selectedItem.itemName,
+          unitsPopup,
           unit: unitObj,
           qty: 1,
           rate: selectedItem.rate,
@@ -757,9 +757,19 @@ public itemService = inject(ItemService);
         this.calculateRowTotals(data, selectedItem.taxPerc ?? 0);
         this.updateRowInGrid(data);
 
+        // Legacy behavior: after committing an item on the last line, append a blank row for the next item.
+        const rows = this.commonService.tempItemFillDetails();
+        const rowIdx = rows.findIndex((r: any) => this.rowIdEquals(r.rowId, data.rowId));
+        const isLastLine = rowIdx >= 0 && rowIdx === rows.length - 1;
+        if (isLastLine) {
+          this.itemService.addNewRow();
+          this.refreshGridAfterRowChange();
+        }
+
         // Move focus to Qty so user can Tab through Qty, Rate, etc.
         setTimeout(() => {
           this.moveToNextColumn(data.rowId, 'qty');
+          this.focusFieldInput(data.rowId, 'qty');
         }, 100);
       }
     }
@@ -776,6 +786,7 @@ public itemService = inject(ItemService);
       itemCode: '',
       itemName: '',
       unit: '',
+      unitsPopup: [],
       qty: 0,
       rate: 0,
       amount: 0,
@@ -818,20 +829,53 @@ public itemService = inject(ItemService);
 
 
   onQTYChange(event: any, data: any): void {
-    const qty = event?.target?.value != null
-      ? parseFloat(String(event.target.value)) || 0
-      : (data?.qty != null ? parseFloat(String(data.qty)) : 0);
-    data.qty = qty;
+    const t = event?.target as HTMLInputElement | undefined;
+    let qty: number;
+    if (t && typeof t.value === 'string') {
+      const v = t.value.trim();
+      if (v === '') {
+        qty = 0;
+      } else {
+        const n = parseFloat(v);
+        qty = Number.isFinite(n) ? n : 0;
+      }
+    } else {
+      const n = parseFloat(String(data?.qty ?? ''));
+      qty = Number.isFinite(n) ? n : 0;
+    }
+    data.qty = qty < 0 ? 0 : qty;
     this.recalculateAndUpdateRow(data);
+    this.warnRateZeroAfterQtyIfNeeded(data);
+  }
+
+  /**
+   * Legacy sales-invoice behavior: after leaving Qty, warn if line has quantity but no rate
+   * (matches old `onMouseLeaveQty`).
+   */
+  private warnRateZeroAfterQtyIfNeeded(data: any): void {
+    const qty = parseFloat(String(data?.qty ?? '')) || 0;
+    const rate = parseFloat(String(data?.rate ?? '')) || 0;
+    const hasLine = !!(data?.itemCode ?? '').toString().trim();
+    if (hasLine && qty > 0 && rate === 0) {
+      this.baseService.showCustomDialoguePopup(
+        'Rate is zero',
+        'Check rate',
+        'WARN'
+      );
+    }
   }
 
   /** Live stock warning while typing in Qty (totals recalc on blur). */
   onQtyInput(event: any, data: any): void {
     const raw = event?.target?.value;
-    const qty =
-      raw === '' || raw == null ? 0 : parseFloat(String(raw)) || 0;
+    // Keep current value while user temporarily clears input; avoids reset-to-zero flicker.
+    if (raw === '' || raw == null) {
+      return;
+    }
+    const qty = parseFloat(String(raw)) || 0;
     data.qty = qty;
     this.patchRowQty(data);
+    this.recalculateAndUpdateRow(data);
   }
 
   /** Shown under Qty when master/row has stock and qty is higher. */
@@ -896,7 +940,7 @@ public itemService = inject(ItemService);
 
   private patchRowQty(data: any): void {
     const rows = [...this.commonService.tempItemFillDetails()];
-    const i = rows.findIndex((r: any) => r.rowId === data.rowId);
+    const i = rows.findIndex((r: any) => this.rowIdEquals(r.rowId, data.rowId));
     if (i === -1) return;
     rows[i] = { ...rows[i], qty: data.qty };
     this.commonService.tempItemFillDetails.set(rows);
@@ -910,41 +954,99 @@ public itemService = inject(ItemService);
     this.recalculateAndUpdateRow(data);
   }
 
-  /** Get allowed units for this row from item master (current item's unitPopup or distinct units). */
-  getUnitsForRow(data: any): { unit: string }[] {
-    const options = this.itemService.fillItemDataOptions();
-    if (!options?.length) return [];
-    const itemCode = (data?.itemCode ?? '').toString().trim();
-    if (itemCode) {
-      const item = options.find((i: any) => (i.itemCode || i.itemName) === itemCode);
-      if (item?.unitPopup?.length) return item.unitPopup.map((u: any) => ({ unit: u.unit || u }));
-      if (item?.unitname) return [{ unit: item.unitname }];
+  /**
+   * Legacy `unitsPopup` on the row, or resolved from master `unitPopup` (same as old searchable dropdown options).
+   */
+  getUnitsPopupForRow(data: any): { unit: string; basicunit: string; factor: number }[] {
+    if (Array.isArray(data?.unitsPopup) && data.unitsPopup.length > 0) {
+      return data.unitsPopup;
     }
-    const distinct = new Set<string>();
-    options.forEach((i: any) => {
-      const u = (i.unitname || i.unit || '').toString().trim();
-      if (u) distinct.add(u);
-    });
-    return Array.from(distinct).map((u) => ({ unit: u }));
+    const options = this.itemService.fillItemDataOptions();
+    const itemCode = (data?.itemCode ?? '').toString().trim();
+    if (!itemCode || !options?.length) return [];
+    const item = options.find(
+      (i: any) =>
+        (i.itemCode || '').toString().trim() === itemCode ||
+        (i.itemName || '').toString().trim() === itemCode
+    );
+    return this.mapMasterUnitPopupToRow(item?.unitPopup);
   }
 
-  onUnitChange(event: any, data: any): void {
-    const raw = event?.value ?? event?.target?.value ?? event?.itemData?.unit ?? '';
-    const value = (typeof raw === 'object' ? (raw?.unit ?? raw) : raw).toString().trim();
-    const allowed = this.getUnitsForRow(data).map((x) => (x.unit || '').toString().trim());
-    const valid = !value || (allowed.length ? allowed.includes(value) : false);
-    if (value && !valid) {
+  /** Bound value for &lt;select&gt; (unit code). */
+  unitSelectValue(data: any): string {
+    const u = data?.unit;
+    if (u && typeof u === 'object' && u.unit != null) return String(u.unit);
+    if (typeof u === 'string') return u;
+    return '';
+  }
+
+  onUnitSelect(event: Event, data: any): void {
+    const el = event.target as HTMLSelectElement;
+    const value = (el?.value ?? '').trim();
+    this.applyUnitSelection(data, value);
+  }
+
+  private applyUnitSelection(data: any, value: string): void {
+    if (!value) {
+      data.unit = '';
+      this.updateRowInGrid(data);
+      return;
+    }
+    const units = this.getUnitsPopupForRow(data);
+    const unitObj = units.find((u) => u.unit === value);
+    if (!unitObj) {
       this.baseService.showCustomDialoguePopup(
         'Unit must be from item master. Please select a valid unit.',
         'Invalid Unit',
         'WARN'
       );
-      data.unit = '';
-      this.updateRowInGrid(data);
       return;
     }
-    data.unit = value || '';
+    if (!data.unitsPopup?.length && units.length) {
+      data.unitsPopup = [...units];
+    }
+    data.unit = { ...unitObj };
     this.updateRowInGrid(data);
+  }
+
+  private mapMasterUnitPopupToRow(
+    popup: any[] | undefined
+  ): { unit: string; basicunit: string; factor: number }[] {
+    if (!Array.isArray(popup) || !popup.length) return [];
+    return popup.map((u: any) => ({
+      unit: (u.unit ?? '').toString(),
+      basicunit: (u.basicUnit ?? u.basicunit ?? u.unit ?? '').toString(),
+      factor: parseFloat(String(u.factor ?? 1)) || 1,
+    }));
+  }
+
+  private buildUnitsPopupForMasterItem(selectedItem: any): {
+    unit: string;
+    basicunit: string;
+    factor: number;
+  }[] {
+    const options = this.itemService.fillItemDataOptions();
+    const code = (selectedItem.itemCode ?? '').toString().trim();
+    const master = options.find(
+      (i: any) =>
+        (i.itemCode || '').toString().trim() === code ||
+        (i.id != null && String(i.id) === String(selectedItem.id ?? selectedItem.itemId)) ||
+        (i.itemId != null &&
+          String(i.itemId) === String(selectedItem.itemId ?? selectedItem.id))
+    );
+    const mapped = this.mapMasterUnitPopupToRow(master?.unitPopup);
+    if (mapped.length) return mapped;
+    const u = (selectedItem.unitname ?? selectedItem.unit ?? 'PCS').toString().trim() || 'PCS';
+    return [{ unit: u, basicunit: u, factor: 1 }];
+  }
+
+  private resolveUnitObjectForSelection(
+    selectedItem: any,
+    unitsPopup: { unit: string; basicunit: string; factor: number }[]
+  ): { unit: string; basicunit: string; factor: number } {
+    const wanted = (selectedItem.unitname ?? selectedItem.unit ?? '').toString().trim();
+    const hit = wanted ? unitsPopup.find((x) => x.unit === wanted) : undefined;
+    return hit ?? unitsPopup[0] ?? { unit: 'PCS', basicunit: 'PCS', factor: 1 };
   }
 
   private recalculateAndUpdateRow(data: any): void {
@@ -989,7 +1091,9 @@ public itemService = inject(ItemService);
 
   private updateRowInGrid(rowData: any): void {
     const rows = this.commonService.tempItemFillDetails();
-    const index = rows.findIndex((row: any) => row.rowId === rowData.rowId);
+    const index = rows.findIndex((row: any) =>
+      this.rowIdEquals(row.rowId, rowData.rowId)
+    );
 
     if (index !== -1) {
       // Preserve existing row identity and server fields (e.g. transactionId), overlay updated fields
@@ -1005,6 +1109,73 @@ public itemService = inject(ItemService);
 
 
   /** -------------------- Keyboard Navigation -------------------- **/
+
+  /** Syncfusion batch cells sometimes omit or stringify `rowId`; inputs still sit under `[data-item-row-id]`. */
+  private rowIdEquals(a: unknown, b: unknown): boolean {
+    const na = Number(a);
+    const nb = Number(b);
+    return Number.isFinite(na) && Number.isFinite(nb) && na === nb;
+  }
+
+  /**
+   * Legacy grid: Tab from Item Code skips to Qty when qty is still 0, or to Rate when qty is set but rate is 0
+   * (otherwise next field is Unit). Aligns with old `onKeyDown` Tab handling on itemcode column.
+   */
+  private getNextFieldAfterItemCodeNavigate(row: any): 'unit' | 'qty' | 'rate' {
+    const code = (row?.itemCode ?? '').toString().trim();
+    if (!code) return 'unit';
+    const qty = parseFloat(String(row?.qty ?? ''));
+    const qtyInvalid = !Number.isFinite(qty) || qty <= 0;
+    if (qtyInvalid) return 'qty';
+    const rate = parseFloat(String(row?.rate ?? ''));
+    const rateInvalid = !Number.isFinite(rate) || rate <= 0;
+    if (rateInvalid) return 'rate';
+    return 'unit';
+  }
+
+  private moveForwardFromItemCode(data: any, currentRowId: number): void {
+    const rows = this.commonService.tempItemFillDetails();
+    const row =
+      rows.find((r: any) => this.rowIdEquals(r.rowId, currentRowId)) ?? data;
+    const target = this.getNextFieldAfterItemCodeNavigate(row);
+    setTimeout(() => this.moveToNextColumn(currentRowId, target), 0);
+  }
+
+  private resolveRowIdForGridNav(data: any): number {
+    const raw = data?.rowId;
+    const fromData =
+      raw != null && raw !== '' ? Number(raw) : NaN;
+    if (Number.isFinite(fromData) && fromData > 0) return fromData;
+    const active = document.activeElement?.closest(
+      '[data-item-row-id]'
+    ) as HTMLElement | null;
+    const fromDom = Number(active?.getAttribute('data-item-row-id') ?? NaN);
+    if (Number.isFinite(fromDom) && fromDom > 0) return fromDom;
+    const rows = this.commonService.tempItemFillDetails();
+    if (rows.length === 1) {
+      const only = Number(rows[0]?.rowId ?? NaN);
+      if (Number.isFinite(only) && only > 0) return only;
+    }
+    return 0;
+  }
+
+  /**
+   * Prefer the row id from the key event target (DOM) over `data.rowId`.
+   * After `assignRowIds()` / grid refresh, template `data` can be stale while the focused
+   * input still sits under the correct `[data-item-row-id]` — wrong id makes Tab jump to row 1.
+   */
+  private resolveRowIdFromKeyEvent(event: KeyboardEvent, data: any): number {
+    const t = event.target as HTMLElement | null;
+    const wrap = t?.closest?.('[data-item-row-id]') as HTMLElement | null;
+    const attr = wrap?.getAttribute('data-item-row-id');
+    const fromEvent =
+      attr != null && attr !== '' ? Number(attr) : NaN;
+    if (Number.isFinite(fromEvent) && fromEvent > 0) {
+      return fromEvent;
+    }
+    return this.resolveRowIdForGridNav(data);
+  }
+
   onItemCodeKeyDown(event: KeyboardEvent, data: any): void {
     const list =
       this.activeItemSearchRowId === data.rowId
@@ -1036,6 +1207,7 @@ public itemService = inject(ItemService);
         event.stopPropagation();
         const item = list[this.itemSearchHighlightIndex];
         if (item) {
+          this.suppressItemSearchOpenUntil = Date.now() + 350;
           this.itemSearchSelecting = true;
           this.applyItemMasterSelection(
             this.normalizeSelectedItem({ ...item }),
@@ -1054,9 +1226,10 @@ public itemService = inject(ItemService);
     this.onKeyDown(event, data, 'itemCode');
   }
 
-  onKeyDown(event: KeyboardEvent, data: any, currentField: string): void {
-    const fields = ['itemCode', 'unit', 'qty', 'rate'];
+  onKeyDown(event: KeyboardEvent, data: any, currentField: 'itemCode' | 'unit' | 'qty' | 'rate'): void {
+    const fields = ['itemCode', 'unit', 'qty', 'rate'] as const;
     const currentIndex = fields.indexOf(currentField);
+    const currentRowId = this.resolveRowIdFromKeyEvent(event, data);
 
     if (event.key === 'Tab') {
       event.preventDefault();
@@ -1065,14 +1238,18 @@ public itemService = inject(ItemService);
       }
       this.commitActiveFieldFromEvent(event, data, currentField);
       this.grid.endEdit();
+      if (!event.shiftKey && currentField === 'itemCode') {
+        this.moveForwardFromItemCode(data, currentRowId);
+        return;
+      }
       const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
       if (nextIndex >= 0 && nextIndex < fields.length) {
         setTimeout(
-          () => this.moveToNextColumn(data.rowId, fields[nextIndex]),
+          () => this.moveToNextColumn(currentRowId, fields[nextIndex]),
           0
         );
       } else if (!event.shiftKey && nextIndex >= fields.length) {
-        setTimeout(() => this.handleRowNavigation(data), 0);
+        setTimeout(() => this.handleRowNavigation(currentRowId), 0);
       }
       return;
     }
@@ -1091,11 +1268,17 @@ public itemService = inject(ItemService);
 
     event.preventDefault();
     if (currentIndex < fields.length - 1) {
-      this.moveToNextColumn(data.rowId, fields[currentIndex + 1]);
+      this.commitActiveFieldFromEvent(event, data, currentField);
+      this.grid.endEdit();
+      if (currentField === 'itemCode') {
+        this.moveForwardFromItemCode(data, currentRowId);
+      } else {
+        this.moveToNextColumn(currentRowId, fields[currentIndex + 1]);
+      }
     } else {
       this.commitActiveFieldFromEvent(event, data, currentField);
       this.grid.endEdit();
-      setTimeout(() => this.handleRowNavigation(data), 0);
+      setTimeout(() => this.handleRowNavigation(currentRowId), 0);
     }
   }
 
@@ -1104,64 +1287,134 @@ public itemService = inject(ItemService);
     data: any,
     field: string
   ): void {
-    const t = event.target as HTMLInputElement;
-    if (!t || (t.tagName !== 'INPUT' && t.tagName !== 'SELECT')) return;
+    const t = event.target;
+    if (!t || !(t instanceof HTMLInputElement) && !(t instanceof HTMLSelectElement)) {
+      return;
+    }
     if (field === 'rate') this.onRateChange({ target: t }, data);
     if (field === 'qty') this.onQTYChange({ target: t }, data);
-    if (field === 'unit') this.onUnitChange({ target: t }, data);
-    if (field === 'itemCode') {
+    if (field === 'unit' && t instanceof HTMLSelectElement) {
+      this.applyUnitSelection(data, t.value?.trim() ?? '');
+    }
+    if (field === 'itemCode' && t instanceof HTMLInputElement) {
       data.itemCode = t.value ?? '';
       this.patchRowItemCode(data);
     }
   }
 
-  private handleRowNavigation(data: any): void {
+  /**
+   * Focus item-code input on another row without `editCell` (batch grid often leaves focus on row 1).
+   */
+  private focusItemCodeOnRow(rowIndex: number, rowId: number): void {
+    const focus = () => this.focusFieldInput(rowId, 'itemCode');
+    const selectAndFocus = () => {
+      try {
+        const g = this.grid as any;
+        if (g && rowIndex >= 0 && typeof g.selectRow === 'function') {
+          g.selectRow(rowIndex);
+        }
+      } catch {
+        /* Syncfusion batch may throw if grid is updating */
+      }
+      focus();
+    };
+    setTimeout(selectAndFocus, 0);
+    setTimeout(focus, 120);
+    setTimeout(focus, 300);
+  }
+
+  private handleRowNavigation(currentRowId: number): void {
     const rows = [...this.commonService.tempItemFillDetails()];
-    const idx = rows.findIndex((row: any) => row.rowId === data.rowId);
+    let idx = rows.findIndex((row: any) =>
+      this.rowIdEquals(row.rowId, currentRowId)
+    );
+    if (idx === -1 && rows.length === 1) {
+      idx = 0;
+    }
     if (idx === -1) return;
 
     for (let i = idx + 1; i < rows.length; i++) {
       const code = (rows[i]?.itemCode ?? '').toString().trim();
       if (!code) {
-        this.moveToNextColumn(rows[i].rowId, 'itemCode');
-        setTimeout(() => this.focusItemCodeInput(rows[i].rowId), 180);
+        const targetRowId = Number(rows[i].rowId ?? 0);
+        if (targetRowId > 0) {
+          this.focusItemCodeOnRow(i, targetRowId);
+        }
         return;
       }
     }
 
     const lenBefore = this.commonService.tempItemFillDetails().length;
-    this.itemService.addNewRow();
+    this.itemService.addNewRow(true);
     let updated = this.commonService.tempItemFillDetails();
-    if (updated.length === lenBefore) {
+    if (updated.length <= lenBefore) {
+      // Fallback: force add one more time in case of async state race.
       this.itemService.addNewRow(true);
       updated = this.commonService.tempItemFillDetails();
     }
 
     const newRow = updated[updated.length - 1];
     if (newRow) {
+      const newIndex = updated.length - 1;
       this.refreshGridAfterRowChange();
-      this.moveToNextColumn(newRow.rowId, 'itemCode');
-      setTimeout(() => this.focusItemCodeInput(newRow.rowId), 180);
+      setTimeout(() => this.focusItemCodeOnRow(newIndex, newRow.rowId), 80);
     }
   }
 
-  private moveToNextColumn(rowId: number, field: string): void {
+  private moveToNextColumn(rowId: number, field: 'itemCode' | 'unit' | 'qty' | 'rate'): void {
+    if (!this.grid || !this.grid.element?.isConnected) {
+      this.focusFieldInput(rowId, field);
+      return;
+    }
     this.grid.endEdit();
     setTimeout(() => {
       const rowIndex = this.commonService.tempItemFillDetails().findIndex(
-        (row: any) => row.rowId === rowId
+        (row: any) => this.rowIdEquals(row.rowId, rowId)
       );
 
       if (rowIndex === -1) return;
+      const viewRows = (this.grid as any).currentViewData as any[] | undefined;
+      if (Array.isArray(viewRows) && (rowIndex < 0 || rowIndex >= viewRows.length)) {
+        this.focusFieldInput(rowId, field);
+        return;
+      }
 
       const gridAny = this.grid as any;
-      if (typeof gridAny.editCell === 'function') {
-        gridAny.editCell(rowIndex, field);
-      } else {
-        this.grid.selectRow(rowIndex);
-        this.grid.startEdit();
+      try {
+        if (typeof gridAny.editCell === 'function') {
+          gridAny.editCell(rowIndex, field);
+        } else {
+          this.grid.selectRow(rowIndex);
+          this.grid.startEdit();
+        }
+      } catch {
+        // Syncfusion batch mode can throw if internal edit state isn't ready yet.
       }
+      this.focusFieldInput(rowId, field);
     }, 50);
+  }
+
+  private focusFieldInput(rowId: number, field: 'itemCode' | 'qty' | 'rate' | 'unit'): void {
+    setTimeout(() => {
+      const gridRoot =
+        this.grid?.element ?? document.getElementById('transactionGrid');
+      if (!gridRoot) return;
+      let selector = 'input.item-code-search-input';
+      if (field === 'qty') selector = 'input.item-qty-input';
+      if (field === 'rate') selector = 'input.item-rate-input';
+      if (field === 'unit') selector = 'select.item-unit-select';
+      const candidates = gridRoot.querySelectorAll(selector);
+      for (let i = 0; i < candidates.length; i++) {
+        const el = candidates[i] as HTMLInputElement;
+        const wrap = el.closest('[data-item-row-id]');
+        const attr = wrap?.getAttribute('data-item-row-id');
+        if (attr != null && this.rowIdEquals(attr, rowId)) {
+          el.focus();
+          el.select?.();
+          break;
+        }
+      }
+    }, 80);
   }
 
   /** -------------------- Grid Actions -------------------- **/
@@ -1173,9 +1426,56 @@ public itemService = inject(ItemService);
       return;
     }
 
-    if (args.requestType === 'save' && args.action === 'edit') {
-      this.onQTYChange(args, args.data);
+    // Batch save: Syncfusion merges `args.data` from its editor model. Custom templates + numericedit
+    // can leave qty/rate as 0/undefined. Our signal (`tempItemFillDetails`) is updated by input/blur — keep it authoritative.
+    if (args.requestType === 'save' && args.data) {
+      this.mergeBatchSaveRowFromStore(args);
     }
+
+    // Do not call onQTYChange here: batch `save`/`edit` fires for every column (rate, unit, …).
+    // Passing that event into onQTYChange used the wrong `target`/`value` and overwrote qty with 0.
+    // Qty is committed via (blur) and onQtyInput on the qty cell only.
+  }
+
+  /**
+   * Before batch commit, overlay numeric/line fields from the store so the grid does not overwrite
+   * user input with stale zeros (common with custom edit templates in Batch mode).
+   */
+  private mergeBatchSaveRowFromStore(args: any): void {
+    const rows = this.commonService.tempItemFillDetails();
+    if (!rows.length) return;
+
+    let src: any | undefined;
+    const rid = args.data?.rowId;
+    if (rid != null && rid !== '') {
+      src = rows.find((r: any) => this.rowIdEquals(r.rowId, rid));
+    }
+    const idx =
+      typeof args.rowIndex === 'number' && !Number.isNaN(args.rowIndex)
+        ? args.rowIndex
+        : typeof args.data?.index === 'number'
+          ? args.data.index
+          : -1;
+    if (!src && idx >= 0 && idx < rows.length) {
+      src = rows[idx];
+    }
+    if (!src) return;
+
+    args.data.qty = src.qty;
+    args.data.rate = src.rate;
+    args.data.unit = src.unit;
+    args.data.unitsPopup = src.unitsPopup;
+    args.data.amount = src.amount;
+    args.data.taxValue = src.taxValue;
+    args.data.totalAmount = src.totalAmount;
+    args.data.grossAmt = src.grossAmt;
+    args.data.discount = src.discount;
+    args.data.discountPerc = src.discountPerc;
+    args.data.taxPerc = src.taxPerc;
+    args.data.itemCode = src.itemCode;
+    args.data.itemName = src.itemName;
+    args.data.itemId = src.itemId;
+    args.data.availableStock = src.availableStock;
   }
 
   onActionComplete(args: any): void {
