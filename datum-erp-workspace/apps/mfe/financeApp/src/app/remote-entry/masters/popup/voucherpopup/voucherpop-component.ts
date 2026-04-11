@@ -21,6 +21,7 @@ interface NumberingRecord {
   selector: 'app-voucher-popup',
   templateUrl: './vouchercomponent.html',
   styleUrls: ['./vouchercomponent.css'],
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 export class VoucherPopupComponent extends BaseComponent implements OnInit, OnChanges {

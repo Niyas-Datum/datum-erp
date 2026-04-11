@@ -77,6 +77,7 @@
                 </div>
                 <div class="col-md-6 d-flex align-items-center ps-md-4">
                   <div class="d-flex flex-grow-1 gap-1">
+                     <label class="col-4">Category</label>
                     <app-multiColumnComboBox class="w-50" formControlName="category" [dataSource]="allCategories"
                       [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" [disabled]="isDisabled"
                       [resetTrigger]="forceComboReset()" (rowSelected)="onCategorySelected($event)"

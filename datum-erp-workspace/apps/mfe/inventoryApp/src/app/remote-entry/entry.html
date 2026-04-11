@@ -36,7 +36,7 @@
           [mediaQuery]="mediaQuery" [type]="sidebarType" position="Left">
 
           <div class="h-100 ">
-            <app-left-grid
+            <app-left-grid *ngIf="isSidebarVisible"
               (rowSelected)="onCostCategorySelected($event)"
               [columns]="leftgridchildData.columns"
               [isNewMode]="isNewMode"

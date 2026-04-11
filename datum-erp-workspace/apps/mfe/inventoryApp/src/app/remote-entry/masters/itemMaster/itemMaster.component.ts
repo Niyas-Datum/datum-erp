@@ -1,10 +1,10 @@
-import { ChangeDetectorRef,Component,DestroyRef, inject,Input,OnInit,signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, Input, OnInit, signal, ViewChild } from '@angular/core';
 import { BaseComponent } from '@org/architecture';
 import { filter, firstValueFrom, take } from 'rxjs';
 import { InventoryAppService } from '../../http/inventory-app.service';
 import { EndpointConstant } from '@org/constants';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Category,CountryOfOrigin, ItemBrand,ItemColor,ItemHistory,ItemMaster,parentItem,SelectedCategory,  TaxType,  UnitData,  Account,  Quality} from '../model/pItemMasters.model';
+import { Category, CountryOfOrigin, ItemBrand, ItemColor, ItemHistory, ItemMaster, parentItem, SelectedCategory, TaxType, UnitData, Account, Quality } from '../model/pItemMasters.model';
 import { MultiColumnComboBoxComponent } from '@syncfusion/ej2-angular-multicolumn-combobox';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BaseService, LocalStorageService } from '@org/services';
@@ -12,11 +12,15 @@ import { BranchDto } from '@org/models';
 import { GridComponent } from '@syncfusion/ej2-angular-grids';
 import { DialogComponent } from '@syncfusion/ej2-angular-popups';
 
+import { forkJoin } from 'rxjs';
+import { finalize, tap } from 'rxjs/operators';
+
 @Component({
   selector: 'app-itemmaster',
   standalone: false,
   templateUrl: './itemMaster.component.html',
   styleUrls: ['./itemMaster.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ItemMasterComponent extends BaseComponent implements OnInit {
   @ViewChild('multicolumn')
@@ -103,22 +107,22 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   }
 
   /** Safely get unit display string (handles object { unit: "PCS" } or plain string) */
-  
+
   getUnitDisplay(unit: any): string {
-  if (!unit) return '';
+    if (!unit) return '';
 
-  // If it's object
-  if (typeof unit === 'object') {
-    return unit.unit ?? '';
+    // If it's object
+    if (typeof unit === 'object') {
+      return unit.unit ?? '';
+    }
+
+    // If it's string
+    if (typeof unit === 'string') {
+      return unit;
+    }
+
+    return '';
   }
-
-  // If it's string
-  if (typeof unit === 'string') {
-    return unit;
-  }
-
-  return '';
-}
 
 
   // Filter out empty rows in view mode
@@ -256,7 +260,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
   itemBrandFields = [
     { field: 'code', header: 'Code', width: 50 },
     { field: 'value', header: 'Value', width: 50 },
-    { field: 'id', header: 'ID', width: 60}
+    { field: 'id', header: 'ID', width: 60 }
   ];
   countryOfOriginFields = [
     { field: 'code', header: 'Code', width: 50 },
@@ -270,7 +274,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     immediateModeDelay: 0,
   };
 
-  isDisabled=true;
+  isDisabled = true;
   unitDetailsEditSettings: object = {
     allowEditing: true,
     allowAdding: true,
@@ -284,24 +288,65 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     this.commonInit();
   }
 
+  /// ngon init => afterview init ,...
+
+  // ngOnInit(): void {
+  //   this.onInitBase();
+  //   this.getPageID();
+  //   this.disableFormControls();
+  //   this.SetPageType(1);
+  //   this.fetchAllBranches();
+  //   this.fetchUnitDropdown();
+  //   this.fetchAllTaxTypes();
+  //   this.fetchItemQuality();
+  //   this.fetchCategories();
+  //   this.fetchParentItems();
+  //   this.fetchItemColors();
+  //   this.fetchItemBrands();
+  //   this.fetchCountryOfOrigin();
+  //   this.fetchAccounts();
+  //   setTimeout(() => {
+  //     this.fetchItemMasterById();
+  //   }, 0)
+  // }
+
+
+
   ngOnInit(): void {
     this.onInitBase();
     this.getPageID();
     this.disableFormControls();
     this.SetPageType(1);
-    this.fetchAllBranches();
-    this.fetchUnitDropdown();
-    this.fetchAllTaxTypes();
-    this.fetchItemQuality();
-    this.fetchCategories();
 
-     this.fetchParentItems();
-     this.fetchItemColors();
-     this.fetchItemBrands();
-     this.fetchCountryOfOrigin();
-     this.fetchAccounts();
+    forkJoin({
+      branches: this.httpService.fetchBranches(),
+      units: this.httpService.fetchUnits(),
+      tax: this.httpService.fetchTaxTypes(),
+      quality: this.httpService.fetchItemQuality(),
+      categories: this.httpService.fetchCategories(),
+      parentItems: this.httpService.fetchParentItems(),
+      colors: this.httpService.fetchItemColors(),
+      brands: this.httpService.fetchItemBrands(),
+      origin: this.httpService.fetchCountryOfOrigin(),
+      accounts: this.httpService.fetchUnits()
+    }).subscribe(() => {
+      this.fetchAllBranches()
+      this.fetchUnitDropdown()
+      this.fetchAllTaxTypes()
+      this.fetchItemQuality()
+      this.fetchCategories()
+      this.fetchParentItems()
+      this.fetchItemColors()
+      this.fetchItemBrands()
+      this.fetchCountryOfOrigin()
+      this.fetchAccounts()
+      this.fetchItemMasterById()
+    })
   }
-    fetchAccounts(): void {
+
+
+
+  fetchAccounts(): void {
     this.httpService
       .fetch(EndpointConstant.FILLITEMACCOUNT, true, 'invAccounts')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -322,7 +367,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       });
   }
 
-    fetchCountryOfOrigin(): void {
+  fetchCountryOfOrigin(): void {
     this.httpService
       .fetch(EndpointConstant.FILLITEMORIGIN, true, 'countryOfOrigin')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -341,7 +386,8 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       });
   }
 
-    fetchParentItems(): void {
+
+  fetchParentItems(): void {
     this.httpService
       .fetch(EndpointConstant.FILLPARENTITEMS, true, 'parentItems')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -360,7 +406,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       });
   }
 
-   fetchItemColors(): void {
+  fetchItemColors(): void {
     this.httpService
       .fetch(EndpointConstant.FILLITEMCOLOR, true, 'itemColors')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -379,7 +425,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       });
   }
 
-    fetchItemBrands(): void {
+  fetchItemBrands(): void {
     this.httpService
       .fetch(EndpointConstant.FILLITEMBRAND, true, 'itemBrands')
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -470,12 +516,12 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     this.httpService
       .fetch(
         EndpointConstant.FILLITEMMASTERSBYID +
-          'pageId=' +
-          this.pageId +
-          '&Id=' +
-          this.selectedItemMasterId() +
-          '&BranchId=' +
-          this.filledBranchId, false, null
+        'pageId=' +
+        this.pageId +
+        '&Id=' +
+        this.selectedItemMasterId() +
+        '&BranchId=' +
+        this.filledBranchId, false, null
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -652,7 +698,10 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
 
   protected override getDataById(data: any): void {
     this.selectedItemMasterId.set(data.id);
-    this.fetchItemMasterById();
+    setTimeout(() => {
+      this.fetchItemMasterById();
+    }, 0)
+
   }
 
   protected override SaveFormData(): void {
@@ -715,10 +764,10 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
         ? this.selectedBasicUnitObj
         : basicUnitStr !== ''
           ? this.allBasicUnits.find((u) => u.unit === basicUnitStr) ?? {
-              unit: basicUnitStr,
-              basicUnit: basicUnitStr,
-              factor: 1,
-            }
+            unit: basicUnitStr,
+            basicUnit: basicUnitStr,
+            factor: 1,
+          }
           : ({} as UnitData);
 
     // Read signal value so itemUnit is a real array, not the signal reference
@@ -764,10 +813,10 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     // Category payload: API expects { id, code, category } - never null. Use selectedCategoryObj or form value (combo may bind full row).
     const cat =
       this.selectedCategoryObj &&
-      ((this.selectedCategoryObj as any).id != null || (this.selectedCategoryObj as any).code != null)
+        ((this.selectedCategoryObj as any).id != null || (this.selectedCategoryObj as any).code != null)
         ? this.selectedCategoryObj
         : this.itemMasterForm.get('category')?.value != null &&
-            typeof this.itemMasterForm.get('category')?.value === 'object'
+          typeof this.itemMasterForm.get('category')?.value === 'object'
           ? this.itemMasterForm.get('category')?.value
           : null;
     let categoryName = (cat as any)?.category ?? (cat as any)?.description ?? '';
@@ -780,10 +829,10 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     const payloadCategory =
       cat != null && ((cat as any).id != null || (cat as any).code != null || categoryName !== '')
         ? {
-            id: (cat as any).id ?? 0,
-            code: (cat as any).code ?? '',
-            category: String(categoryName),
-          }
+          id: (cat as any).id ?? 0,
+          code: (cat as any).code ?? '',
+          category: String(categoryName),
+        }
         : { id: 0, code: '', category: '' };
 
     // Normalize unit objects to API format: { unit, basicunit, factor } (lowercase basicunit for top-level)
@@ -802,225 +851,225 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       itemName: String((parentObj as any).itemName ?? ''),
     };
 
-//     const payload = {
-//       id: this.isUpdate ? this.selectedItemMasterId() : 0,
-//       itemCode: fv.itemcode ?? '',
-//       itemName: fv.itemname ?? '',
-//       arabicName: fv.arabicname ?? '',
-//      // unit: toUnitPayload(payloadUnit),
-//      unit: {
-//   unit: payloadUnit.unit,
-//   basicUnit: payloadUnit.basicUnit,
-//   factor: payloadUnit.factor
-// },
-//       barCode:
-//         this.itemMasterForm.get('barcodeno')?.value != null
-//           ? this.itemMasterForm.get('barcodeno')?.value.toString()
-//           : '',
-//       category: payloadCategory,
-//       isUniqueItem: fv.unique ?? false,
-//       stockItem: fv.stockitem ?? true,
-//       costPrice: fv.costprice ?? 0,
-//       sellingPrice: fv.sellingprice ?? 0,
-//       mrp: fv.mrp ?? null,
-//       margin: fv.margin ?? 0,
-//       marginValue: fv.marginvalue ?? null,
-//       taxType: this.selectedTaxTypeObj ?? {},
-//       isExpiry: fv.expiryitem ?? false,
-//       expiryPeriod: fv.expirydays ?? 0,
-//       isFinishedGood: fv.finishedgoods ?? true,
-//       isRawMaterial: fv.rawmaterials ?? false,
-//       location: fv.racklocation ?? '',
-//       itemDisc: fv.discount ?? 0,
-//       hsn: fv.hsncode ?? '',
-//       parent: parentPayload,
-//       quality: this.selectedItemQualityObj ?? {},
-//       modelNo: fv.modelno ?? '',
-//       color: this.selectedItemColorObj ?? {},
-//       brand: this.selectedItemBrandObj ?? {},
-//       countryOfOrigin: this.selectedCountryOfOriginObj ?? {},
-//       rol: fv.rol ?? 0,
-//       roq: fv.roq ?? 0,
-//       manufacturer: fv.manufacturer ?? null,
-//       weight: fv.weight ?? 0,
-//       sellingUnit: toUnitPayload(this.selectedSellingUnitObj),
-//       oemNo: fv.oemno ?? '',
-//       purchaseUnit: toUnitPayload(this.selectedPurchaseUnitObj),
-//       isGroup: fv.groupitem ?? true,
-//       active: fv.active ?? true,
+    //     const payload = {
+    //       id: this.isUpdate ? this.selectedItemMasterId() : 0,
+    //       itemCode: fv.itemcode ?? '',
+    //       itemName: fv.itemname ?? '',
+    //       arabicName: fv.arabicname ?? '',
+    //      // unit: toUnitPayload(payloadUnit),
+    //      unit: {
+    //   unit: payloadUnit.unit,
+    //   basicUnit: payloadUnit.basicUnit,
+    //   factor: payloadUnit.factor
+    // },
+    //       barCode:
+    //         this.itemMasterForm.get('barcodeno')?.value != null
+    //           ? this.itemMasterForm.get('barcodeno')?.value.toString()
+    //           : '',
+    //       category: payloadCategory,
+    //       isUniqueItem: fv.unique ?? false,
+    //       stockItem: fv.stockitem ?? true,
+    //       costPrice: fv.costprice ?? 0,
+    //       sellingPrice: fv.sellingprice ?? 0,
+    //       mrp: fv.mrp ?? null,
+    //       margin: fv.margin ?? 0,
+    //       marginValue: fv.marginvalue ?? null,
+    //       taxType: this.selectedTaxTypeObj ?? {},
+    //       isExpiry: fv.expiryitem ?? false,
+    //       expiryPeriod: fv.expirydays ?? 0,
+    //       isFinishedGood: fv.finishedgoods ?? true,
+    //       isRawMaterial: fv.rawmaterials ?? false,
+    //       location: fv.racklocation ?? '',
+    //       itemDisc: fv.discount ?? 0,
+    //       hsn: fv.hsncode ?? '',
+    //       parent: parentPayload,
+    //       quality: this.selectedItemQualityObj ?? {},
+    //       modelNo: fv.modelno ?? '',
+    //       color: this.selectedItemColorObj ?? {},
+    //       brand: this.selectedItemBrandObj ?? {},
+    //       countryOfOrigin: this.selectedCountryOfOriginObj ?? {},
+    //       rol: fv.rol ?? 0,
+    //       roq: fv.roq ?? 0,
+    //       manufacturer: fv.manufacturer ?? null,
+    //       weight: fv.weight ?? 0,
+    //       sellingUnit: toUnitPayload(this.selectedSellingUnitObj),
+    //       oemNo: fv.oemno ?? '',
+    //       purchaseUnit: toUnitPayload(this.selectedPurchaseUnitObj),
+    //       isGroup: fv.groupitem ?? true,
+    //       active: fv.active ?? true,
 
-// //       partNo: fv.stockcode ?? '',
-// // shipMark: fv.shipmark ?? '',
-// // paintMark: '',
+    // //       partNo: fv.stockcode ?? '',
+    // // shipMark: fv.shipmark ?? '',
+    // // paintMark: '',
 
-//       invAccount: { id: this.selectedInvAccountId ?? 0, name: this.selectedInvAccountName ?? '' },
-//       salesAccount: { id: this.selectedSalesAccountId ?? 0, name: this.selectedSalesAccountName ?? '' },
-//       costAccount: { id: this.selectedCostAccountId ?? 0, name: this.selectedCostAccountName ?? '' },
-//       purchaseAccount: { id: this.selectedPurchaseAccountId ?? 0, name: this.selectedPurchaseAccountName ?? '' },
-//       remarks: fv.remarks ?? '',
-//       itemUnit: Array.isArray(itemUnitArray) ? itemUnitArray : [],
-//       branch: Array.isArray(this.selectedBranches) ? this.selectedBranches : [],
-//       imageFile: this.imageData ?? null,
-//     };
+    //       invAccount: { id: this.selectedInvAccountId ?? 0, name: this.selectedInvAccountName ?? '' },
+    //       salesAccount: { id: this.selectedSalesAccountId ?? 0, name: this.selectedSalesAccountName ?? '' },
+    //       costAccount: { id: this.selectedCostAccountId ?? 0, name: this.selectedCostAccountName ?? '' },
+    //       purchaseAccount: { id: this.selectedPurchaseAccountId ?? 0, name: this.selectedPurchaseAccountName ?? '' },
+    //       remarks: fv.remarks ?? '',
+    //       itemUnit: Array.isArray(itemUnitArray) ? itemUnitArray : [],
+    //       branch: Array.isArray(this.selectedBranches) ? this.selectedBranches : [],
+    //       imageFile: this.imageData ?? null,
+    //     };
 
-const payload = {
-  id: this.isUpdate ? this.selectedItemMasterId() : 0,
+    const payload = {
+      id: this.isUpdate ? this.selectedItemMasterId() : 0,
 
-  itemCode: fv.itemcode ?? '',
-  itemName: fv.itemname ?? '',
-  arabicName: fv.arabicname ?? '',
+      itemCode: fv.itemcode ?? '',
+      itemName: fv.itemname ?? '',
+      arabicName: fv.arabicname ?? '',
 
-  unit: {
-    unit: payloadUnit?.unit ?? '',
-    basicUnit: payloadUnit?.basicUnit ?? '',
-    factor: payloadUnit?.factor ?? 0
-  },
+      unit: {
+        unit: payloadUnit?.unit ?? '',
+        basicUnit: payloadUnit?.basicUnit ?? '',
+        factor: payloadUnit?.factor ?? 0
+      },
 
-  barCode: fv.barcodeno?.toString() ?? '',
+      barCode: fv.barcodeno?.toString() ?? '',
 
-  category: {
-    id: payloadCategory?.id ?? 0,
-    code: payloadCategory?.code ?? '',
-    category: payloadCategory?.category ?? ''
-  },
+      category: {
+        id: payloadCategory?.id ?? 0,
+        code: payloadCategory?.code ?? '',
+        category: payloadCategory?.category ?? ''
+      },
 
-  isUniqueItem: fv.unique ?? false,
-  stockItem: fv.stockitem ?? true,
+      isUniqueItem: fv.unique ?? false,
+      stockItem: fv.stockitem ?? true,
 
-  costPrice: fv.costprice ?? 0,
-  sellingPrice: fv.sellingprice ?? 0,
-  mrp: fv.mrp ?? 0,
+      costPrice: fv.costprice ?? 0,
+      sellingPrice: fv.sellingprice ?? 0,
+      mrp: fv.mrp ?? 0,
 
-  margin: fv.margin ?? 0,
-  marginValue: fv.marginvalue ?? 0,
+      margin: fv.margin ?? 0,
+      marginValue: fv.marginvalue ?? 0,
 
-  taxType: {
-    id: this.selectedTaxTypeObj?.id ?? 0,
-    name: this.selectedTaxTypeObj?.name ?? ''
-  },
+      taxType: {
+        id: this.selectedTaxTypeObj?.id ?? 0,
+        name: this.selectedTaxTypeObj?.name ?? ''
+      },
 
-  isExpiry: fv.expiryitem ?? false,
-  expiryPeriod: fv.expirydays ?? 0,
+      isExpiry: fv.expiryitem ?? false,
+      expiryPeriod: fv.expirydays ?? 0,
 
-  isFinishedGood: fv.finishedgoods ?? true,
-  isRawMaterial: fv.rawmaterials ?? false,
+      isFinishedGood: fv.finishedgoods ?? true,
+      isRawMaterial: fv.rawmaterials ?? false,
 
-  location: fv.racklocation ?? '',
-  itemDisc: fv.discount ?? 0,
-  hsn: fv.hsncode ?? '',
+      location: fv.racklocation ?? '',
+      itemDisc: fv.discount ?? 0,
+      hsn: fv.hsncode ?? '',
 
-  parent: {
-    id: parentPayload?.id ?? 0,
-    itemCode: parentPayload?.itemCode ?? '',
-    itemName: parentPayload?.itemName ?? ''
-  },
+      parent: {
+        id: parentPayload?.id ?? 0,
+        itemCode: parentPayload?.itemCode ?? '',
+        itemName: parentPayload?.itemName ?? ''
+      },
 
-  quality: {
-    id: this.selectedItemQualityObj?.id ?? 0,
-    value: this.selectedItemQualityObj?.value ?? ''
-  },
+      quality: {
+        id: this.selectedItemQualityObj?.id ?? 0,
+        value: this.selectedItemQualityObj?.value ?? ''
+      },
 
-  modelNo: fv.modelno ?? '',
+      modelNo: fv.modelno ?? '',
 
-  color: {
-    id: this.selectedItemColorObj?.id ?? 0,
-    name: this.selectedItemColorObj?.name ?? '',
-    code: this.selectedItemColorObj?.code ?? '',
-    description: this.selectedItemColorObj?.description ?? ''
-  },
+      color: {
+        id: this.selectedItemColorObj?.id ?? 0,
+        name: this.selectedItemColorObj?.name ?? '',
+        code: this.selectedItemColorObj?.code ?? '',
+        description: this.selectedItemColorObj?.description ?? ''
+      },
 
-  brand: {
-    id: this.selectedItemBrandObj?.id ?? 0,
-    name: this.selectedItemBrandObj?.name ?? '',
-    code: this.selectedItemBrandObj?.code ?? '',
-    description: this.selectedItemBrandObj?.description ?? ''
-  },
+      brand: {
+        id: this.selectedItemBrandObj?.id ?? 0,
+        name: this.selectedItemBrandObj?.name ?? '',
+        code: this.selectedItemBrandObj?.code ?? '',
+        description: this.selectedItemBrandObj?.description ?? ''
+      },
 
-  countryOfOrigin: {
-    id: this.selectedCountryOfOriginObj?.id ?? 0,
-    name: this.selectedCountryOfOriginObj?.name ?? '',
-    code: this.selectedCountryOfOriginObj?.code ?? '',
-    description: this.selectedCountryOfOriginObj?.description ?? ''
-  },
+      countryOfOrigin: {
+        id: this.selectedCountryOfOriginObj?.id ?? 0,
+        name: this.selectedCountryOfOriginObj?.name ?? '',
+        code: this.selectedCountryOfOriginObj?.code ?? '',
+        description: this.selectedCountryOfOriginObj?.description ?? ''
+      },
 
-  rol: fv.rol ?? 0,
-  partNo: fv.partno ?? '',
-  roq: fv.roq ?? 0,
+      rol: fv.rol ?? 0,
+      partNo: fv.partno ?? '',
+      roq: fv.roq ?? 0,
 
-  manufacturer: fv.manufacturer ?? '',
-  weight: fv.weight ?? 0,
+      manufacturer: fv.manufacturer ?? '',
+      weight: fv.weight ?? 0,
 
-  shipMark: fv.shipmark ?? '',
-  paintMark: fv.paintmark ?? '',
+      shipMark: fv.shipmark ?? '',
+      paintMark: fv.paintmark ?? '',
 
-  sellingUnit: {
-    unit: this.selectedSellingUnitObj?.unit ?? '',
-    basicUnit: this.selectedSellingUnitObj?.basicUnit ?? '',
-    factor: this.selectedSellingUnitObj?.factor ?? 0
-  },
+      sellingUnit: {
+        unit: this.selectedSellingUnitObj?.unit ?? '',
+        basicUnit: this.selectedSellingUnitObj?.basicUnit ?? '',
+        factor: this.selectedSellingUnitObj?.factor ?? 0
+      },
 
-  oemNo: fv.oemno ?? '',
+      oemNo: fv.oemno ?? '',
 
-  purchaseUnit: {
-    unit: this.selectedPurchaseUnitObj?.unit ?? '',
-    basicUnit: this.selectedPurchaseUnitObj?.basicUnit ?? '',
-    factor: this.selectedPurchaseUnitObj?.factor ?? 0
-  },
+      purchaseUnit: {
+        unit: this.selectedPurchaseUnitObj?.unit ?? '',
+        basicUnit: this.selectedPurchaseUnitObj?.basicUnit ?? '',
+        factor: this.selectedPurchaseUnitObj?.factor ?? 0
+      },
 
-  isGroup: fv.groupitem ?? true,
-  active: fv.active ?? true,
+      isGroup: fv.groupitem ?? true,
+      active: fv.active ?? true,
 
-  invAccount: {
-    id: this.selectedInvAccountId ?? 0,
-    name: this.selectedInvAccountName ?? ''
-  },
+      invAccount: {
+        id: this.selectedInvAccountId ?? 0,
+        name: this.selectedInvAccountName ?? ''
+      },
 
-  salesAccount: {
-    id: this.selectedSalesAccountId ?? 0,
-    name: this.selectedSalesAccountName ?? ''
-  },
+      salesAccount: {
+        id: this.selectedSalesAccountId ?? 0,
+        name: this.selectedSalesAccountName ?? ''
+      },
 
-  costAccount: {
-    id: this.selectedCostAccountId ?? 0,
-    name: this.selectedCostAccountName ?? ''
-  },
+      costAccount: {
+        id: this.selectedCostAccountId ?? 0,
+        name: this.selectedCostAccountName ?? ''
+      },
 
-  purchaseAccount: {
-    id: this.selectedPurchaseAccountId ?? 0,
-    name: this.selectedPurchaseAccountName ?? ''
-  },
+      purchaseAccount: {
+        id: this.selectedPurchaseAccountId ?? 0,
+        name: this.selectedPurchaseAccountName ?? ''
+      },
 
-  remarks: fv.remarks ?? '',
+      remarks: fv.remarks ?? '',
 
-  itemUnit: (itemUnitArray ?? []).map((u:any) => ({
-    unitID: u.unitID ?? 0,
-    unit: {
-      unit: u.unit?.unit ?? '',
-      basicUnit: u.unit?.basicUnit ?? '',
-      factor: u.unit?.factor ?? 0
-    },
-    basicUnit: u.basicUnit ?? '',
-    factor: u.factor ?? 0,
-    purchaseRate: u.purchaseRate ?? 0,
-    sellingPrice: u.sellingPrice ?? 0,
-    mrp: u.mrp ?? 0,
-    wholeSalePrice: u.wholeSalePrice ?? 0,
-    retailPrice: u.retailPrice ?? 0,
-    wholeSalePrice2: u.wholeSalePrice2 ?? 0,
-    retailPrice2: u.retailPrice2 ?? 0,
-    lowestRate: u.lowestRate ?? 0,
-    barCode: u.barCode ?? '',
-    active: u.active ?? true,
-    status: u.status ?? 0
-  })),
+      itemUnit: (itemUnitArray ?? []).map((u: any) => ({
+        unitID: u.unitID ?? 0,
+        unit: {
+          unit: u.unit?.unit ?? '',
+          basicUnit: u.unit?.basicUnit ?? '',
+          factor: u.unit?.factor ?? 0
+        },
+        basicUnit: u.basicUnit ?? '',
+        factor: u.factor ?? 0,
+        purchaseRate: u.purchaseRate ?? 0,
+        sellingPrice: u.sellingPrice ?? 0,
+        mrp: u.mrp ?? 0,
+        wholeSalePrice: u.wholeSalePrice ?? 0,
+        retailPrice: u.retailPrice ?? 0,
+        wholeSalePrice2: u.wholeSalePrice2 ?? 0,
+        retailPrice2: u.retailPrice2 ?? 0,
+        lowestRate: u.lowestRate ?? 0,
+        barCode: u.barCode ?? '',
+        active: u.active ?? true,
+        status: u.status ?? 0
+      })),
 
-  branch: (this.selectedBranches ?? []).map((b:any) => ({
-    id: b.id ?? 0,
-    name: b.name ?? ''
-  })),
+      branch: (this.selectedBranches ?? []).map((b: any) => ({
+        id: b.id ?? 0,
+        name: b.name ?? ''
+      })),
 
-  imageFile: this.imageData ?? ''
-};
+      imageFile: this.imageData ?? ''
+    };
     console.log("save payload:", payload);
     console.log("SAVE PAYLOAD:", JSON.stringify(payload, null, 2));
     if (this.isUpdate) {
@@ -1032,8 +1081,8 @@ const payload = {
 
   updateCallback(payload: any, selectedItemMasterId: any) {
     console.log('Updating ID:', selectedItemMasterId);
-     console.log('Payload:', payload);
-    this.httpService.patch( EndpointConstant.UPDATEITEMMASTER + selectedItemMasterId+'&pageId='+this.pageId, payload)
+    console.log('Payload:', payload);
+    this.httpService.patch(EndpointConstant.UPDATEITEMMASTER + selectedItemMasterId + '&pageId=' + this.pageId, payload)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
       .subscribe({
         next: async (response: any) => {
@@ -1045,13 +1094,13 @@ const payload = {
           if (ok) {
             this.toast.success(message);
             await this.LeftGridInit();
-          this.serviceBase.dataSharingService.setData({
-            columns: this.leftGrid.leftGridColumns,
-            data: this.leftGrid.leftGridData,
-            pageheading: this.pageheading,
-          });
-          this.cdr.detectChanges();
-          this.itemMasterForm.disable();
+            this.serviceBase.dataSharingService.setData({
+              columns: this.leftGrid.leftGridColumns,
+              data: this.leftGrid.leftGridData,
+              pageheading: this.pageheading,
+            });
+            this.cdr.detectChanges();
+            this.itemMasterForm.disable();
           } else {
             this.toast.error('Update failed: ' + (message || ''));
           }
@@ -1077,13 +1126,13 @@ const payload = {
           if (ok) {
             this.toast.success(message);
             await this.LeftGridInit();
-          this.serviceBase.dataSharingService.setData({
-            columns: this.leftGrid.leftGridColumns,
-            data: this.leftGrid.leftGridData,
-            pageheading: this.pageheading,
-          });
-          this.cdr.detectChanges();
-          this.itemMasterForm.disable();
+            this.serviceBase.dataSharingService.setData({
+              columns: this.leftGrid.leftGridColumns,
+              data: this.leftGrid.leftGridData,
+              pageheading: this.pageheading,
+            });
+            this.cdr.detectChanges();
+            this.itemMasterForm.disable();
           } else {
             this.toast.error('Save failed: ' + (message || ''));
           }
@@ -1117,16 +1166,16 @@ const payload = {
   protected override newbuttonClicked(): void {
     // Toggle input enable/disable state
     this.isInputDisabled = !this.isInputDisabled;
-  
+
     // Update button states
     this.isEditBtnDisabled = !this.isInputDisabled;
     this.isDeleteBtnDisabled = !this.isInputDisabled;
     this.isSaveBtnDisabled = this.isInputDisabled;
-  
+
     // Reset form data and component variables
     this.itemMasterForm.reset();
     this.itemmasterFormReset();
-  
+
     // Enable/disable form controls
     if (this.isInputDisabled) {
       this.disableFormControls();
@@ -1135,8 +1184,8 @@ const payload = {
       this.generateItemCode();
     }
   }
-  
-    generateItemCode() {
+
+  generateItemCode() {
     this.httpService
       .fetch(EndpointConstant.FETCHNEWITEMCODE)
       .pipe(takeUntilDestroyed(this.serviceBase.destroyRef))
@@ -1158,35 +1207,35 @@ const payload = {
     // Prevent reactive triggers (e.g., onBasicUnitSelected firing again)
     this.isManualChange = true;
     this.forceComboReset.update(v => v + 1);
-  
+
     // 🔹 Clear all model variables and state
     this.selectedBasicUnitObj = {} as UnitData;
     this.updatedBasicUnit = '';
     this.updatedSellingUnit = '';
     this.updatedPurchaseUnit = '';
-  
+
     this.selectedCategoryObj = null;
     this.selectedCategory = '';
-  
+
     this.selectedParentItemObj = {};
     this.selectedParentItemName = '';
-  
+
     this.selectedItemBrandObj = {};
     this.selectedItemBrandName = '';
-  
+
     this.selectedItemColorObj = {};
     this.selectedItemColorName = '';
-  
+
     this.selectedCountryOfOriginObj = {};
     this.selectedCountryOfOriginName = '';
-  
+
     this.selectedItemQualityObj = {};
-  
+
     this.allItemHistoryDetails = [] as Array<ItemHistory>;
     this.currentItemMaster = {} as ItemMaster;
-  
+
     this.itemUnitDetails.set([]); // clear grid data
-  
+
     // 🔹 Clear reactive form controls
     this.itemMasterForm.patchValue({
       basicunit: '',
@@ -1204,28 +1253,28 @@ const payload = {
       margin: '',
       marginvalue: '',
     });
-  
+
     // 🔹 Clear dropdown component UI if attached
     if (this.multicomboBoxObj) {
       this.multicomboBoxObj.value = '';
       this.multicomboBoxObj.text = '';
     }
-  
+
     // Reset units-in-grid and options
     this.unitsInGrid = [];
     this.purchaseUnitOptions = [];
     this.sellingUnitOptions = [];
-  
+
     // 🔹 Clear form validation states
     this.itemMasterForm.markAsPristine();
     this.itemMasterForm.markAsUntouched();
-  
+
     // Allow reactive triggers again
     this.isManualChange = false;
   }
 
   protected override onEditClick(): void {
-    this.isUpdate=true;
+    this.isUpdate = true;
     this.isEditBtnDisabled = !this.isInputDisabled;
     this.isDeleteBtnDisabled = !this.isInputDisabled;
     this.isSaveBtnDisabled = this.isInputDisabled;
@@ -1311,7 +1360,7 @@ const payload = {
         },
       });
   }
-  
+
   fetchItemQuality(): void {
     this.httpService
       .fetch(EndpointConstant.FILLQUALITY)
@@ -1532,14 +1581,14 @@ const payload = {
         : null;
     const defaultUnitObj = firstAvailableUnit
       ? {
-          unit: firstAvailableUnit.unit ?? firstAvailableUnit.basicUnit ?? '',
-          basicUnit:
-            typeof firstAvailableUnit.basicUnit === 'object'
-              ? (firstAvailableUnit.basicUnit as any)?.unit ??
-                firstAvailableUnit.basicUnit
-              : firstAvailableUnit.basicUnit ?? firstAvailableUnit.unit ?? '',
-          factor: firstAvailableUnit.factor ?? 1,
-        }
+        unit: firstAvailableUnit.unit ?? firstAvailableUnit.basicUnit ?? '',
+        basicUnit:
+          typeof firstAvailableUnit.basicUnit === 'object'
+            ? (firstAvailableUnit.basicUnit as any)?.unit ??
+            firstAvailableUnit.basicUnit
+            : firstAvailableUnit.basicUnit ?? firstAvailableUnit.unit ?? '',
+        factor: firstAvailableUnit.factor ?? 1,
+      }
       : { unit: '', basicUnit: '', factor: 1 };
 
     if (details.length > 0 && firstAvailableUnit) {
@@ -1632,8 +1681,8 @@ const payload = {
     this.cdr.detectChanges();
   }
 
-  onAddUnitDialogOpen(): void {}
-  onAddUnitDialogCreated(): void {}
+  onAddUnitDialogOpen(): void { }
+  onAddUnitDialogCreated(): void { }
 
   onAddUnitDialogUnitChange(event: any): void {
     this.addUnitDialogSelectedUnitObj = event?.itemData ?? null;
@@ -1819,7 +1868,7 @@ const payload = {
       selectedCategoryObj: this.selectedCategoryObj,
     });
   }
-  
+
   onParentItemSelected(option: string): any {
     let selectedParentItem: any = {};
     const value = option || this.itemMasterForm.get('parentitem')?.value || '';
@@ -2107,16 +2156,16 @@ const payload = {
   }
 
   onChangeQuality(event: any): void {
-  if (!event || event.value == null) return;
+    if (!event || event.value == null) return;
 
-  const selectedQuality = this.allQualities.find(
-    q => q.id === event.value
-  );
+    const selectedQuality = this.allQualities.find(
+      q => q.id === event.value
+    );
 
-  this.selectedItemQualityObj = {
-    id: event.value,
-    value: selectedQuality?.value || ''
-  };
+    this.selectedItemQualityObj = {
+      id: event.value,
+      value: selectedQuality?.value || ''
+    };
   }
 
   onInvAccountSelected(option: string): any {
@@ -2175,51 +2224,51 @@ const payload = {
 
   protected override FormInitialize(): void {
     const form = new FormGroup({
-      branch: new FormControl({ value: this.currentBranchID(), disabled: false },Validators.required),
-      itemcode: new FormControl({ value: '', disabled: false },Validators.required),
+      branch: new FormControl({ value: this.currentBranchID(), disabled: false }, Validators.required),
+      itemcode: new FormControl({ value: '', disabled: false }, Validators.required),
       active: new FormControl({ value: '', disabled: false }),
-      itemname: new FormControl({ value: '', disabled: false },Validators.required),
+      itemname: new FormControl({ value: '', disabled: false }, Validators.required),
       arabicname: new FormControl({ value: '', disabled: false }),
-      basicunit: new FormControl({ value: '',disabled: false },Validators.required),
-      barcodeno: new FormControl({ value: '', disabled: false }), 
-      category: new FormControl({value: null,disabled: false,}), 
+      basicunit: new FormControl({ value: '', disabled: false }, Validators.required),
+      barcodeno: new FormControl({ value: '', disabled: false }),
+      category: new FormControl({ value: null, disabled: false, }),
       unique: new FormControl({ value: false, disabled: false }),
       stockitem: new FormControl({ value: '', disabled: false }),
       costprice: new FormControl({ value: '', disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
-      sellingprice: new FormControl({ value: '',disabled: false,}), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
+      sellingprice: new FormControl({ value: '', disabled: false, }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
       mrp: new FormControl({ value: '', disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
       taxtype: new FormControl({ value: null, disabled: false }),
       margin: new FormControl({ value: '', disabled: false }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
-      marginvalue: new FormControl({value: '', disabled: false,}), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
-      isdisabled: new FormControl({value: false,disabled: false,}),
-      expiryitem: new FormControl({value: false,disabled: false,}),
-      finishedgoods: new FormControl({value: false,disabled: false}),
-      rawmaterials: new FormControl({value: false,disabled: false}),
-      expirydays: new FormControl({ value: '',disabled: this.isInputDisabled}),
-      racklocation: new FormControl({value: '',disabled: this.isInputDisabled}),
+      marginvalue: new FormControl({ value: '', disabled: false, }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
+      isdisabled: new FormControl({ value: false, disabled: false, }),
+      expiryitem: new FormControl({ value: false, disabled: false, }),
+      finishedgoods: new FormControl({ value: false, disabled: false }),
+      rawmaterials: new FormControl({ value: false, disabled: false }),
+      expirydays: new FormControl({ value: '', disabled: this.isInputDisabled }),
+      racklocation: new FormControl({ value: '', disabled: this.isInputDisabled }),
       discount: new FormControl({ value: '', disabled: this.isInputDisabled }),
       hsncode: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      parentitem: new FormControl({value: '', disabled: this.isInputDisabled}), //,Validators.required
+      parentitem: new FormControl({ value: '', disabled: this.isInputDisabled }), //,Validators.required
       quality: new FormControl({ value: '', disabled: this.isInputDisabled }),
       modelno: new FormControl({ value: '', disabled: this.isInputDisabled }),
       color: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      brandname: new FormControl({value: '',disabled: this.isInputDisabled}),
-      countryoforigin: new FormControl({value: '',disabled: this.isInputDisabled}),
-      manufacturer: new FormControl({ value: '', disabled: this.isInputDisabled}),
+      brandname: new FormControl({ value: '', disabled: this.isInputDisabled }),
+      countryoforigin: new FormControl({ value: '', disabled: this.isInputDisabled }),
+      manufacturer: new FormControl({ value: '', disabled: this.isInputDisabled }),
       rol: new FormControl({ value: '', disabled: this.isInputDisabled }),
       roq: new FormControl({ value: '', disabled: this.isInputDisabled }),
       shipmark: new FormControl({ value: '', disabled: this.isInputDisabled }),
       paintmark: new FormControl({ value: '', disabled: this.isInputDisabled }),
       stockcode: new FormControl({ value: '', disabled: this.isInputDisabled }),
       weight: new FormControl({ value: 0, disabled: this.isInputDisabled }),
-      purchaseunit: new FormControl({ value: '',disabled: this.isInputDisabled}), //,Validators.required
-      sellingunit: new FormControl({value: '',disabled: this.isInputDisabled}), //,Validators.required
+      purchaseunit: new FormControl({ value: '', disabled: this.isInputDisabled }), //,Validators.required
+      sellingunit: new FormControl({ value: '', disabled: this.isInputDisabled }), //,Validators.required
       oemno: new FormControl({ value: '', disabled: this.isInputDisabled }),
       groupitem: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      invaccount: new FormControl({ value: '',disabled: this.isInputDisabled || this.isStockItem}),
-      salesaccount: new FormControl({ value: '',disabled: this.isInputDisabled || this.isStockItem}),
-      costaccount: new FormControl({ value: '',disabled: this.isInputDisabled || this.isStockItem}),
-      purchaseaccount: new FormControl({value: '',disabled: this.isInputDisabled || this.isStockItem}),
+      invaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
+      salesaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
+      costaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
+      purchaseaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
       remarks: new FormControl({ value: '', disabled: this.isInputDisabled }),
     });
     this.itemMasterForm = form;
@@ -2279,53 +2328,53 @@ const payload = {
   }
 
   disableFormControls(): void {
-    this.itemMasterForm.disable() ;
+    this.itemMasterForm.disable();
 
-  //   this.itemMasterForm.get('itemcode')?.disable();
-  //   this.itemMasterForm.get('active')?.disable();
-  //   this.itemMasterForm.get('itemname')?.disable();
-  //   this.itemMasterForm.get('arabicname')?.disable();
-  //   this.itemMasterForm.get('basicunit')?.disable();
-  //   this.itemMasterForm.get('barcodeno')?.disable();
-  //   this.itemMasterForm.get('category')?.disable();
-  //   this.itemMasterForm.get('unique')?.disable();
-  //   this.itemMasterForm.get('stockitem')?.disable();
-  //   this.itemMasterForm.get('costprice')?.disable();
-  //   this.itemMasterForm.get('sellingprice')?.disable();
-  //   this.itemMasterForm.get('mrp')?.disable();
-  //   this.itemMasterForm.get('taxtype')?.disable();
-  //   this.itemMasterForm.get('margin')?.disable();
-  //   this.itemMasterForm.get('marginvalue')?.disable();
-  //   this.itemMasterForm.get('isdisabled')?.disable();
-  //   this.itemMasterForm.get('expiryitem')?.disable();
-  //   this.itemMasterForm.get('finishedgoods')?.disable();
-  //   this.itemMasterForm.get('rawmaterials')?.disable();
-  //   this.itemMasterForm.get('expirydays')?.disable();
-  //   this.itemMasterForm.get('racklocation')?.disable();
-  //   this.itemMasterForm.get('discount')?.disable();
-  //   this.itemMasterForm.get('hsncode')?.disable();
-  //   this.itemMasterForm.get('parentitem')?.disable();
-  //   this.itemMasterForm.get('quality')?.disable();
-  //   this.itemMasterForm.get('modelno')?.disable();
-  //   this.itemMasterForm.get('color')?.disable();
-  //   this.itemMasterForm.get('brandname')?.disable();
-  //   this.itemMasterForm.get('countryoforigin')?.disable();
-  //   this.itemMasterForm.get('manufacturer')?.disable();
-  //   this.itemMasterForm.get('rol')?.disable();
-  //    this.itemMasterForm.get('roq')?.disable();
-  //   this.itemMasterForm.get('weight')?.disable();
-  //   this.itemMasterForm.get('shipmark')?.disable();
-  //   this.itemMasterForm.get('paintmark')?.disable();
-  //   this.itemMasterForm.get('stockcode')?.disable();
-  //   this.itemMasterForm.get('oemno')?.disable();
-  //   this.itemMasterForm.get('groupitem')?.disable();
-  //   this.itemMasterForm.get('purchaseunit')?.disable();
-  //   this.itemMasterForm.get('sellingunit')?.disable();
-  //   this.itemMasterForm.get('remarks')?.disable();
-  //   this.itemMasterForm.get('invaccount')?.disable();
-  //   this.itemMasterForm.get('salesaccount')?.disable();
-  //   this.itemMasterForm.get('costaccount')?.disable();
-  //   this.itemMasterForm.get('purchaseaccount')?.disable();
+    //   this.itemMasterForm.get('itemcode')?.disable();
+    //   this.itemMasterForm.get('active')?.disable();
+    //   this.itemMasterForm.get('itemname')?.disable();
+    //   this.itemMasterForm.get('arabicname')?.disable();
+    //   this.itemMasterForm.get('basicunit')?.disable();
+    //   this.itemMasterForm.get('barcodeno')?.disable();
+    //   this.itemMasterForm.get('category')?.disable();
+    //   this.itemMasterForm.get('unique')?.disable();
+    //   this.itemMasterForm.get('stockitem')?.disable();
+    //   this.itemMasterForm.get('costprice')?.disable();
+    //   this.itemMasterForm.get('sellingprice')?.disable();
+    //   this.itemMasterForm.get('mrp')?.disable();
+    //   this.itemMasterForm.get('taxtype')?.disable();
+    //   this.itemMasterForm.get('margin')?.disable();
+    //   this.itemMasterForm.get('marginvalue')?.disable();
+    //   this.itemMasterForm.get('isdisabled')?.disable();
+    //   this.itemMasterForm.get('expiryitem')?.disable();
+    //   this.itemMasterForm.get('finishedgoods')?.disable();
+    //   this.itemMasterForm.get('rawmaterials')?.disable();
+    //   this.itemMasterForm.get('expirydays')?.disable();
+    //   this.itemMasterForm.get('racklocation')?.disable();
+    //   this.itemMasterForm.get('discount')?.disable();
+    //   this.itemMasterForm.get('hsncode')?.disable();
+    //   this.itemMasterForm.get('parentitem')?.disable();
+    //   this.itemMasterForm.get('quality')?.disable();
+    //   this.itemMasterForm.get('modelno')?.disable();
+    //   this.itemMasterForm.get('color')?.disable();
+    //   this.itemMasterForm.get('brandname')?.disable();
+    //   this.itemMasterForm.get('countryoforigin')?.disable();
+    //   this.itemMasterForm.get('manufacturer')?.disable();
+    //   this.itemMasterForm.get('rol')?.disable();
+    //    this.itemMasterForm.get('roq')?.disable();
+    //   this.itemMasterForm.get('weight')?.disable();
+    //   this.itemMasterForm.get('shipmark')?.disable();
+    //   this.itemMasterForm.get('paintmark')?.disable();
+    //   this.itemMasterForm.get('stockcode')?.disable();
+    //   this.itemMasterForm.get('oemno')?.disable();
+    //   this.itemMasterForm.get('groupitem')?.disable();
+    //   this.itemMasterForm.get('purchaseunit')?.disable();
+    //   this.itemMasterForm.get('sellingunit')?.disable();
+    //   this.itemMasterForm.get('remarks')?.disable();
+    //   this.itemMasterForm.get('invaccount')?.disable();
+    //   this.itemMasterForm.get('salesaccount')?.disable();
+    //   this.itemMasterForm.get('costaccount')?.disable();
+    //   this.itemMasterForm.get('purchaseaccount')?.disable();
   }
 
   getPageID(): void {

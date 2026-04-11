@@ -14,11 +14,11 @@ import { LeftGridDto } from '@org/models';
   imports: [CommonModule, GridModule, FormsModule],
   templateUrl: './leftGrid.component.html',
   styleUrl: './leftGrid.component.scss',
-  providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService,InfiniteScrollService],
+  providers: [SortService, GroupService, PageService, FilterService, VirtualScrollService, InfiniteScrollService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeftGridComponent {
-  
+
 
   sharedService = inject(DataSharingService);
 
@@ -31,8 +31,8 @@ export class LeftGridComponent {
   searchText = signal('');
   // Input properties
 
-      public pageheading = '';
-      @Input() columns: any[] = [];
+  public pageheading = '';
+  @Input() columns: any[] = [];
 
 
   //local init
@@ -41,8 +41,8 @@ export class LeftGridComponent {
   @Output() rowSelected = new EventEmitter<any>(); // output event
 
 
-   //public datas: any[] = [];
- public configureEditSettings: object = {};
+  //public datas: any[] = [];
+  public configureEditSettings: object = {};
   public filterOptions: object = {};
 
   // public colum
@@ -58,13 +58,13 @@ export class LeftGridComponent {
   formToolbarService = inject(FormToolbarService);
   isLeftGridDisabled$ = new BehaviorSubject<boolean>(true);
 
- 
+
 
   // Pagination
-  public pageSettings : PageSettingsModel= {
+  public pageSettings: PageSettingsModel = {
     pageSize: 50,
-    pageSizes :[50,100,200],
-    pageCount:5
+    pageSizes: [50, 100, 200],
+    pageCount: 5
   }
 
   isSelectionDisabled = computed(() => this.isNewMode() || this.isEditMode());
@@ -78,50 +78,53 @@ export class LeftGridComponent {
 
 
 
-  ngOnInit(): void { 
-   
-    console.log('LeftGridComponent initialized with data:', this.data);
-    
+  ngOnInit(): void {
 
-   this.configureEditSettings = {
+    // console.log('LeftGridComponent initialized with data:', this.data);
+
+
+    this.configureEditSettings = {
       allowEditing: true,
       allowAdding: true,
       allowDeleting: true,
     };
     this.filterOptions = { type: 'Menu' };
- 
+
   }
-   ngAfterViewInit(): void { 
+  ngAfterViewInit(): void {
     setTimeout(() => {
       this.loadColumns();
-    },100);
+    }, 100);
 
-        this.formToolbarService.newClicked$.subscribe(() => {
-              if(this.formToolbarService.newbuttonClick === 1){
-                this.isLeftGridDisabled$.next(false);
-              }else{
-                this.isLeftGridDisabled$.next(true);
-              }
-        });
-        this.formToolbarService.editClicked$.subscribe(() => {
-              if(this.formToolbarService.editbuttonClick === 1){
-                this.isLeftGridDisabled$.next(true);
-              }else{
-                this.isLeftGridDisabled$.next(false);
-              }
-        });
-   }
-              constructor() {
-                //this.loadColumns();
-              
-              }
-                          onRowSelect(event: any) {
-                            const selected = event.data; // Or event.rowData depending on your grid setup
-                            console.log("Selected unit in LeftGrid:", selected);
-                            this.rowSelected.emit(selected);
-                          }
+    this.formToolbarService.newClicked$.subscribe(() => {
+      if (this.formToolbarService.newbuttonClick === 1) {
+        this.isLeftGridDisabled$.next(false);
+      } else {
+        this.isLeftGridDisabled$.next(true);
+      }
+    });
+    this.formToolbarService.editClicked$.subscribe(() => {
+      if (this.formToolbarService.editbuttonClick === 1) {
+        this.isLeftGridDisabled$.next(true);
+      } else {
+        this.isLeftGridDisabled$.next(false);
+      }
+    });
+  }
+  constructor() {
+    //this.loadColumns();
 
-  
+  }
+  onRowSelect(event: any) {
+    if(this.isLeftGridDisabled$){
+      return
+    }
+    const selected = event.data; // Or event.rowData depending on your grid setup
+    // console.log("Selected unit in LeftGrid:", selected);
+    this.rowSelected.emit(selected);
+  }
+
+
 
   /** Apply live filter by invoice no, customer name, vat no, id. */
   private applyFilter(): void {
@@ -154,20 +157,20 @@ export class LeftGridComponent {
       this.rawData = list;
       this.applyFilter();
     });
-         
-         
-          
-        const dynamicColumns = this.columns.map(col => {
-              if (col.columns) {
-                return { headerText: col.headerText, columns: col.columns };
-              } else {
-                return col;
-              }
-            });
-              this.columns$.next(dynamicColumns);
-        
-          
-               
+
+
+
+    const dynamicColumns = this.columns.map(col => {
+      if (col.columns) {
+        return { headerText: col.headerText, columns: col.columns };
+      } else {
+        return col;
+      }
+    });
+    this.columns$.next(dynamicColumns);
+
+
+
   }
 }
 

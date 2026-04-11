@@ -7,6 +7,36 @@ import { Observable } from "rxjs";
         providedIn: 'root'
 })
 export class InventoryAppService {
+  fetchCountryOfOrigin$(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchCountryOfOrigin(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchItemBrands(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchItemColors(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchParentItems(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchCategories(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchItemQuality(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchTaxTypes(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchUnits(): any {
+    throw new Error('Method not implemented.');
+  }
+  fetchBranches(): any {
+    throw new Error('Method not implemented.');
+  }
 
   baseservice = inject(BaseService); // http request
   backgroundHttpService = inject(BackgroundHttpService);
