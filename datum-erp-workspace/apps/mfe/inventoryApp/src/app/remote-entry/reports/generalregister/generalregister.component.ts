@@ -720,4 +720,17 @@ onExcelCheckboxChange(event: any, col: any) {
     col.checked = event.target.checked;
 }
 
+ //grid filtering
+    filterOptions = {
+        type: 'Menu',
+        operators: {
+            stringOperator: [
+                { value: 'contains', text: 'Contains' },
+                { value: 'startswith', text: 'Starts With' },
+                { value: 'endswith', text: 'Ends With' },
+                { value: 'equal', text: 'Equal' }
+            ]
+        }
+    };
+
 }

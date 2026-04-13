@@ -261,7 +261,7 @@
             <div class="col-md-9 p-3">
                 <ejs-grid #grid [dataSource]="reportData" [allowPaging]="true" [allowSorting]="true" [allowResizing]="true"
                     [pageSettings]="{ pageSize: 20 }" gridLines="Both" height="500" [enableHover]="true"
-                    (rowDataBound)="onRowBound($event)" [allowExcelExport]="true">
+                    (rowDataBound)="onRowBound($event)" [allowExcelExport]="true" [allowFiltering]="true" [filterSettings]="filterOptions">
 
                     <e-columns>
                         <e-column *ngFor="let col of gridColumns" [field]="col.field" [headerText]="col.headerText"
