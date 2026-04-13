@@ -1,4 +1,4 @@
-/* eslint-disable @angular-eslint/component-selector */
+///* eslint-disable @angular-eslint/component-selector */
 import { AfterViewInit, Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { LeftGridDto } from '@org/models';
 import { DataSharingService, FormToolbarService } from '@org/services';

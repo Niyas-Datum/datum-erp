@@ -58,7 +58,7 @@ export class BranchAccounts extends BaseComponent implements OnInit {
   }
   ngOnInit(): void {
     this.onInitBase();
-    this.SetPageType(2);
+    this.SetPageType(4);
 
     // Subscribe to currentPageInfo$ to wait for it to be available
     this.serviceBase.dataSharingService.currentPageInfo$
