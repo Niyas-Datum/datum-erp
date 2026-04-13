@@ -77,7 +77,7 @@ export class DaybookComponent extends BaseComponent implements OnInit {
 
         });
 
-        this.SetPageType(2);
+        this.SetPageType(4);
         this.fetchVoucherTypes();
         this.fetchBranchDropdown();
         this.fetchUserPopup();

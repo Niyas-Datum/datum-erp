@@ -45,8 +45,8 @@ export class FormToolbarService {
   private leftGridClickedSource = new Subject<void>();
   leftGridClicked$ = this.leftGridClickedSource.asObservable();
 
-  private leftGridViewSource = new Subject<void>();
-  leftGridView$ = this.leftGridViewSource.asObservable();
+  private leftGridViewSource = new BehaviorSubject<number>(1);
+leftGridView$ = this.leftGridViewSource.asObservable();
 
   private toolbarVisibilitySource = new BehaviorSubject<boolean>(true);
   toolbarVisibility$ = this.toolbarVisibilitySource.asObservable();
@@ -76,21 +76,14 @@ export class FormToolbarService {
     this.leftGridClickedSource.next();
   }
 
-  emitLeftGridViewSatus(event: number) {
-    console.log("emitLeftGridViewSatus");
-    this.pagetype = event;
-    this.leftGridViewSource.next();
+ emitLeftGridViewSatus(event: number) {
+  this.pagetype = event;
+  this.leftGridViewSource.next(event); // ✅ MUST PASS VALUE
+}
 
-  }
 
-  //*** Left Grid View Status */
-  emitLeftGridtatus(event: number) {
-    console.log("emitLeftGridViewStatus");
-    this.pagetype = event;
-    this.leftGridViewSource.next();
-  }
 
-  emitToolbarVisibility(status: boolean) {
+emitToolbarVisibility(status: boolean) {
   this.toolbarVisibilitySource.next(status);
 }
 }

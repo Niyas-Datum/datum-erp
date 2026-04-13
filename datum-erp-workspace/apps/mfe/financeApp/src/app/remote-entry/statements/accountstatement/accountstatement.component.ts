@@ -75,7 +75,7 @@ export class AccountStatementComponent extends BaseComponent implements OnInit {
             to: new Date()
         });
 
-        this.SetPageType(2);
+        this.SetPageType(4);
         this.fetchBranchDropdown();
         this.fetchAccountPopup();
        this.fetchUserPopup();
