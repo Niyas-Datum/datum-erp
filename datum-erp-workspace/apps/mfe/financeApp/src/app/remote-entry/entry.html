@@ -1,87 +1,73 @@
-<div class="container-fluid mt-3">
-    <div class="row">
-      <!-- Left Grid -->
-      <div class="col-md-2">
-        <div class="row">
-          <div class="col-md-2 col-sm-2">
-            <button (click)="toggleSidebar()" class="e-btn e-btn-sm">
-              <span
-                class="e-btn-icon e-icons  e-elaborate"
-                style="color: #666666; font-size: 1.8rem;"
-              ></span>
+<!-- eslint-disable @angular-eslint/template/prefer-control-flow -->
+<div class="container-fluid h-100 p-0">
+
+  <!-- HEADER -->
+  <div class="row align-items-center g-0 flex-shrink-0 border-bottom bg-light m-0">
+    <div class="col-12 col-md-2 ps-3">
+      <div class="d-flex align-items-center gap-2">
+        <div [ngSwitch]="pageType">
+          <div *ngSwitchCase="1">
+            <button (click)="toggleSidebar()" class="e-btn-sm e-flat">
+              <span class="e-icons e-menu"></span>
             </button>
           </div>
-          <div class="col-md-10 col-sm-10">
-            <div style="font-size: 1.3rem; font-weight: 500; color: #666666;">
-              {{ pageheading }}
-            </div>
-          </div>
+        </div>
+        <div class="fs-6 fw-medium text-secondary text-nowrap">
+          {{ pageheading }}
         </div>
       </div>
-      <!-- col -2-d end -->
-      <div class="col-md-9">
-        <app-form-toolbar
-          [isNewMode]="isNewMode"
-          [isEditMode]="isEditMode"
-          [isNewBtnDisabled]="isNewBtnDisabled"
-          [isEditBtnDisabled]="isEditBtnDisabled"
-          [isDeleteBtnDisabled]="isDeleteBtnDisabled"
-          [isSaveBtnDisabled]="isSaveBtnDisabled"
-          [isPrintBtnDisabled]="isPrintBtnDisabled"
-          (new)="onNewClick()"
-          (delete)="onDeleteClick()"
-          (save)="onSaveClick()"
-          (print)="onPrintClick()"
-          (edit)="onEditClick()"
-        >
-        </app-form-toolbar>
-      </div>
-      <!-- col-9 end -->
     </div>
-    <!-- row end -->
 
-    <!-- SIDEBAR OUTSIDE OF THE ROW -->
-    <!-- SIDEBAR -->
-    <section class="leftgrid-section">
-      <ejs-sidebar
-        id="sideTree"
-        [(isOpen)]="isSidebarVisible"
-        [width]="width"
-        [target]="target"
-        [mediaQuery]="mediaQuery"
-        [type]="sidebarType"
-        position="Left"
-      >
-        <div class="p-1">
-          
-          <app-left-grid
+    <div class="col-12 col-md-10" *ngIf="showToolbar">
+      <app-form-toolbar [isNewMode]="isNewMode" [isEditMode]="isEditMode" [isNewBtnDisabled]="isNewBtnDisabled"
+        [isEditBtnDisabled]="isEditBtnDisabled" [isDeleteBtnDisabled]="isDeleteBtnDisabled"
+        [isSaveBtnDisabled]="isSaveBtnDisabled" [isPrintBtnDisabled]="isPrintBtnDisabled" (new)="onNewClick()"
+        (delete)="onDeleteClick()" (save)="onSaveClick()" (print)="onPrintClick()" (edit)="onEditClick()">
+      </app-form-toolbar>
+    </div>
+  </div>
+
+  <div [ngSwitch]="pageType" class="flex-grow-1 overflow-hidden">
+
+    <div *ngSwitchDefault class="h-100">
+      <section class="d-flex flex-row h-100 overflow-hidden">
+
+        <ejs-sidebar id="sideTree" [(isOpen)]="isSidebarVisible" [width]="width" [target]="target"
+          [mediaQuery]="mediaQuery" [type]="sidebarType" position="Left">
+
+          <div class="h-100 ">
+            <app-left-grid
               (rowSelected)="onCostCategorySelected($event)"
               [columns]="leftgridchildData.columns"
               [isNewMode]="isNewMode"
               [isEditMode]="isEditMode">
             </app-left-grid>
-        </div>
-      </ejs-sidebar>
+          </div>
+        </ejs-sidebar>
 
-      <!-- MAIN CONTENT WRAPPER -->
-      <div class="main-content-wrapper container-fluid">
-        <div class="row mt-2" style="min-height: 70vh;">
-          <div
-            [ngClass]="isSidebarVisible ? 'col-8' : 'col-12'"
-            class="transition-col"
-          >
-            <div
-              class="odoo-form-bg row"
-              style="background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 24px 18px 18px 18px; margin-bottom: 18px;"
-            >
-              <router-outlet></router-outlet>
-            </div>
+        <!-- RIGHT CONTENT (Main content)-->
+        <div class="main-content-wrapper flex-grow-1 d-flex flex-column">
+          <div   class="odoo-form-bg flex-grow-1 overflow-y-auto overflow-x-hidden e-content-animation" style="background:#fff; border-radius:4px;"
+             >
+
+            <router-outlet></router-outlet>
           </div>
         </div>
+
+      </section>
+    </div>
+
+    <!-- PAGE TYPE 2 -->
+    <div *ngSwitchCase="2" class="h-100 p-0">
+      <div style="background:#fff;border-radius:4px;">
+        <router-outlet></router-outlet>
       </div>
-    </section>
+    </div>
+
   </div>
-  <!---  Container --->
-  <div id="dialogContainer">
-    <div id="alertDialog" #dialogAlert></div>
-  </div>
+
+</div>
+<div id="dialogContainer">
+  <div id="alertDialog" #dialogAlert></div>
+</div>
+<!-- <app-popup-container></app-popup-container> -->

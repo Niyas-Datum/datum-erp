@@ -81,7 +81,7 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
         this.salesRegisterForm.patchValue({
             to: new Date()
         });
-        this.SetPageType(3);
+        this.SetPageType(4);
         this.fetchAllFilterMasterData();
         //  this.setInitialState();
         //this.setCashCreditID();
@@ -416,7 +416,7 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
             from: formValue.from,
             to: formValue.to,
 
-             baseType: { id: 23 },
+            baseType: { id: 23 },
             voucherType: this.safeObj(this.voucherTypeObj, formValue.voucherType),
             customerSupplier: this.safeObj(this.customerSupplierObj, formValue.customerSupplier),
             item: this.safeObj(this.itemObj, formValue.item),
@@ -706,4 +706,17 @@ export class SalesRegisterComponent extends BaseComponent implements OnInit {
     onExcelCheckboxChange(event: any, col: any) {
         col.checked = event.target.checked;
     }
+
+    //grid filtering
+    filterOptions = {
+        type: 'Menu',
+        operators: {
+            stringOperator: [
+                { value: 'contains', text: 'Contains' },
+                { value: 'startswith', text: 'Starts With' },
+                { value: 'endswith', text: 'Ends With' },
+                { value: 'equal', text: 'Equal' }
+            ]
+        }
+    };
 }

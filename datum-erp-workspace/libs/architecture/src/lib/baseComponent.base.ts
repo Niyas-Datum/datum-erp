@@ -106,7 +106,8 @@ export abstract class BaseComponent {
 
   SetPageType = (status: number) => {
 
-    if (status === 3) {
+    if (status === 4) {
+      console.log("setpagetype status:"+status)
       // ❌ remove both
       this.serviceBase.formToolbarService.emitLeftGridViewSatus(2); // hide left grid
       this.serviceBase.formToolbarService.emitToolbarVisibility(false); // hide toolbar
