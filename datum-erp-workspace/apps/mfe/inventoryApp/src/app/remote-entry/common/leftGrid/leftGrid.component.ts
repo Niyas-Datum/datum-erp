@@ -5,7 +5,6 @@ import { BaseService, DataSharingService, FormToolbarService } from '@org/servic
 import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService, PageSettingsModel, InfiniteScrollService } from '@syncfusion/ej2-angular-grids';
 import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
-;
 
 
 
@@ -162,15 +161,12 @@ export class LeftGridComponent {
 
     const dynamicColumns = this.columns.map(col => {
       if (col.columns) {
-        return { headerText: col.headerText, columns: col.columns };
+        return { headerText: col.headerText, columns: col.columns }
       } else {
-        return col;
+        return col
       }
     });
-    this.columns$.next(dynamicColumns);
-
-
-
+    this.columns$.next(dynamicColumns)
   }
 }
 

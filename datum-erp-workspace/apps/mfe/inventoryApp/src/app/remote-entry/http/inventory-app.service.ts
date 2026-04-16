@@ -1,10 +1,10 @@
-import { inject,  Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { ApiResponseDto } from "@org/models";
 import { BackgroundHttpService, BaseService } from "@org/services";
 import { Observable } from "rxjs";
 
 @Injectable({
-        providedIn: 'root'
+  providedIn: 'root'
 })
 export class InventoryAppService {
   fetchCountryOfOrigin$(): any {
@@ -40,34 +40,34 @@ export class InventoryAppService {
 
   baseservice = inject(BaseService); // http request
   backgroundHttpService = inject(BackgroundHttpService);
-  constructor() { 
-    console.log('InventoryAppService initialized');   
+  constructor() {
+    console.log('InventoryAppService initialized');
   }
 
-          fetch<T>(endpoint: string, background: boolean = false, key: string | null = null): Observable<ApiResponseDto<T>> {
-                if (background) {
-                    return this.backgroundHttpService.fetch<ApiResponseDto<T>>(endpoint, key, true);
-                }
+  fetch<T>(endpoint: string, background: boolean = false, key: string | null = null): Observable<ApiResponseDto<T>> {
+    if (background) {
+      return this.backgroundHttpService.fetch<ApiResponseDto<T>>(endpoint, key, true);
+    }
 
-                return this.baseservice.get(endpoint);
-          }
-          post<T>(endpoint: string, data: any): Observable<ApiResponseDto<T>> {
-
-                  return this.baseservice.post(endpoint, data);
-
-          }
-          patch<T>(endpoint: string, data: any):Observable<ApiResponseDto<T>> {
-
-                  return this.baseservice.patch(endpoint, data);
-
-          }
-          delete<T>(endpoint: string):Observable<ApiResponseDto<T>> {
-
-                  return this.baseservice.delete(endpoint);
-
-          }
- 
- 
-
-  
+    return this.baseservice.get(endpoint);
   }
+  post<T>(endpoint: string, data: any): Observable<ApiResponseDto<T>> {
+
+    return this.baseservice.post(endpoint, data);
+
+  }
+  patch<T>(endpoint: string, data: any): Observable<ApiResponseDto<T>> {
+
+    return this.baseservice.patch(endpoint, data);
+
+  }
+  delete<T>(endpoint: string): Observable<ApiResponseDto<T>> {
+
+    return this.baseservice.delete(endpoint);
+
+  }
+
+
+
+
+}
