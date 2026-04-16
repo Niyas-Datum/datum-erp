@@ -1,3 +1,5 @@
+
+
 import { Component, inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, DestroyRef, input, computed, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -5,6 +7,7 @@ import { BaseService, DataSharingService, FormToolbarService } from '@org/servic
 import { GridModule, SortService, GroupService, PageService, FilterService, VirtualScrollService, PageSettingsModel, InfiniteScrollService } from '@syncfusion/ej2-angular-grids';
 import { BehaviorSubject } from 'rxjs';
 import { LeftGridDto } from '@org/models';
+;
 
 
 
@@ -79,7 +82,7 @@ export class LeftGridComponent {
 
   ngOnInit(): void {
 
-    // console.log('LeftGridComponent initialized with data:', this.data);
+    console.log('LeftGridComponent initialized with data:', this.data);
 
 
     this.configureEditSettings = {
@@ -115,11 +118,8 @@ export class LeftGridComponent {
 
   }
   onRowSelect(event: any) {
-    if(this.isLeftGridDisabled$){
-      return
-    }
     const selected = event.data; // Or event.rowData depending on your grid setup
-    // console.log("Selected unit in LeftGrid:", selected);
+    console.log("Selected unit in LeftGrid:", selected);
     this.rowSelected.emit(selected);
   }
 
@@ -161,13 +161,14 @@ export class LeftGridComponent {
 
     const dynamicColumns = this.columns.map(col => {
       if (col.columns) {
-        return { headerText: col.headerText, columns: col.columns }
+        return { headerText: col.headerText, columns: col.columns };
       } else {
-        return col
+        return col;
       }
     });
-    this.columns$.next(dynamicColumns)
+    this.columns$.next(dynamicColumns);
+
+
+
   }
 }
-
-

@@ -41,14 +41,16 @@
                 </div>
                 <div class="col-md-6 d-flex align-items-center ps-md-4">
                   <label class="me-3">Active</label>
-                  <input type="checkbox" class="form-check-input" formControlName="active">
+                  <input type="checkbox" class="form-check-input" formControlName="active" [checked]="active"
+                    (change)="onActiveChange($event)">
                 </div>
               </div>
 
               <div class="row g-2 mb-2 align-items-center">
                 <div class="col-md-12 d-flex align-items-center">
                   <label class="col-2">Item Name</label>
-                  <ejs-textbox class="flex-grow-1" formControlName="itemname"></ejs-textbox>
+                  <ejs-textbox #itemname [multiline]="false" class="flex-grow-1"
+                    formControlName="itemname"></ejs-textbox>
                   <span class="text-danger ms-1">*</span>
                 </div>
               </div>
@@ -57,7 +59,7 @@
                 <div class="col-md-12 d-flex align-items-center">
                   <label class="col-2 mb-0">Arabic Name</label>
 
-                  <div class="input-group flex-grow-1 d-flex flex-nowrap">
+                  <div class="input-group flex-grow-1 d-flex gap-2 flex-nowrap">
 
                     <ejs-textbox [multiline]="false" class="e-input flex-grow-1" formControlName="arabicname">
                     </ejs-textbox>
@@ -77,7 +79,7 @@
                 </div>
                 <div class="col-md-6 d-flex align-items-center ps-md-4">
                   <div class="d-flex flex-grow-1 gap-1">
-                     <label class="col-4">Category</label>
+                    <label class="col-4">Category</label>
                     <app-multiColumnComboBox class="w-50" formControlName="category" [dataSource]="allCategories"
                       [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" [disabled]="isDisabled"
                       [resetTrigger]="forceComboReset()" (rowSelected)="onCategorySelected($event)"
@@ -97,8 +99,12 @@
                 <div class="col-md-6 d-flex align-items-center">
                   <label class="col-4 mb-0">Barcode No.</label>
 
-                  <div class="input-group d-flex flex-nowrap">
-                    <ejs-textbox [multiline]="false" formControlName="barcodeno"></ejs-textbox>
+                  <div class="input-group d-flex gap-2 flex-nowrap">
+                    <div class="me-1">
+                      <ejs-textbox [multiline]="false" formControlName="barcodeno"
+                      placeholder="Enter Barcode"></ejs-textbox>
+                    </div>
+                    
                     <button class="btn-outline-secondary" type="button" [disabled]="isInputDisabled"
                       (click)="generateBarCode(0)">G</button>
                     <button [disabled]="isInputDisabled" class="btn-outline-secondary" type="button"
@@ -108,11 +114,13 @@
                 <div class="col-md-6 d-flex align-items-center ps-md-4 gap-3">
                   <div class="d-flex align-items-center gap-1">
                     <label class="mb-0">Unique</label>
-                    <input type="checkbox" class="form-check-input">
+                    <input type="checkbox" class="form-check-input" id="unique" formControlName="unique"
+                      [checked]="unique">
                   </div>
                   <div class="d-flex align-items-center gap-1">
                     <label class="mb-0">Stock Item</label>
-                    <input type="checkbox" class="form-check-input" checked>
+                    <input type="checkbox" class="form-check-input" id="stockitem" formControlName="stockitem"
+                      [checked]="stockitem" (change)="onStockItemChange($event)">
                   </div>
                 </div>
               </div>
@@ -148,8 +156,8 @@
                     </div>
                   </div>
                   <div class="col-md-6 d-flex align-items-center ps-md-2">
-                    <label class="col-4">Tax Type</label>
-                    <ejs-dropdownlist class="flex-grow-1" id="taxtype" formControlName="taxtype"
+                    <label for="taxtype" class="col-4">Tax Type</label>
+                    <ejs-dropdownlist #taxtype class="flex-grow-1" id="taxtype" formControlName="taxtype"
                       [dataSource]="allTaxTypes" [fields]="{ text: 'name', value: 'id' }"
                       (change)="onChangeTaxType($event)" class="flex-grow-1">
                     </ejs-dropdownlist>

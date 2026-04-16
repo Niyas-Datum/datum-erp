@@ -10,7 +10,7 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
   styles: [`
 
 .container-fluid{
-  height:100vh;
+  height:100%;
   display:flex;
   flex-direction:column;
   overflow:hidden;
@@ -30,6 +30,9 @@ app-left-grid {
   height: 100% !important;
 }
 
+.row{
+  margin: 0 !important;
+}
 `]
   ,
   templateUrl: './entry.html',
