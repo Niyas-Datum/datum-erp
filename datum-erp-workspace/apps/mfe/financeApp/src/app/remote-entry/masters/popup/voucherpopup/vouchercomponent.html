@@ -20,12 +20,13 @@
   </div>
 
   <!-- Form Fields -->
+   <!-- [value]="currentRecord?.id" -->
   <div class="form-container">
     <div class="form-group">
       <label for="numberingId">ID</label>
       <ejs-textbox
         id="numberingId"
-        [value]="currentRecord?.id"
+        
         format="n0"
         [readonly]="true"
         [enabled]="false">

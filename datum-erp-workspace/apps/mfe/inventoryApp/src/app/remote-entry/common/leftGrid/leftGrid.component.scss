@@ -24,7 +24,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  pointer-events: none; /* Allow clicks to pass through when disabled */
+  pointer-events: all; /* Allow clicks to pass through when disabled */
 }
 
 .overlay-disabled {

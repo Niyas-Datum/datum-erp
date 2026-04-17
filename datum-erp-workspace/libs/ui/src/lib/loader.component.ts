@@ -3,7 +3,10 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'shared-ui-loader',
   standalone: true,
-  template: `<div class="loader">Loading...</div>`,
+  template: `<div class="loader">
+    <!-- Loading... -->
+    <span class="spinner"></span>
+  </div>`,
   styles: [`
     .loader {
       position: fixed;
@@ -16,6 +19,19 @@ import { Component } from '@angular/core';
       font-size: 24px;
       z-index: 9999;
     }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #d2d2d1ff;
+      border-top: 5px solid #187C9A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   `]
 })
-export class LoaderComponent {}
+export class LoaderComponent { }

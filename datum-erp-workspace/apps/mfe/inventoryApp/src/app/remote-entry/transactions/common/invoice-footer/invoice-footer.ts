@@ -116,8 +116,8 @@ export class InvoiceFooter implements OnInit {
   /** Lines sent on save in `transactionEntries.advance` (legacy sales invoice). */
   selectedAdvanceData: any[] = [];
   grossAmt = 0.0000;
-  taxTotal=0.0000;
-  grandtotal=0.0000;
+  taxTotal = 0.0000;
+  grandtotal = 0.0000;
   // eslint-disable-next-line @angular-eslint/prefer-inject
   constructor(private fb: FormBuilder, private baseService: BaseService) { }
 
@@ -167,7 +167,7 @@ export class InvoiceFooter implements OnInit {
           this.enableCashOption = fallbackPayType.name === 'Cash';
           this.enableCreditOption = fallbackPayType.name === 'Credit';
           this.isChequeButtonEnabled = fallbackPayType.name === 'Credit';
-          
+
           // If payment type is Cash, load default cash account
           if (fallbackPayType.name === 'Cash') {
             this.loadDefaultCashAccount();
@@ -241,18 +241,18 @@ export class InvoiceFooter implements OnInit {
           if (this.currentSales?.transaction) {
             // Bind transaction data first (includes tax, addcharges, etc.)
             this.bindTransactionData(this.currentSales.transaction);
-            
+
             // Emit fillAdditionals so additional details component can bind
             if (this.currentSales.transaction.fillAdditionals) {
               this.dataSharingService.setAdditionalDetails(this.currentSales.transaction.fillAdditionals);
             }
           }
-          
+
           // Payment and cheque data from separate endpoints takes precedence for cash/card/cheque
           if (this.currentSales?.payment?.data && this.currentSales.payment.data.length > 0) {
             this.bindPaymentInformation(this.currentSales.payment.data);
           }
-          
+
           // Bind cheque information if available
           if (this.currentSales?.cheque?.data && this.currentSales.cheque.data.length > 0) {
             this.bindChequeInformation(this.currentSales.cheque.data);
@@ -272,10 +272,10 @@ export class InvoiceFooter implements OnInit {
 
     const fillItems = transactionData?.fillInvTransItems || [];
     this.invTransactions = fillItems;
-    
+
     // 👉 UPDATE: Store items in commonService for item grid component
     this.commonService.invTransactions.set(fillItems);
-    
+
     // 👉 UPDATE: Map items to grid format and update tempItemFillDetails
     const mappedItems = this.mapItemsToGridFormat(fillItems);
     this.commonService.tempItemFillDetails.set(mappedItems);
@@ -294,7 +294,7 @@ export class InvoiceFooter implements OnInit {
     const grossAmount = fillItems.reduce((sum: number, item: any) => sum + this.toNum(item?.grossAmount), 0);
     const discountTotal = fillItems.reduce((sum: number, item: any) => sum + this.toNum(item?.discount), 0);
     const discountPerc = fillItems[0]?.discountPerc ?? 0;
-    
+
     // Store calculated values
     this.grossAmt = grossAmount;
     this.taxTotal = totalTax;
@@ -420,7 +420,7 @@ export class InvoiceFooter implements OnInit {
     const chequeTotal = this.getTotalAmount(this.chequeSelected);
     const taxTotal = this.getTotalAmount(this.taxSelected);
     const addChargesTotal = this.getTotalAmount(this.addChargesSelected);
-    
+
     // Get advance amount from fillAdditionals or default to 0
     const advanceAmount = this.toNum(transactionData?.fillAdditionals?.advance) || 0;
 
@@ -459,7 +459,7 @@ export class InvoiceFooter implements OnInit {
     // Clear existing payment data
     const tempCashSelected: any[] = [];
     const tempCardSelected: any[] = [];
-    
+
     let cashAmount = 0;
     let cardAmount = 0;
 
@@ -508,7 +508,7 @@ export class InvoiceFooter implements OnInit {
 
     chequeInfo.forEach((chequeData: any) => {
       chequeAmount += this.toNum(chequeData.ChqAmount);
-      
+
       // Find bank info
       let bankInfo: any = {};
       this.bankPopupObj.forEach((item: any) => {
@@ -549,7 +549,7 @@ export class InvoiceFooter implements OnInit {
         description: chequeData.Description,
         amount: this.toNum(chequeData.ChqAmount)
       };
-      
+
       tempChequeSelected.push(chequeObj);
     });
 
@@ -570,7 +570,7 @@ export class InvoiceFooter implements OnInit {
       : [];
 
     this.invTransactions = items;
-    
+
     // 👉 UPDATE: Also bind items to commonService here
     this.commonService.invTransactions.set(items);
     const mappedItems = this.mapItemsToGridFormat(items);
@@ -720,7 +720,7 @@ export class InvoiceFooter implements OnInit {
           }));
           this.defaultCashAccount = this.cashPopupObj; // Set default cash account from API
           this.pettyCashObj = this.cashPopupObj; // Also set pettyCashObj
-          
+
           // Don't auto-allocate - user must open popup and click OK
         },
         error: (error) => {
@@ -772,19 +772,19 @@ export class InvoiceFooter implements OnInit {
     const balanceAmount = this.toNum(this.salesForm.get('balance')?.value);
     const grandTotal = this.toNum(this.salesForm.get('grandtotal')?.value);
     const totalPaid = this.toNum(this.salesForm.get('totalpaid')?.value);
-    
+
     // Use grandTotal or totalPaid if balance is 0
     const cashAmount = balanceAmount > 0 ? balanceAmount : (totalPaid > 0 ? totalPaid : grandTotal);
-    
+
     // Use pettyCashObj or defaultCashAccount (whichever is populated)
     const cashAccount = this.pettyCashObj.length > 0 ? this.pettyCashObj : this.defaultCashAccount;
-    
+
     if (cashAccount && cashAccount.length > 0 && cashAmount > 0) {
       // Clear existing cash entries if any
       if (this.cashSelected.length > 0) {
         this.cashSelected = [];
       }
-      
+
       const accountId = parseInt(String(cashAccount[0].id || 61));
       this.cashSelected.push({
         id: accountId,
@@ -800,11 +800,11 @@ export class InvoiceFooter implements OnInit {
 
       // Update the cash form control with the cash amount
       this.salesForm.patchValue({ cash: cashAmount.toFixed(4) });
-      
+
       // Update total paid and balance
       this.updateTotalPaid();
       this.updateBalance();
-      
+
     }
   }
 
@@ -1009,7 +1009,7 @@ export class InvoiceFooter implements OnInit {
 
     if (this.popupType !== 'addcharge') {
       this.updateBalance();
-      
+
       // After cash payment, if there's a balance, enable card option for partial payment
       if (this.popupType === 'cash') {
         const balance = this.toNum(this.salesForm.get('balance')?.value);
@@ -1066,7 +1066,7 @@ export class InvoiceFooter implements OnInit {
             this.isDefaultCash = responseData.defaultCash;
 
             let defaultPayType = null;
-            
+
             if (this.isDefaultCash) {
               // If defaultCash is true, use Cash as default
               defaultPayType = this.payTypeObj.find(
@@ -1074,8 +1074,8 @@ export class InvoiceFooter implements OnInit {
               );
             } else {
               // If no defaultCash, use the first available payment type
-              defaultPayType = this.payTypeObj && this.payTypeObj.length > 0 
-                ? this.payTypeObj[0] 
+              defaultPayType = this.payTypeObj && this.payTypeObj.length > 0
+                ? this.payTypeObj[0]
                 : null;
             }
 
@@ -1086,14 +1086,14 @@ export class InvoiceFooter implements OnInit {
                 value: defaultPayType.name,
               };
               this.selectedPayType = defaultPayType.name;
-              
+
               // Enable appropriate options based on payment type
               this.enableCreditOption = defaultPayType.name === 'Credit';
               this.enableCashOption = defaultPayType.name === 'Cash';
               this.isChequeButtonEnabled = defaultPayType.name === 'Credit';
-              
+
               this.applyPayTypeGate(defaultPayType.name);
-              
+
             }
           }
         },
@@ -1186,7 +1186,7 @@ export class InvoiceFooter implements OnInit {
     this.taxPopupObj = [];
     this.bankPopupObj = [];
     this.additonalChargesPopupObj = [];
-    
+
     // Clear selected payment items
     this.cashSelected = [];
     this.cardSelected = [];
@@ -1249,7 +1249,7 @@ export class InvoiceFooter implements OnInit {
 
   public recalculateTaxValue(): void {
     const items = this.commonService.tempItemFillDetails() || [];
-    
+
     const taxTotal = items.reduce(
       (sum: number, item: any) => sum + this.toNum(item?.taxValue ?? 0),
       0
@@ -1261,43 +1261,43 @@ export class InvoiceFooter implements OnInit {
 
   public recalculateNetAmount(): void {
     const items = this.commonService.tempItemFillDetails() || [];
-    
+
     const netamount = items.reduce(
       (sum: number, item: any) => sum + this.toNum(item?.amount ?? 0),
       0
     );
-    
+
     this.salesForm.patchValue({ netamount: netamount.toFixed(4) }, { emitEvent: false });
   }
 
   public recalculateGrossAmtAmount(): void {
     const items = this.commonService.tempItemFillDetails() || [];
-    
+
     this.grossAmt = items.reduce(
       (sum: number, item: any) => sum + this.toNum(item?.grossamount ?? 0),
       0
     );
   }
 
-onClickRoundOff() {
+  onClickRoundOff() {
 
-  const roundoffControl = this.salesForm.get('roundoff');
-  const grandTotalControl = this.salesForm.get('grandtotal');
+    const roundoffControl = this.salesForm.get('roundoff');
+    const grandTotalControl = this.salesForm.get('grandtotal');
 
-  if (this.grandtotal != null && roundoffControl) {
-    const roundedTotal = Math.round(this.grandtotal);
-    const roundoffValue = Number((roundedTotal - this.grandtotal).toFixed(4));
-    roundoffControl.patchValue(roundoffValue, { emitEvent: false });
-    this.roundValue = roundoffValue;
-    
-    if (grandTotalControl) {
-      grandTotalControl.patchValue(roundedTotal.toFixed(4), { emitEvent: false });
+    if (this.grandtotal != null && roundoffControl) {
+      const roundedTotal = Math.round(this.grandtotal);
+      const roundoffValue = Number((roundedTotal - this.grandtotal).toFixed(4));
+      roundoffControl.patchValue(roundoffValue, { emitEvent: false });
+      this.roundValue = roundoffValue;
+
+      if (grandTotalControl) {
+        grandTotalControl.patchValue(roundedTotal.toFixed(4), { emitEvent: false });
+      }
+
+      // Recalculate balance after updating grand total
+      this.updateBalance();
     }
-    
-    // Recalculate balance after updating grand total
-    this.updateBalance();
   }
-}
 
 
 
@@ -1385,17 +1385,17 @@ onClickRoundOff() {
   commonDiscountPercent = 0.00;
   commonDiscountAmount = 0.00;
   onChangeCommonDiscountPercent(event: any): void {
-  this.recalculateGrossAmtAmount(); // Ensure latest grossAmt is calculated
+    this.recalculateGrossAmtAmount(); // Ensure latest grossAmt is calculated
 
-  const percentCtrl = this.salesForm.get('totaldiscpercent');
-  const amountCtrl = this.salesForm.get('discountamount');
+    const percentCtrl = this.salesForm.get('totaldiscpercent');
+    const amountCtrl = this.salesForm.get('discountamount');
 
-  const percent = Number(percentCtrl?.value || 0);
-  const gross = this.grossAmt; // Already recalculated
+    const percent = Number(percentCtrl?.value || 0);
+    const gross = this.grossAmt; // Already recalculated
 
-  const discountAmount = (gross * percent) / 100;
-  amountCtrl?.setValue(discountAmount.toFixed(4));
-}
+    const discountAmount = (gross * percent) / 100;
+    amountCtrl?.setValue(discountAmount.toFixed(4));
+  }
 
   /**
    * Maps transaction items from API format to grid display format
@@ -1409,117 +1409,117 @@ onClickRoundOff() {
       const unitVal = item.unit;
       const unitStr = typeof unitVal === 'object' ? (unitVal?.unit ?? '') : (unitVal ?? '');
       return {
-      // Core item info (plain objects so grid/store is not shared reference with API response)
-      rowId: index + 1,
-      index: index,
-      transactionId: item.transactionId || 0,
-      itemId: item.itemId || 0,
-      itemCode: item.itemCode || '',
-      itemName: item.itemName || '',
-      location: item.location || '',
-      batchNo: item.batchNo || '',
-      unit: { unit: unitStr, basicunit: unitStr, factor: 1 },
-      unitsPopup: [],
-      qty: this.toNum(item.qty),
-      focQty: this.toNum(item.focQty),
-      basicQty: this.toNum(item.basicQty ?? item.qty),
-      additional: this.toNum(item.additional),
-      
-      // Pricing
-      rate: this.toNum(item.rate),
-      otherRate: this.toNum(item.otherRate),
-      margin: this.toNum(item.margin),
-      rateDisc: this.toNum(item.rateDisc),
-      
-      // Amounts
-      grossAmt: this.toNum(item.grossAmount),
-      discount: this.toNum(item.discount),
-      discountPerc: this.toNum(item.discountPerc),
-      amount: this.toNum(item.amount),
-      
-      // Tax
-      taxPerc: this.toNum(item.taxPerc),
-      taxValue: this.toNum(item.taxValue),
-      taxTypeId: item.taxTypeId || 0,
-      taxAccountId: item.taxAccountId || 0,
-      
-      // Totals
-      total: this.toNum(item.totalAmount),
-      totalAmount: this.toNum(item.totalAmount), // ← Grid uses this field name
-      
-      // MRP and rates
-      printedMRP: this.toNum(item.printedMrp),
-      ptsRate: this.toNum(item.ptsRate),
-      ptrRate: this.toNum(item.ptrRate),
-      
-      // Additional fields
-      pcs: this.toNum(item.pcs),
-      stockItemId: item.stockItemId || 0,
-      stockItem: item.stockItem || '',
-      availableStock:
-        item.stock !== undefined && item.stock !== null && item.stock !== ''
-          ? this.toNum(item.stock)
-          : undefined,
-      expiryDate: item.expiryDate || null,
-      manufactureDate: item.manufactureDate || null,
-      description: item.description || null,
-      
-      // Dimensions
-      lengthFt: this.toNum(item.lengthFt),
-      lengthIn: this.toNum(item.lengthIn),
-      lengthCm: this.toNum(item.lengthCm),
-      girthFt: this.toNum(item.girthFt),
-      girthIn: this.toNum(item.girthIn),
-      girthCm: this.toNum(item.girthCm),
-      thicknessFt: this.toNum(item.thicknessFt),
-      thicknessIn: this.toNum(item.thicknessIn),
-      thicknessCm: this.toNum(item.thicknessCm),
-      
-      // Other info
-      remarks: item.remarks || '',
-      costAccountId: item.costAccountId || 0,
-      brandId: item.brandId || 0,
-      profit: this.toNum(item.profit),
-      repairsRequired: item.repairsRequired || '',
-      finishDate: item.finishDate || null,
-      updateDate: item.updateDate || null,
-      replaceQty: this.toNum(item.replaceQty),
-      printedRate: this.toNum(item.printedRate),
-      hsn: item.hsn || '',
-      avgCost: this.toNum(item.avgCost),
-      isReturn: item.isReturn !== undefined ? item.isReturn : true,
-      
-      // Price category
-      priceCategory: item.priceCategoryId ? {
-        id: item.priceCategoryId,
-        name: item.priceCategoryName || '',
-        code: '',
-        description: ''
-      } : {
-        id: null,
-        name: '',
-        code: '',
-        description: ''
-      },
-      priceCategoryOptions: [], // Will be populated on edit if needed
-      
-      // Size master
-      sizeMaster: item.sizeMasterName ? {
-        id: item.sizeMasterId,
-        name: item.sizeMasterName,
-        code: '',
-        description: ''
-      } : {
-        id: null,
-        name: '',
-        code: '',
-        description: ''
-      },
-      
-      // Unique items
-      uniqueItems: item.uniqueItems || [{ uniqueNumber: 'string' }],
-      batchNoPopup: []
-    };
+        // Core item info (plain objects so grid/store is not shared reference with API response)
+        rowId: index + 1,
+        index: index,
+        transactionId: item.transactionId || 0,
+        itemId: item.itemId || 0,
+        itemCode: item.itemCode || '',
+        itemName: item.itemName || '',
+        location: item.location || '',
+        batchNo: item.batchNo || '',
+        unit: { unit: unitStr, basicunit: unitStr, factor: 1 },
+        unitsPopup: [],
+        qty: this.toNum(item.qty),
+        focQty: this.toNum(item.focQty),
+        basicQty: this.toNum(item.basicQty ?? item.qty),
+        additional: this.toNum(item.additional),
+
+        // Pricing
+        rate: this.toNum(item.rate),
+        otherRate: this.toNum(item.otherRate),
+        margin: this.toNum(item.margin),
+        rateDisc: this.toNum(item.rateDisc),
+
+        // Amounts
+        grossAmt: this.toNum(item.grossAmount),
+        discount: this.toNum(item.discount),
+        discountPerc: this.toNum(item.discountPerc),
+        amount: this.toNum(item.amount),
+
+        // Tax
+        taxPerc: this.toNum(item.taxPerc),
+        taxValue: this.toNum(item.taxValue),
+        taxTypeId: item.taxTypeId || 0,
+        taxAccountId: item.taxAccountId || 0,
+
+        // Totals
+        total: this.toNum(item.totalAmount),
+        totalAmount: this.toNum(item.totalAmount), // ← Grid uses this field name
+
+        // MRP and rates
+        printedMRP: this.toNum(item.printedMrp),
+        ptsRate: this.toNum(item.ptsRate),
+        ptrRate: this.toNum(item.ptrRate),
+
+        // Additional fields
+        pcs: this.toNum(item.pcs),
+        stockItemId: item.stockItemId || 0,
+        stockItem: item.stockItem || '',
+        availableStock:
+          item.stock !== undefined && item.stock !== null && item.stock !== ''
+            ? this.toNum(item.stock)
+            : undefined,
+        expiryDate: item.expiryDate || null,
+        manufactureDate: item.manufactureDate || null,
+        description: item.description || null,
+
+        // Dimensions
+        lengthFt: this.toNum(item.lengthFt),
+        lengthIn: this.toNum(item.lengthIn),
+        lengthCm: this.toNum(item.lengthCm),
+        girthFt: this.toNum(item.girthFt),
+        girthIn: this.toNum(item.girthIn),
+        girthCm: this.toNum(item.girthCm),
+        thicknessFt: this.toNum(item.thicknessFt),
+        thicknessIn: this.toNum(item.thicknessIn),
+        thicknessCm: this.toNum(item.thicknessCm),
+
+        // Other info
+        remarks: item.remarks || '',
+        costAccountId: item.costAccountId || 0,
+        brandId: item.brandId || 0,
+        profit: this.toNum(item.profit),
+        repairsRequired: item.repairsRequired || '',
+        finishDate: item.finishDate || null,
+        updateDate: item.updateDate || null,
+        replaceQty: this.toNum(item.replaceQty),
+        printedRate: this.toNum(item.printedRate),
+        hsn: item.hsn || '',
+        avgCost: this.toNum(item.avgCost),
+        isReturn: item.isReturn !== undefined ? item.isReturn : true,
+
+        // Price category
+        priceCategory: item.priceCategoryId ? {
+          id: item.priceCategoryId,
+          name: item.priceCategoryName || '',
+          code: '',
+          description: ''
+        } : {
+          id: null,
+          name: '',
+          code: '',
+          description: ''
+        },
+        priceCategoryOptions: [], // Will be populated on edit if needed
+
+        // Size master
+        sizeMaster: item.sizeMasterName ? {
+          id: item.sizeMasterId,
+          name: item.sizeMasterName,
+          code: '',
+          description: ''
+        } : {
+          id: null,
+          name: '',
+          code: '',
+          description: ''
+        },
+
+        // Unique items
+        uniqueItems: item.uniqueItems || [{ uniqueNumber: 'string' }],
+        batchNoPopup: []
+      };
     });
   }
 
@@ -1577,25 +1577,25 @@ onClickRoundOff() {
     // Syncfusion emits { value } on change; DOM events use target.value
     const rawValue = event?.value ?? event?.target?.value ?? '';
     const enteredValue = parseFloat(String(rawValue));
-  
+
     if (!isNaN(enteredValue)) {
       const previousNetAmount = this.toNum(this.salesForm.get('netamount')?.value);
       this.salesForm.patchValue({ grandtotal: enteredValue.toFixed(4) }, { emitEvent: false });
-  
+
       // Calculate and round netamount to 2 decimal places
       const newNetAmount = (enteredValue * 100) / 115;
       const roundedNetAmount = parseFloat(newNetAmount.toFixed(2));
       const discAmountNew = parseFloat((previousNetAmount - roundedNetAmount).toFixed(2));
-      
+
       this.salesForm.patchValue({ discountamount: discAmountNew.toFixed(4) }, { emitEvent: false });
-      
+
       const discpercNew = (discAmountNew / previousNetAmount * 100).toFixed(2);
       this.salesForm.patchValue({ totaldiscpercent: discpercNew }, { emitEvent: false });
-      
+
       const commondiscountpercent = Number(discpercNew);
       this.commonDiscountPercent = this.baseService.formatInput(commondiscountpercent);
       this.setCommonDiscountPercent(commondiscountpercent);
-      
+
       this.salesForm.patchValue({ netamount: roundedNetAmount.toFixed(4) }, { emitEvent: false });
     } else {
       this.salesForm.patchValue({ grandtotal: '0.0000' }, { emitEvent: false });
@@ -1614,9 +1614,9 @@ onClickRoundOff() {
     this.salesForm.patchValue({
       discountamount: discountAmount.toFixed(4)
     }, { emitEvent: false });
-    
+
     this.commonDiscountAmount = discountAmount;
-    
+
     // Calculate discount percentage based on gross amount
     if (this.grossAmt > 0) {
       this.commonDiscountPercent = (discountAmount * 100) / this.grossAmt;

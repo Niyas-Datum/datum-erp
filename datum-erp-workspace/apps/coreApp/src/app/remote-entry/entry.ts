@@ -1,5 +1,5 @@
 import { Component, inject, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterModule, RouterOutlet } from '@angular/router';
 import { MenuItemDto, ShortcutMenuDto } from '@org/models';
 import { AppHeaderComponent, HeaderComponent } from '@org/ui';
 import { DataSharingService, LocalStorageService } from '@org/services';
@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-coreApp-entry',
   standalone: false,
+
   styles: [`
 html, body {
   height: 100%;

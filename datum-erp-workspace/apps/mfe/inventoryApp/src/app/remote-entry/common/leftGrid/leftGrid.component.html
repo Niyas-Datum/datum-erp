@@ -13,7 +13,7 @@
 
   <ejs-grid #grid [dataSource]="this.filteredData$ | async" [allowResizing]="true" [allowTextWrap]="true"
     [enableHover]="false" (rowSelected)="onRowSelect($event)" [allowFiltering]="true" [filterSettings]="filterOptions"
-    [allowSorting]="true" gridLines="Both" height="100%" [rowHeight]="30" class="flex-grow-1">
+    [allowSorting]="true" gridLines="Both"  height="100%" [rowHeight]="30"  class="flex-grow-1" >
 
     <e-columns>
       <ng-container *ngFor="let col of columns">
