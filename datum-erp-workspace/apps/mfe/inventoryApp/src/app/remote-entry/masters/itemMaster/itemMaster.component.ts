@@ -288,7 +288,13 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
     this.commonInit();
   }
 
-  /// ngon init => afterview init ,...
+protected override controlH_press(): void {
+    console.log('Ctrl + H in ItemMasterComponent');
+  }
+
+  protected override controlM_press(): void {
+    console.log('Ctrl + M in ItemMasterComponent');
+  }
 
   // ngOnInit(): void {
   //   this.onInitBase();

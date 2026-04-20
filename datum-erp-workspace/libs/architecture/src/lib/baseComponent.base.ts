@@ -5,7 +5,8 @@ import { LeftGridBase } from './leftGrid.base';
 import { setThrowInvalidWriteToSignalError } from '@angular/core/primitives/signals';
 import { MenuItemDto } from '@org/models';
 import { ToastService } from '@org/ui';
-export abstract class BaseComponent {
+import { ShortcutBaseComponent } from './ShortcutBaseComponent';
+export abstract class BaseComponent extends ShortcutBaseComponent {
   protected serviceBase = new SeviceInjectBase();
   protected formUtil = new formUtilBase();
   protected leftGrid = new LeftGridBase();
