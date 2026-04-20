@@ -45,11 +45,11 @@ interface CustomMenuItemModel extends MenuItemModel {
   styleUrls: ['./appHeader.component.scss'],
 })
 export class AppHeaderComponent implements OnInit {
-  isMobileMenuOpen =  false
+  isMobileMenuOpen = false
   isMobileContentOpen = false
 
   toggleMobileMenu() {
-      this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
     // throw new Error('Method not implemented.');
   }
   @ViewChild('menu')
@@ -58,14 +58,20 @@ export class AppHeaderComponent implements OnInit {
   menuService = inject(MenuService);
   datasharingService = inject(DataSharingService);
   menuItems: any[] = [];
-  shortCutMenuItems: any[] = [];
+  // shortCutMenuItems: any[] = [];
+  shortCutMenuItems = signal<any[]>([]);
   userName = signal<string>('');
   currencyList: any;
 
   ngOnInit() {
     this.menuItems = this.menuService.getMenuDataWithMId();
 
-    this.shortCutMenuItems = this.menuService.getShortCutMenuItems();
+    // this.shortCutMenuItems = this.menuService.getShortCutMenuItems();
+    const data = this.menuService.getShortCutMenuItems();
+    this.shortCutMenuItems.set(data || [])
+    setTimeout(() => {
+      if (this.menuObj) { this.menuObj.refresh(); }
+    }, 100)
 
     this.userName.set(localStorage.getItem('username') || '');
   }
@@ -143,7 +149,7 @@ export class AppHeaderComponent implements OnInit {
           toolbarItem
         );
         if (itemIndex >= 0 && itemIndex < this.shortCutMenuItems.length) {
-          item = this.shortCutMenuItems[itemIndex];
+          item = this.shortCutMenuItems()[itemIndex];
         }
       }
     } else if (args.target) {
@@ -154,7 +160,7 @@ export class AppHeaderComponent implements OnInit {
           toolbarItem
         );
         if (itemIndex >= 0 && itemIndex < this.shortCutMenuItems.length) {
-          item = this.shortCutMenuItems[itemIndex];
+          item = this.shortCutMenuItems()[itemIndex];
         }
       }
     }
@@ -199,14 +205,14 @@ export class AppHeaderComponent implements OnInit {
     }
   }
 
-mobileView(){
-  this.isMobileMenuOpen = !this.isMobileMenuOpen
-  if (!this.isMobileMenuOpen) {
-    this.isMobileContentOpen = false
+  mobileView() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen
+    if (!this.isMobileMenuOpen) {
+      this.isMobileContentOpen = false
+    }
   }
-}
 
-openMobileContent() {
-  this.isMobileContentOpen = true
-}
+  openMobileContent() {
+    this.isMobileContentOpen = true
+  }
 }

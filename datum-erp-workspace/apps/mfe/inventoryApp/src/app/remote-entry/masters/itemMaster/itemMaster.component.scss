@@ -158,7 +158,7 @@
   .item-code-section {
     display: inline-flex;
     height: 32px;
-    padding: var(--2, 4px);
+    // padding: var(--2, 4px);
     justify-content: center;
     align-items: center;
     gap: var(--2, 4px);
@@ -168,7 +168,7 @@
     display: flex;
     width: 354.98px;
     padding-left: 10px;
-    padding: var(--2, 4px);
+    // padding: var(--2, 4px);
     align-items: center;
     gap: var(--2, 4px);
   }
@@ -184,7 +184,7 @@
     height: 32px;
     min-width: 84px;
     max-width: 103px;
-    padding: var(--2, 4px);
+    // padding: var(--2, 4px);
     justify-content: center;
     align-items: center;
     gap: var(--2, 4px);
@@ -340,7 +340,7 @@
     .checkbox-row-single {
       display: flex;
       height: 32px;
-      padding: var(--2, 4px);
+      // padding: var(--2, 4px);
       justify-content: flex-end;
       align-items: center;
       gap: var(--2, 4px);
@@ -398,7 +398,7 @@
     .other-details-section .input-label-box,.itemdetails-wrapper .input-label-box {
       display: flex;
       width: 90px;
-      padding: var(--3, 8px) 0px;
+      // padding: var(--3, 8px) 0px;
       align-items: center;
       align-content: center;
       gap: 8px var(--3, 8px);
@@ -414,7 +414,7 @@
     }
     .other-details-section .checkbox-one,.itemdetails-wrapper .checkbox-one {
       display: flex;
-      padding-right: var(--2, 4px);
+      // padding-right: var(--2, 4px);
       align-items: center;
       gap: var(--2, 4px);
       flex: 1 0 0;
@@ -422,7 +422,7 @@
     .other-details-section .input-label-box,.itemdetails-wrapper .input-label-box {
       display: flex;
       width: 90px;
-      padding: var(--3, 8px) 0px;
+      // padding: var(--3, 8px) 0px;
       align-items: center;
       align-content: center;
       gap: 8px var(--3, 8px);
@@ -489,4 +489,13 @@
   height: 28px;
 }
 
+::ng-deep .e-grid .e-headercell {
+    padding-left: 4px !important;  /* Reduce from default */
+    padding-right: 4px !important; 
+}
 
+/* If you want to remove the filter icon space specifically */
+::ng-deep .e-grid .e-filtermenudiv {
+    margin: 0 !important;
+    width: 15px !important; /* Tightens the right side */
+}

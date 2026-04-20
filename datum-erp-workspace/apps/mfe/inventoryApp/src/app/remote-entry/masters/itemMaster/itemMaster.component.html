@@ -70,18 +70,18 @@
               </div>
 
               <div class="row g-2 mb-2 align-items-center">
-                <div class="col-md-6 d-flex align-items-center">
-                  <label class="col-4">Basic Unit</label>
+                <div class="col-md-6 d-flex align-items-center item-master-basicunit">
+                  <label for="basicunit" class="col-4">Basic Unit</label>
                   <app-multiColumnComboBox class="flex-grow-1" formControlName="basicunit" [dataSource]="allBasicUnits"
                     popupWidth="450px" [resetTrigger]="forceComboReset()" (rowSelected)="onBasicUnitSelected($event, 0)"
-                    [fields]="{ text: 'unit', value: 'unit' }" [columns]="basicUnitFields">
+                    [fields]="{ text: 'unit', value: 'unit' }"[disabled]="!isInputDisabled" [columns]="basicUnitFields">
                   </app-multiColumnComboBox>
                 </div>
                 <div class="col-md-6 d-flex align-items-center ps-md-4">
-                  <div class="d-flex flex-grow-1 gap-1">
-                    <label class="col-4">Category</label>
+                  <div class="d-flex flex-grow-1 gap-1 item-master-category">
+                    <label for="category" class="col-4">Category</label>
                     <app-multiColumnComboBox class="w-50" formControlName="category" [dataSource]="allCategories"
-                      [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" [disabled]="isDisabled"
+                      [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" 
                       [resetTrigger]="forceComboReset()" (rowSelected)="onCategorySelected($event)"
                       [columns]="categoryFields">
                     </app-multiColumnComboBox>
