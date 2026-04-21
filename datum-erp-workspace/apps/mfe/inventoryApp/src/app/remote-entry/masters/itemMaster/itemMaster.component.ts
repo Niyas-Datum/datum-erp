@@ -87,6 +87,7 @@ export class ItemMasterComponent extends BaseComponent implements OnInit {
       buttonModel: { content: 'Cancel', cssClass: 'e-flat', isPrimary: false },
     },
   ];
+  Demand: any;
 
   getDefaultAddUnitFormData() {
     return {
@@ -317,38 +318,28 @@ protected override controlH_press(): void {
   // }
 
 
-
   ngOnInit(): void {
     this.onInitBase();
     this.getPageID();
     this.disableFormControls();
     this.SetPageType(1);
 
-    forkJoin({
-      branches: this.httpService.fetchBranches(),
-      units: this.httpService.fetchUnits(),
-      tax: this.httpService.fetchTaxTypes(),
-      quality: this.httpService.fetchItemQuality(),
-      categories: this.httpService.fetchCategories(),
-      parentItems: this.httpService.fetchParentItems(),
-      colors: this.httpService.fetchItemColors(),
-      brands: this.httpService.fetchItemBrands(),
-      origin: this.httpService.fetchCountryOfOrigin(),
-      accounts: this.httpService.fetchUnits()
-    }).subscribe(() => {
-      this.fetchAllBranches()
-      this.fetchUnitDropdown()
-      this.fetchAllTaxTypes()
-      this.fetchItemQuality()
-      this.fetchCategories()
-      this.fetchParentItems()
-      this.fetchItemColors()
-      this.fetchItemBrands()
-      this.fetchCountryOfOrigin()
+    forkJoin([
+      this.fetchAllBranches(),
+      this.fetchUnitDropdown(),
+      this.fetchAllTaxTypes(),
+      this.fetchItemQuality(),
+      this.fetchCategories(),
+      this.fetchParentItems(),
+      this.fetchItemColors(),
+      this.fetchItemBrands(),
+      this.fetchCountryOfOrigin(),
       this.fetchAccounts()
+    ]).subscribe(() => {
       this.fetchItemMasterById()
     })
   }
+
 
 
 
@@ -1394,6 +1385,7 @@ protected override controlH_press(): void {
       .subscribe({
         next: (response) => {
           this.allBasicUnits = response?.data as any;
+          console.log("basic unit ", this.allBasicUnits)
           this.basicUnitOptions = this.allBasicUnits.map(
             (item: any) => item.unit
           );
@@ -1459,6 +1451,8 @@ protected override controlH_press(): void {
         selectedBasicUnit = item;
       }
     });
+
+
     this.selectedBasicUnitObj = selectedBasicUnit;
     if (option != '' && rowIndex != null) {
       if (this.itemUnitDetails().length > 0) {

@@ -18,8 +18,9 @@
       <div class="d-flex align-items-center">
         <div class="border-end border-secondary-subtle me-3" style="height: 20px"></div>
 
+       
         <button ejs-button cssClass="e-flat fs-6  me-3" iconCss="sf-icon-notification-bell-01" type="button"
-          aria-label="notification" role="button"></button>
+          aria-label="notification" role="button"></button> 
 
         <div class="border-end border-secondary-subtle me-3" style="height: 24px"></div>
 
@@ -66,7 +67,7 @@
           <div class="flex-grow-1 overflow-hidden">
             <div class="d-flex gap-2 transition-scroll" [style.transform]="'translateX(' + translateX + 'px)'">
 
-              @for (item of shortCutMenuItems; track item.m_id) {
+              @for (item of shortCutMenuItems(); track item.m_id) {
               <button ejs-button [iconCss]="item.iconClass" class="btn btn-custume btn-sm flex-shrink-0 fw-bold"
                 (click)="onShortcutClick(item)">
                 {{ item.text }}
@@ -105,7 +106,7 @@
       <ejs-toolbar (click)="onClicked($event)" overflowMode="Scrollable" width="100%" cssClass="mobile-toolbar">
 
         <e-items>
-          @for (item of shortCutMenuItems; track item.m_id) {
+          @for (item of shortCutMenuItems(); track item.m_id) {
           <e-item [text]="item.text" [tooltipText]="item.tooltipText" cssClass="mobile-tool-item">
           </e-item>
           }

@@ -58,18 +58,18 @@ export class ItemList implements OnInit, OnDestroy, AfterViewInit {
   private dataSharingService = inject(DataSharingService);
   private baseService = inject(BaseService);
   private readonly cdr = inject(ChangeDetectorRef);
-public commonService = inject(CommonService);
-public itemService = inject(ItemService);
+  public commonService = inject(CommonService);
+  public itemService = inject(ItemService);
 
 
   private destroy$ = new Subject<void>();
 
   // State variables
-    invTransactions: any = [];
+  invTransactions: any = [];
   selectedSalesId: number | null = null;
   currentSales = {} as Purchase;
   pageId = 0;
-  
+
   // Dynamic page info properties
   private currentPageId: number | null = null;
   private currentVoucherId: number | null = null;
@@ -188,13 +188,13 @@ public itemService = inject(ItemService);
     // Listen for imported items from reference popup (only when items exist)
     effect(() => {
       const importedItems = this.itemService.importedResponse();
-      
+
       if (importedItems && importedItems.length > 0 && (this.isNewMode() || this.isEditMode())) {
         // Use setTimeout to ensure it runs after change detection
         setTimeout(() => {
           console.log('📥 Processing imported items in item-list effect:', importedItems.length);
           this.itemService.addImportedItems(importedItems);
-          
+
           // Force grid refresh after items are added
           setTimeout(() => {
             if (this.grid) {
@@ -207,7 +207,7 @@ public itemService = inject(ItemService);
               }
             }
           }, 200);
-          
+
           // Clear imported items after a delay to ensure processing is complete
           setTimeout(() => {
             this.itemService.importedResponse.set([]);
@@ -565,11 +565,14 @@ public itemService = inject(ItemService);
       position: 'fixed',
       top: `${top}px`,
       left: `${Math.round(left)}px`,
-      width: `${Math.round(panelW)}px`,
+      // width: `${Math.round(panelW)}px`,
+      width: `50%`,
       'max-height': `${Math.round(maxH)}px`,
       'z-index': '10050',
       overflow: 'hidden',
       'box-sizing': 'border-box',
+      'overflow-y': 'auto',
+      'overflow-x': 'hidden',
       visibility: 'visible',
     };
   }
@@ -675,7 +678,7 @@ public itemService = inject(ItemService);
     if (!this.currentPageId || !this.currentVoucherId) {
       return;
     }
-    
+
   }
 
   private fillPurchaseDetails(): void {
@@ -692,7 +695,7 @@ public itemService = inject(ItemService);
       const currentItems = this.commonService.tempItemFillDetails();
       const itemId = selectedItem.id || selectedItem.itemId;
       const unit = selectedItem.unitname || selectedItem.unit || '';
-      
+
       // Find existing item with same itemId and unit
       const existingItem = currentItems.find((item: any) => {
         const existingItemId = item.itemId || item.itemCode;
@@ -710,7 +713,7 @@ public itemService = inject(ItemService);
         const taxPerc = selectedItem.taxPerc || existingItem.taxPerc || 0;
         this.calculateRowTotals(existingItem, taxPerc);
         this.updateRowInGrid(existingItem);
-        
+
         // Clear the current row data since we're not using it
         Object.assign(data, {
           itemId: '',
@@ -725,7 +728,7 @@ public itemService = inject(ItemService);
           totalAmount: 0,
           availableStock: null,
         });
-        
+
         setTimeout(() => {
           this.grid.endEdit();
           // Remove the empty row
@@ -734,7 +737,7 @@ public itemService = inject(ItemService);
           );
           this.commonService.tempItemFillDetails.set(updatedItems);
           this.commonService.assignRowIds();
-          
+
           // Add a new empty row so user can continue adding items
           this.itemService.addNewRow();
           this.refreshGridAfterRowChange();
@@ -1482,5 +1485,5 @@ public itemService = inject(ItemService);
     // Reserved for future logic
   }
 
-  
+
 }
