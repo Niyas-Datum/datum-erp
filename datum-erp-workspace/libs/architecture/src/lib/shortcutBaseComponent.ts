@@ -4,7 +4,7 @@ import { HostListener, Directive } from '@angular/core';
 export abstract class ShortcutBaseComponent {
 
   @HostListener('document:keydown', ['$event'])
-   handleShortcutKeyboardEvent(event: KeyboardEvent) {
+  handleShortcutKeyboardEvent(event: KeyboardEvent) {
 
     if (event.ctrlKey && event.key.toLowerCase() === 'h') {
       event.preventDefault();
@@ -15,9 +15,35 @@ export abstract class ShortcutBaseComponent {
       event.preventDefault();
       this.controlM_press();
     }
+
+
+    if (event.key.toLocaleLowerCase() === 'f6') {
+      event.preventDefault();
+      this.f6_press();
+    }
+
+    if (event.key.toLocaleLowerCase() === 'f7') {
+      event.preventDefault();
+      this.f7_press();
+    }
+
+    if (event.key.toLocaleLowerCase() === 'f2') {
+      event.preventDefault();
+      this.f2_press();
+    }
+
+     if (event.key.toLocaleLowerCase() === 'f9') {
+      event.preventDefault();
+      this.f9_press();
+    }
+
   }
 
   // Default implementations (can be overridden)
-  protected controlH_press(): void {}
-  protected controlM_press(): void {}
+  protected controlH_press(): void { }
+  protected controlM_press(): void { }
+  protected f6_press(): void { }
+  protected f7_press(): void { }
+  protected f2_press(): void { }
+  protected f9_press(): void { }
 }

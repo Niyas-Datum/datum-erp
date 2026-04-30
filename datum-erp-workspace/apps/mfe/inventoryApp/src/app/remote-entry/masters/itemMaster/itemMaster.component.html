@@ -52,6 +52,12 @@
                   <ejs-textbox #itemname [multiline]="false" class="flex-grow-1"
                     formControlName="itemname"></ejs-textbox>
                   <span class="text-danger ms-1">*</span>
+                 <div>
+                   <small *ngIf="  itemMasterForm.get('itemname')?.invalid &&  (itemMasterForm.get('itemname')?.touched || itemMasterForm.get('itemname')?.dirty)
+                              " style="color: red">
+                    Item Name is Mandatory
+                  </small>
+                 </div>
                 </div>
               </div>
 
@@ -74,16 +80,22 @@
                   <label for="basicunit" class="col-4">Basic Unit</label>
                   <app-multiColumnComboBox class="flex-grow-1" formControlName="basicunit" [dataSource]="allBasicUnits"
                     popupWidth="450px" [resetTrigger]="forceComboReset()" (rowSelected)="onBasicUnitSelected($event, 0)"
-                    [fields]="{ text: 'unit', value: 'unit' }"[disabled]="!isInputDisabled" [columns]="basicUnitFields">
+                    [fields]="{ text: 'unit', value: 'unit' }" [disabled]="!isInputDisabled"
+                    [columns]="basicUnitFields">
                   </app-multiColumnComboBox>
+                   <small *ngIf="
+                        itemMasterForm.get('basicunit')?.invalid &&
+                        (itemMasterForm.get('basicunit')?.touched || itemMasterForm.get('basicunit')?.dirty)
+                      " style="color: red">
+                        Basic Unit is Mandatory
+                      </small>
                 </div>
                 <div class="col-md-6 d-flex align-items-center ps-md-4">
                   <div class="d-flex flex-grow-1 gap-1 item-master-category">
                     <label for="category" class="col-4">Category</label>
                     <app-multiColumnComboBox class="w-50" formControlName="category" [dataSource]="allCategories"
-                      [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" 
-                      [resetTrigger]="forceComboReset()" (rowSelected)="onCategorySelected($event)"
-                      [columns]="categoryFields">
+                      [fields]="{ text: 'code', value: 'id' }" popupWidth="450px" [resetTrigger]="forceComboReset()"
+                      (rowSelected)="onCategorySelected($event)" [columns]="categoryFields">
                     </app-multiColumnComboBox>
                     <div class="itemmaster-category" style="width: 100%;">
                       <span>{{
@@ -91,6 +103,12 @@
                         }}</span>
                     </div>
                     <span class="text-danger">*</span>
+                    <small *ngIf="
+                                itemMasterForm.get('category')?.invalid &&
+                                (itemMasterForm.get('category')?.touched || itemMasterForm.get('category')?.dirty)
+                              " style="color: red">
+                        Category is Mandatory
+                      </small>
                   </div>
                 </div>
               </div>
@@ -102,9 +120,9 @@
                   <div class="input-group d-flex gap-2 flex-nowrap">
                     <div class="me-1">
                       <ejs-textbox [multiline]="false" formControlName="barcodeno"
-                      placeholder="Enter Barcode"></ejs-textbox>
+                        placeholder="Enter Barcode"></ejs-textbox>
                     </div>
-                    
+
                     <button class="btn-outline-secondary" type="button" [disabled]="isInputDisabled"
                       (click)="generateBarCode(0)">G</button>
                     <button [disabled]="isInputDisabled" class="btn-outline-secondary" type="button"

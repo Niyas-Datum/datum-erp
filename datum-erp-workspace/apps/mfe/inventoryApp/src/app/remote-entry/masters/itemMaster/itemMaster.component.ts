@@ -296,6 +296,21 @@ protected override controlH_press(): void {
   protected override controlM_press(): void {
     console.log('Ctrl + M in ItemMasterComponent');
   }
+    protected override f6_press(): void {
+    console.log("new mode is on")
+    //this.initialization();
+    this.newbuttonClicked();
+  }
+
+  protected override f7_press(): void {
+    console.log("save mode is on")
+    this.SaveFormData();
+  }
+
+  protected override f2_press(): void {
+    console.log("edit mode is on")
+    this.SaveFormData();
+  }
 
   // ngOnInit(): void {
   //   this.onInitBase();
@@ -316,7 +331,9 @@ protected override controlH_press(): void {
   //     this.fetchItemMasterById();
   //   }, 0)
   // }
-
+  ngAfterViewInit(): void {
+    this.newbuttonClicked();
+  }
 
   ngOnInit(): void {
     this.onInitBase();
@@ -699,6 +716,13 @@ protected override controlH_press(): void {
       this.fetchItemMasterById();
     }, 0)
 
+  }
+
+  override formValidationError(): void {
+    if (this.itemMasterForm.invalid) {
+      this.itemMasterForm.markAllAsTouched();
+      return;
+    }
   }
 
   protected override SaveFormData(): void {
@@ -1160,10 +1184,22 @@ protected override controlH_press(): void {
     );
   }
 
+    protected override onNewButtonFormDisabled(): void {
+    this.isInputDisabled = false;
+    console.log(" cancel new button:" + this.isInputDisabled);
+    this.isEditBtnDisabled = this.isInputDisabled;
+    this.isDeleteBtnDisabled = this.isInputDisabled;
+    this.isSaveBtnDisabled = this.isInputDisabled;
+    this.selectedItemMasterId.set(26731);
+    this.fetchItemMasterById();
+    this.disableFormControls();
+  }
+
   protected override newbuttonClicked(): void {
     // Toggle input enable/disable state
-    this.isInputDisabled = !this.isInputDisabled;
-
+    // this.isInputDisabled = !this.isInputDisabled;
+    console.log("new button:" + this.isInputDisabled);
+    this.enableFormControls();
     // Update button states
     this.isEditBtnDisabled = !this.isInputDisabled;
     this.isDeleteBtnDisabled = !this.isInputDisabled;
@@ -1172,15 +1208,39 @@ protected override controlH_press(): void {
     // Reset form data and component variables
     this.itemMasterForm.reset();
     this.itemmasterFormReset();
+    this.imageData = null;
+    this.generateItemCode();
 
     // Enable/disable form controls
-    if (this.isInputDisabled) {
-      this.disableFormControls();
-    } else {
-      this.enableFormControls();
-      this.generateItemCode();
-    }
+    // if (this.isInputDisabled) {
+    //   this.disableFormControls();
+    // } else {
+    //   this.enableFormControls();
+    //   this.generateItemCode();
+    // }
   }
+
+  // protected override newbuttonClicked(): void {
+  //   // Toggle input enable/disable state
+  //   this.isInputDisabled = !this.isInputDisabled;
+
+  //   // Update button states
+  //   this.isEditBtnDisabled = !this.isInputDisabled;
+  //   this.isDeleteBtnDisabled = !this.isInputDisabled;
+  //   this.isSaveBtnDisabled = this.isInputDisabled;
+
+  //   // Reset form data and component variables
+  //   this.itemMasterForm.reset();
+  //   this.itemmasterFormReset();
+
+  //   // Enable/disable form controls
+  //   if (this.isInputDisabled) {
+  //     this.disableFormControls();
+  //   } else {
+  //     this.enableFormControls();
+  //     this.generateItemCode();
+  //   }
+  // }
 
   generateItemCode() {
     this.httpService
@@ -1246,7 +1306,7 @@ protected override controlH_press(): void {
       taxtype: null,
       costprice: '',
       sellingprice: '',
-      mrp: '',
+      mrp: null,
       margin: '',
       marginvalue: '',
     });
@@ -2222,41 +2282,43 @@ protected override controlH_press(): void {
     console.log('itemmasterformshow', this.itemMasterForm);
   }
 
-  protected override FormInitialize(): void {
+protected override FormInitialize(): void {
     const form = new FormGroup({
       branch: new FormControl({ value: this.currentBranchID(), disabled: false }, Validators.required),
       itemcode: new FormControl({ value: '', disabled: false }, Validators.required),
-      active: new FormControl({ value: '', disabled: false }),
+      active: new FormControl({ value: true, disabled: false }),
       itemname: new FormControl({ value: '', disabled: false }, Validators.required),
-      arabicname: new FormControl({ value: '', disabled: false }),
+      arabicname: new FormControl({ value: null, disabled: false }),
       basicunit: new FormControl({ value: '', disabled: false }, Validators.required),
-      barcodeno: new FormControl({ value: '', disabled: false }),
-      category: new FormControl({ value: null, disabled: false, }),
+      barcodeno: new FormControl({ value: null, disabled: false }),
+      category: new FormControl({ value: null, disabled: false, }, Validators.required),
       unique: new FormControl({ value: false, disabled: false }),
-      stockitem: new FormControl({ value: '', disabled: false }),
-      costprice: new FormControl({ value: '', disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
-      sellingprice: new FormControl({ value: '', disabled: false, }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
-      mrp: new FormControl({ value: '', disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
+      //stockitem: new FormControl({ value: '', disabled: false }),
+      stockitem: new FormControl(true),
+      costprice: new FormControl({ value: null, disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
+      sellingprice: new FormControl({ value: null, disabled: false, }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
+      mrp: new FormControl({ value: null, disabled: false }), //, [Validators.required,Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')]
       taxtype: new FormControl({ value: null, disabled: false }),
-      margin: new FormControl({ value: '', disabled: false }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
-      marginvalue: new FormControl({ value: '', disabled: false, }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
+      margin: new FormControl({ value: null, disabled: false }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
+      marginvalue: new FormControl({ value: null, disabled: false, }), //, Validators.pattern('[0-9]+(\.[0-9][0-9]?)?')
       isdisabled: new FormControl({ value: false, disabled: false, }),
       expiryitem: new FormControl({ value: false, disabled: false, }),
       finishedgoods: new FormControl({ value: false, disabled: false }),
       rawmaterials: new FormControl({ value: false, disabled: false }),
-      expirydays: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      racklocation: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      discount: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      hsncode: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      parentitem: new FormControl({ value: '', disabled: this.isInputDisabled }), //,Validators.required
-      quality: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      modelno: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      color: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      brandname: new FormControl({ value: '', disabled: this.isInputDisabled }),
+      //expirydays: new FormControl({ value: '', disabled: this.isInputDisabled }),
+      expirydays: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      racklocation: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      discount: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      hsncode: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      parentitem: new FormControl({ value: null, disabled: this.isInputDisabled }), //,Validators.required
+      quality: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      modelno: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      color: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      brandname: new FormControl({ value: null, disabled: this.isInputDisabled }),
       countryoforigin: new FormControl({ value: '', disabled: this.isInputDisabled }),
       manufacturer: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      rol: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      roq: new FormControl({ value: '', disabled: this.isInputDisabled }),
+      rol: new FormControl({ value: null, disabled: this.isInputDisabled }),
+      roq: new FormControl({ value: null, disabled: this.isInputDisabled }),
       shipmark: new FormControl({ value: '', disabled: this.isInputDisabled }),
       paintmark: new FormControl({ value: '', disabled: this.isInputDisabled }),
       stockcode: new FormControl({ value: '', disabled: this.isInputDisabled }),
@@ -2264,12 +2326,13 @@ protected override controlH_press(): void {
       purchaseunit: new FormControl({ value: '', disabled: this.isInputDisabled }), //,Validators.required
       sellingunit: new FormControl({ value: '', disabled: this.isInputDisabled }), //,Validators.required
       oemno: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      groupitem: new FormControl({ value: '', disabled: this.isInputDisabled }),
-      invaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
-      salesaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
-      costaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
-      purchaseaccount: new FormControl({ value: '', disabled: this.isInputDisabled || this.isStockItem }),
+      groupitem: new FormControl({ value: false, disabled: this.isInputDisabled }),
+      invaccount: new FormControl({ value: null, disabled: this.isInputDisabled || this.isStockItem }),
+      salesaccount: new FormControl({ value: null, disabled: this.isInputDisabled || this.isStockItem }),
+      costaccount: new FormControl({ value: null, disabled: this.isInputDisabled || this.isStockItem }),
+      purchaseaccount: new FormControl({ value: null, disabled: this.isInputDisabled || this.isStockItem }),
       remarks: new FormControl({ value: '', disabled: this.isInputDisabled }),
+      hsncolor: new FormControl({ value: '', disabled: this.isInputDisabled }),
     });
     this.itemMasterForm = form;
     this.formUtil.thisForm = form;
