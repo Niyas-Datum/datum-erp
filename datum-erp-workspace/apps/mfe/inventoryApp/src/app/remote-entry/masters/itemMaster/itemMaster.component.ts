@@ -296,41 +296,23 @@ protected override controlH_press(): void {
   protected override controlM_press(): void {
     console.log('Ctrl + M in ItemMasterComponent');
   }
-    protected override f6_press(): void {
-    console.log("new mode is on")
-    //this.initialization();
-    this.newbuttonClicked();
-  }
-
-  protected override f7_press(): void {
-    console.log("save mode is on")
-    this.SaveFormData();
-  }
-
-  protected override f2_press(): void {
-    console.log("edit mode is on")
-    this.SaveFormData();
-  }
-
-  // ngOnInit(): void {
-  //   this.onInitBase();
-  //   this.getPageID();
-  //   this.disableFormControls();
-  //   this.SetPageType(1);
-  //   this.fetchAllBranches();
-  //   this.fetchUnitDropdown();
-  //   this.fetchAllTaxTypes();
-  //   this.fetchItemQuality();
-  //   this.fetchCategories();
-  //   this.fetchParentItems();
-  //   this.fetchItemColors();
-  //   this.fetchItemBrands();
-  //   this.fetchCountryOfOrigin();
-  //   this.fetchAccounts();
-  //   setTimeout(() => {
-  //     this.fetchItemMasterById();
-  //   }, 0)
+  //   protected override f6_press(): void {
+  //   console.log("new mode is on")
+  //   //this.initialization();
+  //   this.newbuttonClicked();
   // }
+
+  // protected override f7_press(): void {
+  //   console.log("save mode is on")
+  //   this.SaveFormData();
+  // }
+
+  // protected override f2_press(): void {
+  //   console.log("edit mode is on")
+  //   this.SaveFormData();
+  // }
+
+  
   ngAfterViewInit(): void {
     this.newbuttonClicked();
   }
